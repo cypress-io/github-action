@@ -21,6 +21,13 @@ jobs:
       - run: node -v
       - run: npm ci
       - run: npm test
+
+      # https://github.com/cycjimmy/semantic-release-action
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       # - run: npm run semantic-release
       #   env:
       #     # need environment variables for publishing new release

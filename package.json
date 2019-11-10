@@ -1,6 +1,6 @@
 {
   "name": "@cypress/github-action",
-  "version": "1.2.0",
+  "version": "0.0.0-development",
   "description": "GitHub Action for running Cypress end-to-end tests",
   "private": false,
   "main": "dist/index.js",
@@ -10,9 +10,7 @@
   ],
   "scripts": {
     "test": "echo \"There are no tests :(\"",
-    "build-for-release": "ncc build -o dist index.js && git add -f dist",
-    "semantic-release": "npm run build-for-release && semantic-release",
-    "next-version": "next-ver --go"
+    "release": "ncc build -o dist index.js && git add -f dist"
   },
   "repository": {
     "type": "git",
