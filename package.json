@@ -1,6 +1,6 @@
 {
   "name": "@cypress/github-action",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "GitHub Action for running Cypress end-to-end tests",
   "private": false,
   "main": "index.js",
@@ -9,11 +9,12 @@
     "action.yml"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cypress-io/github-action.git"
+    "url": "https://github.com/cypress-io/github-action.git"
   },
   "keywords": [
     "actions",
@@ -33,6 +34,10 @@
   },
   "devDependencies": {
     "prettier": "1.19.1",
-    "@types/node": "^12.0.4"
+    "@types/node": "^12.0.4",
+    "semantic-release": "^15.13.30"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
