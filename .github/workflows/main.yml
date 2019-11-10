@@ -6,10 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and test
     steps:
+      with:
+        # need environment variables for publishing new release
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Checkout
         uses: actions/checkout@v1
       - run: npm test
       - run: npm run semantic-release
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
