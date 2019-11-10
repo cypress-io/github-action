@@ -40,8 +40,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "release": {
-    "analyzeCommits": "simple-commit-message"
   }
 }
