@@ -1,0 +1,15 @@
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/metadata-syntax-for-github-actions
+name: 'Cypress'
+description: 'GitHub Action for running Cypress end-to-end tests'
+author: 'Gleb Bahmutov'
+inputs:
+  record:
+    description: 'Sends test results to Cypress Dashboard'
+    required: false
+    default: false
+runs:
+  using: 'node12'
+  main: 'index.js'
+branding:
+  color: 'green'
+  icon: 'check-square'
