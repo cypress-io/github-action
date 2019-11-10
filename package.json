@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "test": "echo \"There are no tests :(\"",
-    "prepublishOnly": "ncc build -o dist index.js && git add -f dist"
+    "build": "ncc build -o dist index.js",
+    "precommit": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@types/node": "^12.0.4",
     "@zeit/ncc": "0.20.5",
+    "husky": "3.0.9",
     "prettier": "1.19.1"
   },
   "publishConfig": {
