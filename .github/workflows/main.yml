@@ -35,8 +35,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Push updates to branch v1
+      - name: Push updates to branch for major version
+        # if there is a new version published, let's say v1.2.3
+        # then this step will update branch "v1" to this commit
+        # https://github.com/cypress-io/github-action/branches
         if: steps.semantic.outputs.new_release_published == 'true'
-        run: 'git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v1'
+        run: 'git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v${{steps.semantic.outputs.new_release_major_version}}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
