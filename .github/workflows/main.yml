@@ -8,5 +8,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - npm test
-      - npm run semantic-release
+      - run: npm test
+      - run: npm run semantic-release
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
