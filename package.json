@@ -1,0 +1,21 @@
+{
+  "name": "@cypress/github-action",
+  "version": "1.0.0",
+  "description": "GitHub Action for running Cypress end-to-end tests",
+  "private": false,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cypress-io/github-action.git"
+  },
+  "keywords": [],
+  "author": "Gleb Bahmutov <gleb@cypress.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cypress-io/github-action/issues"
+  },
+  "homepage": "https://github.com/cypress-io/github-action#readme"
+}
