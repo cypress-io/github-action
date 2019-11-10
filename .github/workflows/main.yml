@@ -5,12 +5,24 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     name: Build and test
-    env:
-      # need environment variables for publishing new release
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
+      # caching NPM dependencies
+      # https://github.com/actions/cache/blob/master/examples.md#node---npm
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: node -v
+      - run: npm ci
       - run: npm test
       - run: npm run semantic-release
+        env:
+          # need environment variables for publishing new release
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
