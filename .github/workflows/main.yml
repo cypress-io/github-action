@@ -5,11 +5,11 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     name: Build and test
+    env:
+      # need environment variables for publishing new release
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
-      with:
-        # need environment variables for publishing new release
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Checkout
         uses: actions/checkout@v1
       - run: npm test
