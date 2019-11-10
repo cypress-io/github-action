@@ -11,7 +11,8 @@
   "scripts": {
     "test": "echo \"There are no tests :(\"",
     "build-for-release": "ncc build -o dist index.js && git add -f dist",
-    "semantic-release": "npm run build-for-release && semantic-release"
+    "semantic-release": "npm run build-for-release && semantic-release",
+    "next-version": "next-ver --go"
   },
   "repository": {
     "type": "git",
@@ -36,9 +37,13 @@
   "devDependencies": {
     "@types/node": "^12.0.4",
     "@zeit/ncc": "0.20.5",
+    "next-ver": "1.8.0",
     "prettier": "1.19.1"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "release": {
+    "analyzeCommits": "simple-commit-message"
   }
 }

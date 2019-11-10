@@ -25,6 +25,7 @@ jobs:
 
       - run: npm ci
       - run: npm test
+      - run: npm run build-for-release
 
       - name: Create Release
         id: create_release
