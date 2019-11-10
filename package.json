@@ -1,6 +1,6 @@
 {
   "name": "@cypress/github-action",
-  "version": "0.0.0-development",
+  "version": "1.1.0",
   "description": "GitHub Action for running Cypress end-to-end tests",
   "private": false,
   "main": "dist/index.js",
@@ -36,8 +36,7 @@
   "devDependencies": {
     "@types/node": "^12.0.4",
     "@zeit/ncc": "0.20.5",
-    "prettier": "1.19.1",
-    "semantic-release": "^15.13.30"
+    "prettier": "1.19.1"
   },
   "publishConfig": {
     "access": "public"
