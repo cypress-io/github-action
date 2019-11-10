@@ -36,7 +36,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push updates to branch v1
-        if: steps.semantic.outputs.new-release-published == 'true'
+        if: steps.semantic.outputs.new_release_published == 'true'
         run: 'git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v1'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
