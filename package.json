@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "echo \"There are no tests :(\"",
-    "release": "ncc build -o dist index.js && git add -f dist"
+    "prepublishOnly": "ncc build -o dist index.js && git add -f dist"
   },
   "repository": {
     "type": "git",
