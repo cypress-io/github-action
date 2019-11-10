@@ -9,7 +9,7 @@ inputs:
     default: false
 runs:
   using: 'node12'
-  main: 'index.js'
+  main: 'dist/index.js'
 branding:
   color: 'green'
   icon: 'check-square'
