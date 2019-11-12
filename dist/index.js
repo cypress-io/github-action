@@ -1279,12 +1279,16 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
     console.log('npm cache hit', npmCacheHit)
     console.log('cypress cache hit', cypressCacheHit)
 
-    if (!npmCacheHit || !cypressCacheHit) {
-      return install()
-        .then(verifyCypressBinary)
+    return install().then(() => {
+      if (npmCacheHit && cypressCacheHit) {
+        console.log('no need to verify Cypress binary or save caches')
+        return
+      }
+
+      return verifyCypressBinary()
         .then(saveCachedNpm)
         .then(saveCachedCypressBinary)
-    }
+    })
   })
   .then(startServerMaybe)
   .then(runTests)
