@@ -1238,13 +1238,15 @@ const startServerMaybe = () => {
 
   const childProcess = execa(startCommand, {
     shell: true,
-    detached: true
+    detached: true,
+    stdio: 'inherit'
   })
   // allow child process to run in the background
   // https://nodejs.org/api/child_process.html#child_process_options_detached
   childProcess.unref()
-  return childProcess
+  console.log('child process unref')
 }
+
 const runTests = () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
