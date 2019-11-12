@@ -87,6 +87,17 @@ const getInputBool = (name, defaultValue = false) => {
   return defaultValue
 }
 
+const buildAppMaybe = () => {
+  const buildApp = core.getInput('build')
+  if (!buildApp) {
+    return
+  }
+
+  console.log('building application using "%s"', buildApp)
+
+  return exec.exec(buildApp)
+}
+
 const startServerMaybe = () => {
   const startCommand = core.getInput('start')
   if (!startCommand) {
@@ -106,6 +117,17 @@ const startServerMaybe = () => {
   // https://nodejs.org/api/child_process.html#child_process_options_detached
   childProcess.unref()
   console.log('child process unref')
+}
+
+const waitOnMaybe = () => {
+  const waitOn = core.getInput('wait-on')
+  if (!waitOn) {
+    return
+  }
+
+  console.log('waiting on "%s"', waitOn)
+
+  return exec.exec(`npx wait-on "${waitOn}"`)
 }
 
 const runTests = () => {
@@ -157,7 +179,9 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
         .then(saveCachedCypressBinary)
     })
   })
+  .then(buildAppMaybe)
   .then(startServerMaybe)
+  .then(waitOnMaybe)
   .then(runTests)
   .catch(error => {
     console.log(error)
