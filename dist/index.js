@@ -1234,10 +1234,7 @@ const buildAppMaybe = () => {
 
   console.log('building application using "%s"', buildApp)
 
-  return execa(buildApp, {
-    shell: true,
-    stderr: 'inherit'
-  })
+  return exec.exec(buildApp)
 }
 
 const startServerMaybe = () => {
@@ -1269,7 +1266,7 @@ const waitOnMaybe = () => {
 
   console.log('waiting on "%s"', waitOn)
 
-  return execa('npx', ['wait-on', waitOn], { stdio: 'inherit' })
+  return exec.exec(`npx wait-on "${waitOn}"`)
 }
 
 const runTests = () => {
