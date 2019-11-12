@@ -2,6 +2,7 @@
 const core = require('@actions/core')
 const exec = require('@actions/exec')
 const hasha = require('hasha')
+const execa = require('execa')
 const { restoreCache, saveCache } = require('cache/lib/index')
 
 const packageLockHash = hasha.fromFileSync('./package-lock.json')
@@ -86,6 +87,19 @@ const getInputBool = (name, defaultValue = false) => {
   return defaultValue
 }
 
+const startServerMaybe = () => {
+  const startCommand = core.getInput('start')
+  if (!startCommand) {
+    console.log('No start command found')
+    return
+  }
+
+  console.log('starting server with command "%s"', startCommand)
+  return execa(startCommand, {
+    shell: true,
+    detached: true
+  })
+}
 const runTests = () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
@@ -131,6 +145,7 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
         .then(saveCachedCypressBinary)
     }
   })
+  .then(startServerMaybe)
   .then(runTests)
   .catch(error => {
     console.log(error)
