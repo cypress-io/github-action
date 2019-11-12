@@ -1247,6 +1247,17 @@ const startServerMaybe = () => {
   console.log('child process unref')
 }
 
+const waitOnMaybe = () => {
+  const waitOn = core.getInput('wait-on')
+  if (!waitOn) {
+    return
+  }
+
+  console.log('waiting on "%s"', waitOn)
+
+  return execa('npx', ['wait-on', waitOn])
+}
+
 const runTests = () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
@@ -1297,6 +1308,7 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
     })
   })
   .then(startServerMaybe)
+  .then(waitOnMaybe)
   .then(runTests)
   .catch(error => {
     console.log(error)
