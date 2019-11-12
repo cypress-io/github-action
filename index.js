@@ -2,6 +2,7 @@
 const core = require('@actions/core')
 const exec = require('@actions/exec')
 const hasha = require('hasha')
+const execa = require('execa')
 const { restoreCache, saveCache } = require('cache/lib/index')
 
 const packageLockHash = hasha.fromFileSync('./package-lock.json')
@@ -86,6 +87,27 @@ const getInputBool = (name, defaultValue = false) => {
   return defaultValue
 }
 
+const startServerMaybe = () => {
+  const startCommand = core.getInput('start')
+  if (!startCommand) {
+    console.log('No start command found')
+    return
+  }
+
+  console.log('starting server with command "%s"', startCommand)
+  console.log('current working directory "%s"', process.cwd())
+
+  const childProcess = execa(startCommand, {
+    shell: true,
+    detached: true,
+    stdio: 'inherit'
+  })
+  // allow child process to run in the background
+  // https://nodejs.org/api/child_process.html#child_process_options_detached
+  childProcess.unref()
+  console.log('child process unref')
+}
+
 const runTests = () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
@@ -124,13 +146,18 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
     console.log('npm cache hit', npmCacheHit)
     console.log('cypress cache hit', cypressCacheHit)
 
-    if (!npmCacheHit || !cypressCacheHit) {
-      return install()
-        .then(verifyCypressBinary)
+    return install().then(() => {
+      if (npmCacheHit && cypressCacheHit) {
+        console.log('no need to verify Cypress binary or save caches')
+        return
+      }
+
+      return verifyCypressBinary()
         .then(saveCachedNpm)
         .then(saveCachedCypressBinary)
-    }
+    })
   })
+  .then(startServerMaybe)
   .then(runTests)
   .catch(error => {
     console.log(error)
