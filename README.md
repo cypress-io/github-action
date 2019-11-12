@@ -79,6 +79,27 @@ jobs:
 
 ![Parallel run](images/parallel.png)
 
+### Start server
+
+If your tests run against a local server, use `start` parameter, the server will run in the background and will shut down after tests complete
+
+```yml
+name: With server
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          start: npm start
+```
+
 ## More information
 
 - [Building actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/building-actions) docs
