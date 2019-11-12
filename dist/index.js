@@ -1143,16 +1143,23 @@ const exec = __webpack_require__(986)
 const hasha = __webpack_require__(309)
 const execa = __webpack_require__(955)
 const { restoreCache, saveCache } = __webpack_require__(211)
+const fs = __webpack_require__(747)
 
-const packageLockHash = hasha.fromFileSync('./package-lock.json')
+const useYarn = fs.existsSync('yarn.lock')
+const lockFilename = useYarn ? 'yarn.lock' : 'package-lock.json'
+const lockHash = hasha.fromFileSync(lockFilename)
 const platformAndArch = `${process.platform}-${process.arch}`
 
 const NPM_CACHE = (() => {
-  const o = {
-    inputPath: '~/.npm',
-    restoreKeys: `npm-${platformAndArch}-`
+  const o = {}
+  if (useYarn) {
+    o.inputPath = '~/.cache/yarn'
+    o.restoreKeys = `yarn-${platformAndArch}-`
+  } else {
+    o.inputPath = '~/.npm'
+    o.restoreKeys = `npm-${platformAndArch}-`
   }
-  o.primaryKey = o.restoreKeys + packageLockHash
+  o.primaryKey = o.restoreKeys + lockHash
   return o
 })()
 
@@ -1161,7 +1168,7 @@ const CYPRESS_BINARY_CACHE = (() => {
     inputPath: '~/.cache/Cypress',
     restoreKeys: `cypress-${platformAndArch}-`
   }
-  o.primaryKey = o.restoreKeys + packageLockHash
+  o.primaryKey = o.restoreKeys + lockHash
   return o
 })()
 
@@ -1197,10 +1204,16 @@ const saveCachedCypressBinary = () => {
 }
 
 const install = () => {
-  console.log('installing NPM dependencies')
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
-  return exec.exec('npm ci')
+
+  if (useYarn) {
+    console.log('installing NPM dependencies using Yarn')
+    return exec.exec('yarn --frozen-lockfile')
+  } else {
+    console.log('installing NPM dependencies')
+    return exec.exec('npm ci')
+  }
 }
 
 const verifyCypressBinary = () => {
