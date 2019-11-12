@@ -1234,6 +1234,8 @@ const startServerMaybe = () => {
   }
 
   console.log('starting server with command "%s"', startCommand)
+  console.log('current working directory "%s"', process.cwd())
+
   return execa(startCommand, {
     shell: true,
     detached: true
