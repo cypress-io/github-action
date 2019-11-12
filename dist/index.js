@@ -1226,6 +1226,19 @@ const getInputBool = (name, defaultValue = false) => {
   return defaultValue
 }
 
+const buildAppMaybe = () => {
+  const buildApp = core.getInput('build')
+  if (!buildApp) {
+    return
+  }
+
+  console.log('building application using "%s"', buildApp)
+
+  return execa(buildApp, {
+    shell: true
+  })
+}
+
 const startServerMaybe = () => {
   const startCommand = core.getInput('start')
   if (!startCommand) {
@@ -1307,6 +1320,7 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
         .then(saveCachedCypressBinary)
     })
   })
+  .then(buildAppMaybe)
   .then(startServerMaybe)
   .then(waitOnMaybe)
   .then(runTests)
