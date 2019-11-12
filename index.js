@@ -97,10 +97,14 @@ const startServerMaybe = () => {
   console.log('starting server with command "%s"', startCommand)
   console.log('current working directory "%s"', process.cwd())
 
-  return execa(startCommand, {
+  const childProcess = execa(startCommand, {
     shell: true,
     detached: true
   })
+  // allow child process to run in the background
+  // https://nodejs.org/api/child_process.html#child_process_options_detached
+  childProcess.unref()
+  return childProcess
 }
 const runTests = () => {
   const runTests = getInputBool('runTests', true)
