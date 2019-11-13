@@ -1165,10 +1165,6 @@ const NPM_CACHE = (() => {
     o.restoreKeys = `yarn-${platformAndArch}-`
   } else {
     o.inputPath = NPM_CACHE_FOLDER
-    o.inputPath = '~/.cache/yarn'
-    o.restoreKeys = `yarn-${platformAndArch}-`
-  } else {
-    o.inputPath = '~/.npm'
     o.restoreKeys = `npm-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash
@@ -1242,13 +1238,6 @@ const install = () => {
       console.log('npm at "%s"', npmPath)
       return exec.exec(quote(npmPath), ['ci'])
     })
-
-  if (useYarn) {
-    console.log('installing NPM dependencies using Yarn')
-    return exec.exec('yarn --frozen-lockfile')
-  } else {
-    console.log('installing NPM dependencies')
-    return exec.exec('npm ci')
   }
 }
 
