@@ -1140,32 +1140,45 @@ module.exports = require("os");
 // @ts-check
 const core = __webpack_require__(470)
 const exec = __webpack_require__(986)
+const io = __webpack_require__(1)
 const hasha = __webpack_require__(309)
 const execa = __webpack_require__(955)
 const { restoreCache, saveCache } = __webpack_require__(211)
 const fs = __webpack_require__(747)
+const os = __webpack_require__(87)
+const path = __webpack_require__(622)
+const quote = __webpack_require__(531)
+
+const homeDirectory = os.homedir()
 
 const useYarn = fs.existsSync('yarn.lock')
 const lockFilename = useYarn ? 'yarn.lock' : 'package-lock.json'
 const lockHash = hasha.fromFileSync(lockFilename)
 const platformAndArch = `${process.platform}-${process.arch}`
 
+// enforce the same NPM cache folder across different operating systems
+const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
 const NPM_CACHE = (() => {
   const o = {}
   if (useYarn) {
-    o.inputPath = '~/.cache/yarn'
+    o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
     o.restoreKeys = `yarn-${platformAndArch}-`
   } else {
-    o.inputPath = '~/.npm'
+    o.inputPath = NPM_CACHE_FOLDER
     o.restoreKeys = `npm-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash
   return o
 })()
 
+// custom Cypress binary cache folder
+// see https://on.cypress.io/caching
+const CYPRESS_CACHE_FOLDER = path.join(homeDirectory, '.cache', 'Cypress')
+console.log('using custom Cypress cache folder "%s"', CYPRESS_CACHE_FOLDER)
+
 const CYPRESS_BINARY_CACHE = (() => {
   const o = {
-    inputPath: '~/.cache/Cypress',
+    inputPath: CYPRESS_CACHE_FOLDER,
     restoreKeys: `cypress-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash
@@ -1206,19 +1219,34 @@ const saveCachedCypressBinary = () => {
 const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+
+  // Note: need to quote found tool to avoid Windows choking on
+  // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
 
   if (useYarn) {
     console.log('installing NPM dependencies using Yarn')
-    return exec.exec('yarn --frozen-lockfile')
+    return io.which('yarn', true).then(yarnPath => {
+      console.log('yarn at "%s"', yarnPath)
+      return exec.exec(quote(yarnPath), ['--frozen-lockfile'])
+    })
   } else {
     console.log('installing NPM dependencies')
-    return exec.exec('npm ci')
+    core.exportVariable('npm_config_cache', NPM_CACHE_FOLDER)
+
+    return io.which('npm', true).then(npmPath => {
+      console.log('npm at "%s"', npmPath)
+      return exec.exec(quote(npmPath), ['ci'])
+    })
   }
 }
 
 const verifyCypressBinary = () => {
   console.log('Verifying Cypress')
-  return exec.exec('npx cypress verify')
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  return io.which('npx', true).then(npxPath => {
+    return exec.exec(quote(npxPath), ['cypress', 'verify'])
+  })
 }
 
 /**
@@ -1279,7 +1307,9 @@ const waitOnMaybe = () => {
 
   console.log('waiting on "%s"', waitOn)
 
-  return exec.exec(`npx wait-on "${waitOn}"`)
+  return io.which('npx', true).then(npxPath => {
+    return exec.exec(quote(npxPath), ['wait-on', quote(waitOn)])
+  })
 }
 
 const runTests = () => {
@@ -1294,25 +1324,32 @@ const runTests = () => {
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
 
-  let cmd = 'npx cypress run'
-  if (record) {
-    cmd += ' --record'
-  }
-  if (parallel) {
-    // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
-    const parallelId = `${process.env.GITHUB_WORKFLOW} - ${
-      process.env.GITHUB_SHA
-    }`
-    cmd += ` --parallel --ci-build-id "${parallelId}"`
-  }
-  const group = core.getInput('group')
-  if (group) {
-    cmd += ` --group "${group}"`
-  }
-  console.log('Cypress test command: %s', cmd)
+  return io.which('npx', true).then(npxPath => {
+    core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
-  core.exportVariable('TERM', 'xterm')
-  return exec.exec(cmd)
+    const cmd = ['cypress', 'run']
+    if (record) {
+      cmd.push(' --record')
+    }
+    if (parallel) {
+      // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
+      const parallelId = `${process.env.GITHUB_WORKFLOW} - ${
+        process.env.GITHUB_SHA
+      }`
+      cmd.push(`--parallel`)
+      cmd.push('--ci-build-id')
+      cmd.push(`"${parallelId}"`)
+    }
+    const group = core.getInput('group')
+    if (group) {
+      cmd.push('--group')
+      cmd.push(`"${group}"`)
+    }
+    console.log('Cypress test command: npx %s', cmd.join(' '))
+
+    core.exportVariable('TERM', 'xterm')
+    return exec.exec(quote(npxPath), cmd)
+  })
 }
 
 Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
@@ -3817,6 +3854,57 @@ class NtlmCredentialHandler {
 }
 exports.NtlmCredentialHandler = NtlmCredentialHandler;
 
+
+/***/ }),
+
+/***/ 531:
+/***/ (function(module) {
+
+!function(e){if(true)module.exports=e();else { var f; }}(function(){var define,module,exports;module={exports:(exports={})};
+function emptyQuotes(options) {
+  return options.quotes + options.quotes;
+}
+
+function quoteString(options, str) {
+  if (str === '') {
+    return emptyQuotes(options);
+  }
+  if (str[0] !== options.quotes) {
+    str = options.quotes + str;
+  }
+  if (str[str.length - 1] !== options.quotes) {
+    str += options.quotes;
+  }
+  return str;
+}
+
+function quoteOptions(options, str) {
+  if (arguments.length === 1) {
+    str = options;
+    options = { quotes: '"' };
+  }
+
+  if (typeof str === 'string') {
+    return quoteString(options, str);
+  }
+
+  if (typeof str === 'undefined' || str === null) {
+    return emptyQuotes(options);
+  }
+
+  return str;
+}
+
+function quote(str) {
+  if (typeof str === 'object') {
+    return quoteOptions.bind(null, str);
+  }
+  return quoteOptions(str);
+}
+
+module.exports = quote;
+
+return module.exports;});
 
 /***/ }),
 
