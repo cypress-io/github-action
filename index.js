@@ -190,7 +190,7 @@ const runTests = () => {
 
     const cmd = ['cypress', 'run']
     if (record) {
-      cmd.push(' --record')
+      cmd.push('--record')
     }
     if (parallel) {
       // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
