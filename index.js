@@ -235,7 +235,10 @@ const runTests = () => {
     console.log('Cypress test command: npx %s', cmd.join(' '))
 
     core.exportVariable('TERM', 'xterm')
-    return exec.exec(quote(npxPath), cmd)
+    // since we have quoted arguments ourselves, do not double quote them
+    return exec.exec(quote(npxPath), cmd, {
+      windowsVerbatimArguments: true
+    })
   })
 }
 
