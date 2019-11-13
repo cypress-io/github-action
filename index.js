@@ -259,6 +259,12 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
   .then(startServerMaybe)
   .then(waitOnMaybe)
   .then(runTests)
+  .then(() => {
+    console.log('all done, exiting')
+    // force exit to avoid waiting for child processes,
+    // like the server we have started
+    process.exit(0)
+  })
   .catch(error => {
     console.log(error)
     core.setFailed(error.message)
