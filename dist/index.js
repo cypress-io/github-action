@@ -1140,6 +1140,7 @@ module.exports = require("os");
 // @ts-check
 const core = __webpack_require__(470)
 const exec = __webpack_require__(986)
+const io = __webpack_require__(1)
 const hasha = __webpack_require__(309)
 const execa = __webpack_require__(955)
 const { restoreCache, saveCache } = __webpack_require__(211)
@@ -1209,10 +1210,16 @@ const install = () => {
 
   if (useYarn) {
     console.log('installing NPM dependencies using Yarn')
-    return exec.exec('yarn --frozen-lockfile')
+    return io.which('yarn', true).then(yarnPath => {
+      console.log('yarn at "%s"', yarnPath)
+      return exec.exec(yarnPath, ['--frozen-lockfile'])
+    })
   } else {
     console.log('installing NPM dependencies')
-    return exec.exec('npm ci')
+    return io.which('npm', true).then(npmPath => {
+      console.log('npm at "%s"', npmPath)
+      return exec.exec(npmPath, ['ci'])
+    })
   }
 }
 

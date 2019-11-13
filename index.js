@@ -1,6 +1,7 @@
 // @ts-check
 const core = require('@actions/core')
 const exec = require('@actions/exec')
+const io = require('@actions/io')
 const hasha = require('hasha')
 const execa = require('execa')
 const { restoreCache, saveCache } = require('cache/lib/index')
@@ -70,10 +71,16 @@ const install = () => {
 
   if (useYarn) {
     console.log('installing NPM dependencies using Yarn')
-    return exec.exec('yarn --frozen-lockfile')
+    return io.which('yarn', true).then(yarnPath => {
+      console.log('yarn at "%s"', yarnPath)
+      return exec.exec(yarnPath, ['--frozen-lockfile'])
+    })
   } else {
     console.log('installing NPM dependencies')
-    return exec.exec('npm ci')
+    return io.which('npm', true).then(npmPath => {
+      console.log('npm at "%s"', npmPath)
+      return exec.exec(npmPath, ['ci'])
+    })
   }
 }
 
