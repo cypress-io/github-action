@@ -93,7 +93,7 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       console.log('npm at "%s"', npmPath)
-      return exec.exec(npmPath, ['ci'])
+      return exec.exec(`"${npmPath}"`, ['ci'])
     })
   }
 }
