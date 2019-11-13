@@ -154,8 +154,9 @@ const startServerMaybe = () => {
   console.log('parsed command:', args.join(' '))
   return io.which(args[0], true).then(toolPath => {
     console.log('found command "%s"', toolPath)
+    console.log('with arguments', args.slice(1).join(' '))
+
     const childProcess = execa(quote(toolPath), args.slice(1), {
-      shell: true,
       detached: true,
       stdio: 'inherit'
     })
