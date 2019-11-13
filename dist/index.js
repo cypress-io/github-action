@@ -1840,7 +1840,7 @@ const runTests = () => {
     core.exportVariable('TERM', 'xterm')
     // since we have quoted arguments ourselves, do not double quote them
     return exec.exec(quote(npxPath), cmd, {
-      windowsVerbatimArguments: true
+      windowsVerbatimArguments: false
     })
   })
 }
