@@ -1756,7 +1756,8 @@ const startServerMaybe = () => {
   const args = cliParser.parse(startCommand)
   console.log('parsed command:', args.join(' '))
   return io.which(args[0], true).then(toolPath => {
-    const childProcess = execa(toolPath, args.slice(1), {
+    console.log('found command "%s"', toolPath)
+    const childProcess = execa(quote(toolPath), args.slice(1), {
       shell: true,
       detached: true,
       stdio: 'inherit'
