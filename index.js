@@ -9,6 +9,7 @@ const fs = require('fs')
 const os = require('os')
 const path = require('path')
 const quote = require('quote')
+const cliParser = require('argument-vector')()
 
 const homeDirectory = os.homedir()
 
@@ -149,15 +150,19 @@ const startServerMaybe = () => {
   console.log('starting server with command "%s"', startCommand)
   console.log('current working directory "%s"', process.cwd())
 
-  const childProcess = execa(startCommand, {
-    shell: true,
-    detached: true,
-    stdio: 'inherit'
+  const args = cliParser.parse(startCommand)
+  console.log('parsed command:', args.join(' '))
+  return io.which(args[0], true).then(toolPath => {
+    const childProcess = execa(toolPath, args.slice(1), {
+      shell: true,
+      detached: true,
+      stdio: 'inherit'
+    })
+    // allow child process to run in the background
+    // https://nodejs.org/api/child_process.html#child_process_options_detached
+    childProcess.unref()
+    console.log('child process unref')
   })
-  // allow child process to run in the background
-  // https://nodejs.org/api/child_process.html#child_process_options_detached
-  childProcess.unref()
-  console.log('child process unref')
 }
 
 const waitOnMaybe = () => {
