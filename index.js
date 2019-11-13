@@ -225,12 +225,12 @@ const runTests = () => {
       }`
       cmd.push(`--parallel`)
       cmd.push('--ci-build-id')
-      cmd.push(quote(parallelId))
+      cmd.push(parallelId)
     }
     const group = core.getInput('group')
     if (group) {
       cmd.push('--group')
-      cmd.push(quote(group))
+      cmd.push(group)
     }
     console.log('Cypress test command: npx %s', cmd.join(' '))
 
