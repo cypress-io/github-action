@@ -16,13 +16,15 @@ const lockFilename = useYarn ? 'yarn.lock' : 'package-lock.json'
 const lockHash = hasha.fromFileSync(lockFilename)
 const platformAndArch = `${process.platform}-${process.arch}`
 
+// enforce the same NPM cache folder across different operating systems
+const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
 const NPM_CACHE = (() => {
   const o = {}
   if (useYarn) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
     o.restoreKeys = `yarn-${platformAndArch}-`
   } else {
-    o.inputPath = path.join(homeDirectory, '.npm')
+    o.inputPath = NPM_CACHE_FOLDER
     o.restoreKeys = `npm-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash
@@ -32,6 +34,8 @@ const NPM_CACHE = (() => {
 // custom Cypress binary cache folder
 // see https://on.cypress.io/caching
 const CYPRESS_CACHE_FOLDER = path.join(homeDirectory, '.cache', 'Cypress')
+console.log('using custom Cypress cache folder "%s"', CYPRESS_CACHE_FOLDER)
+
 const CYPRESS_BINARY_CACHE = (() => {
   const o = {
     inputPath: CYPRESS_CACHE_FOLDER,
@@ -85,6 +89,8 @@ const install = () => {
     })
   } else {
     console.log('installing NPM dependencies')
+    core.exportVariable('npm_config_cache', NPM_CACHE_FOLDER)
+
     return io.which('npm', true).then(npmPath => {
       console.log('npm at "%s"', npmPath)
       return exec.exec(npmPath, ['ci'])
