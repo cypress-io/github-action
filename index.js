@@ -199,6 +199,8 @@ const waitOnMaybe = () => {
   })
 }
 
+const I = x => x
+
 const runTests = () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
@@ -207,6 +209,7 @@ const runTests = () => {
   }
 
   console.log('Running Cypress tests')
+  const quoteArgument = os.platform() === 'win32' ? quote : I
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
@@ -225,12 +228,12 @@ const runTests = () => {
       }`
       cmd.push(`--parallel`)
       cmd.push('--ci-build-id')
-      cmd.push(parallelId)
+      cmd.push(quoteArgument(parallelId))
     }
     const group = core.getInput('group')
     if (group) {
       cmd.push('--group')
-      cmd.push(group)
+      cmd.push(quoteArgument(group))
     }
     console.log('Cypress test command: npx %s', cmd.join(' '))
 
