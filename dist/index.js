@@ -1744,7 +1744,14 @@ const buildAppMaybe = () => {
 }
 
 const startServerMaybe = () => {
-  const startCommand = core.getInput('start')
+  let startCommand
+
+  if (os.platform() === 'win32') {
+    // allow custom Windows start command
+    startCommand = core.getInput('start-windows') || core.getInput('start')
+  } else {
+    startCommand = core.getInput('start')
+  }
   if (!startCommand) {
     console.log('No start command found')
     return
