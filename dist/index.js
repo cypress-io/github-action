@@ -1233,6 +1233,7 @@ const install = () => {
 
 const verifyCypressBinary = () => {
   console.log('Verifying Cypress')
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   return io.which('npx', true).then(npxPath => {
     return exec.exec(npxPath, ['cypress', 'verify'])
   })
@@ -1314,6 +1315,8 @@ const runTests = () => {
   const parallel = getInputBool('parallel')
 
   return io.which('npx', true).then(npxPath => {
+    core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+
     const cmd = ['cypress', 'run']
     if (record) {
       cmd.push(' --record')
