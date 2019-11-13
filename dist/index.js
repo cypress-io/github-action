@@ -1759,10 +1759,17 @@ const startServerMaybe = () => {
     console.log('found command "%s"', toolPath)
     console.log('with arguments', args.slice(1).join(' '))
 
-    const childProcess = execa(quote(toolPath), args.slice(1), {
+    const options = {
+      shell: true,
       detached: true,
       stdio: 'inherit'
-    })
+    }
+    if (os.platform() === 'win32') {
+      // @ts-ignore
+      options.shell = 'C:\\windows\\system32\\cmd.exe'
+    }
+
+    const childProcess = execa(quote(toolPath), args.slice(1), options)
     // allow child process to run in the background
     // https://nodejs.org/api/child_process.html#child_process_options_detached
     childProcess.unref()
