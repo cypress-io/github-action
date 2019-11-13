@@ -1147,6 +1147,7 @@ const { restoreCache, saveCache } = __webpack_require__(211)
 const fs = __webpack_require__(747)
 const os = __webpack_require__(87)
 const path = __webpack_require__(622)
+const quote = __webpack_require__(531)
 
 const homeDirectory = os.homedir()
 
@@ -1220,11 +1221,14 @@ const install = () => {
   core.exportVariable('CI', '1')
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
+  // Note: need to quote found tool to avoid Windows choking on
+  // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
+
   if (useYarn) {
     console.log('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       console.log('yarn at "%s"', yarnPath)
-      return exec.exec(yarnPath, ['--frozen-lockfile'])
+      return exec.exec(quote(yarnPath), ['--frozen-lockfile'])
     })
   } else {
     console.log('installing NPM dependencies')
@@ -1232,7 +1236,7 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       console.log('npm at "%s"', npmPath)
-      return exec.exec(`"${npmPath}"`, ['ci'])
+      return exec.exec(quote(npmPath), ['ci'])
     })
   }
 }
@@ -1241,7 +1245,7 @@ const verifyCypressBinary = () => {
   console.log('Verifying Cypress')
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   return io.which('npx', true).then(npxPath => {
-    return exec.exec(npxPath, ['cypress', 'verify'])
+    return exec.exec(quote(npxPath), ['cypress', 'verify'])
   })
 }
 
@@ -1304,7 +1308,7 @@ const waitOnMaybe = () => {
   console.log('waiting on "%s"', waitOn)
 
   return io.which('npx', true).then(npxPath => {
-    return exec.exec(npxPath, ['wait-on', `"${waitOn}"`])
+    return exec.exec(quote(npxPath), ['wait-on', quote(waitOn)])
   })
 }
 
@@ -1344,7 +1348,7 @@ const runTests = () => {
     console.log('Cypress test command: npx %s', cmd.join(' '))
 
     core.exportVariable('TERM', 'xterm')
-    return exec.exec(npxPath, cmd)
+    return exec.exec(quote(npxPath), cmd)
   })
 }
 
@@ -3850,6 +3854,57 @@ class NtlmCredentialHandler {
 }
 exports.NtlmCredentialHandler = NtlmCredentialHandler;
 
+
+/***/ }),
+
+/***/ 531:
+/***/ (function(module) {
+
+!function(e){if(true)module.exports=e();else { var f; }}(function(){var define,module,exports;module={exports:(exports={})};
+function emptyQuotes(options) {
+  return options.quotes + options.quotes;
+}
+
+function quoteString(options, str) {
+  if (str === '') {
+    return emptyQuotes(options);
+  }
+  if (str[0] !== options.quotes) {
+    str = options.quotes + str;
+  }
+  if (str[str.length - 1] !== options.quotes) {
+    str += options.quotes;
+  }
+  return str;
+}
+
+function quoteOptions(options, str) {
+  if (arguments.length === 1) {
+    str = options;
+    options = { quotes: '"' };
+  }
+
+  if (typeof str === 'string') {
+    return quoteString(options, str);
+  }
+
+  if (typeof str === 'undefined' || str === null) {
+    return emptyQuotes(options);
+  }
+
+  return str;
+}
+
+function quote(str) {
+  if (typeof str === 'object') {
+    return quoteOptions.bind(null, str);
+  }
+  return quoteOptions(str);
+}
+
+module.exports = quote;
+
+return module.exports;});
 
 /***/ }),
 

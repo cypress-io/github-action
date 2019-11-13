@@ -8,6 +8,7 @@ const { restoreCache, saveCache } = require('cache/lib/index')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
+const quote = require('quote')
 
 const homeDirectory = os.homedir()
 
@@ -81,11 +82,14 @@ const install = () => {
   core.exportVariable('CI', '1')
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
+  // Note: need to quote found tool to avoid Windows choking on
+  // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
+
   if (useYarn) {
     console.log('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       console.log('yarn at "%s"', yarnPath)
-      return exec.exec(yarnPath, ['--frozen-lockfile'])
+      return exec.exec(quote(yarnPath), ['--frozen-lockfile'])
     })
   } else {
     console.log('installing NPM dependencies')
@@ -93,7 +97,7 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       console.log('npm at "%s"', npmPath)
-      return exec.exec(`"${npmPath}"`, ['ci'])
+      return exec.exec(quote(npmPath), ['ci'])
     })
   }
 }
@@ -102,7 +106,7 @@ const verifyCypressBinary = () => {
   console.log('Verifying Cypress')
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   return io.which('npx', true).then(npxPath => {
-    return exec.exec(npxPath, ['cypress', 'verify'])
+    return exec.exec(quote(npxPath), ['cypress', 'verify'])
   })
 }
 
@@ -165,7 +169,7 @@ const waitOnMaybe = () => {
   console.log('waiting on "%s"', waitOn)
 
   return io.which('npx', true).then(npxPath => {
-    return exec.exec(npxPath, ['wait-on', `"${waitOn}"`])
+    return exec.exec(quote(npxPath), ['wait-on', quote(waitOn)])
   })
 }
 
@@ -205,7 +209,7 @@ const runTests = () => {
     console.log('Cypress test command: npx %s', cmd.join(' '))
 
     core.exportVariable('TERM', 'xterm')
-    return exec.exec(npxPath, cmd)
+    return exec.exec(quote(npxPath), cmd)
   })
 }
 
