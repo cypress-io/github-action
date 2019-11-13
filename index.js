@@ -6,6 +6,10 @@ const hasha = require('hasha')
 const execa = require('execa')
 const { restoreCache, saveCache } = require('cache/lib/index')
 const fs = require('fs')
+const os = require('os')
+const path = require('path')
+
+const homeDirectory = os.homedir()
 
 const useYarn = fs.existsSync('yarn.lock')
 const lockFilename = useYarn ? 'yarn.lock' : 'package-lock.json'
@@ -15,19 +19,22 @@ const platformAndArch = `${process.platform}-${process.arch}`
 const NPM_CACHE = (() => {
   const o = {}
   if (useYarn) {
-    o.inputPath = '~/.cache/yarn'
+    o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
     o.restoreKeys = `yarn-${platformAndArch}-`
   } else {
-    o.inputPath = '~/.npm'
+    o.inputPath = path.join(homeDirectory, '.npm')
     o.restoreKeys = `npm-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash
   return o
 })()
 
+// custom Cypress binary cache folder
+// see https://on.cypress.io/caching
+const CYPRESS_CACHE_FOLDER = path.join(homeDirectory, '.cache', 'Cypress')
 const CYPRESS_BINARY_CACHE = (() => {
   const o = {
-    inputPath: '~/.cache/Cypress',
+    inputPath: CYPRESS_CACHE_FOLDER,
     restoreKeys: `cypress-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash
@@ -68,6 +75,7 @@ const saveCachedCypressBinary = () => {
 const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
   if (useYarn) {
     console.log('installing NPM dependencies using Yarn')
