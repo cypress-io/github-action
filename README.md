@@ -117,6 +117,26 @@ jobs:
           start: npm start
 ```
 
+**Note:** sometimes on Windows you need to run a different start command. You can use `start-windows` parameter for this
+
+```yml
+name: With server
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          # Linux and MacOS
+          start: npm start
+          # Takes precedences on Windows
+          start-windows: npm run start:windows:server
+```
+
 ### Wait-on
 
 If you are starting a local server and it takes a while to start, you can add a parameter `wait-on` and pass url to wait for the server to respond. Uses [wait-on](https://www.npmjs.com/package/wait-on) under the hood.
