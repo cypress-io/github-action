@@ -1225,7 +1225,9 @@ const install = () => {
 
 const verifyCypressBinary = () => {
   console.log('Verifying Cypress')
-  return exec.exec('npx cypress verify')
+  return io.which('npx', true).then(npxPath => {
+    return exec.exec(npxPath, ['cypress', 'verify'])
+  })
 }
 
 /**
@@ -1286,7 +1288,9 @@ const waitOnMaybe = () => {
 
   console.log('waiting on "%s"', waitOn)
 
-  return exec.exec(`npx wait-on "${waitOn}"`)
+  return io.which('npx', true).then(npxPath => {
+    return exec.exec(npxPath, ['wait-on', `"${waitOn}"`])
+  })
 }
 
 const runTests = () => {
@@ -1301,25 +1305,30 @@ const runTests = () => {
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
 
-  let cmd = 'npx cypress run'
-  if (record) {
-    cmd += ' --record'
-  }
-  if (parallel) {
-    // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
-    const parallelId = `${process.env.GITHUB_WORKFLOW} - ${
-      process.env.GITHUB_SHA
-    }`
-    cmd += ` --parallel --ci-build-id "${parallelId}"`
-  }
-  const group = core.getInput('group')
-  if (group) {
-    cmd += ` --group "${group}"`
-  }
-  console.log('Cypress test command: %s', cmd)
+  return io.which('npx', true).then(npxPath => {
+    const cmd = ['cypress', 'run']
+    if (record) {
+      cmd.push(' --record')
+    }
+    if (parallel) {
+      // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
+      const parallelId = `${process.env.GITHUB_WORKFLOW} - ${
+        process.env.GITHUB_SHA
+      }`
+      cmd.push(`--parallel`)
+      cmd.push('--ci-build-id')
+      cmd.push(`"${parallelId}"`)
+    }
+    const group = core.getInput('group')
+    if (group) {
+      cmd.push('--group')
+      cmd.push(`"${group}"`)
+    }
+    console.log('Cypress test command: npx %s', cmd.join(' '))
 
-  core.exportVariable('TERM', 'xterm')
-  return exec.exec(cmd)
+    core.exportVariable('TERM', 'xterm')
+    return exec.exec(npxPath, cmd)
+  })
 }
 
 Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
