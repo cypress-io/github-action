@@ -161,16 +161,21 @@ const startServerMaybe = () => {
       detached: true,
       stdio: 'inherit'
     }
-    if (os.platform() === 'win32') {
-      // @ts-ignore
-      options.shell = 'C:\\windows\\system32\\cmd.exe'
-    }
+    // if (os.platform() === 'win32') {
+    //   // @ts-ignore
+    //   options.shell = 'C:\\windows\\system32\\cmd.exe'
+    // }
 
-    const childProcess = execa(quote(toolPath), args.slice(1), options)
+    // const childProcess = execa(quote(toolPath), args.slice(1), options)
     // allow child process to run in the background
     // https://nodejs.org/api/child_process.html#child_process_options_detached
-    childProcess.unref()
-    console.log('child process unref')
+    // childProcess.unref()
+    // console.log('child process unref')
+
+    const toolArguments = args.slice(1)
+    console.log('running %s %s', quote(toolPath), toolArguments.join(' '))
+    console.log('without waiting for the promise to resolve')
+    exec.exec(quote(toolPath), toolArguments)
   })
 }
 
