@@ -1625,13 +1625,25 @@ const platformAndArch = `${process.platform}-${process.arch}`
 const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
 const NPM_CACHE = (() => {
   const o = {}
+  let key = core.getInput('cache-key')
+
+  if (!key) {
+    if (useYarn) {
+      key = `yarn-${platformAndArch}-${lockHash}`
+    } else {
+      key = `npm-${platformAndArch}-${lockHash}`
+    }
+  } else {
+    console.log('using custom cache key "%s"', key)
+  }
+
   if (useYarn) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
-    o.restoreKeys = o.primaryKey = `yarn-${platformAndArch}-${lockHash}`
   } else {
     o.inputPath = NPM_CACHE_FOLDER
-    o.restoreKeys = o.primaryKey = `npm-${platformAndArch}-${lockHash}`
   }
+
+  o.restoreKeys = o.primaryKey = key
   return o
 })()
 
