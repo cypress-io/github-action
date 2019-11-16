@@ -1782,10 +1782,6 @@ const startServerMaybe = () => {
       detached: true,
       stdio: 'inherit'
     }
-    // if (os.platform() === 'win32') {
-    //   // @ts-ignore
-    //   options.shell = 'C:\\windows\\system32\\cmd.exe'
-    // }
 
     // const childProcess = execa(quote(toolPath), args.slice(1), options)
     // allow child process to run in the background
@@ -1853,6 +1849,13 @@ const runTests = () => {
       cmd.push('--ci-build-id')
       cmd.push(quoteArgument(parallelId))
     }
+
+    const browser = core.getInput('browser')
+    if (browser) {
+      cmd.push('--browser')
+      cmd.push(browser)
+    }
+
     console.log('Cypress test command: npx %s', cmd.join(' '))
 
     core.exportVariable('TERM', 'xterm')
