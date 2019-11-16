@@ -1627,12 +1627,11 @@ const NPM_CACHE = (() => {
   const o = {}
   if (useYarn) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
-    o.restoreKeys = `yarn-${platformAndArch}-`
+    o.restoreKeys = o.primaryKey = `yarn-${platformAndArch}-${lockHash}`
   } else {
     o.inputPath = NPM_CACHE_FOLDER
-    o.restoreKeys = `npm-${platformAndArch}-`
+    o.restoreKeys = o.primaryKey = `npm-${platformAndArch}-${lockHash}`
   }
-  o.primaryKey = o.restoreKeys + lockHash
   return o
 })()
 
