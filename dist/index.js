@@ -1853,6 +1853,8 @@ const runTests = () => {
     const browser = core.getInput('browser')
     if (browser) {
       cmd.push('--browser')
+      // TODO should browser be quoted?
+      // If it is a path, it might have spaces
       cmd.push(browser)
     }
 
