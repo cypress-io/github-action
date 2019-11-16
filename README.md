@@ -21,6 +21,25 @@ jobs:
         uses: cypress-io/github-action@v1
 ```
 
+### Browser
+
+Specify the browser name or path with `browser` parameter
+
+```yml
+name: E2E on Chrome
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    # let's make sure our tests pass on Chrome browser
+    name: E2E on Chrome
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v1
+        with:
+          browser: chrome
+```
+
 ### Record test results on Cypress Dashboard
 
 ```yml
@@ -193,9 +212,9 @@ jobs:
 
 ### More examples
 
-| Name                                                                               | Description                                                 |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | Uses Yarn, and runs in parallel on several versions of Node |
+| Name                                                                               | Description                                                                          |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | Uses Yarn, and runs in parallel on several versions of Node, also different browsers |
 
 ## Notes
 
