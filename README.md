@@ -157,6 +157,14 @@ jobs:
           wait-on: http://localhost:8080
 ```
 
+### Custom cache key
+
+Sometimes the default cache key does not work. For example, if you cannot share the Node modules across Node versions due to native extensions. In that case pass your own `cache-key` parameter.
+
+```yml
+
+```
+
 ### More examples
 
 | Name                                                                               | Description                                                 |
