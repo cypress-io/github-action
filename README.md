@@ -157,6 +157,12 @@ jobs:
           wait-on: http://localhost:8080
 ```
 
+### More examples
+
+| Name                                                                               | Description                                                 |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | Uses Yarn, and runs in parallel on several versions of Node |
+
 ## Notes
 
 ### Installation
