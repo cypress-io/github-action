@@ -1825,18 +1825,22 @@ const runTests = () => {
       cmd.push('--record')
     }
     if (parallel) {
-      // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
-      const parallelId = `${process.env.GITHUB_WORKFLOW} - ${
-        process.env.GITHUB_SHA
-      }`
-      cmd.push(`--parallel`)
-      cmd.push('--ci-build-id')
-      cmd.push(quoteArgument(parallelId))
+      cmd.push('--parallel')
     }
     const group = core.getInput('group')
     if (group) {
       cmd.push('--group')
       cmd.push(quoteArgument(group))
+    }
+    if (parallel || group) {
+      // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
+      // until a better workflow id is available
+      // https://github.community/t5/GitHub-Actions/Add-build-number/td-p/30548
+      // https://github.com/actions/toolkit/issues/65
+      const { GITHUB_WORKFLOW, GITHUB_SHA } = process.env
+      const parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
+      cmd.push('--ci-build-id')
+      cmd.push(quoteArgument(parallelId))
     }
     console.log('Cypress test command: npx %s', cmd.join(' '))
 
