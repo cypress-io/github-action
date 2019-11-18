@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "test": "echo \"There are no tests :(\"",
-    "build": "ncc build -o dist index.js"
+    "build": "ncc build -o dist index.js",
+    "format": "prettier --write index.js"
   },
   "repository": {
     "type": "git",
@@ -47,7 +48,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run build"
+      "pre-commit": "npm run format && npm run build"
     }
   }
 }
