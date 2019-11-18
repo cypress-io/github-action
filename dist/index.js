@@ -1607,7 +1607,10 @@ const exec = __webpack_require__(986)
 const io = __webpack_require__(1)
 const hasha = __webpack_require__(309)
 const execa = __webpack_require__(955)
-const { restoreCache, saveCache } = __webpack_require__(211)
+const {
+  restoreCache,
+  saveCache
+} = __webpack_require__(211)
 const fs = __webpack_require__(747)
 const os = __webpack_require__(87)
 const path = __webpack_require__(622)
@@ -1617,7 +1620,9 @@ const cliParser = __webpack_require__(880)()
 const homeDirectory = os.homedir()
 
 const useYarn = fs.existsSync('yarn.lock')
-const lockFilename = useYarn ? 'yarn.lock' : 'package-lock.json'
+const lockFilename = useYarn
+  ? 'yarn.lock'
+  : 'package-lock.json'
 const lockHash = hasha.fromFileSync(lockFilename)
 const platformAndArch = `${process.platform}-${process.arch}`
 
@@ -1649,8 +1654,15 @@ const NPM_CACHE = (() => {
 
 // custom Cypress binary cache folder
 // see https://on.cypress.io/caching
-const CYPRESS_CACHE_FOLDER = path.join(homeDirectory, '.cache', 'Cypress')
-console.log('using custom Cypress cache folder "%s"', CYPRESS_CACHE_FOLDER)
+const CYPRESS_CACHE_FOLDER = path.join(
+  homeDirectory,
+  '.cache',
+  'Cypress'
+)
+console.log(
+  'using custom Cypress cache folder "%s"',
+  CYPRESS_CACHE_FOLDER
+)
 
 const CYPRESS_BINARY_CACHE = (() => {
   const o = {
@@ -1672,7 +1684,10 @@ const restoreCachedNpm = () => {
 
 const saveCachedNpm = () => {
   console.log('saving NPM modules')
-  return saveCache(NPM_CACHE.inputPath, NPM_CACHE.primaryKey)
+  return saveCache(
+    NPM_CACHE.inputPath,
+    NPM_CACHE.primaryKey
+  )
 }
 
 const restoreCachedCypressBinary = () => {
@@ -1695,7 +1710,10 @@ const saveCachedCypressBinary = () => {
 const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  core.exportVariable(
+    'CYPRESS_CACHE_FOLDER',
+    CYPRESS_CACHE_FOLDER
+  )
 
   // Note: need to quote found tool to avoid Windows choking on
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
@@ -1704,11 +1722,16 @@ const install = () => {
     console.log('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       console.log('yarn at "%s"', yarnPath)
-      return exec.exec(quote(yarnPath), ['--frozen-lockfile'])
+      return exec.exec(quote(yarnPath), [
+        '--frozen-lockfile'
+      ])
     })
   } else {
     console.log('installing NPM dependencies')
-    core.exportVariable('npm_config_cache', NPM_CACHE_FOLDER)
+    core.exportVariable(
+      'npm_config_cache',
+      NPM_CACHE_FOLDER
+    )
 
     return io.which('npm', true).then(npmPath => {
       console.log('npm at "%s"', npmPath)
@@ -1719,7 +1742,10 @@ const install = () => {
 
 const verifyCypressBinary = () => {
   console.log('Verifying Cypress')
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  core.exportVariable(
+    'CYPRESS_CACHE_FOLDER',
+    CYPRESS_CACHE_FOLDER
+  )
   return io.which('npx', true).then(npxPath => {
     return exec.exec(quote(npxPath), ['cypress', 'verify'])
   })
@@ -1759,7 +1785,9 @@ const startServerMaybe = () => {
 
   if (os.platform() === 'win32') {
     // allow custom Windows start command
-    startCommand = core.getInput('start-windows') || core.getInput('start')
+    startCommand =
+      core.getInput('start-windows') ||
+      core.getInput('start')
   } else {
     startCommand = core.getInput('start')
   }
@@ -1768,8 +1796,14 @@ const startServerMaybe = () => {
     return
   }
 
-  console.log('starting server with command "%s"', startCommand)
-  console.log('current working directory "%s"', process.cwd())
+  console.log(
+    'starting server with command "%s"',
+    startCommand
+  )
+  console.log(
+    'current working directory "%s"',
+    process.cwd()
+  )
 
   const args = cliParser.parse(startCommand)
   console.log('parsed command:', args.join(' '))
@@ -1777,12 +1811,11 @@ const startServerMaybe = () => {
     console.log('found command "%s"', toolPath)
     console.log('with arguments', args.slice(1).join(' '))
 
-    const options = {
-      shell: true,
-      detached: true,
-      stdio: 'inherit'
-    }
-
+    // const options = {
+    //   shell: true,
+    //   detached: true,
+    //   stdio: 'inherit'
+    // }
     // const childProcess = execa(quote(toolPath), args.slice(1), options)
     // allow child process to run in the background
     // https://nodejs.org/api/child_process.html#child_process_options_detached
@@ -1790,8 +1823,14 @@ const startServerMaybe = () => {
     // console.log('child process unref')
 
     const toolArguments = args.slice(1)
-    console.log('running %s %s', quote(toolPath), toolArguments.join(' '))
-    console.log('without waiting for the promise to resolve')
+    console.log(
+      'running %s %s',
+      quote(toolPath),
+      toolArguments.join(' ')
+    )
+    console.log(
+      'without waiting for the promise to resolve'
+    )
     exec.exec(quote(toolPath), toolArguments)
   })
 }
@@ -1805,7 +1844,10 @@ const waitOnMaybe = () => {
   console.log('waiting on "%s"', waitOn)
 
   return io.which('npx', true).then(npxPath => {
-    return exec.exec(quote(npxPath), ['wait-on', quote(waitOn)])
+    return exec.exec(quote(npxPath), [
+      'wait-on',
+      quote(waitOn)
+    ])
   })
 }
 
@@ -1814,18 +1856,25 @@ const I = x => x
 const runTests = () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
-    console.log('Skipping running tests: runTests parameter is false')
+    console.log(
+      'Skipping running tests: runTests parameter is false'
+    )
     return
   }
 
   console.log('Running Cypress tests')
-  const quoteArgument = os.platform() === 'win32' ? quote : I
+  const quoteArgument =
+    os.platform() === 'win32' ? quote : I
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
 
+  // TODO using yarn to run cypress when yarn is used for install
   return io.which('npx', true).then(npxPath => {
-    core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+    core.exportVariable(
+      'CYPRESS_CACHE_FOLDER',
+      CYPRESS_CACHE_FOLDER
+    )
 
     const cmd = ['cypress', 'run']
     if (record) {
@@ -1858,24 +1907,51 @@ const runTests = () => {
       cmd.push(browser)
     }
 
-    console.log('Cypress test command: npx %s', cmd.join(' '))
+    console.log(
+      'Cypress test command: npx %s',
+      cmd.join(' ')
+    )
 
     core.exportVariable('TERM', 'xterm')
     // since we have quoted arguments ourselves, do not double quote them
-    return exec.exec(quote(npxPath), cmd, {
+    const options = {
       windowsVerbatimArguments: false
-    })
+    }
+    const workingDirectory = core.getInput(
+      'working-directory'
+    )
+    if (workingDirectory) {
+      options.cwd = workingDirectory
+      console.log(
+        'in working directory "%s',
+        workingDirectory
+      )
+    }
+    return exec.exec(quote(npxPath), cmd, options)
   })
 }
 
-Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
-  .then(([npmCacheHit, cypressCacheHit]) => {
+const installMaybe = () => {
+  const installParameter = getInputBool('install', true)
+  if (!installParameter) {
+    console.log(
+      'Skipping install because install parameter is false'
+    )
+    return Promise.resolve()
+  }
+
+  return Promise.all([
+    restoreCachedNpm(),
+    restoreCachedCypressBinary()
+  ]).then(([npmCacheHit, cypressCacheHit]) => {
     console.log('npm cache hit', npmCacheHit)
     console.log('cypress cache hit', cypressCacheHit)
 
     return install().then(() => {
       if (npmCacheHit && cypressCacheHit) {
-        console.log('no need to verify Cypress binary or save caches')
+        console.log(
+          'no need to verify Cypress binary or save caches'
+        )
         return
       }
 
@@ -1884,6 +1960,9 @@ Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
         .then(saveCachedCypressBinary)
     })
   })
+}
+
+installMaybe()
   .then(buildAppMaybe)
   .then(startServerMaybe)
   .then(waitOnMaybe)
