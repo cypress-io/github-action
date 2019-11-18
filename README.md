@@ -176,6 +176,34 @@ jobs:
           wait-on: http://localhost:8080
 ```
 
+### Working directory
+
+In a monorepo, the end-to-end test might be placed in a different subfolder from the application itself, like this
+
+```text
+repo/
+  app/
+  e2e/
+    cypress
+    cypress.json
+  package.json
+```
+
+You can specify the `e2e` working directory when running Cypress tests using `working-directory` parameter
+
+```yml
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v1
+        with:
+          start: npm start
+          working-directory: e2e
+```
+
 ### Custom cache key
 
 Sometimes the default cache key does not work. For example, if you cannot share the Node modules across Node versions due to native extensions. In that case pass your own `cache-key` parameter.

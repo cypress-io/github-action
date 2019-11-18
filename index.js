@@ -262,7 +262,7 @@ const runTests = () => {
     const options = {
       windowsVerbatimArguments: false
     }
-    const workingDirectory = core.getInput('working_directory')
+    const workingDirectory = core.getInput('working-directory')
     if (workingDirectory) {
       options.cwd = workingDirectory
       console.log('in working directory "%s', workingDirectory)
