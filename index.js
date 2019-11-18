@@ -265,22 +265,33 @@ const runTests = () => {
   })
 }
 
-Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()])
-  .then(([npmCacheHit, cypressCacheHit]) => {
-    console.log('npm cache hit', npmCacheHit)
-    console.log('cypress cache hit', cypressCacheHit)
+const installMaybe = () => {
+  const installParameter = getInputBool('install', true)
+  if (!installParameter) {
+    console.log('Skipping install because install parameter is false')
+    return Promise.resolve()
+  }
 
-    return install().then(() => {
-      if (npmCacheHit && cypressCacheHit) {
-        console.log('no need to verify Cypress binary or save caches')
-        return
-      }
+  return Promise.all([restoreCachedNpm(), restoreCachedCypressBinary()]).then(
+    ([npmCacheHit, cypressCacheHit]) => {
+      console.log('npm cache hit', npmCacheHit)
+      console.log('cypress cache hit', cypressCacheHit)
 
-      return verifyCypressBinary()
-        .then(saveCachedNpm)
-        .then(saveCachedCypressBinary)
-    })
-  })
+      return install().then(() => {
+        if (npmCacheHit && cypressCacheHit) {
+          console.log('no need to verify Cypress binary or save caches')
+          return
+        }
+
+        return verifyCypressBinary()
+          .then(saveCachedNpm)
+          .then(saveCachedCypressBinary)
+      })
+    }
+  )
+}
+
+installMaybe()
   .then(buildAppMaybe)
   .then(startServerMaybe)
   .then(waitOnMaybe)
