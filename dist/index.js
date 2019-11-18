@@ -1777,12 +1777,11 @@ const startServerMaybe = () => {
     console.log('found command "%s"', toolPath)
     console.log('with arguments', args.slice(1).join(' '))
 
-    const options = {
-      shell: true,
-      detached: true,
-      stdio: 'inherit'
-    }
-
+    // const options = {
+    //   shell: true,
+    //   detached: true,
+    //   stdio: 'inherit'
+    // }
     // const childProcess = execa(quote(toolPath), args.slice(1), options)
     // allow child process to run in the background
     // https://nodejs.org/api/child_process.html#child_process_options_detached
@@ -1824,6 +1823,7 @@ const runTests = () => {
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
 
+  // TODO using yarn to run cypress when yarn is used for install
   return io.which('npx', true).then(npxPath => {
     core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
@@ -1862,9 +1862,15 @@ const runTests = () => {
 
     core.exportVariable('TERM', 'xterm')
     // since we have quoted arguments ourselves, do not double quote them
-    return exec.exec(quote(npxPath), cmd, {
+    const options = {
       windowsVerbatimArguments: false
-    })
+    }
+    const workingDirectory = core.getInput('working_directory')
+    if (workingDirectory) {
+      options.cwd = workingDirectory
+      console.log('in working directory "%s', workingDirectory)
+    }
+    return exec.exec(quote(npxPath), cmd, options)
   })
 }
 
