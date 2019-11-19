@@ -19,6 +19,8 @@ jobs:
       - uses: cypress-io/github-action@2a1baeb
 ```
 
+You can use [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) or [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) as test projects.
+
 7. Push the change and make sure the new feature performs correctly. If yes, open a pull request.
 
 **For pull request reviewers:**
