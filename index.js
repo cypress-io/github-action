@@ -293,7 +293,6 @@ const runTests = () => {
     const configFileInput = core.getInput('config-file')
     if (configFileInput) {
       cmd.push('--config-file')
-      // TODO should false not be quoted?
       cmd.push(quoteArgument(configFileInput))
     }
     if (parallel || group) {
