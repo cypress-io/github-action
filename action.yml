@@ -7,6 +7,10 @@ inputs:
     description: 'Sends test results to Cypress Dashboard'
     required: false
     default: false
+  env:
+    description: 'Sets Cypress environment variables'
+    required: false
+    default: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
