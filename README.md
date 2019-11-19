@@ -293,6 +293,10 @@ ACTIONS_RUNNER_DEBUG: true
 ACTIONS_STEP_DEBUG: true
 ```
 
+## Development
+
+Read [DEVELOPMENT.md](DEVELOPMENT.md)
+
 ## More information
 
 - [Building actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/building-actions) docs
