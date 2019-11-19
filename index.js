@@ -3,7 +3,6 @@ const core = require('@actions/core')
 const exec = require('@actions/exec')
 const io = require('@actions/io')
 const hasha = require('hasha')
-const execa = require('execa')
 const {
   restoreCache,
   saveCache
@@ -56,9 +55,8 @@ const CYPRESS_CACHE_FOLDER = path.join(
   '.cache',
   'Cypress'
 )
-console.log(
-  'using custom Cypress cache folder "%s"',
-  CYPRESS_CACHE_FOLDER
+core.debug(
+  `using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`
 )
 
 const CYPRESS_BINARY_CACHE = (() => {
@@ -71,7 +69,7 @@ const CYPRESS_BINARY_CACHE = (() => {
 })()
 
 const restoreCachedNpm = () => {
-  console.log('trying to restore cached NPM modules')
+  core.debug('trying to restore cached NPM modules')
   return restoreCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey,
@@ -80,7 +78,7 @@ const restoreCachedNpm = () => {
 }
 
 const saveCachedNpm = () => {
-  console.log('saving NPM modules')
+  core.debug('saving NPM modules')
   return saveCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey
@@ -88,7 +86,7 @@ const saveCachedNpm = () => {
 }
 
 const restoreCachedCypressBinary = () => {
-  console.log('trying to restore cached Cypress binary')
+  core.debug('trying to restore cached Cypress binary')
   return restoreCache(
     CYPRESS_BINARY_CACHE.inputPath,
     CYPRESS_BINARY_CACHE.primaryKey,
@@ -97,7 +95,7 @@ const restoreCachedCypressBinary = () => {
 }
 
 const saveCachedCypressBinary = () => {
-  console.log('saving Cypress binary')
+  core.debug('saving Cypress binary')
   return saveCache(
     CYPRESS_BINARY_CACHE.inputPath,
     CYPRESS_BINARY_CACHE.primaryKey
@@ -116,29 +114,29 @@ const install = () => {
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
 
   if (useYarn) {
-    console.log('installing NPM dependencies using Yarn')
+    core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
-      console.log('yarn at "%s"', yarnPath)
+      core.debug(`yarn at "${yarnPath}"`)
       return exec.exec(quote(yarnPath), [
         '--frozen-lockfile'
       ])
     })
   } else {
-    console.log('installing NPM dependencies')
+    core.debug('installing NPM dependencies')
     core.exportVariable(
       'npm_config_cache',
       NPM_CACHE_FOLDER
     )
 
     return io.which('npm', true).then(npmPath => {
-      console.log('npm at "%s"', npmPath)
+      core.debug(`npm at "${npmPath}"`)
       return exec.exec(quote(npmPath), ['ci'])
     })
   }
 }
 
 const verifyCypressBinary = () => {
-  console.log('Verifying Cypress')
+  core.debug('Verifying Cypress')
   core.exportVariable(
     'CYPRESS_CACHE_FOLDER',
     CYPRESS_CACHE_FOLDER
@@ -172,7 +170,7 @@ const buildAppMaybe = () => {
     return
   }
 
-  console.log('building application using "%s"', buildApp)
+  core.debug(`building application using "${buildApp}"`)
 
   return exec.exec(buildApp)
 }
@@ -189,7 +187,7 @@ const startServerMaybe = () => {
     startCommand = core.getInput('start')
   }
   if (!startCommand) {
-    console.log('No start command found')
+    core.debug('No start command found')
     return
   }
 
@@ -203,31 +201,20 @@ const startServerMaybe = () => {
   )
 
   const args = cliParser.parse(startCommand)
-  console.log('parsed command:', args.join(' '))
-  return io.which(args[0], true).then(toolPath => {
-    console.log('found command "%s"', toolPath)
-    console.log('with arguments', args.slice(1).join(' '))
+  core.debug(`parsed command: ${args.join(' ')}`)
 
-    // const options = {
-    //   shell: true,
-    //   detached: true,
-    //   stdio: 'inherit'
-    // }
-    // const childProcess = execa(quote(toolPath), args.slice(1), options)
-    // allow child process to run in the background
-    // https://nodejs.org/api/child_process.html#child_process_options_detached
-    // childProcess.unref()
-    // console.log('child process unref')
+  return io.which(args[0], true).then(toolPath => {
+    core.debug(`found command "${toolPath}"`)
+    core.debug(`with arguments ${args.slice(1).join(' ')}`)
 
     const toolArguments = args.slice(1)
-    console.log(
-      'running %s %s',
-      quote(toolPath),
-      toolArguments.join(' ')
+    core.debug(
+      `running ${quote(toolPath)} ${toolArguments.join(
+        ' '
+      )}`
     )
-    console.log(
-      'without waiting for the promise to resolve'
-    )
+    core.debug('without waiting for the promise to resolve')
+
     exec.exec(quote(toolPath), toolArguments)
   })
 }
@@ -259,7 +246,7 @@ const runTests = () => {
     return
   }
 
-  console.log('Running Cypress tests')
+  core.debug('Running Cypress tests')
   const quoteArgument =
     os.platform() === 'win32' ? quote : I
 
@@ -319,9 +306,8 @@ const runTests = () => {
     )
     if (workingDirectory) {
       options.cwd = workingDirectory
-      console.log(
-        'in working directory "%s',
-        workingDirectory
+      core.debug(
+        `in working directory "${workingDirectory}"`
       )
     }
     return exec.exec(quote(npxPath), cmd, options)
@@ -341,12 +327,12 @@ const installMaybe = () => {
     restoreCachedNpm(),
     restoreCachedCypressBinary()
   ]).then(([npmCacheHit, cypressCacheHit]) => {
-    console.log('npm cache hit', npmCacheHit)
-    console.log('cypress cache hit', cypressCacheHit)
+    core.debug(`npm cache hit ${npmCacheHit}`)
+    core.debug(`cypress cache hit ${cypressCacheHit}`)
 
     return install().then(() => {
       if (npmCacheHit && cypressCacheHit) {
-        console.log(
+        core.debug(
           'no need to verify Cypress binary or save caches'
         )
         return
@@ -365,7 +351,7 @@ installMaybe()
   .then(waitOnMaybe)
   .then(runTests)
   .then(() => {
-    console.log('all done, exiting')
+    core.debug('all done, exiting')
     // force exit to avoid waiting for child processes,
     // like the server we have started
     // see https://github.com/actions/toolkit/issues/216
