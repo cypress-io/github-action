@@ -40,6 +40,28 @@ jobs:
           browser: chrome
 ```
 
+### Env
+
+Specify the env argument with `env` parameter
+
+```yml
+name: Cypress tests
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress run with env
+        uses: cypress-io/github-action@v1
+        with:
+          env: host=api.dev.local,port=4222
+```
+
+For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-env-lt-env-gt).
+
 ### Record test results on Cypress Dashboard
 
 ```yml

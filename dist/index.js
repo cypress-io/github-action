@@ -1734,6 +1734,14 @@ const runTests = () => {
       cmd.push(browser)
     }
 
+    const envInput = core.getInput('env')
+    if (envInput) {
+      // TODO should env be quoted?
+      // If it is a JSON, it might have spaces
+      cmd.push('--env')
+      cmd.push(envInput)
+    }
+
     console.log(
       'Cypress test command: npx %s',
       cmd.join(' ')
