@@ -7,6 +7,13 @@ inputs:
     description: 'Sends test results to Cypress Dashboard'
     required: false
     default: false
+  config:
+    description: 'Set configuration values. Separate multiple values with a comma. The values set here override any values set in your configuration file.'
+    required: false
+  config-file:
+    description: 'Path to a JSON file where configuration values are set.'
+    required: false
+    default: cypress.json
 runs:
   using: 'node12'
   main: 'dist/index.js'
