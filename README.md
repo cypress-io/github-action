@@ -60,7 +60,7 @@ jobs:
           env: host=api.dev.local,port=4222
 ```
 
-For more information, visit [the Cypress command-line docs](https://docs.cypress.io/guides/guides/command-line.html#cypress-run-env-lt-env-gt).
+For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-env-lt-env-gt).
 
 ### Record test results on Cypress Dashboard
 
