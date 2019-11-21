@@ -243,6 +243,17 @@ jobs:
           wait-on: http://localhost:8080
 ```
 
+By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout in seconds using `wait-on-timeout`.
+
+```yml
+- uses: cypress-io/github-action@v1
+  with:
+    start: npm start
+    wait-on: http://localhost:8080/status
+    # wait for 2 minutes for the server to respond
+    wait-on-timeout: 120
+```
+
 ### Working directory
 
 In a monorepo, the end-to-end test might be placed in a different sub-folder from the application itself, like this
