@@ -254,6 +254,35 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
     wait-on-timeout: 120
 ```
 
+### Custom build id
+
+You can overwrite [`ci-build-id`](https://on.cypress.io/parallelization#Linking-CI-machines-for-parallelization-or-grouping) used to link separate machines running tests into a single parallel run.
+
+```yml
+name: Parallel
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # run 3 copies of the current job in parallel
+        containers: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v1
+        with:
+          record: true
+          parallel: true
+          group: 'Actions example'
+          ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+```
+
+**Tip:** see GitHub Actions [environment variables](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/using-environment-variables) and [expression syntax](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions).
+
 ### Working directory
 
 In a monorepo, the end-to-end test might be placed in a different sub-folder from the application itself, like this
