@@ -237,9 +237,9 @@ const waitOnMaybe = () => {
   return io.which('npx', true).then(npxPath => {
     return exec.exec(quote(npxPath), [
       'wait-on',
-      quote(waitOn),
       '--timeout',
-      waitOnTimeout
+      waitOnTimeout,
+      quote(waitOn)
     ])
   })
 }
