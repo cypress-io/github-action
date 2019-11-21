@@ -300,7 +300,8 @@ const runTests = () => {
       // https://github.com/actions/toolkit/issues/65
       const { GITHUB_WORKFLOW, GITHUB_SHA } = process.env
       const parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
-      const customCiBuildId = core.getInput('ci-build-id') || parallelId
+      const customCiBuildId =
+        core.getInput('ci-build-id') || parallelId
       cmd.push('--ci-build-id')
       cmd.push(quoteArgument(customCiBuildId))
     }
