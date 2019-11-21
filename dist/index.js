@@ -1668,11 +1668,22 @@ const waitOnMaybe = () => {
     return
   }
 
-  console.log('waiting on "%s"', waitOn)
+  const waitOnTimeout =
+    core.getInput('wait-on-timeout') || '60'
+
+  console.log(
+    'waiting on "%s" with timeout of %s seconds',
+    waitOn,
+    waitOnTimeout
+  )
+
+  const waitTimeoutMs = parseFloat(waitOnTimeout) * 1000
 
   return io.which('npx', true).then(npxPath => {
     return exec.exec(quote(npxPath), [
       'wait-on',
+      '--timeout',
+      waitTimeoutMs,
       quote(waitOn)
     ])
   })
