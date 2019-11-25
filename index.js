@@ -3,6 +3,7 @@ const core = require('@actions/core')
 const exec = require('@actions/exec')
 const io = require('@actions/io')
 const hasha = require('hasha')
+const got = require('got')
 const {
   restoreCache,
   saveCache
@@ -12,6 +13,29 @@ const os = require('os')
 const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
+
+const ping = (url, timeout) => {
+  const start = +new Date()
+  return got(url, {
+    retry: {
+      retries(retry, error) {
+        const now = +new Date()
+        console.error(
+          now - start,
+          'ms',
+          error.method,
+          error.host,
+          error.code
+        )
+        if (now - start > timeout) {
+          console.error('timed out')
+          return 0
+        }
+        return 1000
+      }
+    }
+  })
+}
 
 const homeDirectory = os.homedir()
 
@@ -236,14 +260,16 @@ const waitOnMaybe = () => {
 
   const waitTimeoutMs = parseFloat(waitOnTimeout) * 1000
 
-  return io.which('npx', true).then(npxPath => {
-    return exec.exec(quote(npxPath), [
-      'wait-on',
-      '--timeout',
-      waitTimeoutMs,
-      quote(waitOn)
-    ])
-  })
+  return ping(waitOn, waitTimeoutMs)
+
+  // return io.which('npx', true).then(npxPath => {
+  //   return exec.exec(quote(npxPath), [
+  //     'wait-on',
+  //     '--timeout',
+  //     waitTimeoutMs,
+  //     quote(waitOn)
+  //   ])
+  // })
 }
 
 const I = x => x

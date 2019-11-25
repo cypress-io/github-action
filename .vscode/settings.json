@@ -15,5 +15,6 @@
     "statusBar.foreground": "#15202b"
   },
   "peacock.color": "#f9e64f",
-  "editor.formatOnPaste": false
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": true
 }
