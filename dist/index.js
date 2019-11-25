@@ -2422,7 +2422,7 @@ const ping = (url, timeout) => {
           error.code
         )
         if (now - start > timeout) {
-          console.error('timed out')
+          console.error('%s timed out', url)
           return 0
         }
         return 1000
@@ -2655,15 +2655,6 @@ const waitOnMaybe = () => {
   const waitTimeoutMs = parseFloat(waitOnTimeout) * 1000
 
   return ping(waitOn, waitTimeoutMs)
-
-  // return io.which('npx', true).then(npxPath => {
-  //   return exec.exec(quote(npxPath), [
-  //     'wait-on',
-  //     '--timeout',
-  //     waitTimeoutMs,
-  //     quote(waitOn)
-  //   ])
-  // })
 }
 
 const I = x => x

@@ -258,7 +258,7 @@ jobs:
 
 ### Wait-on
 
-If you are starting a local server and it takes a while to start, you can add a parameter `wait-on` and pass url to wait for the server to respond. Uses [wait-on](https://www.npmjs.com/package/wait-on) under the hood.
+If you are starting a local server and it takes a while to start, you can add a parameter `wait-on` and pass url to wait for the server to respond.
 
 ```yml
 name: After server responds
@@ -273,7 +273,8 @@ jobs:
         uses: cypress-io/github-action@v1
         with:
           start: npm start
-          wait-on: http://localhost:8080
+          # quote the url to be safe against YML parsing surprises
+          wait-on: 'http://localhost:8080'
 ```
 
 By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout in seconds using `wait-on-timeout`.
@@ -282,7 +283,7 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
 - uses: cypress-io/github-action@v1
   with:
     start: npm start
-    wait-on: http://localhost:8080/status
+    wait-on: 'http://localhost:8080/status'
     # wait for 2 minutes for the server to respond
     wait-on-timeout: 120
 ```

@@ -16,5 +16,5 @@
   },
   "peacock.color": "#f9e64f",
   "editor.formatOnPaste": false,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": false
 }
