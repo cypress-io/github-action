@@ -37,6 +37,7 @@ const ping = (url, timeout) => {
   })
 }
 
+const isWindows = os.platform() === 'win32'
 const homeDirectory = os.homedir()
 
 const useYarn = fs.existsSync('yarn.lock')
@@ -126,6 +127,22 @@ const saveCachedCypressBinary = () => {
   )
 }
 
+const isPackageJSONInWorkingDir = workingDirectory => {
+  if (!workingDirectory) {
+    return Promise.reject()
+  }
+  return exec.exec(
+    isWindows ? 'IF' : 'test',
+    isWindows
+      ? ['EXIST', 'package.json']
+      : ['-f', 'package.json'],
+    {
+      windowsVerbatimArguments: false,
+      cwd: workingDirectory
+    }
+  )
+}
+
 const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
@@ -137,12 +154,34 @@ const install = () => {
   // Note: need to quote found tool to avoid Windows choking on
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
 
+  const options = {
+    windowsVerbatimArguments: false
+  }
+  const workingDirectory = core.getInput(
+    'working-directory'
+  )
+  if (workingDirectory) {
+    options.cwd = workingDirectory
+    core.debug(`in working directory "${workingDirectory}"`)
+  }
+
   if (useYarn) {
     core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       core.debug(`yarn at "${yarnPath}"`)
-      return exec.exec(quote(yarnPath), [
-        '--frozen-lockfile'
+      return Promise.all([
+        exec.exec(quote(yarnPath), ['--frozen-lockfile']),
+        isPackageJSONInWorkingDir(workingDirectory)
+          .then(() => {
+            return exec.exec(
+              quote(yarnPath),
+              ['--frozen-lockfile'],
+              options
+            )
+          })
+          .catch(() => {
+            return Promise.resolve()
+          })
       ])
     })
   } else {
@@ -154,7 +193,20 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       core.debug(`npm at "${npmPath}"`)
-      return exec.exec(quote(npmPath), ['ci'])
+      return Promise.all([
+        exec.exec(quote(npmPath), ['ci']),
+        isPackageJSONInWorkingDir(workingDirectory)
+          .then(() => {
+            return exec.exec(
+              quote(npmPath),
+              ['ci'],
+              options
+            )
+          })
+          .catch(() => {
+            return Promise.resolve()
+          })
+      ])
     })
   }
 }
@@ -202,7 +254,7 @@ const buildAppMaybe = () => {
 const startServerMaybe = () => {
   let startCommand
 
-  if (os.platform() === 'win32') {
+  if (isWindows) {
     // allow custom Windows start command
     startCommand =
       core.getInput('start-windows') ||
@@ -275,8 +327,7 @@ const runTests = () => {
   }
 
   core.debug('Running Cypress tests')
-  const quoteArgument =
-    os.platform() === 'win32' ? quote : I
+  const quoteArgument = isWindows ? quote : I
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')

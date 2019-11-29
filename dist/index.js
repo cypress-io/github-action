@@ -2431,6 +2431,7 @@ const ping = (url, timeout) => {
   })
 }
 
+const isWindows = os.platform() === 'win32'
 const homeDirectory = os.homedir()
 
 const useYarn = fs.existsSync('yarn.lock')
@@ -2520,6 +2521,22 @@ const saveCachedCypressBinary = () => {
   )
 }
 
+const isPackageJSONInWorkingDir = workingDirectory => {
+  if (!workingDirectory) {
+    return Promise.reject()
+  }
+  return exec.exec(
+    isWindows ? 'IF' : 'test',
+    isWindows
+      ? ['EXIST', 'package.json']
+      : ['-f', 'package.json'],
+    {
+      windowsVerbatimArguments: false,
+      cwd: workingDirectory
+    }
+  )
+}
+
 const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
@@ -2531,12 +2548,34 @@ const install = () => {
   // Note: need to quote found tool to avoid Windows choking on
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
 
+  const options = {
+    windowsVerbatimArguments: false
+  }
+  const workingDirectory = core.getInput(
+    'working-directory'
+  )
+  if (workingDirectory) {
+    options.cwd = workingDirectory
+    core.debug(`in working directory "${workingDirectory}"`)
+  }
+
   if (useYarn) {
     core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       core.debug(`yarn at "${yarnPath}"`)
-      return exec.exec(quote(yarnPath), [
-        '--frozen-lockfile'
+      return Promise.all([
+        exec.exec(quote(yarnPath), ['--frozen-lockfile']),
+        isPackageJSONInWorkingDir(workingDirectory)
+          .then(() => {
+            return exec.exec(
+              quote(yarnPath),
+              ['--frozen-lockfile'],
+              options
+            )
+          })
+          .catch(() => {
+            return Promise.resolve()
+          })
       ])
     })
   } else {
@@ -2548,7 +2587,20 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       core.debug(`npm at "${npmPath}"`)
-      return exec.exec(quote(npmPath), ['ci'])
+      return Promise.all([
+        exec.exec(quote(npmPath), ['ci']),
+        isPackageJSONInWorkingDir(workingDirectory)
+          .then(() => {
+            return exec.exec(
+              quote(npmPath),
+              ['ci'],
+              options
+            )
+          })
+          .catch(() => {
+            return Promise.resolve()
+          })
+      ])
     })
   }
 }
@@ -2596,7 +2648,7 @@ const buildAppMaybe = () => {
 const startServerMaybe = () => {
   let startCommand
 
-  if (os.platform() === 'win32') {
+  if (isWindows) {
     // allow custom Windows start command
     startCommand =
       core.getInput('start-windows') ||
@@ -2669,8 +2721,7 @@ const runTests = () => {
   }
 
   core.debug('Running Cypress tests')
-  const quoteArgument =
-    os.platform() === 'win32' ? quote : I
+  const quoteArgument = isWindows ? quote : I
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
@@ -6123,7 +6174,7 @@ module.exports = function (obj) {
 /***/ 482:
 /***/ (function(module) {
 
-module.exports = {"_from":"got","_id":"got@9.6.0","_inBundle":false,"_integrity":"sha512-R7eWptXuGYxwijs0eV+v3o6+XH1IqVK8dJOEecQfTmkncw9AV4dcw/Dhxi8MdlqPthxxpZyizMzyg8RTmEsG+Q==","_location":"/got","_phantomChildren":{"pump":"3.0.0"},"_requested":{"type":"tag","registry":true,"raw":"got","name":"got","escapedName":"got","rawSpec":"","saveSpec":null,"fetchSpec":"latest"},"_requiredBy":["#USER","/"],"_resolved":"https://registry.npmjs.org/got/-/got-9.6.0.tgz","_shasum":"edf45e7d67f99545705de1f7bbeeeb121765ed85","_spec":"got","_where":"/Users/gleb/git/github-action","ava":{"concurrency":4},"browser":{"decompress-response":false,"electron":false},"bugs":{"url":"https://github.com/sindresorhus/got/issues"},"bundleDependencies":false,"dependencies":{"@sindresorhus/is":"^0.14.0","@szmarczak/http-timer":"^1.1.2","cacheable-request":"^6.0.0","decompress-response":"^3.3.0","duplexer3":"^0.1.4","get-stream":"^4.1.0","lowercase-keys":"^1.0.1","mimic-response":"^1.0.1","p-cancelable":"^1.0.0","to-readable-stream":"^1.0.0","url-parse-lax":"^3.0.0"},"deprecated":false,"description":"Simplified HTTP requests","devDependencies":{"ava":"^1.1.0","coveralls":"^3.0.0","delay":"^4.1.0","form-data":"^2.3.3","get-port":"^4.0.0","np":"^3.1.0","nyc":"^13.1.0","p-event":"^2.1.0","pem":"^1.13.2","proxyquire":"^2.0.1","sinon":"^7.2.2","slow-stream":"0.0.4","tempfile":"^2.0.0","tempy":"^0.2.1","tough-cookie":"^3.0.0","xo":"^0.24.0"},"engines":{"node":">=8.6"},"files":["source"],"homepage":"https://github.com/sindresorhus/got#readme","keywords":["http","https","get","got","url","uri","request","util","utility","simple","curl","wget","fetch","net","network","electron"],"license":"MIT","main":"source","name":"got","repository":{"type":"git","url":"git+https://github.com/sindresorhus/got.git"},"scripts":{"release":"np","test":"xo && nyc ava"},"version":"9.6.0"};
+module.exports = {"_args":[["got@9.6.0","/home/sebush/projects/intershop/github/sebastian-haehnlein/github-action"]],"_from":"got@9.6.0","_id":"got@9.6.0","_inBundle":false,"_integrity":"sha512-R7eWptXuGYxwijs0eV+v3o6+XH1IqVK8dJOEecQfTmkncw9AV4dcw/Dhxi8MdlqPthxxpZyizMzyg8RTmEsG+Q==","_location":"/got","_phantomChildren":{"pump":"3.0.0"},"_requested":{"type":"version","registry":true,"raw":"got@9.6.0","name":"got","escapedName":"got","rawSpec":"9.6.0","saveSpec":null,"fetchSpec":"9.6.0"},"_requiredBy":["/"],"_resolved":"https://registry.npmjs.org/got/-/got-9.6.0.tgz","_spec":"9.6.0","_where":"/home/sebush/projects/intershop/github/sebastian-haehnlein/github-action","ava":{"concurrency":4},"browser":{"decompress-response":false,"electron":false},"bugs":{"url":"https://github.com/sindresorhus/got/issues"},"dependencies":{"@sindresorhus/is":"^0.14.0","@szmarczak/http-timer":"^1.1.2","cacheable-request":"^6.0.0","decompress-response":"^3.3.0","duplexer3":"^0.1.4","get-stream":"^4.1.0","lowercase-keys":"^1.0.1","mimic-response":"^1.0.1","p-cancelable":"^1.0.0","to-readable-stream":"^1.0.0","url-parse-lax":"^3.0.0"},"description":"Simplified HTTP requests","devDependencies":{"ava":"^1.1.0","coveralls":"^3.0.0","delay":"^4.1.0","form-data":"^2.3.3","get-port":"^4.0.0","np":"^3.1.0","nyc":"^13.1.0","p-event":"^2.1.0","pem":"^1.13.2","proxyquire":"^2.0.1","sinon":"^7.2.2","slow-stream":"0.0.4","tempfile":"^2.0.0","tempy":"^0.2.1","tough-cookie":"^3.0.0","xo":"^0.24.0"},"engines":{"node":">=8.6"},"files":["source"],"homepage":"https://github.com/sindresorhus/got#readme","keywords":["http","https","get","got","url","uri","request","util","utility","simple","curl","wget","fetch","net","network","electron"],"license":"MIT","main":"source","name":"got","repository":{"type":"git","url":"git+https://github.com/sindresorhus/got.git"},"scripts":{"release":"np","test":"xo && nyc ava"},"version":"9.6.0"};
 
 /***/ }),
 
