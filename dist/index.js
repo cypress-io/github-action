@@ -2436,6 +2436,7 @@ const ping = (url, timeout) => {
 }
 
 const homeDirectory = os.homedir()
+const platformAndArch = `${process.platform}-${process.arch}`
 
 const workingDirectory =
   core.getInput('working-directory') || process.cwd()
@@ -2457,30 +2458,32 @@ const packageLockFilename = path.join(
   'package-lock.json'
 )
 
-const useYarn = fs.existsSync(yarnFilename)
-const lockFilename = useYarn
-  ? yarnFilename
-  : packageLockFilename
-const lockHash = hasha.fromFileSync(lockFilename)
-const platformAndArch = `${process.platform}-${process.arch}`
+const useYarn = () => fs.existsSync(yarnFilename)
+
+const lockHash = () => {
+  const lockFilename = useYarn()
+    ? yarnFilename
+    : packageLockFilename
+  return hasha.fromFileSync(lockFilename)
+}
 
 // enforce the same NPM cache folder across different operating systems
 const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
 const NPM_CACHE = (() => {
   const o = {}
   let key = core.getInput('cache-key')
-
+  const hash = lockHash()
   if (!key) {
-    if (useYarn) {
-      key = `yarn-${platformAndArch}-${lockHash}`
+    if (useYarn()) {
+      key = `yarn-${platformAndArch}-${hash}`
     } else {
-      key = `npm-${platformAndArch}-${lockHash}`
+      key = `npm-${platformAndArch}-${hash}`
     }
   } else {
     console.log('using custom cache key "%s"', key)
   }
 
-  if (useYarn) {
+  if (useYarn()) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
   } else {
     o.inputPath = NPM_CACHE_FOLDER
@@ -2506,7 +2509,7 @@ const CYPRESS_BINARY_CACHE = (() => {
     inputPath: CYPRESS_CACHE_FOLDER,
     restoreKeys: `cypress-${platformAndArch}-`
   }
-  o.primaryKey = o.restoreKeys + lockHash
+  o.primaryKey = o.restoreKeys + lockHash()
   return o
 })()
 
@@ -2555,7 +2558,7 @@ const install = () => {
   // Note: need to quote found tool to avoid Windows choking on
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
 
-  if (useYarn) {
+  if (useYarn()) {
     core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       core.debug(`yarn at "${yarnPath}"`)
