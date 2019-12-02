@@ -2408,6 +2408,10 @@ const path = __webpack_require__(622)
 const quote = __webpack_require__(531)
 const cliParser = __webpack_require__(880)()
 
+/**
+ * A small utility for checking when an URL responds, kind of
+ * a poor man's https://www.npmjs.com/package/wait-on
+ */
 const ping = (url, timeout) => {
   const start = +new Date()
   return got(url, {
@@ -2431,32 +2435,57 @@ const ping = (url, timeout) => {
   })
 }
 
-const homeDirectory = os.homedir()
+const isWindows = () => os.platform() === 'win32'
 
-const useYarn = fs.existsSync('yarn.lock')
-const lockFilename = useYarn
-  ? 'yarn.lock'
-  : 'package-lock.json'
-const lockHash = hasha.fromFileSync(lockFilename)
+const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
+
+const workingDirectory =
+  core.getInput('working-directory') || process.cwd()
+
+/**
+ * When running "npm install" or any other Cypress-related commands,
+ * use the install directory as current working directory
+ */
+const cypressCommandOptions = {
+  cwd: workingDirectory
+}
+
+const yarnFilename = path.join(
+  workingDirectory,
+  'yarn.lock'
+)
+const packageLockFilename = path.join(
+  workingDirectory,
+  'package-lock.json'
+)
+
+const useYarn = () => fs.existsSync(yarnFilename)
+
+const lockHash = () => {
+  const lockFilename = useYarn()
+    ? yarnFilename
+    : packageLockFilename
+  return hasha.fromFileSync(lockFilename)
+}
 
 // enforce the same NPM cache folder across different operating systems
 const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
-const NPM_CACHE = (() => {
+const getNpmCache = () => {
   const o = {}
   let key = core.getInput('cache-key')
-
+  const hash = lockHash()
   if (!key) {
-    if (useYarn) {
-      key = `yarn-${platformAndArch}-${lockHash}`
+    if (useYarn()) {
+      key = `yarn-${platformAndArch}-${hash}`
     } else {
-      key = `npm-${platformAndArch}-${lockHash}`
+      key = `npm-${platformAndArch}-${hash}`
     }
   } else {
     console.log('using custom cache key "%s"', key)
   }
 
-  if (useYarn) {
+  if (useYarn()) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
   } else {
     o.inputPath = NPM_CACHE_FOLDER
@@ -2464,7 +2493,7 @@ const NPM_CACHE = (() => {
 
   o.restoreKeys = o.primaryKey = key
   return o
-})()
+}
 
 // custom Cypress binary cache folder
 // see https://on.cypress.io/caching
@@ -2477,17 +2506,18 @@ core.debug(
   `using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`
 )
 
-const CYPRESS_BINARY_CACHE = (() => {
+const getCypressBinaryCache = () => {
   const o = {
     inputPath: CYPRESS_CACHE_FOLDER,
     restoreKeys: `cypress-${platformAndArch}-`
   }
-  o.primaryKey = o.restoreKeys + lockHash
+  o.primaryKey = o.restoreKeys + lockHash()
   return o
-})()
+}
 
 const restoreCachedNpm = () => {
   core.debug('trying to restore cached NPM modules')
+  const NPM_CACHE = getNpmCache()
   return restoreCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey,
@@ -2497,6 +2527,7 @@ const restoreCachedNpm = () => {
 
 const saveCachedNpm = () => {
   core.debug('saving NPM modules')
+  const NPM_CACHE = getNpmCache()
   return saveCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey
@@ -2505,6 +2536,7 @@ const saveCachedNpm = () => {
 
 const restoreCachedCypressBinary = () => {
   core.debug('trying to restore cached Cypress binary')
+  const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return restoreCache(
     CYPRESS_BINARY_CACHE.inputPath,
     CYPRESS_BINARY_CACHE.primaryKey,
@@ -2514,6 +2546,7 @@ const restoreCachedCypressBinary = () => {
 
 const saveCachedCypressBinary = () => {
   core.debug('saving Cypress binary')
+  const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return saveCache(
     CYPRESS_BINARY_CACHE.inputPath,
     CYPRESS_BINARY_CACHE.primaryKey
@@ -2531,13 +2564,15 @@ const install = () => {
   // Note: need to quote found tool to avoid Windows choking on
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
 
-  if (useYarn) {
+  if (useYarn()) {
     core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       core.debug(`yarn at "${yarnPath}"`)
-      return exec.exec(quote(yarnPath), [
-        '--frozen-lockfile'
-      ])
+      return exec.exec(
+        quote(yarnPath),
+        ['--frozen-lockfile'],
+        cypressCommandOptions
+      )
     })
   } else {
     core.debug('installing NPM dependencies')
@@ -2548,7 +2583,11 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       core.debug(`npm at "${npmPath}"`)
-      return exec.exec(quote(npmPath), ['ci'])
+      return exec.exec(
+        quote(npmPath),
+        ['ci'],
+        cypressCommandOptions
+      )
     })
   }
 }
@@ -2560,7 +2599,11 @@ const verifyCypressBinary = () => {
     CYPRESS_CACHE_FOLDER
   )
   return io.which('npx', true).then(npxPath => {
-    return exec.exec(quote(npxPath), ['cypress', 'verify'])
+    return exec.exec(
+      quote(npxPath),
+      ['cypress', 'verify'],
+      cypressCommandOptions
+    )
   })
 }
 
@@ -2590,13 +2633,14 @@ const buildAppMaybe = () => {
 
   core.debug(`building application using "${buildApp}"`)
 
+  // TODO: allow specifying custom working folder?
   return exec.exec(buildApp)
 }
 
 const startServerMaybe = () => {
   let startCommand
 
-  if (os.platform() === 'win32') {
+  if (isWindows()) {
     // allow custom Windows start command
     startCommand =
       core.getInput('start-windows') ||
@@ -2633,6 +2677,7 @@ const startServerMaybe = () => {
     )
     core.debug('without waiting for the promise to resolve')
 
+    // TODO specify working directory when running the server?
     exec.exec(quote(toolPath), toolArguments)
   })
 }
@@ -2669,8 +2714,7 @@ const runTests = () => {
   }
 
   core.debug('Running Cypress tests')
-  const quoteArgument =
-    os.platform() === 'win32' ? quote : I
+  const quoteArgument = isWindows() ? quote : I
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
@@ -2740,19 +2784,15 @@ const runTests = () => {
 
     core.exportVariable('TERM', 'xterm')
     // since we have quoted arguments ourselves, do not double quote them
-    const options = {
+    const opts = {
+      ...cypressCommandOptions,
       windowsVerbatimArguments: false
     }
-    const workingDirectory = core.getInput(
-      'working-directory'
+
+    core.debug(
+      `in working directory "${cypressCommandOptions.workingDirectory}"`
     )
-    if (workingDirectory) {
-      options.cwd = workingDirectory
-      core.debug(
-        `in working directory "${workingDirectory}"`
-      )
-    }
-    return exec.exec(quote(npxPath), cmd, options)
+    return exec.exec(quote(npxPath), cmd, opts)
   })
 }
 

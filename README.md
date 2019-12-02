@@ -121,7 +121,6 @@ jobs:
 
 Specify [configuration](https://docs.cypress.io/guides/references/configuration.html) values with `config` parameter
 
-
 ```yml
 name: Cypress tests
 on: [push]
@@ -347,6 +346,49 @@ jobs:
 
 See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) for a running example
 
+### Subfolders
+
+Sometimes Cypress and end-to-end tests have their own `package.json` file in a subfolder, like
+
+```text
+root/
+  e2e/
+    (code for installing and running Cypress tests)
+    package.json
+    package-lock.json
+    cypress.json
+    cypress
+
+  (code for running the "app" with "npm start")
+  package.json
+  yarn.lock
+```
+
+In that case you can combine this action with [bahmutov/npm-install](https://github.com/bahmutov/npm-install) action to install dependencies separately.
+
+```yml
+name: E2E
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install root dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Start server in the background
+        run: npm start &
+
+      # Cypress has its own package.json in folder "e2e"
+      - name: Install Cypress and run tests
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: e2e
+```
+
+See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) for example.
+
 ### Custom cache key
 
 Sometimes the default cache key does not work. For example, if you cannot share the Node modules across Node versions due to native extensions. In that case pass your own `cache-key` parameter.
@@ -412,10 +454,11 @@ See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-m
 
 ### More examples
 
-| Name                                                                                 | Description                                                                          |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)   | Uses Yarn, and runs in parallel on several versions of Node, also different browsers |
-| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder              |
+| Name                                                                                     | Description                                                                          |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)       | Uses Yarn, and runs in parallel on several versions of Node, also different browsers |
+| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)     | splits install and running tests commands, runs Cypress from sub-folder              |
+| [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies                                             |
 
 ## Notes
 
