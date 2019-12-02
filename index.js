@@ -41,6 +41,8 @@ const ping = (url, timeout) => {
   })
 }
 
+const isWindows = () => os.platform() === 'win32'
+
 const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
 
@@ -244,7 +246,7 @@ const buildAppMaybe = () => {
 const startServerMaybe = () => {
   let startCommand
 
-  if (os.platform() === 'win32') {
+  if (isWindows()) {
     // allow custom Windows start command
     startCommand =
       core.getInput('start-windows') ||
@@ -318,8 +320,7 @@ const runTests = () => {
   }
 
   core.debug('Running Cypress tests')
-  const quoteArgument =
-    os.platform() === 'win32' ? quote : I
+  const quoteArgument = isWindows() ? quote : I
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
