@@ -9,17 +9,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      # caching NPM dependencies
-      # https://github.com/actions/cache/blob/master/examples.md#node---npm
-      - uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - run: node -v
-      - run: npm ci
+      - uses: bahmutov/npm-install@v1
+      - run: npm run format
+      - run: npm run build
+      - name: Detect changed files
+        run: npx stop-build
       - run: npm test
 
       # https://github.com/cycjimmy/semantic-release-action
