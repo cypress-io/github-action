@@ -12,6 +12,7 @@ jobs:
       - uses: bahmutov/npm-install@v1
       - run: npm run format
       - run: npm run build
+      - run: git diff
       - name: Detect changed files
         run: npx stop-build
       - run: npm test
