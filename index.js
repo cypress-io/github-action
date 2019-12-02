@@ -14,6 +14,10 @@ const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 
+/**
+ * A small utility for checking when an URL responds, kind of
+ * a poor man's https://www.npmjs.com/package/wait-on
+ */
 const ping = (url, timeout) => {
   const start = +new Date()
   return got(url, {
@@ -39,10 +43,30 @@ const ping = (url, timeout) => {
 
 const homeDirectory = os.homedir()
 
-const useYarn = fs.existsSync('yarn.lock')
+const workingDirectory =
+  core.getInput('working-directory') || process.cwd()
+
+/**
+ * When running "npm install" or any other Cypress-related commands,
+ * use the install directory as current working directory
+ */
+const cypressCommandOptions = {
+  cwd: workingDirectory
+}
+
+const yarnFilename = path.join(
+  workingDirectory,
+  'yarn.lock'
+)
+const packageLockFilename = path.join(
+  workingDirectory,
+  'package-lock.json'
+)
+
+const useYarn = fs.existsSync(yarnFilename)
 const lockFilename = useYarn
-  ? 'yarn.lock'
-  : 'package-lock.json'
+  ? yarnFilename
+  : packageLockFilename
 const lockHash = hasha.fromFileSync(lockFilename)
 const platformAndArch = `${process.platform}-${process.arch}`
 
@@ -141,9 +165,11 @@ const install = () => {
     core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       core.debug(`yarn at "${yarnPath}"`)
-      return exec.exec(quote(yarnPath), [
-        '--frozen-lockfile'
-      ])
+      return exec.exec(
+        quote(yarnPath),
+        ['--frozen-lockfile'],
+        cypressCommandOptions
+      )
     })
   } else {
     core.debug('installing NPM dependencies')
@@ -154,7 +180,11 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       core.debug(`npm at "${npmPath}"`)
-      return exec.exec(quote(npmPath), ['ci'])
+      return exec.exec(
+        quote(npmPath),
+        ['ci'],
+        cypressCommandOptions
+      )
     })
   }
 }
@@ -166,7 +196,11 @@ const verifyCypressBinary = () => {
     CYPRESS_CACHE_FOLDER
   )
   return io.which('npx', true).then(npxPath => {
-    return exec.exec(quote(npxPath), ['cypress', 'verify'])
+    return exec.exec(
+      quote(npxPath),
+      ['cypress', 'verify'],
+      cypressCommandOptions
+    )
   })
 }
 
@@ -196,6 +230,7 @@ const buildAppMaybe = () => {
 
   core.debug(`building application using "${buildApp}"`)
 
+  // TODO: allow specifying custom working folder?
   return exec.exec(buildApp)
 }
 
@@ -239,6 +274,7 @@ const startServerMaybe = () => {
     )
     core.debug('without waiting for the promise to resolve')
 
+    // TODO specify working directory when running the server?
     exec.exec(quote(toolPath), toolArguments)
   })
 }
@@ -346,19 +382,15 @@ const runTests = () => {
 
     core.exportVariable('TERM', 'xterm')
     // since we have quoted arguments ourselves, do not double quote them
-    const options = {
+    const opts = {
+      ...cypressCommandOptions,
       windowsVerbatimArguments: false
     }
-    const workingDirectory = core.getInput(
-      'working-directory'
+
+    core.debug(
+      `in working directory "${cypressCommandOptions.workingDirectory}"`
     )
-    if (workingDirectory) {
-      options.cwd = workingDirectory
-      core.debug(
-        `in working directory "${workingDirectory}"`
-      )
-    }
-    return exec.exec(quote(npxPath), cmd, options)
+    return exec.exec(quote(npxPath), cmd, opts)
   })
 }
 
