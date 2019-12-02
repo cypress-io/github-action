@@ -2469,7 +2469,7 @@ const lockHash = () => {
 
 // enforce the same NPM cache folder across different operating systems
 const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
-const NPM_CACHE = (() => {
+const getNpmCache = () => {
   const o = {}
   let key = core.getInput('cache-key')
   const hash = lockHash()
@@ -2491,7 +2491,7 @@ const NPM_CACHE = (() => {
 
   o.restoreKeys = o.primaryKey = key
   return o
-})()
+}
 
 // custom Cypress binary cache folder
 // see https://on.cypress.io/caching
@@ -2504,17 +2504,18 @@ core.debug(
   `using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`
 )
 
-const CYPRESS_BINARY_CACHE = (() => {
+const getCypressBinaryCache = () => {
   const o = {
     inputPath: CYPRESS_CACHE_FOLDER,
     restoreKeys: `cypress-${platformAndArch}-`
   }
   o.primaryKey = o.restoreKeys + lockHash()
   return o
-})()
+}
 
 const restoreCachedNpm = () => {
   core.debug('trying to restore cached NPM modules')
+  const NPM_CACHE = getNpmCache()
   return restoreCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey,
@@ -2524,6 +2525,7 @@ const restoreCachedNpm = () => {
 
 const saveCachedNpm = () => {
   core.debug('saving NPM modules')
+  const NPM_CACHE = getNpmCache()
   return saveCache(
     NPM_CACHE.inputPath,
     NPM_CACHE.primaryKey
@@ -2532,6 +2534,7 @@ const saveCachedNpm = () => {
 
 const restoreCachedCypressBinary = () => {
   core.debug('trying to restore cached Cypress binary')
+  const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return restoreCache(
     CYPRESS_BINARY_CACHE.inputPath,
     CYPRESS_BINARY_CACHE.primaryKey,
@@ -2541,6 +2544,7 @@ const restoreCachedCypressBinary = () => {
 
 const saveCachedCypressBinary = () => {
   core.debug('saving Cypress binary')
+  const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return saveCache(
     CYPRESS_BINARY_CACHE.inputPath,
     CYPRESS_BINARY_CACHE.primaryKey
