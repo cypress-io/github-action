@@ -195,7 +195,7 @@ jobs:
 
 ![Parallel run](images/parallel.png)
 
-**Warning ⚠️:** Cypress Dashboard API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name, since there is no better unique ID during GitHub Action execution. Thus if you attempt to re-run GitHub checks, the Dashboard thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`.
+**Warning ⚠️:** Cypress Dashboard API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name, since there is no better unique ID during GitHub Action execution. Thus if you attempt to re-run GitHub checks, the Dashboard thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
 
 ### Build app
 
