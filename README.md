@@ -60,6 +60,27 @@ jobs:
           env: host=api.dev.local,port=4222
 ```
 
+### Specs
+
+Specify the [spec files to run](https://docs.cypress.io/guides/guides/command-line.html#cypress-run-spec-lt-spec-gt) with `spec` parameter
+
+```yml
+name: Cypress tests
+on: [push]
+jobs:
+  cypress-run:
+    name: Cypress run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          spec: cypress/integration/spec1.js
+```
+
 For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-env-lt-env-gt).
 
 ### Record test results on Cypress Dashboard

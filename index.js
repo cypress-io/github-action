@@ -349,6 +349,11 @@ const runTests = () => {
       cmd.push('--config')
       cmd.push(quoteArgument(configInput))
     }
+    const spec = core.getInput('spec')
+    if (spec) {
+      cmd.push('--spec')
+      cmd.push(quoteArgument(spec))
+    }
     const configFileInput = core.getInput('config-file')
     if (configFileInput) {
       cmd.push('--config-file')
