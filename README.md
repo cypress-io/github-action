@@ -40,6 +40,26 @@ jobs:
           browser: chrome
 ```
 
+### Docker image
+
+You can run tests in a GH Action in your Docker container.
+
+```yml
+name: E2E in custom container
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    # Cypress Docker image with Chrome v78
+    # and Firefox v70 pre-installed
+    container: cypress/browsers:node12.13.0-chrome78-ff70
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v1
+        with:
+          browser: firefox
+```
+
 ### Env
 
 Specify the env argument with `env` parameter
