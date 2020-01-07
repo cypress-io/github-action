@@ -24,7 +24,7 @@ const ping = (url, timeout) => {
     retry: {
       retries(retry, error) {
         const now = +new Date()
-        console.error(
+        core.debug(
           now - start,
           'ms',
           error.method,
