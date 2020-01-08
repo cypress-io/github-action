@@ -25,11 +25,9 @@ const ping = (url, timeout) => {
       retries(retry, error) {
         const now = +new Date()
         core.debug(
-          now - start,
-          'ms',
-          error.method,
-          error.host,
-          error.code
+          `${now - start}ms ${error.method} ${error.host} ${
+            error.code
+          }`
         )
         if (now - start > timeout) {
           console.error('%s timed out', url)
