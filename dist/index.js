@@ -2418,12 +2418,10 @@ const ping = (url, timeout) => {
     retry: {
       retries(retry, error) {
         const now = +new Date()
-        console.error(
-          now - start,
-          'ms',
-          error.method,
-          error.host,
-          error.code
+        core.debug(
+          `${now - start}ms ${error.method} ${error.host} ${
+            error.code
+          }`
         )
         if (now - start > timeout) {
           console.error('%s timed out', url)
