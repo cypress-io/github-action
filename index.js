@@ -322,6 +322,7 @@ const runTests = () => {
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
+  const headless = getInputBool('headless')
 
   // TODO using yarn to run cypress when yarn is used for install
   return io.which('npx', true).then(npxPath => {
@@ -331,6 +332,9 @@ const runTests = () => {
     )
 
     const cmd = ['cypress', 'run']
+    if (headless) {
+      cmd.push('--headless')
+    }
     if (record) {
       cmd.push('--record')
     }

@@ -40,6 +40,24 @@ jobs:
           browser: chrome
 ```
 
+### Headless
+
+Run the browser in headless mode
+
+```yml
+name: Chrome headless
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v1
+        with:
+          browser: chrome
+          headless: true
+```
+
 ### Docker image
 
 You can run tests in a GH Action in your Docker container.
