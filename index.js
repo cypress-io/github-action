@@ -344,7 +344,9 @@ const runTests = () => {
         `with concatenated command prefix: ${cmd.join(' ')}`
       )
     }
-    cmd.push('cypress run')
+    // push each CLI argument separately
+    cmd.push('cypress')
+    cmd.push('run')
     if (headless) {
       cmd.push('--headless')
     }
