@@ -2714,18 +2714,33 @@ const runTests = () => {
   core.debug('Running Cypress tests')
   const quoteArgument = isWindows() ? quote : I
 
+  const commandPrefix = core.getInput('command-prefix')
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
   const headless = getInputBool('headless')
 
   // TODO using yarn to run cypress when yarn is used for install
+  // split potentially long
+
   return io.which('npx', true).then(npxPath => {
     core.exportVariable(
       'CYPRESS_CACHE_FOLDER',
       CYPRESS_CACHE_FOLDER
     )
 
-    const cmd = ['cypress', 'run']
+    let cmd = []
+    if (commandPrefix) {
+      // we need to split the command prefix into individual arguments
+      // otherwise they are passed all as a single string
+      const parts = commandPrefix.split(' ')
+      cmd = cmd.concat(parts)
+      core.debug(
+        `with concatenated command prefix: ${cmd.join(' ')}`
+      )
+    }
+    // push each CLI argument separately
+    cmd.push('cypress')
+    cmd.push('run')
     if (headless) {
       cmd.push('--headless')
     }
