@@ -2714,6 +2714,7 @@ const runTests = () => {
   core.debug('Running Cypress tests')
   const quoteArgument = isWindows() ? quote : I
 
+  const commandPrefix = core.getInput('command-prefix')
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
   const headless = getInputBool('headless')
@@ -2725,7 +2726,11 @@ const runTests = () => {
       CYPRESS_CACHE_FOLDER
     )
 
-    const cmd = ['cypress', 'run']
+    const cmd = []
+    if (commandPrefix) {
+      cmd.push(commandPrefix)
+    }
+    cmd.push('cypress run')
     if (headless) {
       cmd.push('--headless')
     }
