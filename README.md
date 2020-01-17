@@ -346,6 +346,28 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
     wait-on-timeout: 120
 ```
 
+### Command prefix
+
+You can prefix the test command using the `command-prefix` option. This is useful for example when running [Percy](https://docs.percy.io/docs/cypress), which requires the test command to be wrapped with `percy exec --`.
+
+```yml
+name: Taking Percy snapshots
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          start: npm start
+          # quote the url to be safe against YML parsing surprises
+          wait-on: 'http://localhost:8080'
+          command-prefix: 'yarn run percy exec --'
+```
+
 ### Custom build id
 
 You can overwrite [`ci-build-id`](https://on.cypress.io/parallelization#Linking-CI-machines-for-parallelization-or-grouping) used to link separate machines running tests into a single parallel run.
