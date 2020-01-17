@@ -2720,15 +2720,23 @@ const runTests = () => {
   const headless = getInputBool('headless')
 
   // TODO using yarn to run cypress when yarn is used for install
+  // split potentially long
+
   return io.which('npx', true).then(npxPath => {
     core.exportVariable(
       'CYPRESS_CACHE_FOLDER',
       CYPRESS_CACHE_FOLDER
     )
 
-    const cmd = []
+    let cmd = []
     if (commandPrefix) {
-      cmd.push(commandPrefix)
+      // we need to split the command prefix into individual arguments
+      // otherwise they are passed all as a single string
+      const parts = commandPrefix.split(' ')
+      cmd = cmd.concat(parts)
+      core.debug(
+        `with concatenated command prefix: ${cmd.join(' ')}`
+      )
     }
     cmd.push('cypress run')
     if (headless) {
