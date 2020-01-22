@@ -11,7 +11,7 @@ name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -30,7 +30,7 @@ name: E2E on Chrome
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
@@ -49,7 +49,7 @@ name: Chrome headless
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v1
       - uses: cypress-io/github-action@v1
@@ -67,7 +67,7 @@ name: E2E in custom container
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     # Cypress Docker image with Chrome v78
     # and Firefox v70 pre-installed
     container: cypress/browsers:node12.13.0-chrome78-ff70
@@ -87,7 +87,7 @@ name: Cypress tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -108,7 +108,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -129,7 +129,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -152,7 +152,7 @@ name: Artifacts
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     name: Artifacts
     steps:
       - uses: actions/checkout@v1
@@ -186,7 +186,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -207,7 +207,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -230,7 +230,7 @@ on: [push]
 jobs:
   test:
     name: Cypress run
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     strategy:
       matrix:
         # run 3 copies of the current job in parallel
@@ -265,7 +265,7 @@ name: Build
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -284,7 +284,7 @@ name: With server
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -301,7 +301,7 @@ name: With server
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -323,7 +323,7 @@ name: After server responds
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -355,7 +355,7 @@ name: Visual
 on: [push]
 jobs:
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -381,7 +381,7 @@ name: Parallel
 on: [push]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     strategy:
       matrix:
         # run 3 copies of the current job in parallel
@@ -420,7 +420,7 @@ You can specify the `e2e` working directory when running Cypress tests using `wo
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v1
       - uses: cypress-io/github-action@v1
@@ -456,7 +456,7 @@ name: E2E
 on: push
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@master
       - name: Install root dependencies
@@ -483,7 +483,7 @@ name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
@@ -517,7 +517,7 @@ name: E2E
 on: push
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@master
       - name: Install dependencies
