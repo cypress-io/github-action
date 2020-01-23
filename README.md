@@ -4,7 +4,7 @@
 
 ## Important
 
-We are getting reports that Cypress has suddenly started crashing when running on `ubuntu-latest` OS. Seems, GH Actions have switched from 16.04 to 18.04 overnight, and are having a [xvfb issue](https://github.com/cypress-io/cypress/pull/6199). Please wor around this problem by using `runs-on: ubuntu-16.04` image.
+We are getting reports that Cypress has suddenly started crashing when running on `ubuntu-latest` OS. Seems, GH Actions have switched from 16.04 to 18.04 overnight, and are having a [xvfb issue](https://github.com/cypress-io/cypress/pull/6199). Please work around this problem by using `runs-on: ubuntu-16.04` image.
 
 ## Examples
 
