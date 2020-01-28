@@ -361,6 +361,11 @@ const runTests = () => {
       cmd.push('--group')
       cmd.push(quoteArgument(group))
     }
+    const tag = core.getInput('tag')
+    if (tag) {
+      cmd.push('--tag')
+      cmd.push(quoteArgument(tag))
+    }
     const configInput = core.getInput('config')
     if (configInput) {
       cmd.push('--config')
