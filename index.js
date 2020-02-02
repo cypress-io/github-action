@@ -429,38 +429,57 @@ const runTests = () => {
   })
 }
 
-const installMaybe = () => {
-  const installParameter = getInputBool('install', true)
+const installDependenciesMaybe = () => {
+  const installParameter = getInputBool('install-dependencies', true)
   if (!installParameter) {
     console.log(
-      'Skipping install because install parameter is false'
+      'Skipping dependency installation because `install-dependencies` parameter is false'
     )
     return Promise.resolve()
   }
 
-  return Promise.all([
-    restoreCachedNpm(),
-    restoreCachedCypressBinary()
-  ]).then(([npmCacheHit, cypressCacheHit]) => {
+  return restoreCachedNpm().then(npmCacheHit => {
     core.debug(`npm cache hit ${npmCacheHit}`)
-    core.debug(`cypress cache hit ${cypressCacheHit}`)
 
     return install().then(() => {
-      if (npmCacheHit && cypressCacheHit) {
+      if (npmCacheHit) {
         core.debug(
-          'no need to verify Cypress binary or save caches'
+          'no need to save npm cache'
         )
         return
       }
 
-      return verifyCypressBinary()
-        .then(saveCachedNpm)
-        .then(saveCachedCypressBinary)
+      return saveCachedNpm()
     })
   })
 }
 
-installMaybe()
+const installBinaryMaybe = () => {
+  const installParameter = getInputBool('install-binary', true)
+  if (!installParameter) {
+    console.log(
+      'Skipping binary installation because `install-binary` parameter is false'
+    )
+    return Promise.resolve()
+  }
+
+  return restoreCachedCypressBinary().then(cypressCacheHit => {
+    core.debug(`cypress cache hit ${cypressCacheHit}`)
+
+    if (cypressCacheHit) {
+      core.debug(
+        'no need to verify Cypress binary or save caches'
+      )
+      return
+    }
+
+    return verifyCypressBinary()
+      .then(saveCachedCypressBinary)
+  })
+}
+
+installDependenciesMaybe()
+  .then(installBinaryMaybe)
   .then(buildAppMaybe)
   .then(startServerMaybe)
   .then(waitOnMaybe)
