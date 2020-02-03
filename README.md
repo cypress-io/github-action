@@ -581,13 +581,20 @@ jobs:
 
 See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) for working example.
 
+### Custom install
+
+Finally, you might not need this GH Action at all. For example, if you want to split the NPM dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself. See [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) for working example.
+
 ### More examples
 
-| Name                                                                                     | Description                                                                          |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)       | Uses Yarn, and runs in parallel on several versions of Node, also different browsers |
-| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)     | splits install and running tests commands, runs Cypress from sub-folder              |
-| [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies                                             |
+<!-- prettier-ignore-start -->
+Name | Description
+--- | ---
+[cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | uses Yarn, and runs in parallel on several versions of Node, also different browsers
+[cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder
+[cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies
+[cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) | only install NPM dependencies, then install and cache Cypress binary yourself
+<!-- prettier-ignore-end -->
 
 ## Notes
 
