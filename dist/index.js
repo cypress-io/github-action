@@ -2396,8 +2396,8 @@ module.exports = object => {
 const core = __webpack_require__(470)
 const exec = __webpack_require__(986)
 const io = __webpack_require__(1)
-const got = __webpack_require__(798)
 const hasha = __webpack_require__(309)
+const got = __webpack_require__(798)
 const {
   restoreCache,
   saveCache
