@@ -51,8 +51,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run build && git add && lint-staged --debug",
-      "post-commit": "git update-index --again"
+      "pre-commit": "npm run format && npm run build && git add dist"
     }
   },
   "lint-staged": {
