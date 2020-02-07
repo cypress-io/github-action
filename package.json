@@ -50,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format && npm run build"
+      "pre-commit": "npm run format && npm run build && git add dist"
     }
   }
 }
