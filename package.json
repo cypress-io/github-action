@@ -42,6 +42,7 @@
     "@types/node": "^12.0.4",
     "@zeit/ncc": "0.20.5",
     "husky": "3.0.9",
+    "lint-staged": "10.0.7",
     "prettier": "1.19.1",
     "stop-build": "1.1.0"
   },
@@ -50,7 +51,11 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format && npm run build"
+      "pre-commit": "npm run build && git add && lint-staged --debug",
+      "post-commit": "git update-index --again"
     }
+  },
+  "lint-staged": {
+    "index.js": "prettier --write"
   }
 }
