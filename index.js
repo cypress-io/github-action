@@ -382,16 +382,12 @@ const runTests = () => {
       cmd.push(quoteArgument(configFileInput))
     }
     if (parallel || group) {
-      // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
-      // until a better workflow id is available
-      // https://github.community/t5/GitHub-Actions/Add-build-number/td-p/30548
-      // https://github.com/actions/toolkit/issues/65
-      const { GITHUB_WORKFLOW, GITHUB_SHA } = process.env
-      const parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
-      const customCiBuildId =
-        core.getInput('ci-build-id') || parallelId
-      cmd.push('--ci-build-id')
-      cmd.push(quoteArgument(customCiBuildId))
+      const customCiBuildId = core.getInput('ci-build-id')
+
+      if (customCiBuildId) {
+        cmd.push('--ci-build-id')
+        cmd.push(quoteArgument(customCiBuildId))
+      }
     }
 
     const browser = core.getInput('browser')
