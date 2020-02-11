@@ -405,8 +405,10 @@ const runTests = async () => {
 
     const parallelId =
       resp && resp.data && resp.data.updated_at
-        ? new Date(resp.data.updated_at).getTime()
-        : new Date().getTime()
+        ? `${GITHUB_RUN_ID}-${new Date(
+            resp.data.updated_at
+          ).getTime()}`
+        : `${GITHUB_RUN_ID}-${new Date().getTime()}`
     const customCiBuildId =
       core.getInput('ci-build-id') || parallelId
     cmd.push('--ci-build-id')
