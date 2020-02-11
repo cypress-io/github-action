@@ -2941,12 +2941,17 @@ const runTests = async () => {
       }
     )
 
-    const parallelId =
-      resp && resp.data && resp.data.updated_at
-        ? `${GITHUB_RUN_ID}-${new Date(
-            resp.data.updated_at
-          ).getTime()}`
-        : `${GITHUB_RUN_ID}-${new Date().getTime()}`
+    let parallelId = `${GITHUB_RUN_ID}-${new Date().getTime()}`
+    if (resp && resp.data) {
+      core.exportVariable(
+        'GH_BRANCH',
+        resp.data.head_branch
+      )
+      parallelId = `${GITHUB_RUN_ID}-${new Date(
+        resp.data.updated_at
+      ).getTime()}`
+    }
+
     const customCiBuildId =
       core.getInput('ci-build-id') || parallelId
     cmd.push('--ci-build-id')
