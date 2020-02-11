@@ -390,28 +390,31 @@ const runTests = async () => {
     } = process.env
 
     const [owner, repo] = GITHUB_REPOSITORY.split('/')
-    const client = new Octokit({
-      auth: GITHUB_TOKEN
-    })
-
-    const resp = await client.request(
-      'GET /repos/:owner/:repo/actions/runs/:run_id',
-      {
-        owner,
-        repo,
-        run_id: GITHUB_RUN_ID
-      }
-    )
-
     let parallelId = `${GITHUB_RUN_ID}-${new Date().getTime()}`
-    if (resp && resp.data) {
-      core.exportVariable(
-        'GH_BRANCH',
-        resp.data.head_branch
+
+    if (GITHUB_TOKEN) {
+      const client = new Octokit({
+        auth: GITHUB_TOKEN
+      })
+
+      const resp = await client.request(
+        'GET /repos/:owner/:repo/actions/runs/:run_id',
+        {
+          owner,
+          repo,
+          run_id: GITHUB_RUN_ID
+        }
       )
-      parallelId = `${GITHUB_RUN_ID}-${new Date(
-        resp.data.updated_at
-      ).getTime()}`
+
+      if (resp && resp.data) {
+        core.exportVariable(
+          'GH_BRANCH',
+          resp.data.head_branch
+        )
+        parallelId = `${GITHUB_RUN_ID}-${new Date(
+          resp.data.updated_at
+        ).getTime()}`
+      }
     }
 
     const customCiBuildId =

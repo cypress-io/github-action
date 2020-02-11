@@ -6,6 +6,8 @@
 
 We are getting reports that Cypress has suddenly started crashing when running on `ubuntu-latest` OS. Seems, GH Actions have switched from 16.04 to 18.04 overnight, and are having a [xvfb issue](https://github.com/cypress-io/cypress/pull/6199). Please work around this problem by using `runs-on: ubuntu-16.04` image or upgrading to [Cypress v3.8.3](https://github.com/cypress-io/cypress/releases/tag/v3.8.3) where we explicitly set XVFB arguments.
 
+We recommend to use the action with `on: [push]` instead of `on: [pull_request]` to get the most accurate information related to the commit on the dashboard.
+
 ## Examples
 
 ### Basic
@@ -145,7 +147,7 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Tag recordings
@@ -180,7 +182,7 @@ jobs:
           tag: node-${{ matrix.node }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 The recording will have tags as labels on the run.
@@ -296,12 +298,10 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ![Parallel run](images/parallel.png)
-
-**Warning ⚠️:** Cypress Dashboard API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name, since there is no better unique ID during GitHub Action execution. Thus if you attempt to re-run GitHub checks, the Dashboard thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
 
 ### Build app
 
@@ -444,7 +444,7 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 **Tip:** see GitHub Actions [environment variables](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/using-environment-variables) and [expression syntax](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions).
@@ -554,7 +554,7 @@ jobs:
           cache-key: node-v${{ matrix.node }}-on-${{ runner.os }}-hash-${{ hashFiles('yarn.lock') }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Split install and tests
