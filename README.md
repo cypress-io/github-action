@@ -303,6 +303,9 @@ jobs:
 
 ![Parallel run](images/parallel.png)
 
+**Warning ⚠️:** Cypress action use `GITHUB_TOKEN` to get the updated time of the action, making it possible to restart a run without the need of pushing an empty commit. If you don't want to
+use the `GITHUB_TOKEN` you can still run your tests without problem with the only note that Cypress Dashboard API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name. If you attempt to re-run GitHub checks, the Dashboard thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
+
 ### Build app
 
 You can run a build step before starting tests
@@ -593,13 +596,13 @@ Finally, you might not need this GH Action at all. For example, if you want to s
 ### More examples
 
 <!-- prettier-ignore-start -->
-| Name                                                                                           | Description                                                                                                       |
-| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)             | uses Yarn, and runs in parallel on several versions of Node, also different browsers                              |
-| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)           | splits install and running tests commands, runs Cypress from sub-folder                                           |
-| [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders)       | separate folder for Cypress dependencies                                                                          |
-| [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) | only install NPM dependencies, then install and cache Cypress binary yourself                                     |
-| [gh-action-and-gh-integration](https://github.com/cypress-io/gh-action-and-gh-integration)     | records to the dashboard and has [Cypress GH Integration](https://on.cypress.io/github-integration) app installed |
+Name | Description
+--- | ---
+[cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | uses Yarn, and runs in parallel on several versions of Node, also different browsers
+[cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder
+[cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies
+[cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) | only install NPM dependencies, then install and cache Cypress binary yourself
+[gh-action-and-gh-integration](https://github.com/cypress-io/gh-action-and-gh-integration) | records to the dashboard and has [Cypress GH Integration](https://on.cypress.io/github-integration) app installed
 <!-- prettier-ignore-end -->
 
 ## Notes

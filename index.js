@@ -384,13 +384,15 @@ const runTests = async () => {
   }
   if (parallel || group) {
     const {
+      GITHUB_WORKFLOW,
+      GITHUB_SHA,
       GITHUB_TOKEN,
       GITHUB_RUN_ID,
       GITHUB_REPOSITORY
     } = process.env
 
     const [owner, repo] = GITHUB_REPOSITORY.split('/')
-    let parallelId = `${GITHUB_RUN_ID}-${new Date().getTime()}`
+    let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
 
     if (GITHUB_TOKEN) {
       const client = new Octokit({
