@@ -2962,7 +2962,6 @@ const runTests = async () => {
         }
       )
 
-      console.log('-----', JSON.stringify(runsList.data))
       if (runsList && runsList.data) {
         // Use the total_count, every time a job is restarted the list has
         // the number of jobs including current run and previous runs, every time
