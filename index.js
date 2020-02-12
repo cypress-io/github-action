@@ -408,6 +408,8 @@ const runTests = async () => {
         }
       )
 
+      console.log('----> resp', JSON.stringify(resp))
+
       if (resp && resp.data) {
         core.exportVariable(
           'GH_BRANCH',
