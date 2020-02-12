@@ -408,7 +408,16 @@ const runTests = async () => {
         }
       )
 
-      console.log('----> resp', JSON.stringify(resp))
+      const resp2 = await client.request(
+        'GET /repos/:owner/:repo/actions/jobs/:job_id',
+        {
+          owner,
+          repo,
+          job_id: GITHUB_RUN_ID
+        }
+      )
+
+      console.log('----> resp', JSON.stringify(resp2))
 
       if (resp && resp.data) {
         core.exportVariable(
