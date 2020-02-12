@@ -13,6 +13,7 @@ jobs:
       - run: npm run format
       - run: npm run build
       - run: npm test
+      - run: npm run check:markdown
 
       # https://github.com/cycjimmy/semantic-release-action
       - name: Semantic Release
