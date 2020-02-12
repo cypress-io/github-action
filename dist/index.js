@@ -2946,6 +2946,17 @@ const runTests = async () => {
         }
       )
 
+      const resp2 = await client.request(
+        'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
+        {
+          owner,
+          repo,
+          run_id: GITHUB_RUN_ID
+        }
+      )
+
+      console.log('---->', JSON.stringify(resp2))
+
       if (resp && resp.data) {
         core.exportVariable(
           'GH_BRANCH',
@@ -2955,20 +2966,11 @@ const runTests = async () => {
         parallelId = `${GITHUB_RUN_ID}-${new Date(
           resp.data.updated_at
         ).getTime()}`
-
-        console.log('----', process.env.GH_PARALLEL_ID)
-        if (!process.env.GH_PARALLEL_ID) {
-          console.log('----0', parallelId)
-          core.exportVariable('GH_PARALLEL_ID', parallelId)
-        }
-        console.log('----1', process.env.GH_PARALLEL_ID)
       }
     }
 
     const customCiBuildId =
-      core.getInput('ci-build-id') ||
-      process.env.GH_PARALLEL_ID ||
-      parallelId
+      core.getInput('ci-build-id') || parallelId
     cmd.push('--ci-build-id')
     cmd.push(quoteArgument(customCiBuildId))
   }
