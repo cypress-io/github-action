@@ -415,14 +415,13 @@ const runTests = async () => {
           resp.data.head_branch
         )
 
+        parallelId = `${GITHUB_RUN_ID}-${new Date(
+          resp.data.updated_at
+        ).getTime()}`
+
         console.log('----', GH_PARALLEL_ID)
         if (!GH_PARALLEL_ID) {
-          core.exportVariable(
-            'GH_PARALLEL_ID',
-            `${GITHUB_RUN_ID}-${new Date(
-              resp.data.updated_at
-            ).getTime()}`
-          )
+          core.exportVariable('GH_PARALLEL_ID', parallelId)
         }
       }
     }
