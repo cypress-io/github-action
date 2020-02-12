@@ -2926,8 +2926,7 @@ const runTests = async () => {
       GITHUB_SHA,
       GITHUB_TOKEN,
       GITHUB_RUN_ID,
-      GITHUB_REPOSITORY,
-      GH_PARALLEL_ID
+      GITHUB_REPOSITORY
     } = process.env
 
     const [owner, repo] = GITHUB_REPOSITORY.split('/')
@@ -2957,16 +2956,18 @@ const runTests = async () => {
           resp.data.updated_at
         ).getTime()}`
 
-        console.log('----', GH_PARALLEL_ID)
-        if (!GH_PARALLEL_ID) {
+        console.log('----', process.env.GH_PARALLEL_ID)
+        if (!process.env.GH_PARALLEL_ID) {
+          console.log('----0', parallelId)
           core.exportVariable('GH_PARALLEL_ID', parallelId)
         }
+        console.log('----1', process.env.GH_PARALLEL_ID)
       }
     }
 
     const customCiBuildId =
       core.getInput('ci-build-id') ||
-      GH_PARALLEL_ID ||
+      process.env.GH_PARALLEL_ID ||
       parallelId
     cmd.push('--ci-build-id')
     cmd.push(quoteArgument(customCiBuildId))
