@@ -2,6 +2,7 @@
 const core = require('@actions/core')
 const exec = require('@actions/exec')
 const io = require('@actions/io')
+const { Octokit } = require('@octokit/rest')
 const hasha = require('hasha')
 const got = require('got')
 const {
@@ -308,7 +309,7 @@ const waitOnMaybe = () => {
 
 const I = x => x
 
-const runTests = () => {
+const runTests = async () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
     console.log(
@@ -328,105 +329,144 @@ const runTests = () => {
   // TODO using yarn to run cypress when yarn is used for install
   // split potentially long
 
-  return io.which('npx', true).then(npxPath => {
-    core.exportVariable(
-      'CYPRESS_CACHE_FOLDER',
-      CYPRESS_CACHE_FOLDER
-    )
+  const npxPath = await io.which('npx', true)
+  core.exportVariable(
+    'CYPRESS_CACHE_FOLDER',
+    CYPRESS_CACHE_FOLDER
+  )
 
-    let cmd = []
-    if (commandPrefix) {
-      // we need to split the command prefix into individual arguments
-      // otherwise they are passed all as a single string
-      const parts = commandPrefix.split(' ')
-      cmd = cmd.concat(parts)
-      core.debug(
-        `with concatenated command prefix: ${cmd.join(' ')}`
-      )
-    }
-    // push each CLI argument separately
-    cmd.push('cypress')
-    cmd.push('run')
-    if (headless) {
-      cmd.push('--headless')
-    }
-    if (record) {
-      cmd.push('--record')
-    }
-    if (parallel) {
-      cmd.push('--parallel')
-    }
-    const group = core.getInput('group')
-    if (group) {
-      cmd.push('--group')
-      cmd.push(quoteArgument(group))
-    }
-    const tag = core.getInput('tag')
-    if (tag) {
-      cmd.push('--tag')
-      cmd.push(quoteArgument(tag))
-    }
-    const configInput = core.getInput('config')
-    if (configInput) {
-      cmd.push('--config')
-      cmd.push(quoteArgument(configInput))
-    }
-    const spec = core.getInput('spec')
-    if (spec) {
-      cmd.push('--spec')
-      cmd.push(quoteArgument(spec))
-    }
-    const configFileInput = core.getInput('config-file')
-    if (configFileInput) {
-      cmd.push('--config-file')
-      cmd.push(quoteArgument(configFileInput))
-    }
-    if (parallel || group) {
-      // on GitHub Actions we can use workflow name and SHA commit to tie multiple jobs together
-      // until a better workflow id is available
-      // https://github.community/t5/GitHub-Actions/Add-build-number/td-p/30548
-      // https://github.com/actions/toolkit/issues/65
-      const { GITHUB_WORKFLOW, GITHUB_SHA } = process.env
-      const parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
-      const customCiBuildId =
-        core.getInput('ci-build-id') || parallelId
-      cmd.push('--ci-build-id')
-      cmd.push(quoteArgument(customCiBuildId))
-    }
-
-    const browser = core.getInput('browser')
-    if (browser) {
-      cmd.push('--browser')
-      // TODO should browser be quoted?
-      // If it is a path, it might have spaces
-      cmd.push(browser)
-    }
-
-    const envInput = core.getInput('env')
-    if (envInput) {
-      // TODO should env be quoted?
-      // If it is a JSON, it might have spaces
-      cmd.push('--env')
-      cmd.push(envInput)
-    }
-
-    console.log(
-      'Cypress test command: npx %s',
-      cmd.join(' ')
-    )
-
-    core.exportVariable('TERM', 'xterm')
-    // since we have quoted arguments ourselves, do not double quote them
-    const opts = {
-      ...cypressCommandOptions,
-      windowsVerbatimArguments: false
-    }
-
+  let cmd = []
+  if (commandPrefix) {
+    // we need to split the command prefix into individual arguments
+    // otherwise they are passed all as a single string
+    const parts = commandPrefix.split(' ')
+    cmd = cmd.concat(parts)
     core.debug(
-      `in working directory "${cypressCommandOptions.workingDirectory}"`
+      `with concatenated command prefix: ${cmd.join(' ')}`
     )
-    return exec.exec(quote(npxPath), cmd, opts)
-  })
+  }
+  // push each CLI argument separately
+  cmd.push('cypress')
+  cmd.push('run')
+  if (headless) {
+    cmd.push('--headless')
+  }
+  if (record) {
+    cmd.push('--record')
+  }
+  if (parallel) {
+    cmd.push('--parallel')
+  }
+  const group = core.getInput('group')
+  if (group) {
+    cmd.push('--group')
+    cmd.push(quoteArgument(group))
+  }
+  const tag = core.getInput('tag')
+  if (tag) {
+    cmd.push('--tag')
+    cmd.push(quoteArgument(tag))
+  }
+  const configInput = core.getInput('config')
+  if (configInput) {
+    cmd.push('--config')
+    cmd.push(quoteArgument(configInput))
+  }
+  const spec = core.getInput('spec')
+  if (spec) {
+    cmd.push('--spec')
+    cmd.push(quoteArgument(spec))
+  }
+  const configFileInput = core.getInput('config-file')
+  if (configFileInput) {
+    cmd.push('--config-file')
+    cmd.push(quoteArgument(configFileInput))
+  }
+  if (parallel || group) {
+    const {
+      GITHUB_WORKFLOW,
+      GITHUB_SHA,
+      GITHUB_TOKEN,
+      GITHUB_RUN_ID,
+      GITHUB_REPOSITORY
+    } = process.env
+
+    const [owner, repo] = GITHUB_REPOSITORY.split('/')
+    let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
+
+    if (GITHUB_TOKEN) {
+      const client = new Octokit({
+        auth: GITHUB_TOKEN
+      })
+
+      const resp = await client.request(
+        'GET /repos/:owner/:repo/actions/runs/:run_id',
+        {
+          owner,
+          repo,
+          run_id: GITHUB_RUN_ID
+        }
+      )
+
+      if (resp && resp.data) {
+        core.exportVariable(
+          'GH_BRANCH',
+          resp.data.head_branch
+        )
+      }
+
+      const runsList = await client.request(
+        'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
+        {
+          owner,
+          repo,
+          run_id: GITHUB_RUN_ID
+        }
+      )
+
+      if (runsList && runsList.data) {
+        // Use the total_count, every time a job is restarted the list has
+        // the number of jobs including current run and previous runs, every time
+        // it appends the result.
+        parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
+      }
+    }
+
+    const customCiBuildId =
+      core.getInput('ci-build-id') || parallelId
+    cmd.push('--ci-build-id')
+    cmd.push(quoteArgument(customCiBuildId))
+  }
+
+  const browser = core.getInput('browser')
+  if (browser) {
+    cmd.push('--browser')
+    // TODO should browser be quoted?
+    // If it is a path, it might have spaces
+    cmd.push(browser)
+  }
+
+  const envInput = core.getInput('env')
+  if (envInput) {
+    // TODO should env be quoted?
+    // If it is a JSON, it might have spaces
+    cmd.push('--env')
+    cmd.push(envInput)
+  }
+
+  console.log('Cypress test command: npx %s', cmd.join(' '))
+
+  core.exportVariable('TERM', 'xterm')
+  // since we have quoted arguments ourselves, do not double quote them
+  const opts = {
+    ...cypressCommandOptions,
+    windowsVerbatimArguments: false
+  }
+
+  core.debug(
+    `in working directory "${cypressCommandOptions.workingDirectory}"`
+  )
+  return exec.exec(quote(npxPath), cmd, opts)
 }
 
 const installMaybe = () => {
