@@ -11,7 +11,8 @@
   "scripts": {
     "test": "echo \"There are no tests :(\"",
     "build": "ncc build -o dist index.js",
-    "format": "prettier --write index.js"
+    "format": "prettier --write index.js",
+    "check:markdown": "find *.md -exec npx markdown-link-check {} \\;"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,7 @@
     "@types/node": "^12.0.4",
     "@zeit/ncc": "0.20.5",
     "husky": "3.0.9",
+    "markdown-link-check": "3.8.0",
     "prettier": "1.19.1",
     "stop-build": "1.1.0"
   },
