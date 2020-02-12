@@ -2951,7 +2951,7 @@ const runTests = async () => {
         {
           owner,
           repo,
-          job_id: GITHUB_RUN_ID
+          job_id: resp.data.check_suite_id
         }
       )
 
