@@ -408,7 +408,14 @@ const runTests = async () => {
         }
       )
 
-      const resp2 = await client.request(
+      if (resp && resp.data) {
+        core.exportVariable(
+          'GH_BRANCH',
+          resp.data.head_branch
+        )
+      }
+
+      const runsList = await client.request(
         'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
         {
           owner,
@@ -417,17 +424,11 @@ const runTests = async () => {
         }
       )
 
-      console.log('---->', JSON.stringify(resp2))
-
-      if (resp && resp.data) {
-        core.exportVariable(
-          'GH_BRANCH',
-          resp.data.head_branch
-        )
-
-        parallelId = `${GITHUB_RUN_ID}-${new Date(
-          resp.data.updated_at
-        ).getTime()}`
+      if (runsList && runsList.data) {
+        // Use the total_count, every time a job is restarted the list has
+        // the number of jobs including current run and previous runs, every time
+        // it appends the result.
+        parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
       }
     }
 
