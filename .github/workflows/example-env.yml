@@ -58,6 +58,7 @@ jobs:
       - name: Cypress run with env
         uses: ./
         env:
+          DEBUG: cypress:server:args
           CYPRESS_port: 4222
         with:
           environment: host=api.dev.local
