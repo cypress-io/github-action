@@ -1,7 +1,7 @@
 name: example-env
 on: [push]
 env:
-  environmentName: staging
+  CYPRESS_environmentName: staging
 jobs:
   with-env:
     runs-on: ubuntu-latest
