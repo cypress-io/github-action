@@ -15,7 +15,7 @@ jobs:
         with:
           working-directory: examples/env
           # additional env variables to pass to Cypress specs
-          env: host=api.dev.local,port=4222
+          environment: host=api.dev.local,port=4222
           spec: cypress/integration/spec.js
 
   without-env:
@@ -60,6 +60,6 @@ jobs:
         env:
           CYPRESS_port: 4222
         with:
-          env: host=api.dev.local
+          environment: host=api.dev.local
           working-directory: examples/env
           spec: cypress/integration/spec.js
