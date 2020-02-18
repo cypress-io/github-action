@@ -41,7 +41,7 @@ jobs:
         # more env variables via job's env block
         env:
           CYPRESS_host: api.dev.local
-          CYPRESS_port: 4222
+          CYPRESS_port: '4222'
         with:
           working-directory: examples/env
           spec: cypress/integration/spec.js
