@@ -1,6 +1,7 @@
 name: example-env
 on: [push]
 env:
+  # this variable should always be present in specs
   CYPRESS_environmentName: staging
 jobs:
   with-env:
@@ -13,6 +14,7 @@ jobs:
         uses: ./
         with:
           working-directory: examples/env
+          # additional env variables to pass to Cypress specs
           env: host=api.dev.local,port=4222
           spec: cypress/integration/spec.js
 
