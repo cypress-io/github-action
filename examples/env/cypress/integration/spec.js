@@ -8,6 +8,6 @@ it('has all expected env variables', () => {
   // host and port are set via action's "with: env:" parameter
   expect(Cypress.env()).to.deep.include({
     host: 'api.dev.local',
-    port: 4222
+    apiPort: 4222
   })
 })

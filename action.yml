@@ -14,7 +14,7 @@ inputs:
     description: 'Path to a JSON file where configuration values are set.'
     required: false
     default: cypress.json
-  environment:
+  env:
     description: 'Sets Cypress environment variables'
     required: false
 runs:

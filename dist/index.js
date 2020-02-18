@@ -2553,13 +2553,6 @@ const path = __webpack_require__(622)
 const quote = __webpack_require__(531)
 const cliParser = __webpack_require__(880)()
 
-// print all CYPRESS_ variables for now
-Object.keys(process.env)
-  .filter(key => key.startsWith('CYPRESS_'))
-  .forEach(key => {
-    console.log(key, process.env[key])
-  })
-
 /**
  * A small utility for checking when an URL responds, kind of
  * a poor man's https://www.npmjs.com/package/wait-on

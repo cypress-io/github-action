@@ -15,13 +15,6 @@ const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 
-// print all CYPRESS_ variables for now
-Object.keys(process.env)
-  .filter(key => key.startsWith('CYPRESS_'))
-  .forEach(key => {
-    console.log(key, process.env[key])
-  })
-
 /**
  * A small utility for checking when an URL responds, kind of
  * a poor man's https://www.npmjs.com/package/wait-on
