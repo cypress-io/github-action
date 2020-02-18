@@ -15,6 +15,13 @@ jobs:
       - run: npm test
       - run: npm run check:markdown
 
+  release:
+    runs-on: ubuntu-latest
+    name: release
+    needs: build-and-test
+    # only release from the master branch
+    if: github.ref == 'refs/heads/master'
+    steps:
       # https://github.com/cycjimmy/semantic-release-action
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v2
