@@ -1,7 +1,9 @@
 name: example-env
 on: [push]
+env:
+  environmentName: staging
 jobs:
-  cypress-run:
+  with-env:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -12,3 +14,16 @@ jobs:
         with:
           working-directory: examples/env
           env: host=api.dev.local,port=4222
+          spec: cypress/integration/spec.js
+
+  without-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress run with env
+        uses: ./
+        with:
+          working-directory: examples/env
+          spec: cypress/integration/without-env-spec.js
