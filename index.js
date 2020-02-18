@@ -446,7 +446,7 @@ const runTests = async () => {
     cmd.push(browser)
   }
 
-  const envInput = core.getInput('environment')
+  const envInput = core.getInput('env')
   if (envInput) {
     // TODO should env be quoted?
     // If it is a JSON, it might have spaces
