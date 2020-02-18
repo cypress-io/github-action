@@ -59,6 +59,7 @@ jobs:
         uses: ./
         env:
           DEBUG: cypress:server:args,cypress:server:config
+          CYPRESS_FOO: bar
           CYPRESS_port: 4222
         with:
           environment: host=api.dev.local
