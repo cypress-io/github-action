@@ -10,4 +10,5 @@ jobs:
       - name: Cypress run with env
         uses: ./
         with:
+          working-directory: examples/env
           env: host=api.dev.local,port=4222
