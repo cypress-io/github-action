@@ -18,6 +18,9 @@ jobs:
           name: screenshots-in-electron
           path: examples/chrome/cypress/screenshots
 
+      - run: npx image-size cypress/screenshots/spec.js/example.png
+        working-directory: examples/chrome
+
       - name: Chrome
         uses: ./
         with:
@@ -28,3 +31,6 @@ jobs:
         with:
           name: screenshots-in-chrome
           path: examples/chrome/cypress/screenshots
+
+      - run: npx image-size cypress/screenshots/spec.js/example.png
+        working-directory: examples/chrome
