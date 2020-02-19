@@ -48,6 +48,8 @@ jobs:
           browser: chrome
 ```
 
+[![Chrome example](https://github.com/cypress-io/github-action/workflows/example-chrome/badge.svg?branch=master)](.github/workflows/example-chrome.yml)
+
 ### Headless
 
 Run the browser in headless mode
