@@ -16,6 +16,23 @@ jobs:
         with:
           working-directory: examples/basic
 
+      # store screenshot captured during the test
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-electron
+          path: examples/basic/cypress/screenshots
+
+      - name: Chrome
+        uses: ./
+        with:
+          working-directory: examples/basic
+          browser: chrome
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-chrome
+          path: examples/basic/cypress/screenshots
+
   basic-on-windows:
     runs-on: windows-latest
     steps:
