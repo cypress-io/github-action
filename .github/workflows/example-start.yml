@@ -1,0 +1,19 @@
+name: example-start
+on: [push]
+jobs:
+  start:
+    # example with web application build,
+    # server start and waiting for the server
+    # to respond before running tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/start
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:5000'
