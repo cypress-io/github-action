@@ -1,7 +1,7 @@
 name: example-chrome
 on: [push]
 jobs:
-  basic:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,7 +18,7 @@ jobs:
           name: screenshots-in-electron
           path: examples/chrome/cypress/screenshots
 
-      - run: npx image-size cypress/screenshots/spec.js/example.png
+      - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/chrome
 
       - name: Chrome
@@ -32,5 +32,20 @@ jobs:
           name: screenshots-in-chrome
           path: examples/chrome/cypress/screenshots
 
-      - run: npx image-size cypress/screenshots/spec.js/example.png
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/chrome
+
+      - name: Chrome headless
+        uses: ./
+        with:
+          working-directory: examples/chrome
+          browser: chrome
+          headless: true
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-headless-chrome
+          path: examples/chrome/cypress/screenshots
+
+      - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/chrome
