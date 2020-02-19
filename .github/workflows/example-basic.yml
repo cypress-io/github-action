@@ -15,3 +15,14 @@ jobs:
         # because we are running these examples in a monorepo
         with:
           working-directory: examples/basic
+
+  basic-on-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic
