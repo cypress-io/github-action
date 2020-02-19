@@ -28,10 +28,10 @@ jobs:
           working-directory: examples/basic
           browser: chrome
 
-        - uses: actions/upload-artifact@v1
-          with:
-            name: screenshots-in-chrome
-            path: examples/basic/cypress/screenshots
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-chrome
+          path: examples/basic/cypress/screenshots
 
   basic-on-windows:
     runs-on: windows-latest
