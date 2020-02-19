@@ -1,10 +1,31 @@
 name: example-env
 on: [push]
 env:
-  # this variable should always be present in specs
+  # pass an environment variable to Cypress
+  # a test can get its value like this
+  # Cypress.env('environmentName') // 'staging'
+  # see https://on.cypress.io/env
   CYPRESS_environmentName: staging
 jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      # in the tests below, only the environment
+      # variable 'environmentName' will be set
+      - name: Cypress run with env
+        uses: ./
+        with:
+          working-directory: examples/env
+          spec: cypress/integration/without-env-spec.js
+
   with-env:
+    # in the tests below, in addition to 'environmentName'
+    # we are passing additional environment variables
+    # using "--env" command line option
+    # see https://on.cypress.io/configuration
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,20 +36,11 @@ jobs:
         with:
           working-directory: examples/env
           # additional env variables to pass to Cypress specs
+          # variables are automatically casted
+          # Cypress.env('host') // 'api.dev.local'
+          # Cypress.env('apiPort') // 4222
           env: host=api.dev.local,apiPort=4222
           spec: cypress/integration/spec.js
-
-  without-env:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: Cypress run with env
-        uses: ./
-        with:
-          working-directory: examples/env
-          spec: cypress/integration/without-env-spec.js
 
   with-action-env:
     runs-on: ubuntu-latest
@@ -38,7 +50,9 @@ jobs:
 
       - name: Cypress run with env
         uses: ./
-        # more env variables via job's env block
+        # GH Actions workflow syntax allows
+        # each step to add more environment variables
+        # via additional "env" blocks
         env:
           CYPRESS_apiPort: 4222
           CYPRESS_host: api.dev.local
@@ -47,9 +61,10 @@ jobs:
           spec: cypress/integration/spec.js
 
   combined-env:
-    # 1st var comes from workflow's env
-    # 2nd from "env" block
-    # 3rd comes via action's "with: env:" block
+    # combination of all 3 ways to pass environment variables
+    # 'environmentName' value comes from the workflow's environment
+    # 'apiPort' comes from the step's "env" block
+    # 'host' is defined in the action's "with: env:" parameter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
