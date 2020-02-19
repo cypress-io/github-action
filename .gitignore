@@ -1,3 +1,4 @@
 node_modules/
 cypress/videos/
-examples/env/cypress/videos/
+examples/*/cypress/videos
+examples/*/cypress/screenshots

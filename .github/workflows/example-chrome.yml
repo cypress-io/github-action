@@ -1,0 +1,30 @@
+name: example-chrome
+on: [push]
+jobs:
+  basic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Electron
+        uses: ./
+        with:
+          working-directory: examples/chrome
+
+      # store screenshot captured during the test
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-electron
+          path: examples/chrome/cypress/screenshots
+
+      - name: Chrome
+        uses: ./
+        with:
+          working-directory: examples/chrome
+          browser: chrome
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-chrome
+          path: examples/chrome/cypress/screenshots
