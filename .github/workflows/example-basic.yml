@@ -23,10 +23,10 @@ jobs:
           path: examples/basic/cypress/screenshots
 
       - name: Chrome
-          uses: ./
-          with:
-            working-directory: examples/basic
-            browser: chrome
+        uses: ./
+        with:
+          working-directory: examples/basic
+          browser: chrome
 
         - uses: actions/upload-artifact@v1
           with:
