@@ -20,7 +20,7 @@ jobs:
       - uses: actions/upload-artifact@v1
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: examples/basic/cypress/screenshots
 
   basic-on-windows:
     runs-on: windows-latest
