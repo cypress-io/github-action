@@ -16,6 +16,12 @@ jobs:
         with:
           working-directory: examples/basic
 
+      # store screenshot captured during the test
+      - uses: actions/upload-artifact@v1
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
   basic-on-windows:
     runs-on: windows-latest
     steps:
