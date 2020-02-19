@@ -104,7 +104,7 @@ jobs:
           env: host=api.dev.local,port=4222
 ```
 
-![Env example](https://github.com/cypress-io/github-action/workflows/example-env/badge.svg?branch=master)
+[![Env example](https://github.com/cypress-io/github-action/workflows/example-env/badge.svg?branch=master)](.github/workflows/example-env.yml)
 
 ### Specs
 

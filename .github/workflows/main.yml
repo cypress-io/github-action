@@ -8,7 +8,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-
       - uses: bahmutov/npm-install@v1
       - run: npm run format
       - run: npm run build
@@ -22,6 +21,9 @@ jobs:
     # only release from the master branch
     if: github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: bahmutov/npm-install@v1
       # https://github.com/cycjimmy/semantic-release-action
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v2
