@@ -11,6 +11,7 @@ const os = require('os')
 const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
+const findYarnWorkspaceRoot = require('find-yarn-workspace-root');
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -53,7 +54,7 @@ const cypressCommandOptions = {
   cwd: workingDirectory
 }
 
-const yarnFilename = path.join(workingDirectory, 'yarn.lock')
+const yarnFilename = path.join(findYarnWorkspaceRoot(workingDirectory) || workingDirectory, 'yarn.lock')
 const packageLockFilename = path.join(
   workingDirectory,
   'package-lock.json'
