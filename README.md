@@ -104,6 +104,8 @@ jobs:
           env: host=api.dev.local,port=4222
 ```
 
+![Env example](https://github.com/cypress-io/github-action/workflows/example-env/badge.svg?branch=master)
+
 ### Specs
 
 Specify the [spec files to run](https://docs.cypress.io/guides/guides/command-line.html#cypress-run-spec-lt-spec-gt) with `spec` parameter

@@ -17,7 +17,6 @@ inputs:
   env:
     description: 'Sets Cypress environment variables'
     required: false
-    default: false
 runs:
   using: 'node12'
   main: 'dist/index.js'

@@ -1,5 +1,13 @@
 # Development
 
+## Testing via examples
+
+1. Add a new example project in `examples` folder. It is a regular NPM package with its own `package.json` and Cypress dev dependency.
+1. Add a corresponding `.github/workflows` YAML file that uses this action and runs inside `examples/X` working directory. The example should demonstrate the feature
+1. Add workflow badge to README if needed
+
+## Testing against another repo
+
 1. Create a new local branch for any development, for example `git checkout -b featureA`
 1. Update the source code in [index.js](index.js)
 1. Build `dist` file(s) using `npm run build`

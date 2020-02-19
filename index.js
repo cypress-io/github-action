@@ -464,7 +464,7 @@ const runTests = async () => {
   }
 
   core.debug(
-    `in working directory "${cypressCommandOptions.workingDirectory}"`
+    `in working directory "${cypressCommandOptions.cwd}"`
   )
   return exec.exec(quote(npxPath), cmd, opts)
 }
