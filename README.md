@@ -27,6 +27,8 @@ jobs:
         uses: cypress-io/github-action@v1
 ```
 
+[![Basic example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
+
 ### Browser
 
 Specify the browser name or path with `browser` parameter
