@@ -530,6 +530,31 @@ jobs:
 
 See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) for example.
 
+### Yarn workspaces
+
+This action should discover Yarn workspace correctly. For example, see folder [examples/start-and-yarn-workspaces](examples/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
+
+```yaml
+name: example-start-and-yarn-workspaces
+on: [push]
+jobs:
+  single:
+    # the example has Yarn workspace in its "root" folder
+    # examples/start-and-yarn-workspaces
+    # and tests in a subfolder like "workspace-1"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v1
+        with:
+          working-directory: examples/start-and-yarn-workspaces/workspace-1
+          build: yarn run build
+          start: yarn start
+          wait-on: 'http://localhost:5000'
+```
+
+[![Yarn workspaces example](https://github.com/cypress-io/github-action/workflows/example-start-and-yarn-workspaces/badge.svg?branch=master)](.github/workflows/example-start-and-yarn-workspaces.yml)
+
 ### Custom cache key
 
 Sometimes the default cache key does not work. For example, if you cannot share the Node modules across Node versions due to native extensions. In that case pass your own `cache-key` parameter.

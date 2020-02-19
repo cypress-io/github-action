@@ -1,11 +1,28 @@
 name: example-start-and-yarn-workspaces
 on: [push]
 jobs:
-  start:
+  single:
+    # the example has Yarn workspace in its "root" folder
+    # examples/start-and-yarn-workspaces
+    # and tests in a subfolder like "workspace-1"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Tests
+        uses: ./
+        with:
+          working-directory: examples/start-and-yarn-workspaces/workspace-1
+          build: yarn run build
+          start: yarn start
+          wait-on: 'http://localhost:5000'
+
+  multiple:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
-    # with yarn workspaces
+    # in each Yarn workspaces subfolder
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
