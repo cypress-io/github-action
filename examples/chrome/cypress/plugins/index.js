@@ -13,4 +13,11 @@ module.exports = on => {
       return launchOptions
     }
   })
+
+  on('task', {
+    log(message) {
+      console.log(message)
+      return null
+    }
+  })
 }

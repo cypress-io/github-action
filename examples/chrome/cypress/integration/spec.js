@@ -9,4 +9,14 @@ it('works', () => {
   // you can take the screenshot of the entire page
   // which will be stitched into one tall image
   cy.screenshot('fullPage', { capture: 'fullPage' })
+
+  // log the top window's dimensions
+  const resolution = Cypress._.pick(top, [
+    'innerWidth',
+    'innerHeight'
+  ])
+  cy.task(
+    'log',
+    `top window inner w, h is ${resolution.innerWidth}x${resolution.innerHeight}`
+  )
 })
