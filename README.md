@@ -286,6 +286,11 @@ jobs:
     name: Cypress run
     runs-on: ubuntu-16.04
     strategy:
+      # when one test fails, DO NOT cancel the other
+      # containers, because this will kill Cypress processes
+      # leaving the Dashboard hanging ...
+      # https://github.com/cypress-io/github-action/issues/48
+      fail-fast: false
       matrix:
         # run 3 copies of the current job in parallel
         containers: [1, 2, 3]
@@ -304,6 +309,8 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # Recommended: pass the GitHub token lets this action correctly
+          # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
