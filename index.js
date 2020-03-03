@@ -236,8 +236,10 @@ const startServerMaybe = () => {
     return
   }
 
+  const cwd = cypressCommandOptions.cwd
+
   console.log('starting server with command "%s"', startCommand)
-  console.log('current working directory "%s"', process.cwd())
+  console.log('current working directory "%s"', cwd)
 
   const args = cliParser.parse(startCommand)
   core.debug(`parsed command: ${args.join(' ')}`)
@@ -248,7 +250,6 @@ const startServerMaybe = () => {
 
     const toolArguments = args.slice(1)
     const argsString = toolArguments.join(' ')
-    const cwd = cypressCommandOptions.cwd
     core.debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
     core.debug('without waiting for the promise to resolve')
 
