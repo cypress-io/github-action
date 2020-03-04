@@ -32,8 +32,18 @@ jobs:
           name: screenshots-in-chrome
           path: examples/chrome/cypress/screenshots
 
+      - uses: actions/upload-artifact@v1
+        with:
+          name: video-in-chrome
+          path: examples/chrome/cypress/videos
+
       - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/chrome
+
+      # I wonder if GH Actions VM includes any of the tools that
+      # can tell us the resolution of a video file
+      - run: ffprobe cypress/videos/*.mp4 || true
+      - run: mplayer -really-quiet -ao null -vo null -identify -frames 0 cypress/videos/*.mp4 || true
 
       - name: Chrome headless
         uses: ./
@@ -46,6 +56,11 @@ jobs:
         with:
           name: screenshots-in-headless-chrome
           path: examples/chrome/cypress/screenshots
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: video-in-headless-chrome
+          path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/chrome
