@@ -1,0 +1,29 @@
+name: example-firefox
+on: push
+jobs:
+  firefox:
+    runs-on: ubuntu-latest
+    # https://github.com/cypress-io/cypress-docker-images
+    # that has non-root user "node"
+    container:
+      image: cypress/browsers:node13.6.0-chrome80-ff72
+      options: --user node
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Firefox
+        uses: ./
+        timeout-minutes: 3
+        with:
+          working-directory: examples/firefox
+          browser: firefox
+
+      # report screenshot size and store the screenshots as test artifacts
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-firefox
+          path: examples/firefox/cypress/screenshots
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/firefox
