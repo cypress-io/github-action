@@ -6,7 +6,7 @@ jobs:
     # https://github.com/cypress-io/cypress-docker-images
     # that has non-root user "node"
     container:
-      image: cypress/browsers:node13.6.0-chrome80-ff72
+      image: cypress/browsers:node12.16.1-chrome80-ff73
       options: --user node
     steps:
       - name: Checkout
@@ -15,7 +15,7 @@ jobs:
       # try debugging NPM permissions problem
       - run: whoami
       - run: id
-      - run: ls -la ~
+      - run: ls -la .
       - run: npm --version
       # - run: npm config set cache ~/.npm
       # - run: npm config get cache
