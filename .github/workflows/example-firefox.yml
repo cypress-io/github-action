@@ -7,7 +7,7 @@ jobs:
     # that has non-root user "node"
     container:
       image: cypress/browsers:node12.16.1-chrome80-ff73
-      options: --user node
+      options: --user 1001
     steps:
       - name: Checkout
         uses: actions/checkout@v1
