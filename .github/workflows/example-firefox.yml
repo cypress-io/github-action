@@ -12,6 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
+      # try debugging NPM permissions problem
+      - run: whoami
+      - run: id
+      - run: npm config get cache
+      - run: npm cache clean
+
       - name: Firefox
         uses: ./
         timeout-minutes: 3
