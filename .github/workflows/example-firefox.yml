@@ -15,9 +15,11 @@ jobs:
       # try debugging NPM permissions problem
       - run: whoami
       - run: id
-      - run: npm config set cache ~/.npm
-      - run: npm config get cache
-      - run: npm cache clean
+      - run: ls -la ~
+      - run: npm --version
+      # - run: npm config set cache ~/.npm
+      # - run: npm config get cache
+      # - run: npm cache clean
 
       - name: Firefox
         uses: ./
