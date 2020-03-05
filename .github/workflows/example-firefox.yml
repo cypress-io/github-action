@@ -7,19 +7,10 @@ jobs:
     # that has non-root user "node"
     container:
       image: cypress/browsers:node12.16.1-chrome80-ff73
-      options: --user 1001
+      options: --user 2000
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-
-      # try debugging NPM permissions problem
-      # - run: whoami
-      - run: id
-      - run: ls -la .
-      - run: npm --version
-      # - run: npm config set cache ~/.npm
-      # - run: npm config get cache
-      # - run: npm cache clean
 
       - name: Firefox
         uses: ./
