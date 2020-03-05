@@ -6359,11 +6359,12 @@ const getNpmCache = () => {
   const o = {}
   let key = core.getInput('cache-key')
   const hash = lockHash()
+  const uid = os.userInfo().uid
   if (!key) {
     if (useYarn()) {
-      key = `yarn-${platformAndArch}-${hash}`
+      key = `yarn-${platformAndArch}-${hash}-user-${uid}`
     } else {
-      key = `npm-${platformAndArch}-${hash}`
+      key = `npm-${platformAndArch}-${hash}-user-${uid}`
     }
   } else {
     console.log('using custom cache key "%s"', key)
