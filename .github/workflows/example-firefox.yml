@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
+      # for debugging permission problems
+      - run: id
+
       - name: Firefox
         uses: ./
         timeout-minutes: 3
