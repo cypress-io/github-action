@@ -15,7 +15,7 @@ jobs:
       # for debugging permission problems
       - run: id
       - run: ls -la ~ || true
-      - run: ls -la $HOME || true
+      - run: ls -la /github/home || true
 
       - name: Firefox
         uses: ./
