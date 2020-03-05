@@ -1,0 +1,38 @@
+name: example-firefox
+on: push
+jobs:
+  firefox:
+    runs-on: ubuntu-latest
+    # https://github.com/cypress-io/cypress-docker-images
+    container:
+      image: cypress/browsers:node12.16.1-chrome80-ff73
+      # "magical" user id that matches id for created home folder
+      # https://github.com/cypress-io/github-action/issues/104
+      options: --user 1001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      # for debugging permission problems
+      - run: id
+      # the home folder is set by the GH docker start
+      # -e "HOME=/github/home"
+      # and has permissions (user 1001)
+      # drwxr-xr-x 2 1001  115
+      - run: ls -la ~
+
+      - name: Firefox
+        uses: ./
+        timeout-minutes: 3
+        with:
+          working-directory: examples/firefox
+          browser: firefox
+
+      # report screenshot size and store the screenshots as test artifacts
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-firefox
+          path: examples/firefox/cypress/screenshots
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/firefox
