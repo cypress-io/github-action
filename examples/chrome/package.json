@@ -4,7 +4,8 @@
   "description": "running Cypress using Chrome",
   "main": "index.js",
   "scripts": {
-    "test": "cypress run"
+    "test": "cypress run",
+    "info": "cypress info"
   },
   "author": "",
   "license": "ISC",
