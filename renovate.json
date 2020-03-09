@@ -1,0 +1,29 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "labels": [
+    "type: dependencies",
+    "renovate"
+  ],
+  "masterIssue": true,
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 2,
+  "timezone": "America/New_York",
+  "schedule": [
+    "every weekend"
+  ],
+  "enabled": false,
+  "packageRules": [
+    {
+      "packageNames": [
+        "cypress"
+      ],
+      "enabled": true
+    }
+  ]
+}
