@@ -15,3 +15,4 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npm run info
           working-directory: examples/chrome
+          browser: edge

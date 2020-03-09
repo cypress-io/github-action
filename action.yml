@@ -17,6 +17,9 @@ inputs:
   env:
     description: 'Sets Cypress environment variables'
     required: false
+  browser:
+    description: 'Name of the browser to use'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
