@@ -6321,6 +6321,43 @@ const ping = (url, timeout) => {
   })
 }
 
+/**
+ * Parses input command, finds the tool and
+ * the runs the command.
+ */
+const execCommand = (
+  fullCommand,
+  waitToFinish = true,
+  label = 'executing'
+) => {
+  const cwd = cypressCommandOptions.cwd
+
+  console.log('%s with command "%s"', label, fullCommand)
+  console.log('current working directory "%s"', cwd)
+
+  const args = cliParser.parse(fullCommand)
+  core.debug(`parsed command: ${args.join(' ')}`)
+
+  return io.which(args[0], true).then(toolPath => {
+    core.debug(`found command "${toolPath}"`)
+    core.debug(`with arguments ${args.slice(1).join(' ')}`)
+
+    const toolArguments = args.slice(1)
+    const argsString = toolArguments.join(' ')
+    core.debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
+    core.debug('without waiting for the promise to resolve')
+
+    const promise = exec.exec(
+      quote(toolPath),
+      toolArguments,
+      cypressCommandOptions
+    )
+    if (waitToFinish) {
+      return promise
+    }
+  })
+}
+
 const isWindows = () => os.platform() === 'win32'
 
 const homeDirectory = os.homedir()
@@ -6501,7 +6538,7 @@ const buildAppMaybe = () => {
 
   core.debug(`building application using "${buildApp}"`)
 
-  return exec.exec(buildApp, [], cypressCommandOptions)
+  return execCommand(buildApp, true, 'build app')
 }
 
 const startServerMaybe = () => {
@@ -6519,25 +6556,7 @@ const startServerMaybe = () => {
     return
   }
 
-  const cwd = cypressCommandOptions.cwd
-
-  console.log('starting server with command "%s"', startCommand)
-  console.log('current working directory "%s"', cwd)
-
-  const args = cliParser.parse(startCommand)
-  core.debug(`parsed command: ${args.join(' ')}`)
-
-  return io.which(args[0], true).then(toolPath => {
-    core.debug(`found command "${toolPath}"`)
-    core.debug(`with arguments ${args.slice(1).join(' ')}`)
-
-    const toolArguments = args.slice(1)
-    const argsString = toolArguments.join(' ')
-    core.debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
-    core.debug('without waiting for the promise to resolve')
-
-    exec.exec(quote(toolPath), toolArguments, cypressCommandOptions)
-  })
+  return execCommand(startCommand, false, 'start server')
 }
 
 const waitOnMaybe = () => {

@@ -4,13 +4,14 @@
   "description": "running Cypress using Chrome",
   "main": "index.js",
   "scripts": {
-    "test": "cypress run"
+    "test": "cypress run",
+    "info": "cypress info"
   },
   "author": "",
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "4.0.2",
+    "cypress": "4.1.0",
     "image-size": "0.8.3"
   }
 }
