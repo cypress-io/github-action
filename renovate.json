@@ -16,19 +16,5 @@
   "timezone": "America/New_York",
   "schedule": [
     "every weekend"
-  ],
-  "packageRules": [
-    {
-      "packageNames": [
-        "cypress"
-      ],
-      "enabled": true
-    },
-    {
-      "packagePatterns": [
-        "*"
-      ],
-      "enabled": false
-    }
   ]
 }
