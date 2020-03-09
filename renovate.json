@@ -17,8 +17,13 @@
   "schedule": [
     "every weekend"
   ],
-  "enabled": false,
   "packageRules": [
+    {
+      "packageNames": [
+        "*"
+      ],
+      "enabled": false
+    },
     {
       "packageNames": [
         "cypress"
