@@ -19,7 +19,7 @@
   ],
   "packageRules": [
     {
-      "packageNames": [
+      "packagePatterns": [
         "*"
       ],
       "enabled": false
