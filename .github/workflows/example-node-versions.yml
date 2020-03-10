@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
+      - run: npm -v
 
       - name: Checkout
         uses: actions/checkout@v1
