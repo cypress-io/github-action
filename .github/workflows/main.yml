@@ -8,9 +8,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-        - uses: actions/setup-node@v1
-          with:
-            node-version: '8.0.0'
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '8.0.0'
       - uses: bahmutov/npm-install@v1
       - run: npm run build
       - run: npm test
@@ -21,9 +21,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-        - uses: actions/setup-node@v1
-          with:
-            node-version: '12'
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
       - uses: bahmutov/npm-install@v1
       - run: npm run format
       - run: npm run build
