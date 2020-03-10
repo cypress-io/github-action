@@ -6,7 +6,7 @@ jobs:
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:
-        node: ['8.10', 10, 12]
+        node: [8.11, 10, 12]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
