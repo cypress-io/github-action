@@ -3,10 +3,10 @@ on: push
 jobs:
   firefox:
     runs-on: ubuntu-latest
-    container:
-      # "magical" user id that matches id for created home folder
-      # https://github.com/cypress-io/github-action/issues/104
-      options: --user 1001
+    # container:
+    #   # "magical" user id that matches id for created home folder
+    #   # https://github.com/cypress-io/github-action/issues/104
+    #   options: --user 1001
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -18,6 +18,10 @@ jobs:
       # and has permissions (user 1001)
       # drwxr-xr-x 2 1001  115
       - run: ls -la ~
+
+      - run: whoami
+      - run: su 1001
+      - run: id
 
       - name: Firefox
         uses: ./
