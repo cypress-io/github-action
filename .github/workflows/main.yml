@@ -2,12 +2,28 @@ name: main
 on: [push]
 
 jobs:
-  build-and-test:
+  build-and-test-node8:
     runs-on: ubuntu-latest
-    name: Build and test
+    name: Node8
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+        - uses: actions/setup-node@v1
+          with:
+            node-version: '8.0.0'
+      - uses: bahmutov/npm-install@v1
+      - run: npm run build
+      - run: npm test
+
+  build-and-test-node12:
+    runs-on: ubuntu-latest
+    name: Node12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        - uses: actions/setup-node@v1
+          with:
+            node-version: '12'
       - uses: bahmutov/npm-install@v1
       - run: npm run format
       - run: npm run build
@@ -17,7 +33,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     name: release
-    needs: build-and-test
+    needs: [build-and-test-node8]
     # only release from the master branch
     if: github.ref == 'refs/heads/master'
     steps:
