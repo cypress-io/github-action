@@ -6,7 +6,7 @@ jobs:
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:
-        node: [8.9, 10, 12]
+        node: [8.10, 10, 12]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -17,6 +17,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v1
+
+      # Hmm, should we rebuild the "dist" before using the action?
 
       - uses: ./
         with:
