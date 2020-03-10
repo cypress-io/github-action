@@ -33,7 +33,7 @@ jobs:
           build: npx cypress info
 
   basic-on-mac:
-    runs-on: mac-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
