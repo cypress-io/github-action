@@ -642,6 +642,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### Node versions
+
+You can run your tests across multiple Node versions.
+
+**Note:** because this action uses `npm ci` and `npx` commands, it requires at least Node 8.x
+
 ### Split install and tests
 
 Sometimes you may want to run additional commands between installation and tests. To enable this use the `install` and `runTests` parameters.
