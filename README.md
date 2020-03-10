@@ -666,7 +666,7 @@ jobs:
 
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
 
-**Note:** because this action uses `npm ci` and `npx` commands, it requires at least Node 8.x that includes the version of NPM with those commands.
+**Note:** because this action uses `npm ci` and `npx` commands, it requires at least Node 8.12 that includes the version of NPM with those commands.
 
 ### Split install and tests
 
