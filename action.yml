@@ -20,6 +20,9 @@ inputs:
   browser:
     description: 'Name of the browser to use'
     required: false
+  run:
+    description: 'Command that overrides cypress run'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
