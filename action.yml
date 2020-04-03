@@ -20,7 +20,7 @@ inputs:
   browser:
     description: 'Name of the browser to use'
     required: false
-  run:
+  command:
     description: 'Command that overrides cypress run'
     required: false
 runs:

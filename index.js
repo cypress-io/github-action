@@ -304,10 +304,14 @@ const runTests = async () => {
     return
   }
 
-  const runCommand = getInput('run')
-  if (runCommand) {
-    console.log('Running tests with custom run command')
-    return execCommand(startCommand, true, 'run cypress')
+  // export common environment variables that help run Cypress
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  core.exportVariable('TERM', 'xterm')
+
+  const customCommand = core.getInput('command')
+  if (customCommand) {
+    console.log('Using custom test command: %s', customCommand)
+    return execCommand(customCommand, true, 'run tests')
   }
 
   core.debug('Running Cypress tests')
@@ -320,9 +324,6 @@ const runTests = async () => {
 
   // TODO using yarn to run cypress when yarn is used for install
   // split potentially long
-
-  const npxPath = await io.which('npx', true)
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
   let cmd = []
   if (commandPrefix) {
@@ -439,7 +440,6 @@ const runTests = async () => {
 
   console.log('Cypress test command: npx %s', cmd.join(' '))
 
-  core.exportVariable('TERM', 'xterm')
   // since we have quoted arguments ourselves, do not double quote them
   const opts = {
     ...cypressCommandOptions,
@@ -447,6 +447,10 @@ const runTests = async () => {
   }
 
   core.debug(`in working directory "${cypressCommandOptions.cwd}"`)
+
+  const npxPath = await io.which('npx', true)
+  core.debug(`npx path: ${npxPath}`)
+
   return exec.exec(quote(npxPath), cmd, opts)
 }
 
