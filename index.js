@@ -304,10 +304,13 @@ const runTests = async () => {
     return
   }
 
-  const runCommand = getInput('run')
-  if (runCommand) {
-    console.log('Running tests with custom run command')
-    return execCommand(startCommand, true, 'run cypress')
+  const npxPath = await io.which('npx', true)
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+
+  const customCommand = core.getInput('run')
+  if (customCommand) {
+    console.log('Using custom test command: %s', customCommand)
+    return execCommand(customCommand, true, 'run tests')
   }
 
   core.debug('Running Cypress tests')
@@ -320,9 +323,6 @@ const runTests = async () => {
 
   // TODO using yarn to run cypress when yarn is used for install
   // split potentially long
-
-  const npxPath = await io.which('npx', true)
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
   let cmd = []
   if (commandPrefix) {
