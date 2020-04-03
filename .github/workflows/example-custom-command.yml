@@ -15,4 +15,4 @@ jobs:
           working-directory: examples/custom-command
 
       - name: Show saved file 🖨
-        command: cat examples/custom-command/results.json
+        run: cat examples/custom-command/results.json
