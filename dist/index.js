@@ -6587,7 +6587,9 @@ const runTests = async () => {
     return
   }
 
+  // export common environment variables that help run Cypress
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  core.exportVariable('TERM', 'xterm')
 
   const customCommand = core.getInput('command')
   if (customCommand) {
@@ -6721,7 +6723,6 @@ const runTests = async () => {
 
   console.log('Cypress test command: npx %s', cmd.join(' '))
 
-  core.exportVariable('TERM', 'xterm')
   // since we have quoted arguments ourselves, do not double quote them
   const opts = {
     ...cypressCommandOptions,
