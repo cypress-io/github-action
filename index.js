@@ -304,10 +304,9 @@ const runTests = async () => {
     return
   }
 
-  const npxPath = await io.which('npx', true)
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
 
-  const customCommand = core.getInput('run')
+  const customCommand = core.getInput('command')
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)
     return execCommand(customCommand, true, 'run tests')
@@ -447,6 +446,10 @@ const runTests = async () => {
   }
 
   core.debug(`in working directory "${cypressCommandOptions.cwd}"`)
+
+  const npxPath = await io.which('npx', true)
+  core.debug(`npx path: ${npxPath}`)
+
   return exec.exec(quote(npxPath), cmd, opts)
 }
 
