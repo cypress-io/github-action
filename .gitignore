@@ -2,3 +2,4 @@ node_modules/
 cypress/videos/
 examples/*/cypress/videos
 examples/*/cypress/screenshots
+results.json

@@ -1,0 +1,18 @@
+name: example-custom-command
+on: [push]
+jobs:
+  start:
+    # example where instead of forming the default "cypress run ..."
+    # the user can specify their own command
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v1
+
+      - name: Custom tests 🧪
+        uses: ./
+        with:
+          working-directory: examples/custom-command
+
+      - name: Show saved file 🖨
+        command: cat examples/custom-command/results.json
