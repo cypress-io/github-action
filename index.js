@@ -304,6 +304,12 @@ const runTests = async () => {
     return
   }
 
+  const runCommand = getInput('run')
+  if (runCommand) {
+    console.log('Running tests with custom run command')
+    return execCommand(startCommand, true, 'run cypress')
+  }
+
   core.debug('Running Cypress tests')
   const quoteArgument = isWindows() ? quote : I
 
