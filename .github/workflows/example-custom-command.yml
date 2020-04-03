@@ -12,6 +12,7 @@ jobs:
       - name: Custom tests 🧪
         uses: ./
         with:
+          command: npm run custom-test
           working-directory: examples/custom-command
 
       - name: Show saved file 🖨
