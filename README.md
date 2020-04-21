@@ -325,9 +325,19 @@ name: Parallel Cypress Tests
 on: [push]
 
 jobs:
+  # Create a job to create a unique identifier
+  context:
+    runs-on: ubuntu-16.04
+    outputs:
+      uuid: ${{ steps.uuid.outputs.value }}
+    steps:
+      - name: 'uuid'
+        id: uuid
+        run: echo "::set-output name=value::$GITHUB_SHA-$(date +"%s")"
   test:
     name: Cypress run
     runs-on: ubuntu-16.04
+    needs: [context]
     strategy:
       # when one test fails, DO NOT cancel the other
       # containers, because this will kill Cypress processes
@@ -340,7 +350,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-
       # because of "record" and "parallel" parameters
       # these containers will load balance all found tests among themselves
       - name: Cypress run
@@ -349,6 +358,7 @@ jobs:
           record: true
           parallel: true
           group: 'Actions example'
+          ci-build-id: ${{ needs.context.outputs.uuid }}
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -358,8 +368,6 @@ jobs:
 ```
 
 ![Parallel run](images/parallel.png)
-
-**Warning ⚠️:** Cypress action use `GITHUB_TOKEN` to get the correct branch and the number of jobs runed, making it possible to re-run without the need of pushing an empty commit. If you don't want to use the `GITHUB_TOKEN` you can still run your tests without problem with the only note that Cypress Dashboard API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name. If you attempt to re-run GitHub checks, the Dashboard thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
 
 ### Build app
 
