@@ -23,6 +23,9 @@ inputs:
   command:
     description: 'Command that overrides cypress run'
     required: false
+  project:
+    description: 'Path of project to run'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
