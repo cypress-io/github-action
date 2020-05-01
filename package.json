@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/cypress-io/github-action#readme",
   "dependencies": {
-    "@actions/core": "1.2.0",
+    "@actions/core": "1.2.4",
     "@actions/exec": "1.0.1",
     "@actions/io": "1.0.1",
     "@octokit/rest": "16.43.1",
