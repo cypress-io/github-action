@@ -212,7 +212,7 @@ const install = () => {
 
     return io.which('npm', true).then(npmPath => {
       core.debug(`npm at "${npmPath}"`)
-      return exec.exec(quote(npmPath), ['ci'], cypressCommandOptions)
+      return exec.exec(quote(npmPath), ['i'], cypressCommandOptions)
     })
   }
 }
