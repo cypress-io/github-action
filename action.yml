@@ -23,6 +23,33 @@ inputs:
   command:
     description: 'Command that overrides cypress run'
     required: false
+  start:
+    description: 'Command for starting local server in the background'
+    required: false
+  install:
+    description: 'Whether or not to run install'
+    required: false
+  wait-on:
+    description: 'Local server URL to wait for'
+    required: false
+  wait-on-timeout:
+    description: 'Amount of time to wait for wait-on url to be available'
+    required: false
+  parallel:
+    description: 'Whether or not to load balance tests using multiple containers'
+    required: false
+  group:
+    description: 'Group setting for tests'
+    required: false
+  tag:
+    description: 'Tag setting for tests'
+    required: false
+  working-directory:
+    description: 'Working directory containing Cypress folder'
+    required: false
+  headless:
+    description: 'Whether or not to use headless mode'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
