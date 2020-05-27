@@ -50,6 +50,9 @@ inputs:
   headless:
     description: 'Whether or not to use headless mode'
     required: false
+  spec:
+    description: 'Provide a specific specs to run'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
