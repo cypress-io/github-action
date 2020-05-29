@@ -6648,6 +6648,11 @@ const runTests = async () => {
     cmd.push('--spec')
     cmd.push(quoteArgument(spec))
   }
+  const project = core.getInput('project')
+  if (project) {
+    cmd.push('--project')
+    cmd.push(quoteArgument(project))
+  }
   const configFileInput = core.getInput('config-file')
   if (configFileInput) {
     cmd.push('--config-file')
