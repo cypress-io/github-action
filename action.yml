@@ -53,6 +53,9 @@ inputs:
   spec:
     description: 'Provide a specific specs to run'
     required: false
+  project:
+    description: 'Path of project to run'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
