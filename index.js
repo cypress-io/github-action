@@ -2,7 +2,7 @@
 const core = require('@actions/core')
 const exec = require('@actions/exec')
 const io = require('@actions/io')
-const { Octokit } = require('@octokit/rest')
+const { Octokit } = require('@octokit/core')
 const hasha = require('hasha')
 const got = require('got')
 const { restoreCache, saveCache } = require('cache/lib/index')
