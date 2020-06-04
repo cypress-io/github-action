@@ -32,7 +32,7 @@
     "@actions/core": "1.2.4",
     "@actions/exec": "1.0.1",
     "@actions/io": "1.0.1",
-    "@octokit/rest": "16.43.1",
+    "@octokit/core": "2.5.3",
     "argument-vector": "1.0.2",
     "cache": "github:cypress-io/github-actions-cache#8bec6cc",
     "execa": "3.3.0",
