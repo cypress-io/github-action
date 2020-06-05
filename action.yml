@@ -56,6 +56,9 @@ inputs:
   project:
     description: 'Path of project to run'
     required: false
+  command-prefix:
+    description: 'You can prefix the default test command using the command-prefix option.'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
