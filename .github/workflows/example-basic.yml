@@ -9,7 +9,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/cypress@v1
+        # uses: cypress-io/github-action@v1
         uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
