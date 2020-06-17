@@ -474,6 +474,7 @@ const runTests = async () => {
   }
 
   core.debug('Running Cypress tests using NPM module API')
+  core.debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
   const cypress = require('cypress')
   const cypressOptions = {
     headless: getInputBool('headless'),
