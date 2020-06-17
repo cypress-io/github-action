@@ -5522,7 +5522,13 @@ exports.SourceNode = __webpack_require__(54).SourceNode;
 
 
 /***/ }),
-/* 95 */,
+/* 95 */
+/***/ (function(module) {
+
+module.exports = eval("require")("cypress");
+
+
+/***/ }),
 /* 96 */,
 /* 97 */
 /***/ (function(module) {
@@ -5869,27 +5875,18 @@ const waitOnMaybe = () => {
 
 const I = x => x
 
-const runTests = async () => {
-  const runTests = getInputBool('runTests', true)
-  if (!runTests) {
-    console.log('Skipping running tests: runTests parameter is false')
-    return
-  }
-
-  // export common environment variables that help run Cypress
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  core.exportVariable('TERM', 'xterm')
-
-  const customCommand = core.getInput('command')
-  if (customCommand) {
-    console.log('Using custom test command: %s', customCommand)
-    return execCommand(customCommand, true, 'run tests')
-  }
-
-  core.debug('Running Cypress tests')
+/**
+ * Forms entire command line like "npx cypress run ..."
+ */
+const runTestsUsingCommandLine = async () => {
+  core.debug('Running Cypress tests using CLI command')
   const quoteArgument = isWindows() ? quote : I
 
   const commandPrefix = core.getInput('command-prefix')
+  if (!commandPrefix) {
+    throw new Error('Expected command prefix')
+  }
+
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
   const headless = getInputBool('headless')
@@ -5898,13 +5895,12 @@ const runTests = async () => {
   // split potentially long
 
   let cmd = []
-  if (commandPrefix) {
-    // we need to split the command prefix into individual arguments
-    // otherwise they are passed all as a single string
-    const parts = commandPrefix.split(' ')
-    cmd = cmd.concat(parts)
-    core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
-  }
+  // we need to split the command prefix into individual arguments
+  // otherwise they are passed all as a single string
+  const parts = commandPrefix.split(' ')
+  cmd = cmd.concat(parts)
+  core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
+
   // push each CLI argument separately
   cmd.push('cypress')
   cmd.push('run')
@@ -5947,6 +5943,8 @@ const runTests = async () => {
     cmd.push('--config-file')
     cmd.push(quoteArgument(configFileInput))
   }
+
+  // TODO factor out
   if (parallel || group) {
     const {
       GITHUB_WORKFLOW,
@@ -6029,6 +6027,49 @@ const runTests = async () => {
   core.debug(`npx path: ${npxPath}`)
 
   return exec.exec(quote(npxPath), cmd, opts)
+}
+
+const runTests = async () => {
+  const runTests = getInputBool('runTests', true)
+  if (!runTests) {
+    console.log('Skipping running tests: runTests parameter is false')
+    return
+  }
+
+  // export common environment variables that help run Cypress
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  core.exportVariable('TERM', 'xterm')
+
+  const customCommand = core.getInput('command')
+  if (customCommand) {
+    console.log('Using custom test command: %s', customCommand)
+    return execCommand(customCommand, true, 'run tests')
+  }
+
+  const commandPrefix = core.getInput('command-prefix')
+  if (commandPrefix) {
+    return runTestsUsingCommandLine()
+  }
+
+  core.debug('Running Cypress tests using NPM module API')
+  const cypress = __webpack_require__(95)
+  const cypressOptions = {
+    headless: getInputBool('headless'),
+    record: getInputBool('record'),
+    parallel: getInputBool('parallel'),
+    group: core.getInput('group'),
+    tag: core.getInput('tag'),
+    config: core.getInput('config'),
+    spec: core.getInput('spec'),
+    configFile: core.getInput('config-file'),
+    project: core.getInput('project'),
+    browser: core.getInput('browser'),
+    env: core.getInput('env')
+  }
+  // TODO add ci build id
+
+  core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
+  return cypress.run(cypressOptions)
 }
 
 const installMaybe = () => {
@@ -24672,7 +24713,7 @@ module.exports = function isExtendable(val) {
 /* 482 */
 /***/ (function(module) {
 
-module.exports = {"_args":[["got@9.6.0","/Users/gregor/Projects/cypress-github-action"]],"_from":"got@9.6.0","_id":"got@9.6.0","_inBundle":false,"_integrity":"sha512-R7eWptXuGYxwijs0eV+v3o6+XH1IqVK8dJOEecQfTmkncw9AV4dcw/Dhxi8MdlqPthxxpZyizMzyg8RTmEsG+Q==","_location":"/got","_phantomChildren":{"pump":"3.0.0"},"_requested":{"type":"version","registry":true,"raw":"got@9.6.0","name":"got","escapedName":"got","rawSpec":"9.6.0","saveSpec":null,"fetchSpec":"9.6.0"},"_requiredBy":["/"],"_resolved":"https://registry.npmjs.org/got/-/got-9.6.0.tgz","_spec":"9.6.0","_where":"/Users/gregor/Projects/cypress-github-action","ava":{"concurrency":4},"browser":{"decompress-response":false,"electron":false},"bugs":{"url":"https://github.com/sindresorhus/got/issues"},"dependencies":{"@sindresorhus/is":"^0.14.0","@szmarczak/http-timer":"^1.1.2","cacheable-request":"^6.0.0","decompress-response":"^3.3.0","duplexer3":"^0.1.4","get-stream":"^4.1.0","lowercase-keys":"^1.0.1","mimic-response":"^1.0.1","p-cancelable":"^1.0.0","to-readable-stream":"^1.0.0","url-parse-lax":"^3.0.0"},"description":"Simplified HTTP requests","devDependencies":{"ava":"^1.1.0","coveralls":"^3.0.0","delay":"^4.1.0","form-data":"^2.3.3","get-port":"^4.0.0","np":"^3.1.0","nyc":"^13.1.0","p-event":"^2.1.0","pem":"^1.13.2","proxyquire":"^2.0.1","sinon":"^7.2.2","slow-stream":"0.0.4","tempfile":"^2.0.0","tempy":"^0.2.1","tough-cookie":"^3.0.0","xo":"^0.24.0"},"engines":{"node":">=8.6"},"files":["source"],"homepage":"https://github.com/sindresorhus/got#readme","keywords":["http","https","get","got","url","uri","request","util","utility","simple","curl","wget","fetch","net","network","electron"],"license":"MIT","main":"source","name":"got","repository":{"type":"git","url":"git+https://github.com/sindresorhus/got.git"},"scripts":{"release":"np","test":"xo && nyc ava"},"version":"9.6.0"};
+module.exports = {"_from":"got","_id":"got@9.6.0","_inBundle":false,"_integrity":"sha512-R7eWptXuGYxwijs0eV+v3o6+XH1IqVK8dJOEecQfTmkncw9AV4dcw/Dhxi8MdlqPthxxpZyizMzyg8RTmEsG+Q==","_location":"/got","_phantomChildren":{"pump":"3.0.0"},"_requested":{"type":"tag","registry":true,"raw":"got","name":"got","escapedName":"got","rawSpec":"","saveSpec":null,"fetchSpec":"latest"},"_requiredBy":["#USER","/"],"_resolved":"https://registry.npmjs.org/got/-/got-9.6.0.tgz","_shasum":"edf45e7d67f99545705de1f7bbeeeb121765ed85","_spec":"got","_where":"/Users/gleb/git/github-action","ava":{"concurrency":4},"browser":{"decompress-response":false,"electron":false},"bugs":{"url":"https://github.com/sindresorhus/got/issues"},"bundleDependencies":false,"dependencies":{"@sindresorhus/is":"^0.14.0","@szmarczak/http-timer":"^1.1.2","cacheable-request":"^6.0.0","decompress-response":"^3.3.0","duplexer3":"^0.1.4","get-stream":"^4.1.0","lowercase-keys":"^1.0.1","mimic-response":"^1.0.1","p-cancelable":"^1.0.0","to-readable-stream":"^1.0.0","url-parse-lax":"^3.0.0"},"deprecated":false,"description":"Simplified HTTP requests","devDependencies":{"ava":"^1.1.0","coveralls":"^3.0.0","delay":"^4.1.0","form-data":"^2.3.3","get-port":"^4.0.0","np":"^3.1.0","nyc":"^13.1.0","p-event":"^2.1.0","pem":"^1.13.2","proxyquire":"^2.0.1","sinon":"^7.2.2","slow-stream":"0.0.4","tempfile":"^2.0.0","tempy":"^0.2.1","tough-cookie":"^3.0.0","xo":"^0.24.0"},"engines":{"node":">=8.6"},"files":["source"],"homepage":"https://github.com/sindresorhus/got#readme","keywords":["http","https","get","got","url","uri","request","util","utility","simple","curl","wget","fetch","net","network","electron"],"license":"MIT","main":"source","name":"got","repository":{"type":"git","url":"git+https://github.com/sindresorhus/got.git"},"scripts":{"release":"np","test":"xo && nyc ava"},"version":"9.6.0"};
 
 /***/ }),
 /* 483 */,

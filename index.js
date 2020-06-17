@@ -297,27 +297,18 @@ const waitOnMaybe = () => {
 
 const I = x => x
 
-const runTests = async () => {
-  const runTests = getInputBool('runTests', true)
-  if (!runTests) {
-    console.log('Skipping running tests: runTests parameter is false')
-    return
-  }
-
-  // export common environment variables that help run Cypress
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  core.exportVariable('TERM', 'xterm')
-
-  const customCommand = core.getInput('command')
-  if (customCommand) {
-    console.log('Using custom test command: %s', customCommand)
-    return execCommand(customCommand, true, 'run tests')
-  }
-
-  core.debug('Running Cypress tests')
+/**
+ * Forms entire command line like "npx cypress run ..."
+ */
+const runTestsUsingCommandLine = async () => {
+  core.debug('Running Cypress tests using CLI command')
   const quoteArgument = isWindows() ? quote : I
 
   const commandPrefix = core.getInput('command-prefix')
+  if (!commandPrefix) {
+    throw new Error('Expected command prefix')
+  }
+
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
   const headless = getInputBool('headless')
@@ -326,13 +317,12 @@ const runTests = async () => {
   // split potentially long
 
   let cmd = []
-  if (commandPrefix) {
-    // we need to split the command prefix into individual arguments
-    // otherwise they are passed all as a single string
-    const parts = commandPrefix.split(' ')
-    cmd = cmd.concat(parts)
-    core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
-  }
+  // we need to split the command prefix into individual arguments
+  // otherwise they are passed all as a single string
+  const parts = commandPrefix.split(' ')
+  cmd = cmd.concat(parts)
+  core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
+
   // push each CLI argument separately
   cmd.push('cypress')
   cmd.push('run')
@@ -375,6 +365,8 @@ const runTests = async () => {
     cmd.push('--config-file')
     cmd.push(quoteArgument(configFileInput))
   }
+
+  // TODO factor out
   if (parallel || group) {
     const {
       GITHUB_WORKFLOW,
@@ -457,6 +449,49 @@ const runTests = async () => {
   core.debug(`npx path: ${npxPath}`)
 
   return exec.exec(quote(npxPath), cmd, opts)
+}
+
+const runTests = async () => {
+  const runTests = getInputBool('runTests', true)
+  if (!runTests) {
+    console.log('Skipping running tests: runTests parameter is false')
+    return
+  }
+
+  // export common environment variables that help run Cypress
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  core.exportVariable('TERM', 'xterm')
+
+  const customCommand = core.getInput('command')
+  if (customCommand) {
+    console.log('Using custom test command: %s', customCommand)
+    return execCommand(customCommand, true, 'run tests')
+  }
+
+  const commandPrefix = core.getInput('command-prefix')
+  if (commandPrefix) {
+    return runTestsUsingCommandLine()
+  }
+
+  core.debug('Running Cypress tests using NPM module API')
+  const cypress = require('cypress')
+  const cypressOptions = {
+    headless: getInputBool('headless'),
+    record: getInputBool('record'),
+    parallel: getInputBool('parallel'),
+    group: core.getInput('group'),
+    tag: core.getInput('tag'),
+    config: core.getInput('config'),
+    spec: core.getInput('spec'),
+    configFile: core.getInput('config-file'),
+    project: core.getInput('project'),
+    browser: core.getInput('browser'),
+    env: core.getInput('env')
+  }
+  // TODO add ci build id
+
+  core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
+  return cypress.run(cypressOptions)
 }
 
 const installMaybe = () => {
