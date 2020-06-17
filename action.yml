@@ -26,8 +26,17 @@ inputs:
   start:
     description: 'Command for starting local server in the background'
     required: false
+  start-windows:
+    description: 'A different start command on Windows'
+    required: false
+  build:
+    description: 'Command to run in build step before starting tests'
+    required: false
   install:
     description: 'Whether or not to run install'
+    required: false
+  runTests:
+    description: 'Whether or not to run tests'
     required: false
   wait-on:
     description: 'Local server URL to wait for'
@@ -58,6 +67,12 @@ inputs:
     required: false
   command-prefix:
     description: 'You can prefix the default test command using the command-prefix option.'
+    required: false
+  ci-build-id:
+    description: 'ID associates multiple CI machines to one test run'
+    required: false
+  cache-key:
+    description: 'Custom cache key'
     required: false
 runs:
   using: 'node12'
