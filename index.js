@@ -486,16 +486,34 @@ const runTests = async () => {
   const cypressOptions = {
     headless: getInputBool('headless'),
     record: getInputBool('record'),
-    parallel: getInputBool('parallel'),
-    group: core.getInput('group'),
-    tag: core.getInput('tag'),
-    config: core.getInput('config'),
-    spec: core.getInput('spec'),
-    configFile: core.getInput('config-file'),
-    project: core.getInput('project'),
-    browser: core.getInput('browser'),
-    env: core.getInput('env')
+    parallel: getInputBool('parallel')
   }
+
+  if (core.getInput('group')) {
+    cypressOptions.group = core.getInput('group')
+  }
+  if (core.getInput('tag')) {
+    cypressOptions.tag = core.getInput('tag')
+  }
+  if (core.getInput('config')) {
+    cypressOptions.config = core.getInput('config')
+  }
+  if (core.getInput('spec')) {
+    cypressOptions.spec = core.getInput('spec')
+  }
+  if (core.getInput('config-file')) {
+    cypressOptions.configFile = core.getInput('config-file')
+  }
+  if (core.getInput('project')) {
+    cypressOptions.project = core.getInput('project')
+  }
+  if (core.getInput('browser')) {
+    cypressOptions.browser = core.getInput('browser')
+  }
+  if (core.getInput('env')) {
+    cypressOptions.env = core.getInput('env')
+  }
+
   // TODO add ci build id
 
   core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
