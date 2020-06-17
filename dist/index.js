@@ -6078,6 +6078,8 @@ const runTests = async () => {
   }
   if (core.getInput('project')) {
     cypressOptions.project = core.getInput('project')
+  } else {
+    cypressOptions.project = cypressCommandOptions.cwd
   }
   if (core.getInput('browser')) {
     cypressOptions.browser = core.getInput('browser')
