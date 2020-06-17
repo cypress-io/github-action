@@ -476,13 +476,13 @@ const runTests = async () => {
   core.debug('Running Cypress tests using NPM module API')
   core.debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
   core.debug(`working directory ${workingDirectory}`)
-  core.debug(
-    `resolved cypress ${require.resolve('cypress', {
+  const cypressModulePath =
+    require.resolve('cypress', {
       paths: [workingDirectory]
-    })}`
-  )
+    }) || 'cypress'
+  core.debug(`resolved cypress ${cypressModulePath}`)
 
-  const cypress = require('cypress')
+  const cypress = require(cypressModulePath)
   const cypressOptions = {
     headless: getInputBool('headless'),
     record: getInputBool('record'),

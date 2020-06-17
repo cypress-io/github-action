@@ -5522,13 +5522,7 @@ exports.SourceNode = __webpack_require__(54).SourceNode;
 
 
 /***/ }),
-/* 95 */
-/***/ (function(module) {
-
-module.exports = eval("require")("cypress");
-
-
-/***/ }),
+/* 95 */,
 /* 96 */,
 /* 97 */
 /***/ (function(module) {
@@ -6054,13 +6048,13 @@ const runTests = async () => {
   core.debug('Running Cypress tests using NPM module API')
   core.debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
   core.debug(`working directory ${workingDirectory}`)
-  core.debug(
-    `resolved cypress ${require.resolve('cypress', {
+  const cypressModulePath =
+    require.resolve('cypress', {
       paths: [workingDirectory]
-    })}`
-  )
+    }) || 'cypress'
+  core.debug(`resolved cypress ${cypressModulePath}`)
 
-  const cypress = __webpack_require__(95)
+  const cypress = require(cypressModulePath)
   const cypressOptions = {
     headless: getInputBool('headless'),
     record: getInputBool('record'),
