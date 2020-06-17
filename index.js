@@ -499,7 +499,31 @@ const runTests = async () => {
   // TODO add ci build id
 
   core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
-  return cypress.run(cypressOptions)
+
+  const onTestsFinished = testResults => {
+    if (testResults.failures) {
+      console.error('Test run failed, code %d', testResults.failures)
+      if (testResults.message) {
+        console.error(testResults.message)
+      }
+
+      return Promise.reject(
+        new Error(testResults.message || 'Tests failed')
+      )
+    }
+
+    core.debug(`Cypress tests: ${testResults.totalFailed} failed`)
+    return testResults.totalFailed
+  }
+
+  const onTestsError = e => {
+    console.error(e)
+    return Promise.reject(e)
+  }
+
+  return cypress
+    .run(cypressOptions)
+    .then(onTestsFinished, onTestsError)
 }
 
 const installMaybe = () => {
