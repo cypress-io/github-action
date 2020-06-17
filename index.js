@@ -80,6 +80,7 @@ const isWindows = () => os.platform() === 'win32'
 const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
 
+const startWorkingDirectory = process.cwd()
 const workingDirectory =
   core.getInput('working-directory') || process.cwd()
 
@@ -504,10 +505,10 @@ const runTests = async () => {
   if (core.getInput('config-file')) {
     cypressOptions.configFile = core.getInput('config-file')
   }
+
+  // if the user set the explicit folder, use that
   if (core.getInput('project')) {
     cypressOptions.project = core.getInput('project')
-  } else {
-    cypressOptions.project = cypressCommandOptions.cwd
   }
   if (core.getInput('browser')) {
     cypressOptions.browser = core.getInput('browser')
@@ -521,6 +522,8 @@ const runTests = async () => {
   core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = testResults => {
+    process.chdir(startWorkingDirectory)
+
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
       if (testResults.message) {
@@ -537,10 +540,13 @@ const runTests = async () => {
   }
 
   const onTestsError = e => {
+    process.chdir(startWorkingDirectory)
+
     console.error(e)
     return Promise.reject(e)
   }
 
+  process.chdir(workingDirectory)
   return cypress
     .run(cypressOptions)
     .then(onTestsFinished, onTestsError)
