@@ -1,0 +1,22 @@
+name: example-recording
+on: [push]
+jobs:
+  basic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v1
+        uses: ./
+        with:
+          working-directory: examples/recording
+          record: true
+          group: Recording example
+          tag: action
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
