@@ -781,6 +781,33 @@ Read [DEVELOPMENT.md](DEVELOPMENT.md)
 
 ## Extras
 
+### Outputs
+
+This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress Dashboard](https://on.cypress.io/dashboard-introduction), see [action.yml](action.yml). To use this output:
+
+```yml
+- name: Cypress tests
+  uses: cypress-io/github-action@v2
+  # let's give this action an ID so we can refer
+  # to its output values later
+  id: cypress
+  # Continue the build in case of an error, as we need to set the
+  # commit status in the next step, both in case of success and failure
+  continue-on-error: true
+  with:
+    record: true
+  env:
+    CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
+- name: Print Dashboard URL
+  run: |
+    echo Cypress finished with: ${{ steps.cypress.outcome }}
+    echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
+```
+
+[![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
+
+### Docker image
+
 If your repository does not have `package.json` or `yarn.json` (maybe it contains a static site and does not need any dependencies), you can run Cypress tests using `cypress/included:...` [Cypress Docker images](https://github.com/cypress-io/cypress-docker-images/tree/master/included). In that case you don't even need this GH Action, instead use the Docker container and write `cypress run` command like this example from [cypress-gh-action-included](https://github.com/bahmutov/cypress-gh-action-included)
 
 ```yml

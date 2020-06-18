@@ -6141,6 +6141,11 @@ const runTests = async () => {
     }
 
     core.debug(`Cypress tests: ${testResults.totalFailed} failed`)
+
+    const dashboardUrl = testResults.runUrl
+    core.debug(`Dashboard url ${dashboardUrl}`)
+    core.setOutput('dashboardUrl', dashboardUrl)
+
     return testResults.totalFailed
   }
 
