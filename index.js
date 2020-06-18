@@ -12,6 +12,7 @@ const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
+const { debug } = require('console')
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -80,6 +81,7 @@ const isWindows = () => os.platform() === 'win32'
 const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
 
+const startWorkingDirectory = process.cwd()
 const workingDirectory =
   core.getInput('working-directory') || process.cwd()
 
@@ -297,42 +299,91 @@ const waitOnMaybe = () => {
 
 const I = x => x
 
-const runTests = async () => {
-  const runTests = getInputBool('runTests', true)
-  if (!runTests) {
-    console.log('Skipping running tests: runTests parameter is false')
-    return
+/**
+ * Asks Cypress API if there were already builds for this commit.
+ * In that case increments the count to get unique parallel id.
+ */
+const getCiBuildId = async () => {
+  const {
+    GITHUB_WORKFLOW,
+    GITHUB_SHA,
+    GITHUB_TOKEN,
+    GITHUB_RUN_ID,
+    GITHUB_REPOSITORY
+  } = process.env
+
+  const [owner, repo] = GITHUB_REPOSITORY.split('/')
+  let branch
+  let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
+
+  if (GITHUB_TOKEN) {
+    const client = new Octokit({
+      auth: GITHUB_TOKEN
+    })
+
+    const resp = await client.request(
+      'GET /repos/:owner/:repo/actions/runs/:run_id',
+      {
+        owner,
+        repo,
+        run_id: parseInt(GITHUB_RUN_ID)
+      }
+    )
+
+    if (resp && resp.data && resp.data.head_branch) {
+      branch = resp.data.head_branch
+      // core.exportVariable('GH_BRANCH', resp.data.head_branch)
+    }
+
+    const runsList = await client.request(
+      'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
+      {
+        owner,
+        repo,
+        run_id: parseInt(GITHUB_RUN_ID)
+      }
+    )
+
+    if (runsList && runsList.data) {
+      // Use the total_count, every time a job is restarted the list has
+      // the number of jobs including current run and previous runs, every time
+      // it appends the result.
+      parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
+    }
   }
 
-  // export common environment variables that help run Cypress
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  core.exportVariable('TERM', 'xterm')
+  core.debug(
+    `determined branch ${branch} and parallel id ${parallelId}`
+  )
+  return { branch, parallelId }
+}
 
-  const customCommand = core.getInput('command')
-  if (customCommand) {
-    console.log('Using custom test command: %s', customCommand)
-    return execCommand(customCommand, true, 'run tests')
-  }
-
-  core.debug('Running Cypress tests')
+/**
+ * Forms entire command line like "npx cypress run ..."
+ */
+const runTestsUsingCommandLine = async () => {
+  core.debug('Running Cypress tests using CLI command')
   const quoteArgument = isWindows() ? quote : I
 
   const commandPrefix = core.getInput('command-prefix')
+  if (!commandPrefix) {
+    throw new Error('Expected command prefix')
+  }
+
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
   const headless = getInputBool('headless')
 
   // TODO using yarn to run cypress when yarn is used for install
-  // split potentially long
+  // split potentially long command?
 
   let cmd = []
-  if (commandPrefix) {
-    // we need to split the command prefix into individual arguments
-    // otherwise they are passed all as a single string
-    const parts = commandPrefix.split(' ')
-    cmd = cmd.concat(parts)
-    core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
-  }
+  // we need to split the command prefix into individual arguments
+  // otherwise they are passed all as a single string
+  const parts = commandPrefix.split(' ')
+  cmd = cmd.concat(parts)
+  core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
+
   // push each CLI argument separately
   cmd.push('cypress')
   cmd.push('run')
@@ -375,51 +426,11 @@ const runTests = async () => {
     cmd.push('--config-file')
     cmd.push(quoteArgument(configFileInput))
   }
+
   if (parallel || group) {
-    const {
-      GITHUB_WORKFLOW,
-      GITHUB_SHA,
-      GITHUB_TOKEN,
-      GITHUB_RUN_ID,
-      GITHUB_REPOSITORY
-    } = process.env
-
-    const [owner, repo] = GITHUB_REPOSITORY.split('/')
-    let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
-
-    if (GITHUB_TOKEN) {
-      const client = new Octokit({
-        auth: GITHUB_TOKEN
-      })
-
-      const resp = await client.request(
-        'GET /repos/:owner/:repo/actions/runs/:run_id',
-        {
-          owner,
-          repo,
-          run_id: GITHUB_RUN_ID
-        }
-      )
-
-      if (resp && resp.data) {
-        core.exportVariable('GH_BRANCH', resp.data.head_branch)
-      }
-
-      const runsList = await client.request(
-        'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
-        {
-          owner,
-          repo,
-          run_id: GITHUB_RUN_ID
-        }
-      )
-
-      if (runsList && runsList.data) {
-        // Use the total_count, every time a job is restarted the list has
-        // the number of jobs including current run and previous runs, every time
-        // it appends the result.
-        parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
-      }
+    const { branch, parallelId } = await getCiBuildId()
+    if (branch) {
+      core.exportVariable('GH_BRANCH', branch)
     }
 
     const customCiBuildId = core.getInput('ci-build-id') || parallelId
@@ -457,6 +468,116 @@ const runTests = async () => {
   core.debug(`npx path: ${npxPath}`)
 
   return exec.exec(quote(npxPath), cmd, opts)
+}
+
+const runTests = async () => {
+  const runTests = getInputBool('runTests', true)
+  if (!runTests) {
+    console.log('Skipping running tests: runTests parameter is false')
+    return
+  }
+
+  // export common environment variables that help run Cypress
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  core.exportVariable('TERM', 'xterm')
+
+  const customCommand = core.getInput('command')
+  if (customCommand) {
+    console.log('Using custom test command: %s', customCommand)
+    return execCommand(customCommand, true, 'run tests')
+  }
+
+  const commandPrefix = core.getInput('command-prefix')
+  if (commandPrefix) {
+    return runTestsUsingCommandLine()
+  }
+
+  core.debug('Running Cypress tests using NPM module API')
+  core.debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
+  core.debug(`working directory ${workingDirectory}`)
+  const cypressModulePath =
+    require.resolve('cypress', {
+      paths: [workingDirectory]
+    }) || 'cypress'
+  core.debug(`resolved cypress ${cypressModulePath}`)
+
+  const cypress = require(cypressModulePath)
+  const cypressOptions = {
+    headless: getInputBool('headless'),
+    record: getInputBool('record'),
+    parallel: getInputBool('parallel')
+  }
+
+  if (core.getInput('group')) {
+    cypressOptions.group = core.getInput('group')
+  }
+  if (core.getInput('tag')) {
+    cypressOptions.tag = core.getInput('tag')
+  }
+  if (core.getInput('config')) {
+    cypressOptions.config = core.getInput('config')
+  }
+  if (core.getInput('spec')) {
+    cypressOptions.spec = core.getInput('spec')
+  }
+  if (core.getInput('config-file')) {
+    cypressOptions.configFile = core.getInput('config-file')
+  }
+
+  // if the user set the explicit folder, use that
+  if (core.getInput('project')) {
+    cypressOptions.project = core.getInput('project')
+  }
+  if (core.getInput('browser')) {
+    cypressOptions.browser = core.getInput('browser')
+  }
+  if (core.getInput('env')) {
+    cypressOptions.env = core.getInput('env')
+  }
+
+  if (cypressOptions.parallel || cypressOptions.group) {
+    const { branch, parallelId } = await getCiBuildId()
+    if (branch) {
+      core.exportVariable('GH_BRANCH', branch)
+    }
+
+    const customCiBuildId = core.getInput('ci-build-id') || parallelId
+    if (customCiBuildId) {
+      cypressOptions.ciBuildId = customCiBuildId
+    }
+  }
+
+  core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
+
+  const onTestsFinished = testResults => {
+    process.chdir(startWorkingDirectory)
+
+    if (testResults.failures) {
+      console.error('Test run failed, code %d', testResults.failures)
+      if (testResults.message) {
+        console.error(testResults.message)
+      }
+
+      return Promise.reject(
+        new Error(testResults.message || 'Tests failed')
+      )
+    }
+
+    core.debug(`Cypress tests: ${testResults.totalFailed} failed`)
+    return testResults.totalFailed
+  }
+
+  const onTestsError = e => {
+    process.chdir(startWorkingDirectory)
+
+    console.error(e)
+    return Promise.reject(e)
+  }
+
+  process.chdir(workingDirectory)
+  return cypress
+    .run(cypressOptions)
+    .then(onTestsFinished, onTestsError)
 }
 
 const installMaybe = () => {
