@@ -9,7 +9,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v1
+        # uses: cypress-io/github-action@v2
         uses: ./
         with:
           working-directory: examples/recording

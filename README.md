@@ -24,7 +24,7 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
 ```
 
 [![Basic example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
@@ -43,7 +43,7 @@ jobs:
     name: E2E on Chrome
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           browser: chrome
 ```
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           browser: chrome
           headless: true
@@ -83,7 +83,7 @@ jobs:
     container: cypress/browsers:node12.13.0-chrome78-ff70
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           browser: chrome
 ```
@@ -103,7 +103,7 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           browser: firefox
 ```
@@ -122,7 +122,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           browser: edge
 ```
@@ -146,7 +146,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Cypress run with env
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           env: host=api.dev.local,port=4222
 ```
@@ -169,7 +169,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           spec: cypress/integration/spec1.js
 ```
@@ -191,7 +191,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           project: ./some/nested/folder
 ```
@@ -212,7 +212,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           record: true
         env:
@@ -249,7 +249,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           record: true
           tag: node-${{ matrix.node }}
@@ -277,7 +277,7 @@ jobs:
     name: Artifacts
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
       # after the test run completes
       # store videos and any screenshots
       # NOTE: screenshots will be generated only if E2E test failed
@@ -313,7 +313,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           config: pageLoadTimeout=100000,watchForFileChanges=false
 ```
@@ -334,7 +334,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           config-file: tests/cypress-config.json
 ```
@@ -368,7 +368,7 @@ jobs:
       # because of "record" and "parallel" parameters
       # these containers will load balance all found tests among themselves
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           record: true
           parallel: true
@@ -399,7 +399,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           build: npm run build
 ```
@@ -418,7 +418,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           start: npm start
 ```
@@ -435,7 +435,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           # Linux and MacOS
           start: npm start
@@ -459,7 +459,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           start: npm start
           # quote the url to be safe against YML parsing surprises
@@ -469,7 +469,7 @@ jobs:
 By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout in seconds using `wait-on-timeout`.
 
 ```yml
-- uses: cypress-io/github-action@v1
+- uses: cypress-io/github-action@v2
   with:
     start: npm start
     wait-on: 'http://localhost:8080/status'
@@ -491,7 +491,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           start: npm start
           # quote the url to be safe against YML parsing surprises
@@ -536,7 +536,7 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           record: true
           parallel: true
@@ -572,7 +572,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           start: npm start
           working-directory: e2e
@@ -616,7 +616,7 @@ jobs:
 
       # Cypress has its own package.json in folder "e2e"
       - name: Install Cypress and run tests
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           working-directory: e2e
 ```
@@ -638,7 +638,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
         with:
           working-directory: examples/start-and-yarn-workspaces/workspace-1
           build: yarn run build
@@ -673,7 +673,7 @@ jobs:
       # run Cypress tests and record them under the same run
       # associated with commit SHA and just give a different group name
       - name: Cypress run
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           record: true
           group: Tests on Node v${{ matrix.node }}
@@ -702,7 +702,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v1
+      - uses: cypress-io/github-action@v2
 ```
 
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
@@ -722,13 +722,13 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Install dependencies
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           # just perform install
           runTests: false
       - run: yarn lint
       - name: Run e2e tests
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           # we have already installed all dependencies above
           install: false
