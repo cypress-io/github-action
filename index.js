@@ -12,6 +12,7 @@ const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
+const { debug } = require('console')
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -299,6 +300,65 @@ const waitOnMaybe = () => {
 const I = x => x
 
 /**
+ * Asks Cypress API if there were already builds for this commit.
+ * In that case increments the count to get unique parallel id.
+ */
+const getCiBuildId = async () => {
+  const {
+    GITHUB_WORKFLOW,
+    GITHUB_SHA,
+    GITHUB_TOKEN,
+    GITHUB_RUN_ID,
+    GITHUB_REPOSITORY
+  } = process.env
+
+  const [owner, repo] = GITHUB_REPOSITORY.split('/')
+  let branch
+  let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
+
+  if (GITHUB_TOKEN) {
+    const client = new Octokit({
+      auth: GITHUB_TOKEN
+    })
+
+    const resp = await client.request(
+      'GET /repos/:owner/:repo/actions/runs/:run_id',
+      {
+        owner,
+        repo,
+        run_id: parseInt(GITHUB_RUN_ID)
+      }
+    )
+
+    if (resp && resp.data && resp.data.head_branch) {
+      branch = resp.data.head_branch
+      // core.exportVariable('GH_BRANCH', resp.data.head_branch)
+    }
+
+    const runsList = await client.request(
+      'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
+      {
+        owner,
+        repo,
+        run_id: parseInt(GITHUB_RUN_ID)
+      }
+    )
+
+    if (runsList && runsList.data) {
+      // Use the total_count, every time a job is restarted the list has
+      // the number of jobs including current run and previous runs, every time
+      // it appends the result.
+      parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
+    }
+  }
+
+  core.debug(
+    `determined branch ${branch} and parallel id ${parallelId}`
+  )
+  return { branch, parallelId }
+}
+
+/**
  * Forms entire command line like "npx cypress run ..."
  */
 const runTestsUsingCommandLine = async () => {
@@ -315,7 +375,7 @@ const runTestsUsingCommandLine = async () => {
   const headless = getInputBool('headless')
 
   // TODO using yarn to run cypress when yarn is used for install
-  // split potentially long
+  // split potentially long command?
 
   let cmd = []
   // we need to split the command prefix into individual arguments
@@ -367,52 +427,10 @@ const runTestsUsingCommandLine = async () => {
     cmd.push(quoteArgument(configFileInput))
   }
 
-  // TODO factor out
   if (parallel || group) {
-    const {
-      GITHUB_WORKFLOW,
-      GITHUB_SHA,
-      GITHUB_TOKEN,
-      GITHUB_RUN_ID,
-      GITHUB_REPOSITORY
-    } = process.env
-
-    const [owner, repo] = GITHUB_REPOSITORY.split('/')
-    let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
-
-    if (GITHUB_TOKEN) {
-      const client = new Octokit({
-        auth: GITHUB_TOKEN
-      })
-
-      const resp = await client.request(
-        'GET /repos/:owner/:repo/actions/runs/:run_id',
-        {
-          owner,
-          repo,
-          run_id: GITHUB_RUN_ID
-        }
-      )
-
-      if (resp && resp.data) {
-        core.exportVariable('GH_BRANCH', resp.data.head_branch)
-      }
-
-      const runsList = await client.request(
-        'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
-        {
-          owner,
-          repo,
-          run_id: GITHUB_RUN_ID
-        }
-      )
-
-      if (runsList && runsList.data) {
-        // Use the total_count, every time a job is restarted the list has
-        // the number of jobs including current run and previous runs, every time
-        // it appends the result.
-        parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
-      }
+    const { branch, parallelId } = await getCiBuildId()
+    if (branch) {
+      core.exportVariable('GH_BRANCH', branch)
     }
 
     const customCiBuildId = core.getInput('ci-build-id') || parallelId
@@ -517,7 +535,17 @@ const runTests = async () => {
     cypressOptions.env = core.getInput('env')
   }
 
-  // TODO add ci build id
+  if (cypressOptions.parallel || cypressOptions.group) {
+    const { branch, parallelId } = await getCiBuildId()
+    if (branch) {
+      core.exportVariable('GH_BRANCH', branch)
+    }
+
+    const customCiBuildId = core.getInput('ci-build-id') || parallelId
+    if (customCiBuildId) {
+      cypressOptions.ciBuildId = customCiBuildId
+    }
+  }
 
   core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
