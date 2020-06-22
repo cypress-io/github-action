@@ -470,6 +470,11 @@ const runTestsUsingCommandLine = async () => {
   return exec.exec(quote(npxPath), cmd, opts)
 }
 
+/**
+ * Run Cypress tests by collecting input parameters
+ * and using Cypress module API to run tests.
+ * @see https://on.cypress.io/module-api
+ */
 const runTests = async () => {
   const runTests = getInputBool('runTests', true)
   if (!runTests) {
@@ -559,7 +564,7 @@ const runTests = async () => {
       }
 
       return Promise.reject(
-        new Error(testResults.message || 'Tests failed')
+        new Error(testResults.message || 'Error running Cypress')
       )
     }
 
@@ -569,7 +574,11 @@ const runTests = async () => {
     core.debug(`Dashboard url ${dashboardUrl}`)
     core.setOutput('dashboardUrl', dashboardUrl)
 
-    return testResults.totalFailed
+    if (testResults.totalFailed) {
+      throw Promise.reject(
+        new Error(`Cypress tests: ${testResults.totalFailed} failed`)
+      )
+    }
   }
 
   const onTestsError = e => {
@@ -625,6 +634,8 @@ installMaybe()
     process.exit(0)
   })
   .catch(error => {
+    // final catch - when anything goes wrong, throw an error
+    // and exit the action with non-zero code
     console.log(error)
     core.setFailed(error.message)
     process.exit(1)
