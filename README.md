@@ -223,22 +223,25 @@ jobs:
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
-### Pass `quiet` flag for cypress run to silence any Cypress specific output from stdout
+### Quiet flag
+
+You can provide `quiet` flag for cypress run to silence any Cypress specific output from stdout
 
 ```yml
 name: example-quiet
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: ./
         with:
+          working-directory: examples/quiet
           quiet: true
 ```
 
