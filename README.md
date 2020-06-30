@@ -223,6 +223,27 @@ jobs:
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
+### Pass `quiet` flag for cypress run to silence any Cypress specific output from stdout
+
+```yml
+name: example-quiet
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests with `quiet` parameter
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          quiet: true
+```
+
+[![quiet example](https://github.com/cypress-io/github-action/workflows/example-quiet/badge.svg?branch=master)](.github/workflows/example-quiet.yml)
+
 ### Tag recordings
 
 You can pass a single or multiple tags when recording a run. For example
