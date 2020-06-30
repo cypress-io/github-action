@@ -1,20 +1,17 @@
 {
   "name": "example-quiet",
   "version": "1.0.0",
-  "description": "e2e tests with quiet flag",
+  "description": "running Cypress with quiet flag",
   "main": "index.js",
   "scripts": {
     "test": "cypress run",
-    "build": "echo building ... server ... done!",
-    "start": "serve public"
+    "info": "cypress info"
   },
   "author": "",
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "4.9.0"
-  },
-  "dependencies": {
-    "serve": "11.3.0"
+    "cypress": "4.9.0",
+    "image-size": "0.8.3"
   }
 }
