@@ -454,10 +454,9 @@ const runTestsUsingCommandLine = async () => {
     cmd.push(envInput)
   }
 
-  const quiet = core.getInput('quiet')
+  const quiet = getInputBool('quiet')
   if (quiet) {
     cmd.push('--quiet')
-    cmd.push(quiet)
   }
 
   console.log('Cypress test command: npx %s', cmd.join(' '))
@@ -516,7 +515,8 @@ const runTests = async () => {
   const cypressOptions = {
     headless: getInputBool('headless'),
     record: getInputBool('record'),
-    parallel: getInputBool('parallel')
+    parallel: getInputBool('parallel'),
+    quiet: getInputBool('quiet')
   }
 
   if (core.getInput('group')) {
@@ -544,9 +544,6 @@ const runTests = async () => {
   }
   if (core.getInput('env')) {
     cypressOptions.env = core.getInput('env')
-  }
-  if (core.getInput('quiet')) {
-    cypressOptions.quiet = core.getInput('quiet')
   }
 
   if (cypressOptions.parallel || cypressOptions.group) {
