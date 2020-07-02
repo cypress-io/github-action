@@ -317,6 +317,10 @@ const getCiBuildId = async () => {
   let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
 
   if (GITHUB_TOKEN) {
+    core.debug(
+      `Determining build id by asking GitHub about run ${GITHUB_RUN_ID}`
+    )
+
     const client = new Octokit({
       auth: GITHUB_TOKEN
     })
@@ -332,7 +336,7 @@ const getCiBuildId = async () => {
 
     if (resp && resp.data && resp.data.head_branch) {
       branch = resp.data.head_branch
-      // core.exportVariable('GH_BRANCH', resp.data.head_branch)
+      core.debug(`found the branch name ${branch}`)
     }
 
     const runsList = await client.request(
@@ -348,7 +352,12 @@ const getCiBuildId = async () => {
       // Use the total_count, every time a job is restarted the list has
       // the number of jobs including current run and previous runs, every time
       // it appends the result.
+      core.debug(
+        `fetched run list with ${runsList.data.total_count} records`
+      )
       parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
+    } else {
+      core.debug('could not get run list')
     }
   }
 
