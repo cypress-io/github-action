@@ -2,12 +2,6 @@
 
 > [GitHub Action](https://help.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end tests. Includes NPM installation, custom caching and lots of configuration options.
 
-## Important
-
-We are getting reports that Cypress has suddenly started crashing when running on `ubuntu-latest` OS. Seems, GH Actions have switched from 16.04 to 18.04 overnight, and are having a [xvfb issue](https://github.com/cypress-io/cypress/pull/6199). Please work around this problem by using `runs-on: ubuntu-16.04` image or upgrading to [Cypress v3.8.3](https://github.com/cypress-io/cypress/releases/tag/v3.8.3) where we explicitly set XVFB arguments.
-
-We recommend using the action with `on: [push]` instead of `on: [pull_request]` to get the most accurate information related to the commit on the dashboard.
-
 ## Examples
 
 ### Basic
@@ -218,10 +212,15 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
+
+**Tip 1:** We recommend using the action with `on: [push]` instead of `on: [pull_request]` to get the most accurate information related to the commit on the dashboard. With pull requests, the merge commit is created automatically and might not correspond to a meaningful commit in the repository.
+
+**Tip 2:** we recommend passing the `GITHUB_TOKEN` secret (created by the GH Action automatically) as an environment variable. This will allow correctly identifying every build and avoid confusion when re-running a build.
 
 ### Quiet flag
 
