@@ -340,7 +340,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          config: pageLoadTimeout=100000,watchForFileChanges=false
+          config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
 ```
 
 ### Config File
