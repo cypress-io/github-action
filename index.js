@@ -454,6 +454,11 @@ const runTestsUsingCommandLine = async () => {
     cmd.push(envInput)
   }
 
+  const quiet = getInputBool('quiet')
+  if (quiet) {
+    cmd.push('--quiet')
+  }
+
   console.log('Cypress test command: npx %s', cmd.join(' '))
 
   // since we have quoted arguments ourselves, do not double quote them
@@ -510,7 +515,8 @@ const runTests = async () => {
   const cypressOptions = {
     headless: getInputBool('headless'),
     record: getInputBool('record'),
-    parallel: getInputBool('parallel')
+    parallel: getInputBool('parallel'),
+    quiet: getInputBool('quiet')
   }
 
   if (core.getInput('group')) {
