@@ -245,7 +245,7 @@ jobs:
           quiet: true
 ```
 
-[![example-quiet](https://github.com/cypress-io/github-action/workflows/example-quiet/badge.svg)](.github/workflows/example-quiet.yml)
+[![example-quiet](https://github.com/cypress-io/github-action/workflows/example-quiet/badge.svg?branch=master)](.github/workflows/example-quiet.yml)
 
 ### Tag recordings
 
