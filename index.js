@@ -339,6 +339,12 @@ const getCiBuildId = async () => {
       core.debug(`found the branch name ${branch}`)
     }
 
+    // This will return the complete list of jobs for a run with their steps,
+    // this should always return data when there are jobs on the workflow.
+    // Every time the workflow is re-run the jobs length should stay the same
+    // (because the same amount of jobs were ran) but the id of them should change
+    // letting us, select the first id as unique id
+    // https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
     const runsList = await client.request(
       'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
       {
@@ -348,16 +354,17 @@ const getCiBuildId = async () => {
       }
     )
 
-    if (runsList && runsList.data) {
-      // Use the total_count, every time a job is restarted the list has
-      // the number of jobs including current run and previous runs, every time
-      // it appends the result.
-      core.debug(
-        `fetched run list with ${runsList.data.total_count} records`
-      )
-      parallelId = `${GITHUB_RUN_ID}-${runsList.data.total_count}`
+    if (
+      runsList &&
+      runsList.data &&
+      runsList.data.jobs &&
+      runsList.data.jobs.length
+    ) {
+      const jobId = runsList.data.jobs[0].id
+      core.debug(`fetched run list with jobId ${jobId}`)
+      parallelId = `${GITHUB_RUN_ID}-${jobId}`
     } else {
-      core.debug('could not get run list')
+      core.debug('could not get run list data')
     }
   }
 
