@@ -5916,6 +5916,12 @@ const getCiBuildId = async () => {
       core.debug(`found the branch name ${branch}`)
     }
 
+    // This will return the complete list of jobs for a run with their steps,
+    // this should always return data when there are jobs on the workflow.
+    // Every time the workflow is re-run the jobs length should stay the same
+    // (because the same amount of jobs were ran) but the id of them should change
+    // letting us, select the first id as unique id
+    // https://docs.github.com/en/rest/reference/actions#list-jobs-for-a-workflow-run
     const runsList = await client.request(
       'GET /repos/:owner/:repo/actions/runs/:run_id/jobs',
       {
