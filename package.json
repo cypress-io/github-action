@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/node": "12.12.54",
-    "@zeit/ncc": "0.22.1",
+    "@zeit/ncc": "0.22.3",
     "husky": "3.0.9",
     "markdown-link-check": "3.8.0",
     "prettier": "1.19.1",
