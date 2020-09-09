@@ -202,17 +202,23 @@ const install = () => {
     core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       core.debug(`yarn at "${yarnPath}"`)
+      let lockfileDeprecated = false
+      const listeners = {
+        stdout(data) {
+          lockfileDeprecated = data.toString().startsWith('2.')
+        }
+      }
       return exec
-        .exec(quote(yarnPath), ['--version'])
-        .then(version => {
-          return exec.exec(
+        .exec(quote(yarnPath), ['--version'], { listeners })
+        .then(() =>
+          exec.exec(
             quote(yarnPath),
-            version.startsWith('2.')
+            lockfileDeprecated
               ? ['--immutable', '--immutable-cache']
               : ['--frozen-lockfile'],
             cypressCommandOptions
           )
-        })
+        )
     })
   } else {
     core.debug('installing NPM dependencies')
