@@ -538,7 +538,7 @@ steps:
     uses: actions/checkout@v1
 
   - name: Custom tests 🧪
-    uses: cypress-io/github-action@1
+    uses: cypress-io/github-action@v1
     with:
       command: npm run e2e:ci
 ```
