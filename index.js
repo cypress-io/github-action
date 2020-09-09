@@ -202,11 +202,17 @@ const install = () => {
     core.debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then(yarnPath => {
       core.debug(`yarn at "${yarnPath}"`)
-      return exec.exec(
-        quote(yarnPath),
-        ['--frozen-lockfile'],
-        cypressCommandOptions
-      )
+      return exec
+        .exec(quote(yarnPath), ['--version'])
+        .then(version => {
+          return exec.exec(
+            quote(yarnPath),
+            version.startsWith('2.')
+              ? ['--immutable', '--immutable-cache']
+              : ['--frozen-lockfile'],
+            cypressCommandOptions
+          )
+        })
     })
   } else {
     core.debug('installing NPM dependencies')
