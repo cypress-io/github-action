@@ -34,7 +34,7 @@
     "@actions/io": "1.0.2",
     "@octokit/core": "2.5.4",
     "argument-vector": "1.0.2",
-    "cache": "github:cypress-io/github-actions-cache#bc821d0",
+    "cache": "github:cypress-io/github-actions-cache#8bec6cc",
     "execa": "3.3.0",
     "find-yarn-workspace-root": "1.2.1",
     "got": "9.6.0",
