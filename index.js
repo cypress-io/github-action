@@ -662,7 +662,7 @@ installMaybe()
   .catch(error => {
     // final catch - when anything goes wrong, throw an error
     // and exit the action with non-zero code
-    console.log(error)
+    core.debug(error)
     core.setFailed(error.message)
     process.exit(1)
   })
