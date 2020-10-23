@@ -7728,7 +7728,9 @@ installMaybe()
   .catch(error => {
     // final catch - when anything goes wrong, throw an error
     // and exit the action with non-zero code
-    core.debug(error)
+    core.debug(error.message)
+    core.debug(error.stack)
+
     core.setFailed(error.message)
     process.exit(1)
   })
