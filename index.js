@@ -546,6 +546,7 @@ const runTests = async () => {
   }
   if (core.getInput('config')) {
     cypressOptions.config = core.getInput('config')
+    core.debug(`Cypress config "${cypressOptions.config}"`)
   }
   if (core.getInput('spec')) {
     cypressOptions.spec = core.getInput('spec')

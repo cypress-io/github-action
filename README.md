@@ -797,6 +797,8 @@ ACTIONS_RUNNER_DEBUG: true
 ACTIONS_STEP_DEBUG: true
 ```
 
+The `ACTIONS_RUNNER_DEBUG` will show generic Actions messages, while `ACTIONS_STEP_DEBUG` will enable the `core.debug(...)` messages from this actions.
+
 ## Development
 
 Read [DEVELOPMENT.md](DEVELOPMENT.md)
