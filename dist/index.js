@@ -7667,7 +7667,7 @@ const runTests = async () => {
     core.setOutput('dashboardUrl', dashboardUrl)
 
     if (testResults.totalFailed) {
-      throw Promise.reject(
+      return Promise.reject(
         new Error(`Cypress tests: ${testResults.totalFailed} failed`)
       )
     }

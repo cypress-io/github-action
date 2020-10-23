@@ -10,4 +10,9 @@ describe('Example config', () => {
     cy.visit('/')
     cy.contains('This is a page').should('be.visible')
   })
+
+  it.only('fails on purpose', () => {
+    // to verify that the action exits correctly
+    expect(false).to.be.true
+  })
 })
