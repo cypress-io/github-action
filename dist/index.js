@@ -5585,12 +5585,7 @@ exports.enable(load());
 
 
 /***/ }),
-/* 82 */
-/***/ (function(module) {
-
-module.exports = require("console");
-
-/***/ }),
+/* 82 */,
 /* 83 */
 /***/ (function(module) {
 
@@ -7052,7 +7047,6 @@ const path = __webpack_require__(622)
 const quote = __webpack_require__(531)
 const cliParser = __webpack_require__(880)()
 const findYarnWorkspaceRoot = __webpack_require__(638)
-const { debug } = __webpack_require__(82)
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -7206,7 +7200,11 @@ const restoreCachedNpm = () => {
 const saveCachedNpm = () => {
   core.debug('saving NPM modules')
   const NPM_CACHE = getNpmCache()
-  return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey)
+  return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
+    e => {
+      console.warn('Saving NPM cache error: %s', e.message)
+    }
+  )
 }
 
 const restoreCachedCypressBinary = () => {
@@ -7225,7 +7223,9 @@ const saveCachedCypressBinary = () => {
   return saveCache(
     [CYPRESS_BINARY_CACHE.inputPath],
     CYPRESS_BINARY_CACHE.primaryKey
-  )
+  ).catch(e => {
+    console.warn('Saving Cypress cache error: %s', e.message)
+  })
 }
 
 const install = () => {

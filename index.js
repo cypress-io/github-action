@@ -12,7 +12,6 @@ const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
-const { debug } = require('console')
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -166,7 +165,11 @@ const restoreCachedNpm = () => {
 const saveCachedNpm = () => {
   core.debug('saving NPM modules')
   const NPM_CACHE = getNpmCache()
-  return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey)
+  return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
+    e => {
+      console.warn('Saving NPM cache error: %s', e.message)
+    }
+  )
 }
 
 const restoreCachedCypressBinary = () => {
@@ -185,7 +188,9 @@ const saveCachedCypressBinary = () => {
   return saveCache(
     [CYPRESS_BINARY_CACHE.inputPath],
     CYPRESS_BINARY_CACHE.primaryKey
-  )
+  ).catch(e => {
+    console.warn('Saving Cypress cache error: %s', e.message)
+  })
 }
 
 const install = () => {
