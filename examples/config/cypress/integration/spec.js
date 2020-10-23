@@ -11,7 +11,7 @@ describe('Example config', () => {
     cy.contains('This is a page').should('be.visible')
   })
 
-  it.only('fails on purpose', () => {
+  it.skip('fails on purpose', () => {
     // to verify that the action exits correctly
     expect(false).to.be.true
   })
