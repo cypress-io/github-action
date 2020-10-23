@@ -1,18 +1,17 @@
 // @ts-check
+const { restoreCache, saveCache } = require('@actions/cache')
 const core = require('@actions/core')
 const exec = require('@actions/exec')
 const io = require('@actions/io')
 const { Octokit } = require('@octokit/core')
 const hasha = require('hasha')
 const got = require('got')
-const { restoreCache, saveCache } = require('cache/lib/index')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
-const { debug } = require('console')
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -158,26 +157,28 @@ const getCypressBinaryCache = () => {
 const restoreCachedNpm = () => {
   core.debug('trying to restore cached NPM modules')
   const NPM_CACHE = getNpmCache()
-  return restoreCache(
-    NPM_CACHE.inputPath,
-    NPM_CACHE.primaryKey,
+  return restoreCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey, [
     NPM_CACHE.restoreKeys
-  )
+  ])
 }
 
 const saveCachedNpm = () => {
   core.debug('saving NPM modules')
   const NPM_CACHE = getNpmCache()
-  return saveCache(NPM_CACHE.inputPath, NPM_CACHE.primaryKey)
+  return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
+    e => {
+      console.warn('Saving NPM cache error: %s', e.message)
+    }
+  )
 }
 
 const restoreCachedCypressBinary = () => {
   core.debug('trying to restore cached Cypress binary')
   const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return restoreCache(
-    CYPRESS_BINARY_CACHE.inputPath,
+    [CYPRESS_BINARY_CACHE.inputPath],
     CYPRESS_BINARY_CACHE.primaryKey,
-    CYPRESS_BINARY_CACHE.restoreKeys
+    [CYPRESS_BINARY_CACHE.restoreKeys]
   )
 }
 
@@ -185,9 +186,11 @@ const saveCachedCypressBinary = () => {
   core.debug('saving Cypress binary')
   const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return saveCache(
-    CYPRESS_BINARY_CACHE.inputPath,
+    [CYPRESS_BINARY_CACHE.inputPath],
     CYPRESS_BINARY_CACHE.primaryKey
-  )
+  ).catch(e => {
+    console.warn('Saving Cypress cache error: %s', e.message)
+  })
 }
 
 const install = () => {
@@ -633,7 +636,7 @@ const installMaybe = () => {
     return install().then(() => {
       if (npmCacheHit && cypressCacheHit) {
         core.debug('no need to verify Cypress binary or save caches')
-        return
+        return Promise.resolve(undefined)
       }
 
       return verifyCypressBinary()
