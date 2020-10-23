@@ -343,6 +343,8 @@ jobs:
           config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
 ```
 
+[![example-config](https://github.com/cypress-io/github-action/workflows/example-config/badge.svg?branch=master)](.github/workflows/example-config.yml)
+
 ### Config File
 
 Specify the path to your config file with `config-file` parameter
@@ -794,6 +796,8 @@ You can see verbose messages from GitHub Actions by setting the following secret
 ACTIONS_RUNNER_DEBUG: true
 ACTIONS_STEP_DEBUG: true
 ```
+
+The `ACTIONS_RUNNER_DEBUG` will show generic Actions messages, while `ACTIONS_STEP_DEBUG` will enable the `core.debug(...)` messages from this actions.
 
 ## Development
 

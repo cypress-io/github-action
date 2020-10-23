@@ -546,6 +546,7 @@ const runTests = async () => {
   }
   if (core.getInput('config')) {
     cypressOptions.config = core.getInput('config')
+    core.debug(`Cypress config "${cypressOptions.config}"`)
   }
   if (core.getInput('spec')) {
     cypressOptions.spec = core.getInput('spec')
@@ -596,11 +597,16 @@ const runTests = async () => {
     core.debug(`Cypress tests: ${testResults.totalFailed} failed`)
 
     const dashboardUrl = testResults.runUrl
-    core.debug(`Dashboard url ${dashboardUrl}`)
+    if (dashboardUrl) {
+      core.debug(`Dashboard url ${dashboardUrl}`)
+    } else {
+      core.debug('There is no Dashboard url')
+    }
+    // we still set the output explicitly
     core.setOutput('dashboardUrl', dashboardUrl)
 
     if (testResults.totalFailed) {
-      throw Promise.reject(
+      return Promise.reject(
         new Error(`Cypress tests: ${testResults.totalFailed} failed`)
       )
     }
@@ -661,7 +667,9 @@ installMaybe()
   .catch(error => {
     // final catch - when anything goes wrong, throw an error
     // and exit the action with non-zero code
-    console.log(error)
+    core.debug(error.message)
+    core.debug(error.stack)
+
     core.setFailed(error.message)
     process.exit(1)
   })
