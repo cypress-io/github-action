@@ -7663,7 +7663,12 @@ const runTests = async () => {
     core.debug(`Cypress tests: ${testResults.totalFailed} failed`)
 
     const dashboardUrl = testResults.runUrl
-    core.debug(`Dashboard url ${dashboardUrl}`)
+    if (dashboardUrl) {
+      core.debug(`Dashboard url ${dashboardUrl}`)
+    } else {
+      core.debug('There is no Dashboard url')
+    }
+    // we still set the output explicitly
     core.setOutput('dashboardUrl', dashboardUrl)
 
     if (testResults.totalFailed) {
