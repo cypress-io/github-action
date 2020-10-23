@@ -1,0 +1,17 @@
+name: example-config
+on: [push]
+jobs:
+  start:
+    # example where we pass custom base URL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/config
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3333'
