@@ -23,6 +23,17 @@ jobs:
 
 [![Basic example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
 
+### Explicit version
+
+**Best pratice:**
+
+When using `cypress-io/github-action@v2` from your workflow, you automatically will be using the latest [tagged version from this repository](https://github.com/cypress-io/github-action/tags). If you want to precisely control the version of this module, use the full tag version, for example:
+
+```yml
+- name: Cypress run
+  uses: cypress-io/github-action@v2.2.7
+```
+
 ### Browser
 
 Specify the browser name or path with `browser` parameter
