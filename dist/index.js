@@ -1948,7 +1948,47 @@ module.exports = eval("require")("encoding");
 
 /***/ }),
 /* 20 */,
-/* 21 */,
+/* 21 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Readable = __webpack_require__(794).Readable;
+const lowercaseKeys = __webpack_require__(474);
+
+class Response extends Readable {
+	constructor(statusCode, headers, body, url) {
+		if (typeof statusCode !== 'number') {
+			throw new TypeError('Argument `statusCode` should be a number');
+		}
+		if (typeof headers !== 'object') {
+			throw new TypeError('Argument `headers` should be an object');
+		}
+		if (!(body instanceof Buffer)) {
+			throw new TypeError('Argument `body` should be a buffer');
+		}
+		if (typeof url !== 'string') {
+			throw new TypeError('Argument `url` should be a string');
+		}
+
+		super();
+		this.statusCode = statusCode;
+		this.headers = lowercaseKeys(headers);
+		this.body = body;
+		this.url = url;
+	}
+
+	_read() {
+		this.push(this.body);
+		this.push(null);
+	}
+}
+
+module.exports = Response;
+
+
+/***/ }),
 /* 22 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -3466,7 +3506,7 @@ exports.SourceNode = SourceNode;
 "use strict";
 
 const errors = __webpack_require__(774);
-const asStream = __webpack_require__(794);
+const asStream = __webpack_require__(831);
 const asPromise = __webpack_require__(916);
 const normalizeArguments = __webpack_require__(847);
 const merge = __webpack_require__(821);
@@ -3567,7 +3607,7 @@ var toRegex = __webpack_require__(647);
 var compilers = __webpack_require__(951);
 var parsers = __webpack_require__(378);
 var Extglob = __webpack_require__(773);
-var utils = __webpack_require__(831);
+var utils = __webpack_require__(429);
 var MAX_LENGTH = 1024 * 64;
 
 /**
@@ -4184,7 +4224,7 @@ if (typeof Symbol === undefined || !Symbol.asyncIterator) {
 
 "use strict";
 
-const {PassThrough} = __webpack_require__(413);
+const {PassThrough} = __webpack_require__(794);
 
 module.exports = options => {
 	options = Object.assign({}, options);
@@ -4275,7 +4315,7 @@ var extend = __webpack_require__(978);
 
 var compilers = __webpack_require__(185);
 var parsers = __webpack_require__(569);
-var cache = __webpack_require__(833);
+var cache = __webpack_require__(850);
 var utils = __webpack_require__(846);
 var MAX_LENGTH = 1024 * 64;
 
@@ -7225,7 +7265,9 @@ const restoreCachedNpm = () => {
   const NPM_CACHE = getNpmCache()
   return restoreCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey, [
     NPM_CACHE.restoreKeys
-  ])
+  ]).catch(e => {
+    console.warn('Restoring NPM cache error: %s', e.message)
+  })
 }
 
 const saveCachedNpm = () => {
@@ -7245,7 +7287,9 @@ const restoreCachedCypressBinary = () => {
     [CYPRESS_BINARY_CACHE.inputPath],
     CYPRESS_BINARY_CACHE.primaryKey,
     [CYPRESS_BINARY_CACHE.restoreKeys]
-  )
+  ).catch(e => {
+    console.warn('Restoring Cypress cache error: %s', e.message)
+  })
 }
 
 const saveCachedCypressBinary = () => {
@@ -9971,43 +10015,273 @@ module.exports = function nodeRNG() {
 /***/ }),
 /* 140 */,
 /* 141 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Readable = __webpack_require__(413).Readable;
-const lowercaseKeys = __webpack_require__(474);
+var net = __webpack_require__(631);
+var tls = __webpack_require__(16);
+var http = __webpack_require__(605);
+var https = __webpack_require__(211);
+var events = __webpack_require__(614);
+var assert = __webpack_require__(357);
+var util = __webpack_require__(669);
 
-class Response extends Readable {
-	constructor(statusCode, headers, body, url) {
-		if (typeof statusCode !== 'number') {
-			throw new TypeError('Argument `statusCode` should be a number');
-		}
-		if (typeof headers !== 'object') {
-			throw new TypeError('Argument `headers` should be an object');
-		}
-		if (!(body instanceof Buffer)) {
-			throw new TypeError('Argument `body` should be a buffer');
-		}
-		if (typeof url !== 'string') {
-			throw new TypeError('Argument `url` should be a string');
-		}
 
-		super();
-		this.statusCode = statusCode;
-		this.headers = lowercaseKeys(headers);
-		this.body = body;
-		this.url = url;
-	}
+exports.httpOverHttp = httpOverHttp;
+exports.httpsOverHttp = httpsOverHttp;
+exports.httpOverHttps = httpOverHttps;
+exports.httpsOverHttps = httpsOverHttps;
 
-	_read() {
-		this.push(this.body);
-		this.push(null);
-	}
+
+function httpOverHttp(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = http.request;
+  return agent;
 }
 
-module.exports = Response;
+function httpsOverHttp(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = http.request;
+  agent.createSocket = createSecureSocket;
+  agent.defaultPort = 443;
+  return agent;
+}
+
+function httpOverHttps(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = https.request;
+  return agent;
+}
+
+function httpsOverHttps(options) {
+  var agent = new TunnelingAgent(options);
+  agent.request = https.request;
+  agent.createSocket = createSecureSocket;
+  agent.defaultPort = 443;
+  return agent;
+}
+
+
+function TunnelingAgent(options) {
+  var self = this;
+  self.options = options || {};
+  self.proxyOptions = self.options.proxy || {};
+  self.maxSockets = self.options.maxSockets || http.Agent.defaultMaxSockets;
+  self.requests = [];
+  self.sockets = [];
+
+  self.on('free', function onFree(socket, host, port, localAddress) {
+    var options = toOptions(host, port, localAddress);
+    for (var i = 0, len = self.requests.length; i < len; ++i) {
+      var pending = self.requests[i];
+      if (pending.host === options.host && pending.port === options.port) {
+        // Detect the request to connect same origin server,
+        // reuse the connection.
+        self.requests.splice(i, 1);
+        pending.request.onSocket(socket);
+        return;
+      }
+    }
+    socket.destroy();
+    self.removeSocket(socket);
+  });
+}
+util.inherits(TunnelingAgent, events.EventEmitter);
+
+TunnelingAgent.prototype.addRequest = function addRequest(req, host, port, localAddress) {
+  var self = this;
+  var options = mergeOptions({request: req}, self.options, toOptions(host, port, localAddress));
+
+  if (self.sockets.length >= this.maxSockets) {
+    // We are over limit so we'll add it to the queue.
+    self.requests.push(options);
+    return;
+  }
+
+  // If we are under maxSockets create a new one.
+  self.createSocket(options, function(socket) {
+    socket.on('free', onFree);
+    socket.on('close', onCloseOrRemove);
+    socket.on('agentRemove', onCloseOrRemove);
+    req.onSocket(socket);
+
+    function onFree() {
+      self.emit('free', socket, options);
+    }
+
+    function onCloseOrRemove(err) {
+      self.removeSocket(socket);
+      socket.removeListener('free', onFree);
+      socket.removeListener('close', onCloseOrRemove);
+      socket.removeListener('agentRemove', onCloseOrRemove);
+    }
+  });
+};
+
+TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
+  var self = this;
+  var placeholder = {};
+  self.sockets.push(placeholder);
+
+  var connectOptions = mergeOptions({}, self.proxyOptions, {
+    method: 'CONNECT',
+    path: options.host + ':' + options.port,
+    agent: false,
+    headers: {
+      host: options.host + ':' + options.port
+    }
+  });
+  if (options.localAddress) {
+    connectOptions.localAddress = options.localAddress;
+  }
+  if (connectOptions.proxyAuth) {
+    connectOptions.headers = connectOptions.headers || {};
+    connectOptions.headers['Proxy-Authorization'] = 'Basic ' +
+        new Buffer(connectOptions.proxyAuth).toString('base64');
+  }
+
+  debug('making CONNECT request');
+  var connectReq = self.request(connectOptions);
+  connectReq.useChunkedEncodingByDefault = false; // for v0.6
+  connectReq.once('response', onResponse); // for v0.6
+  connectReq.once('upgrade', onUpgrade);   // for v0.6
+  connectReq.once('connect', onConnect);   // for v0.7 or later
+  connectReq.once('error', onError);
+  connectReq.end();
+
+  function onResponse(res) {
+    // Very hacky. This is necessary to avoid http-parser leaks.
+    res.upgrade = true;
+  }
+
+  function onUpgrade(res, socket, head) {
+    // Hacky.
+    process.nextTick(function() {
+      onConnect(res, socket, head);
+    });
+  }
+
+  function onConnect(res, socket, head) {
+    connectReq.removeAllListeners();
+    socket.removeAllListeners();
+
+    if (res.statusCode !== 200) {
+      debug('tunneling socket could not be established, statusCode=%d',
+        res.statusCode);
+      socket.destroy();
+      var error = new Error('tunneling socket could not be established, ' +
+        'statusCode=' + res.statusCode);
+      error.code = 'ECONNRESET';
+      options.request.emit('error', error);
+      self.removeSocket(placeholder);
+      return;
+    }
+    if (head.length > 0) {
+      debug('got illegal response body from proxy');
+      socket.destroy();
+      var error = new Error('got illegal response body from proxy');
+      error.code = 'ECONNRESET';
+      options.request.emit('error', error);
+      self.removeSocket(placeholder);
+      return;
+    }
+    debug('tunneling connection has established');
+    self.sockets[self.sockets.indexOf(placeholder)] = socket;
+    return cb(socket);
+  }
+
+  function onError(cause) {
+    connectReq.removeAllListeners();
+
+    debug('tunneling socket could not be established, cause=%s\n',
+          cause.message, cause.stack);
+    var error = new Error('tunneling socket could not be established, ' +
+                          'cause=' + cause.message);
+    error.code = 'ECONNRESET';
+    options.request.emit('error', error);
+    self.removeSocket(placeholder);
+  }
+};
+
+TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
+  var pos = this.sockets.indexOf(socket)
+  if (pos === -1) {
+    return;
+  }
+  this.sockets.splice(pos, 1);
+
+  var pending = this.requests.shift();
+  if (pending) {
+    // If we have pending requests and a socket gets closed a new one
+    // needs to be created to take over in the pool for the one that closed.
+    this.createSocket(pending, function(socket) {
+      pending.request.onSocket(socket);
+    });
+  }
+};
+
+function createSecureSocket(options, cb) {
+  var self = this;
+  TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
+    var hostHeader = options.request.getHeader('host');
+    var tlsOptions = mergeOptions({}, self.options, {
+      socket: socket,
+      servername: hostHeader ? hostHeader.replace(/:.*$/, '') : options.host
+    });
+
+    // 0 is dummy port for v0.6
+    var secureSocket = tls.connect(0, tlsOptions);
+    self.sockets[self.sockets.indexOf(socket)] = secureSocket;
+    cb(secureSocket);
+  });
+}
+
+
+function toOptions(host, port, localAddress) {
+  if (typeof host === 'string') { // since v0.10
+    return {
+      host: host,
+      port: port,
+      localAddress: localAddress
+    };
+  }
+  return host; // for v0.11 or later
+}
+
+function mergeOptions(target) {
+  for (var i = 1, len = arguments.length; i < len; ++i) {
+    var overrides = arguments[i];
+    if (typeof overrides === 'object') {
+      var keys = Object.keys(overrides);
+      for (var j = 0, keyLen = keys.length; j < keyLen; ++j) {
+        var k = keys[j];
+        if (overrides[k] !== undefined) {
+          target[k] = overrides[k];
+        }
+      }
+    }
+  }
+  return target;
+}
+
+
+var debug;
+if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
+  debug = function() {
+    var args = Array.prototype.slice.call(arguments);
+    if (typeof args[0] === 'string') {
+      args[0] = 'TUNNEL: ' + args[0];
+    } else {
+      args.unshift('TUNNEL:');
+    }
+    console.error.apply(console, args);
+  }
+} else {
+  debug = function() {};
+}
+exports.debug = debug; // for test
 
 
 /***/ }),
@@ -10691,7 +10965,7 @@ exports.NOOP_TRACER = new NoopTracer();
 /* 152 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-var Stream = __webpack_require__(413).Stream;
+var Stream = __webpack_require__(794).Stream;
 var util = __webpack_require__(669);
 
 module.exports = DelayedStream;
@@ -12039,7 +12313,7 @@ function escapeExtglobs(compiler) {
 var util = __webpack_require__(669);
 var define = __webpack_require__(731);
 var CacheBase = __webpack_require__(609);
-var Emitter = __webpack_require__(983);
+var Emitter = __webpack_require__(426);
 var isObject = __webpack_require__(915);
 var merge = __webpack_require__(662);
 var pascal = __webpack_require__(589);
@@ -14682,7 +14956,7 @@ const http_client_1 = __webpack_require__(539);
 const storage_blob_1 = __webpack_require__(373);
 const buffer = __importStar(__webpack_require__(293));
 const fs = __importStar(__webpack_require__(747));
-const stream = __importStar(__webpack_require__(413));
+const stream = __importStar(__webpack_require__(794));
 const util = __importStar(__webpack_require__(669));
 const utils = __importStar(__webpack_require__(15));
 const constants_1 = __webpack_require__(931);
@@ -20308,7 +20582,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var endpoint = __webpack_require__(385);
 var universalUserAgent = __webpack_require__(392);
-var isPlainObject = __webpack_require__(588);
+var isPlainObject = __webpack_require__(356);
 var nodeFetch = _interopDefault(__webpack_require__(454));
 var requestError = __webpack_require__(844);
 
@@ -20615,7 +20889,7 @@ module.exports = isAccessorDescriptor;
 "use strict";
 
 
-const PassThrough = __webpack_require__(413).PassThrough;
+const PassThrough = __webpack_require__(794).PassThrough;
 const mimicResponse = __webpack_require__(957);
 
 const cloneResponse = response => {
@@ -20894,13 +21168,7 @@ module.exports =
 
 
 /***/ }),
-/* 335 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-module.exports = __webpack_require__(850);
-
-
-/***/ }),
+/* 335 */,
 /* 336 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -22050,273 +22318,47 @@ module.exports = function kindOf(val) {
 
 /***/ }),
 /* 356 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
 
 
-var net = __webpack_require__(631);
-var tls = __webpack_require__(16);
-var http = __webpack_require__(605);
-var https = __webpack_require__(211);
-var events = __webpack_require__(614);
-var assert = __webpack_require__(357);
-var util = __webpack_require__(669);
+Object.defineProperty(exports, '__esModule', { value: true });
 
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
 
-exports.httpOverHttp = httpOverHttp;
-exports.httpsOverHttp = httpsOverHttp;
-exports.httpOverHttps = httpOverHttps;
-exports.httpsOverHttps = httpsOverHttps;
-
-
-function httpOverHttp(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = http.request;
-  return agent;
+function isObject(o) {
+  return Object.prototype.toString.call(o) === '[object Object]';
 }
 
-function httpsOverHttp(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = http.request;
-  agent.createSocket = createSecureSocket;
-  agent.defaultPort = 443;
-  return agent;
+function isPlainObject(o) {
+  var ctor,prot;
+
+  if (isObject(o) === false) return false;
+
+  // If has modified constructor
+  ctor = o.constructor;
+  if (ctor === undefined) return true;
+
+  // If has modified prototype
+  prot = ctor.prototype;
+  if (isObject(prot) === false) return false;
+
+  // If constructor does not have an Object-specific method
+  if (prot.hasOwnProperty('isPrototypeOf') === false) {
+    return false;
+  }
+
+  // Most likely a plain Object
+  return true;
 }
 
-function httpOverHttps(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = https.request;
-  return agent;
-}
-
-function httpsOverHttps(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = https.request;
-  agent.createSocket = createSecureSocket;
-  agent.defaultPort = 443;
-  return agent;
-}
-
-
-function TunnelingAgent(options) {
-  var self = this;
-  self.options = options || {};
-  self.proxyOptions = self.options.proxy || {};
-  self.maxSockets = self.options.maxSockets || http.Agent.defaultMaxSockets;
-  self.requests = [];
-  self.sockets = [];
-
-  self.on('free', function onFree(socket, host, port, localAddress) {
-    var options = toOptions(host, port, localAddress);
-    for (var i = 0, len = self.requests.length; i < len; ++i) {
-      var pending = self.requests[i];
-      if (pending.host === options.host && pending.port === options.port) {
-        // Detect the request to connect same origin server,
-        // reuse the connection.
-        self.requests.splice(i, 1);
-        pending.request.onSocket(socket);
-        return;
-      }
-    }
-    socket.destroy();
-    self.removeSocket(socket);
-  });
-}
-util.inherits(TunnelingAgent, events.EventEmitter);
-
-TunnelingAgent.prototype.addRequest = function addRequest(req, host, port, localAddress) {
-  var self = this;
-  var options = mergeOptions({request: req}, self.options, toOptions(host, port, localAddress));
-
-  if (self.sockets.length >= this.maxSockets) {
-    // We are over limit so we'll add it to the queue.
-    self.requests.push(options);
-    return;
-  }
-
-  // If we are under maxSockets create a new one.
-  self.createSocket(options, function(socket) {
-    socket.on('free', onFree);
-    socket.on('close', onCloseOrRemove);
-    socket.on('agentRemove', onCloseOrRemove);
-    req.onSocket(socket);
-
-    function onFree() {
-      self.emit('free', socket, options);
-    }
-
-    function onCloseOrRemove(err) {
-      self.removeSocket(socket);
-      socket.removeListener('free', onFree);
-      socket.removeListener('close', onCloseOrRemove);
-      socket.removeListener('agentRemove', onCloseOrRemove);
-    }
-  });
-};
-
-TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
-  var self = this;
-  var placeholder = {};
-  self.sockets.push(placeholder);
-
-  var connectOptions = mergeOptions({}, self.proxyOptions, {
-    method: 'CONNECT',
-    path: options.host + ':' + options.port,
-    agent: false,
-    headers: {
-      host: options.host + ':' + options.port
-    }
-  });
-  if (options.localAddress) {
-    connectOptions.localAddress = options.localAddress;
-  }
-  if (connectOptions.proxyAuth) {
-    connectOptions.headers = connectOptions.headers || {};
-    connectOptions.headers['Proxy-Authorization'] = 'Basic ' +
-        new Buffer(connectOptions.proxyAuth).toString('base64');
-  }
-
-  debug('making CONNECT request');
-  var connectReq = self.request(connectOptions);
-  connectReq.useChunkedEncodingByDefault = false; // for v0.6
-  connectReq.once('response', onResponse); // for v0.6
-  connectReq.once('upgrade', onUpgrade);   // for v0.6
-  connectReq.once('connect', onConnect);   // for v0.7 or later
-  connectReq.once('error', onError);
-  connectReq.end();
-
-  function onResponse(res) {
-    // Very hacky. This is necessary to avoid http-parser leaks.
-    res.upgrade = true;
-  }
-
-  function onUpgrade(res, socket, head) {
-    // Hacky.
-    process.nextTick(function() {
-      onConnect(res, socket, head);
-    });
-  }
-
-  function onConnect(res, socket, head) {
-    connectReq.removeAllListeners();
-    socket.removeAllListeners();
-
-    if (res.statusCode !== 200) {
-      debug('tunneling socket could not be established, statusCode=%d',
-        res.statusCode);
-      socket.destroy();
-      var error = new Error('tunneling socket could not be established, ' +
-        'statusCode=' + res.statusCode);
-      error.code = 'ECONNRESET';
-      options.request.emit('error', error);
-      self.removeSocket(placeholder);
-      return;
-    }
-    if (head.length > 0) {
-      debug('got illegal response body from proxy');
-      socket.destroy();
-      var error = new Error('got illegal response body from proxy');
-      error.code = 'ECONNRESET';
-      options.request.emit('error', error);
-      self.removeSocket(placeholder);
-      return;
-    }
-    debug('tunneling connection has established');
-    self.sockets[self.sockets.indexOf(placeholder)] = socket;
-    return cb(socket);
-  }
-
-  function onError(cause) {
-    connectReq.removeAllListeners();
-
-    debug('tunneling socket could not be established, cause=%s\n',
-          cause.message, cause.stack);
-    var error = new Error('tunneling socket could not be established, ' +
-                          'cause=' + cause.message);
-    error.code = 'ECONNRESET';
-    options.request.emit('error', error);
-    self.removeSocket(placeholder);
-  }
-};
-
-TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
-  var pos = this.sockets.indexOf(socket)
-  if (pos === -1) {
-    return;
-  }
-  this.sockets.splice(pos, 1);
-
-  var pending = this.requests.shift();
-  if (pending) {
-    // If we have pending requests and a socket gets closed a new one
-    // needs to be created to take over in the pool for the one that closed.
-    this.createSocket(pending, function(socket) {
-      pending.request.onSocket(socket);
-    });
-  }
-};
-
-function createSecureSocket(options, cb) {
-  var self = this;
-  TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
-    var hostHeader = options.request.getHeader('host');
-    var tlsOptions = mergeOptions({}, self.options, {
-      socket: socket,
-      servername: hostHeader ? hostHeader.replace(/:.*$/, '') : options.host
-    });
-
-    // 0 is dummy port for v0.6
-    var secureSocket = tls.connect(0, tlsOptions);
-    self.sockets[self.sockets.indexOf(socket)] = secureSocket;
-    cb(secureSocket);
-  });
-}
-
-
-function toOptions(host, port, localAddress) {
-  if (typeof host === 'string') { // since v0.10
-    return {
-      host: host,
-      port: port,
-      localAddress: localAddress
-    };
-  }
-  return host; // for v0.11 or later
-}
-
-function mergeOptions(target) {
-  for (var i = 1, len = arguments.length; i < len; ++i) {
-    var overrides = arguments[i];
-    if (typeof overrides === 'object') {
-      var keys = Object.keys(overrides);
-      for (var j = 0, keyLen = keys.length; j < keyLen; ++j) {
-        var k = keys[j];
-        if (overrides[k] !== undefined) {
-          target[k] = overrides[k];
-        }
-      }
-    }
-  }
-  return target;
-}
-
-
-var debug;
-if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-  debug = function() {
-    var args = Array.prototype.slice.call(arguments);
-    if (typeof args[0] === 'string') {
-      args[0] = 'TUNNEL: ' + args[0];
-    } else {
-      args.unshift('TUNNEL:');
-    }
-    console.error.apply(console, args);
-  }
-} else {
-  debug = function() {};
-}
-exports.debug = debug; // for test
+exports.isPlainObject = isPlainObject;
 
 
 /***/ }),
@@ -23215,7 +23257,7 @@ function register (state, name, method, options) {
 
 "use strict";
 
-const {Transform} = __webpack_require__(413);
+const {Transform} = __webpack_require__(794);
 
 module.exports = {
 	download(response, emitter, downloadBodySize) {
@@ -23873,7 +23915,7 @@ var api = __webpack_require__(440);
 var logger$1 = __webpack_require__(928);
 var abortController = __webpack_require__(106);
 var os = __webpack_require__(87);
-var stream = __webpack_require__(413);
+var stream = __webpack_require__(794);
 __webpack_require__(510);
 var crypto = __webpack_require__(417);
 var coreLro = __webpack_require__(889);
@@ -48510,7 +48552,7 @@ module.exports = function(nanomatch, options) {
 
 var brackets = __webpack_require__(17);
 var define = __webpack_require__(663);
-var utils = __webpack_require__(831);
+var utils = __webpack_require__(429);
 
 /**
  * Characters to use in text regex (we want to "not" match
@@ -48972,7 +49014,7 @@ module.exports = function isObject(val) {
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var isPlainObject = __webpack_require__(588);
+var isPlainObject = __webpack_require__(356);
 var universalUserAgent = __webpack_require__(339);
 
 function lowercaseKeys(object) {
@@ -51388,9 +51430,10 @@ function localstorage() {
 /* 411 */,
 /* 412 */,
 /* 413 */
-/***/ (function(module) {
+/***/ (function(module, __unusedexports, __webpack_require__) {
 
-module.exports = require("stream");
+module.exports = __webpack_require__(141);
+
 
 /***/ }),
 /* 414 */,
@@ -52488,15 +52531,264 @@ module.exports = function isObject(val) {
 
 /***/ }),
 /* 426 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function(module) {
 
-module.exports = __webpack_require__(356);
+
+/**
+ * Expose `Emitter`.
+ */
+
+if (true) {
+  module.exports = Emitter;
+}
+
+/**
+ * Initialize a new `Emitter`.
+ *
+ * @api public
+ */
+
+function Emitter(obj) {
+  if (obj) return mixin(obj);
+};
+
+/**
+ * Mixin the emitter properties.
+ *
+ * @param {Object} obj
+ * @return {Object}
+ * @api private
+ */
+
+function mixin(obj) {
+  for (var key in Emitter.prototype) {
+    obj[key] = Emitter.prototype[key];
+  }
+  return obj;
+}
+
+/**
+ * Listen on the given `event` with `fn`.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.on =
+Emitter.prototype.addEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
+    .push(fn);
+  return this;
+};
+
+/**
+ * Adds an `event` listener that will be invoked a single
+ * time then automatically removed.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.once = function(event, fn){
+  function on() {
+    this.off(event, on);
+    fn.apply(this, arguments);
+  }
+
+  on.fn = fn;
+  this.on(event, on);
+  return this;
+};
+
+/**
+ * Remove the given callback for `event` or all
+ * registered callbacks.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.off =
+Emitter.prototype.removeListener =
+Emitter.prototype.removeAllListeners =
+Emitter.prototype.removeEventListener = function(event, fn){
+  this._callbacks = this._callbacks || {};
+
+  // all
+  if (0 == arguments.length) {
+    this._callbacks = {};
+    return this;
+  }
+
+  // specific event
+  var callbacks = this._callbacks['$' + event];
+  if (!callbacks) return this;
+
+  // remove all handlers
+  if (1 == arguments.length) {
+    delete this._callbacks['$' + event];
+    return this;
+  }
+
+  // remove specific handler
+  var cb;
+  for (var i = 0; i < callbacks.length; i++) {
+    cb = callbacks[i];
+    if (cb === fn || cb.fn === fn) {
+      callbacks.splice(i, 1);
+      break;
+    }
+  }
+
+  // Remove event specific arrays for event types that no
+  // one is subscribed for to avoid memory leak.
+  if (callbacks.length === 0) {
+    delete this._callbacks['$' + event];
+  }
+
+  return this;
+};
+
+/**
+ * Emit `event` with the given args.
+ *
+ * @param {String} event
+ * @param {Mixed} ...
+ * @return {Emitter}
+ */
+
+Emitter.prototype.emit = function(event){
+  this._callbacks = this._callbacks || {};
+
+  var args = new Array(arguments.length - 1)
+    , callbacks = this._callbacks['$' + event];
+
+  for (var i = 1; i < arguments.length; i++) {
+    args[i - 1] = arguments[i];
+  }
+
+  if (callbacks) {
+    callbacks = callbacks.slice(0);
+    for (var i = 0, len = callbacks.length; i < len; ++i) {
+      callbacks[i].apply(this, args);
+    }
+  }
+
+  return this;
+};
+
+/**
+ * Return array of callbacks for `event`.
+ *
+ * @param {String} event
+ * @return {Array}
+ * @api public
+ */
+
+Emitter.prototype.listeners = function(event){
+  this._callbacks = this._callbacks || {};
+  return this._callbacks['$' + event] || [];
+};
+
+/**
+ * Check if this emitter has `event` handlers.
+ *
+ * @param {String} event
+ * @return {Boolean}
+ * @api public
+ */
+
+Emitter.prototype.hasListeners = function(event){
+  return !! this.listeners(event).length;
+};
 
 
 /***/ }),
 /* 427 */,
 /* 428 */,
-/* 429 */,
+/* 429 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+var regex = __webpack_require__(648);
+var Cache = __webpack_require__(264);
+
+/**
+ * Utils
+ */
+
+var utils = module.exports;
+var cache = utils.cache = new Cache();
+
+/**
+ * Cast `val` to an array
+ * @return {Array}
+ */
+
+utils.arrayify = function(val) {
+  if (!Array.isArray(val)) {
+    return [val];
+  }
+  return val;
+};
+
+/**
+ * Memoize a generated regex or function
+ */
+
+utils.memoize = function(type, pattern, options, fn) {
+  var key = utils.createKey(type + pattern, options);
+
+  if (cache.has(type, key)) {
+    return cache.get(type, key);
+  }
+
+  var val = fn(pattern, options);
+  if (options && options.cache === false) {
+    return val;
+  }
+
+  cache.set(type, key, val);
+  return val;
+};
+
+/**
+ * Create the key to use for memoization. The key is generated
+ * by iterating over the options and concatenating key-value pairs
+ * to the pattern string.
+ */
+
+utils.createKey = function(pattern, options) {
+  var key = pattern;
+  if (typeof options === 'undefined') {
+    return key;
+  }
+  for (var prop in options) {
+    key += ';' + prop + '=' + String(options[prop]);
+  }
+  return key;
+};
+
+/**
+ * Create the regex to use for matching text
+ */
+
+utils.createRegex = function(str) {
+  var opts = {contains: true, strictClose: false};
+  return regex(str, opts);
+};
+
+
+/***/ }),
 /* 430 */,
 /* 431 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -53530,7 +53822,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var Stream = _interopDefault(__webpack_require__(413));
+var Stream = _interopDefault(__webpack_require__(794));
 var http = _interopDefault(__webpack_require__(605));
 var Url = _interopDefault(__webpack_require__(835));
 var https = _interopDefault(__webpack_require__(211));
@@ -55727,7 +56019,7 @@ module.exports = function isObject(val) {
 /* 466 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-var Stream = __webpack_require__(413).Stream
+var Stream = __webpack_require__(794).Stream
 
 module.exports = legacy
 
@@ -59501,7 +59793,7 @@ class HttpClient {
         if (useProxy) {
             // If using proxy, need tunnel
             if (!tunnel) {
-                tunnel = __webpack_require__(335);
+                tunnel = __webpack_require__(413);
             }
             const agentOptions = {
                 maxSockets: maxSockets,
@@ -59642,7 +59934,7 @@ exports.HttpClient = HttpClient;
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 var util = __webpack_require__(669);
-var Stream = __webpack_require__(413).Stream;
+var Stream = __webpack_require__(794).Stream;
 var DelayedStream = __webpack_require__(152);
 
 module.exports = CombinedStream;
@@ -60955,7 +61247,7 @@ module.exports = function kindOf(val) {
 
 "use strict";
 
-const {PassThrough} = __webpack_require__(413);
+const {PassThrough} = __webpack_require__(794);
 
 module.exports = options => {
 	options = Object.assign({}, options);
@@ -61437,51 +61729,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 /***/ }),
 /* 587 */,
-/* 588 */
-/***/ (function(__unusedmodule, exports) {
-
-"use strict";
-
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-/*!
- * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-function isObject(o) {
-  return Object.prototype.toString.call(o) === '[object Object]';
-}
-
-function isPlainObject(o) {
-  var ctor,prot;
-
-  if (isObject(o) === false) return false;
-
-  // If has modified constructor
-  ctor = o.constructor;
-  if (ctor === undefined) return true;
-
-  // If has modified prototype
-  prot = ctor.prototype;
-  if (isObject(prot) === false) return false;
-
-  // If constructor does not have an Object-specific method
-  if (prot.hasOwnProperty('isPrototypeOf') === false) {
-    return false;
-  }
-
-  // Most likely a plain Object
-  return true;
-}
-
-exports.isPlainObject = isPlainObject;
-
-
-/***/ }),
+/* 588 */,
 /* 589 */
 /***/ (function(module) {
 
@@ -62455,7 +62703,7 @@ function clone (obj) {
 
 
 var isObject = __webpack_require__(34);
-var Emitter = __webpack_require__(983);
+var Emitter = __webpack_require__(426);
 var visit = __webpack_require__(143);
 var toPath = __webpack_require__(746);
 var union = __webpack_require__(445);
@@ -63568,7 +63816,7 @@ module.exports = {
 
   var Stream
   try {
-    Stream = __webpack_require__(413).Stream
+    Stream = __webpack_require__(794).Stream
   } catch (ex) {
     Stream = function () {}
   }
@@ -67886,7 +68134,7 @@ exports.Context = Context;
 "use strict";
 
 
-var stream = __webpack_require__(413);
+var stream = __webpack_require__(794);
 
 function DuplexWrapper(options, writable, readable) {
   if (typeof readable === "undefined") {
@@ -73379,103 +73627,9 @@ module.exports = {
 /***/ }),
 /* 793 */,
 /* 794 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function(module) {
 
-"use strict";
-
-const {PassThrough} = __webpack_require__(413);
-const duplexer3 = __webpack_require__(718);
-const requestAsEventEmitter = __webpack_require__(584);
-const {HTTPError, ReadError} = __webpack_require__(774);
-
-module.exports = options => {
-	const input = new PassThrough();
-	const output = new PassThrough();
-	const proxy = duplexer3(input, output);
-	const piped = new Set();
-	let isFinished = false;
-
-	options.retry.retries = () => 0;
-
-	if (options.body) {
-		proxy.write = () => {
-			throw new Error('Got\'s stream is not writable when the `body` option is used');
-		};
-	}
-
-	const emitter = requestAsEventEmitter(options, input);
-
-	// Cancels the request
-	proxy._destroy = emitter.abort;
-
-	emitter.on('response', response => {
-		const {statusCode} = response;
-
-		response.on('error', error => {
-			proxy.emit('error', new ReadError(error, options));
-		});
-
-		if (options.throwHttpErrors && statusCode !== 304 && (statusCode < 200 || statusCode > 299)) {
-			proxy.emit('error', new HTTPError(response, options), null, response);
-			return;
-		}
-
-		isFinished = true;
-
-		response.pipe(output);
-
-		for (const destination of piped) {
-			if (destination.headersSent) {
-				continue;
-			}
-
-			for (const [key, value] of Object.entries(response.headers)) {
-				// Got gives *decompressed* data. Overriding `content-encoding` header would result in an error.
-				// It's not possible to decompress already decompressed data, is it?
-				const allowed = options.decompress ? key !== 'content-encoding' : true;
-				if (allowed) {
-					destination.setHeader(key, value);
-				}
-			}
-
-			destination.statusCode = response.statusCode;
-		}
-
-		proxy.emit('response', response);
-	});
-
-	[
-		'error',
-		'request',
-		'redirect',
-		'uploadProgress',
-		'downloadProgress'
-	].forEach(event => emitter.on(event, (...args) => proxy.emit(event, ...args)));
-
-	const pipe = proxy.pipe.bind(proxy);
-	const unpipe = proxy.unpipe.bind(proxy);
-	proxy.pipe = (destination, options) => {
-		if (isFinished) {
-			throw new Error('Failed to pipe. The response has been emitted already.');
-		}
-
-		const result = pipe(destination, options);
-
-		if (Reflect.has(destination, 'setHeader')) {
-			piped.add(destination);
-		}
-
-		return result;
-	};
-
-	proxy.unpipe = stream => {
-		piped.delete(stream);
-		return unpipe(stream);
-	};
-
-	return proxy;
-};
-
+module.exports = require("stream");
 
 /***/ }),
 /* 795 */,
@@ -74689,73 +74843,97 @@ module.exports = opts => {
 
 "use strict";
 
+const {PassThrough} = __webpack_require__(794);
+const duplexer3 = __webpack_require__(718);
+const requestAsEventEmitter = __webpack_require__(584);
+const {HTTPError, ReadError} = __webpack_require__(774);
 
-var regex = __webpack_require__(648);
-var Cache = __webpack_require__(264);
+module.exports = options => {
+	const input = new PassThrough();
+	const output = new PassThrough();
+	const proxy = duplexer3(input, output);
+	const piped = new Set();
+	let isFinished = false;
 
-/**
- * Utils
- */
+	options.retry.retries = () => 0;
 
-var utils = module.exports;
-var cache = utils.cache = new Cache();
+	if (options.body) {
+		proxy.write = () => {
+			throw new Error('Got\'s stream is not writable when the `body` option is used');
+		};
+	}
 
-/**
- * Cast `val` to an array
- * @return {Array}
- */
+	const emitter = requestAsEventEmitter(options, input);
 
-utils.arrayify = function(val) {
-  if (!Array.isArray(val)) {
-    return [val];
-  }
-  return val;
-};
+	// Cancels the request
+	proxy._destroy = emitter.abort;
 
-/**
- * Memoize a generated regex or function
- */
+	emitter.on('response', response => {
+		const {statusCode} = response;
 
-utils.memoize = function(type, pattern, options, fn) {
-  var key = utils.createKey(type + pattern, options);
+		response.on('error', error => {
+			proxy.emit('error', new ReadError(error, options));
+		});
 
-  if (cache.has(type, key)) {
-    return cache.get(type, key);
-  }
+		if (options.throwHttpErrors && statusCode !== 304 && (statusCode < 200 || statusCode > 299)) {
+			proxy.emit('error', new HTTPError(response, options), null, response);
+			return;
+		}
 
-  var val = fn(pattern, options);
-  if (options && options.cache === false) {
-    return val;
-  }
+		isFinished = true;
 
-  cache.set(type, key, val);
-  return val;
-};
+		response.pipe(output);
 
-/**
- * Create the key to use for memoization. The key is generated
- * by iterating over the options and concatenating key-value pairs
- * to the pattern string.
- */
+		for (const destination of piped) {
+			if (destination.headersSent) {
+				continue;
+			}
 
-utils.createKey = function(pattern, options) {
-  var key = pattern;
-  if (typeof options === 'undefined') {
-    return key;
-  }
-  for (var prop in options) {
-    key += ';' + prop + '=' + String(options[prop]);
-  }
-  return key;
-};
+			for (const [key, value] of Object.entries(response.headers)) {
+				// Got gives *decompressed* data. Overriding `content-encoding` header would result in an error.
+				// It's not possible to decompress already decompressed data, is it?
+				const allowed = options.decompress ? key !== 'content-encoding' : true;
+				if (allowed) {
+					destination.setHeader(key, value);
+				}
+			}
 
-/**
- * Create the regex to use for matching text
- */
+			destination.statusCode = response.statusCode;
+		}
 
-utils.createRegex = function(str) {
-  var opts = {contains: true, strictClose: false};
-  return regex(str, opts);
+		proxy.emit('response', response);
+	});
+
+	[
+		'error',
+		'request',
+		'redirect',
+		'uploadProgress',
+		'downloadProgress'
+	].forEach(event => emitter.on(event, (...args) => proxy.emit(event, ...args)));
+
+	const pipe = proxy.pipe.bind(proxy);
+	const unpipe = proxy.unpipe.bind(proxy);
+	proxy.pipe = (destination, options) => {
+		if (isFinished) {
+			throw new Error('Failed to pipe. The response has been emitted already.');
+		}
+
+		const result = pipe(destination, options);
+
+		if (Reflect.has(destination, 'setHeader')) {
+			piped.add(destination);
+		}
+
+		return result;
+	};
+
+	proxy.unpipe = stream => {
+		piped.delete(stream);
+		return unpipe(stream);
+	};
+
+	return proxy;
 };
 
 
@@ -74880,13 +75058,7 @@ exports.quickSort = function (ary, comparator) {
 
 
 /***/ }),
-/* 833 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-module.exports = new (__webpack_require__(264))();
-
-
-/***/ }),
+/* 833 */,
 /* 834 */,
 /* 835 */
 /***/ (function(module) {
@@ -75803,273 +75975,9 @@ module.exports = {
 
 /***/ }),
 /* 850 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(module, __unusedexports, __webpack_require__) {
 
-"use strict";
-
-
-var net = __webpack_require__(631);
-var tls = __webpack_require__(16);
-var http = __webpack_require__(605);
-var https = __webpack_require__(211);
-var events = __webpack_require__(614);
-var assert = __webpack_require__(357);
-var util = __webpack_require__(669);
-
-
-exports.httpOverHttp = httpOverHttp;
-exports.httpsOverHttp = httpsOverHttp;
-exports.httpOverHttps = httpOverHttps;
-exports.httpsOverHttps = httpsOverHttps;
-
-
-function httpOverHttp(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = http.request;
-  return agent;
-}
-
-function httpsOverHttp(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = http.request;
-  agent.createSocket = createSecureSocket;
-  agent.defaultPort = 443;
-  return agent;
-}
-
-function httpOverHttps(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = https.request;
-  return agent;
-}
-
-function httpsOverHttps(options) {
-  var agent = new TunnelingAgent(options);
-  agent.request = https.request;
-  agent.createSocket = createSecureSocket;
-  agent.defaultPort = 443;
-  return agent;
-}
-
-
-function TunnelingAgent(options) {
-  var self = this;
-  self.options = options || {};
-  self.proxyOptions = self.options.proxy || {};
-  self.maxSockets = self.options.maxSockets || http.Agent.defaultMaxSockets;
-  self.requests = [];
-  self.sockets = [];
-
-  self.on('free', function onFree(socket, host, port, localAddress) {
-    var options = toOptions(host, port, localAddress);
-    for (var i = 0, len = self.requests.length; i < len; ++i) {
-      var pending = self.requests[i];
-      if (pending.host === options.host && pending.port === options.port) {
-        // Detect the request to connect same origin server,
-        // reuse the connection.
-        self.requests.splice(i, 1);
-        pending.request.onSocket(socket);
-        return;
-      }
-    }
-    socket.destroy();
-    self.removeSocket(socket);
-  });
-}
-util.inherits(TunnelingAgent, events.EventEmitter);
-
-TunnelingAgent.prototype.addRequest = function addRequest(req, host, port, localAddress) {
-  var self = this;
-  var options = mergeOptions({request: req}, self.options, toOptions(host, port, localAddress));
-
-  if (self.sockets.length >= this.maxSockets) {
-    // We are over limit so we'll add it to the queue.
-    self.requests.push(options);
-    return;
-  }
-
-  // If we are under maxSockets create a new one.
-  self.createSocket(options, function(socket) {
-    socket.on('free', onFree);
-    socket.on('close', onCloseOrRemove);
-    socket.on('agentRemove', onCloseOrRemove);
-    req.onSocket(socket);
-
-    function onFree() {
-      self.emit('free', socket, options);
-    }
-
-    function onCloseOrRemove(err) {
-      self.removeSocket(socket);
-      socket.removeListener('free', onFree);
-      socket.removeListener('close', onCloseOrRemove);
-      socket.removeListener('agentRemove', onCloseOrRemove);
-    }
-  });
-};
-
-TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
-  var self = this;
-  var placeholder = {};
-  self.sockets.push(placeholder);
-
-  var connectOptions = mergeOptions({}, self.proxyOptions, {
-    method: 'CONNECT',
-    path: options.host + ':' + options.port,
-    agent: false,
-    headers: {
-      host: options.host + ':' + options.port
-    }
-  });
-  if (options.localAddress) {
-    connectOptions.localAddress = options.localAddress;
-  }
-  if (connectOptions.proxyAuth) {
-    connectOptions.headers = connectOptions.headers || {};
-    connectOptions.headers['Proxy-Authorization'] = 'Basic ' +
-        new Buffer(connectOptions.proxyAuth).toString('base64');
-  }
-
-  debug('making CONNECT request');
-  var connectReq = self.request(connectOptions);
-  connectReq.useChunkedEncodingByDefault = false; // for v0.6
-  connectReq.once('response', onResponse); // for v0.6
-  connectReq.once('upgrade', onUpgrade);   // for v0.6
-  connectReq.once('connect', onConnect);   // for v0.7 or later
-  connectReq.once('error', onError);
-  connectReq.end();
-
-  function onResponse(res) {
-    // Very hacky. This is necessary to avoid http-parser leaks.
-    res.upgrade = true;
-  }
-
-  function onUpgrade(res, socket, head) {
-    // Hacky.
-    process.nextTick(function() {
-      onConnect(res, socket, head);
-    });
-  }
-
-  function onConnect(res, socket, head) {
-    connectReq.removeAllListeners();
-    socket.removeAllListeners();
-
-    if (res.statusCode !== 200) {
-      debug('tunneling socket could not be established, statusCode=%d',
-        res.statusCode);
-      socket.destroy();
-      var error = new Error('tunneling socket could not be established, ' +
-        'statusCode=' + res.statusCode);
-      error.code = 'ECONNRESET';
-      options.request.emit('error', error);
-      self.removeSocket(placeholder);
-      return;
-    }
-    if (head.length > 0) {
-      debug('got illegal response body from proxy');
-      socket.destroy();
-      var error = new Error('got illegal response body from proxy');
-      error.code = 'ECONNRESET';
-      options.request.emit('error', error);
-      self.removeSocket(placeholder);
-      return;
-    }
-    debug('tunneling connection has established');
-    self.sockets[self.sockets.indexOf(placeholder)] = socket;
-    return cb(socket);
-  }
-
-  function onError(cause) {
-    connectReq.removeAllListeners();
-
-    debug('tunneling socket could not be established, cause=%s\n',
-          cause.message, cause.stack);
-    var error = new Error('tunneling socket could not be established, ' +
-                          'cause=' + cause.message);
-    error.code = 'ECONNRESET';
-    options.request.emit('error', error);
-    self.removeSocket(placeholder);
-  }
-};
-
-TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
-  var pos = this.sockets.indexOf(socket)
-  if (pos === -1) {
-    return;
-  }
-  this.sockets.splice(pos, 1);
-
-  var pending = this.requests.shift();
-  if (pending) {
-    // If we have pending requests and a socket gets closed a new one
-    // needs to be created to take over in the pool for the one that closed.
-    this.createSocket(pending, function(socket) {
-      pending.request.onSocket(socket);
-    });
-  }
-};
-
-function createSecureSocket(options, cb) {
-  var self = this;
-  TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
-    var hostHeader = options.request.getHeader('host');
-    var tlsOptions = mergeOptions({}, self.options, {
-      socket: socket,
-      servername: hostHeader ? hostHeader.replace(/:.*$/, '') : options.host
-    });
-
-    // 0 is dummy port for v0.6
-    var secureSocket = tls.connect(0, tlsOptions);
-    self.sockets[self.sockets.indexOf(socket)] = secureSocket;
-    cb(secureSocket);
-  });
-}
-
-
-function toOptions(host, port, localAddress) {
-  if (typeof host === 'string') { // since v0.10
-    return {
-      host: host,
-      port: port,
-      localAddress: localAddress
-    };
-  }
-  return host; // for v0.11 or later
-}
-
-function mergeOptions(target) {
-  for (var i = 1, len = arguments.length; i < len; ++i) {
-    var overrides = arguments[i];
-    if (typeof overrides === 'object') {
-      var keys = Object.keys(overrides);
-      for (var j = 0, keyLen = keys.length; j < keyLen; ++j) {
-        var k = keys[j];
-        if (overrides[k] !== undefined) {
-          target[k] = overrides[k];
-        }
-      }
-    }
-  }
-  return target;
-}
-
-
-var debug;
-if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-  debug = function() {
-    var args = Array.prototype.slice.call(arguments);
-    if (typeof args[0] === 'string') {
-      args[0] = 'TUNNEL: ' + args[0];
-    } else {
-      args.unshift('TUNNEL:');
-    }
-    console.error.apply(console, args);
-  }
-} else {
-  debug = function() {};
-}
-exports.debug = debug; // for test
+module.exports = new (__webpack_require__(264))();
 
 
 /***/ }),
@@ -76913,7 +76821,7 @@ cu.bubble = function(Parent, events) {
 
 "use strict";
 
-const PassThrough = __webpack_require__(413).PassThrough;
+const PassThrough = __webpack_require__(794).PassThrough;
 const zlib = __webpack_require__(761);
 const mimicResponse = __webpack_require__(957);
 
@@ -78751,6 +78659,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const http_client_1 = __webpack_require__(539);
+const constants_1 = __webpack_require__(931);
 function isSuccessStatusCode(statusCode) {
     if (!statusCode) {
         return false;
@@ -78777,47 +78686,74 @@ function isRetryableStatusCode(statusCode) {
     return retryableStatusCodes.includes(statusCode);
 }
 exports.isRetryableStatusCode = isRetryableStatusCode;
-function retry(name, method, getStatusCode, maxAttempts = 2) {
+function sleep(milliseconds) {
     return __awaiter(this, void 0, void 0, function* () {
-        let response = undefined;
-        let statusCode = undefined;
-        let isRetryable = false;
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    });
+}
+function retry(name, method, getStatusCode, maxAttempts = constants_1.DefaultRetryAttempts, delay = constants_1.DefaultRetryDelay, onError = undefined) {
+    return __awaiter(this, void 0, void 0, function* () {
         let errorMessage = '';
         let attempt = 1;
         while (attempt <= maxAttempts) {
+            let response = undefined;
+            let statusCode = undefined;
+            let isRetryable = false;
             try {
                 response = yield method();
+            }
+            catch (error) {
+                if (onError) {
+                    response = onError(error);
+                }
+                isRetryable = true;
+                errorMessage = error.message;
+            }
+            if (response) {
                 statusCode = getStatusCode(response);
                 if (!isServerErrorStatusCode(statusCode)) {
                     return response;
                 }
+            }
+            if (statusCode) {
                 isRetryable = isRetryableStatusCode(statusCode);
                 errorMessage = `Cache service responded with ${statusCode}`;
-            }
-            catch (error) {
-                isRetryable = true;
-                errorMessage = error.message;
             }
             core.debug(`${name} - Attempt ${attempt} of ${maxAttempts} failed with error: ${errorMessage}`);
             if (!isRetryable) {
                 core.debug(`${name} - Error is not retryable`);
                 break;
             }
+            yield sleep(delay);
             attempt++;
         }
         throw Error(`${name} failed: ${errorMessage}`);
     });
 }
 exports.retry = retry;
-function retryTypedResponse(name, method, maxAttempts = 2) {
+function retryTypedResponse(name, method, maxAttempts = constants_1.DefaultRetryAttempts, delay = constants_1.DefaultRetryDelay) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield retry(name, method, (response) => response.statusCode, maxAttempts);
+        return yield retry(name, method, (response) => response.statusCode, maxAttempts, delay, 
+        // If the error object contains the statusCode property, extract it and return
+        // an ITypedResponse<T> so it can be processed by the retry logic.
+        (error) => {
+            if (error instanceof http_client_1.HttpClientError) {
+                return {
+                    statusCode: error.statusCode,
+                    result: null,
+                    headers: {}
+                };
+            }
+            else {
+                return undefined;
+            }
+        });
     });
 }
 exports.retryTypedResponse = retryTypedResponse;
-function retryHttpClientResponse(name, method, maxAttempts = 2) {
+function retryHttpClientResponse(name, method, maxAttempts = constants_1.DefaultRetryAttempts, delay = constants_1.DefaultRetryDelay) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield retry(name, method, (response) => response.message.statusCode, maxAttempts);
+        return yield retry(name, method, (response) => response.message.statusCode, maxAttempts, delay);
     });
 }
 exports.retryHttpClientResponse = retryHttpClientResponse;
@@ -80712,6 +80648,10 @@ var CompressionMethod;
     CompressionMethod["ZstdWithoutLong"] = "zstd-without-long";
     CompressionMethod["Zstd"] = "zstd";
 })(CompressionMethod = exports.CompressionMethod || (exports.CompressionMethod = {}));
+// The default number of retry attempts.
+exports.DefaultRetryAttempts = 2;
+// The default delay in milliseconds between retry attempts.
+exports.DefaultRetryDelay = 5000;
 // Socket timeout in milliseconds during download.  If no traffic is received
 // over the socket during this period, the socket is destroyed and the download
 // is aborted.
@@ -81045,7 +80985,7 @@ const urlLib = __webpack_require__(835);
 const normalizeUrl = __webpack_require__(53);
 const getStream = __webpack_require__(341);
 const CachePolicy = __webpack_require__(154);
-const Response = __webpack_require__(141);
+const Response = __webpack_require__(21);
 const lowercaseKeys = __webpack_require__(97);
 const cloneResponse = __webpack_require__(325);
 const Keyv = __webpack_require__(475);
@@ -81629,7 +81569,7 @@ module.exports = function(extglob) {
 
 "use strict";
 
-const {Readable} = __webpack_require__(413);
+const {Readable} = __webpack_require__(794);
 
 module.exports = input => (
 	new Readable({
@@ -83787,7 +83727,7 @@ function isObject(val) {
 
 "use strict";
 
-const {PassThrough: PassThroughStream} = __webpack_require__(413);
+const {PassThrough: PassThroughStream} = __webpack_require__(794);
 
 module.exports = options => {
 	options = {...options};
@@ -84404,187 +84344,7 @@ module.exports = resolveUrl
 /* 980 */,
 /* 981 */,
 /* 982 */,
-/* 983 */
-/***/ (function(module) {
-
-
-/**
- * Expose `Emitter`.
- */
-
-if (true) {
-  module.exports = Emitter;
-}
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(obj) {
-  if (obj) return mixin(obj);
-};
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (var key in Emitter.prototype) {
-    obj[key] = Emitter.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.on =
-Emitter.prototype.addEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
-    .push(fn);
-  return this;
-};
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.once = function(event, fn){
-  function on() {
-    this.off(event, on);
-    fn.apply(this, arguments);
-  }
-
-  on.fn = fn;
-  this.on(event, on);
-  return this;
-};
-
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.off =
-Emitter.prototype.removeListener =
-Emitter.prototype.removeAllListeners =
-Emitter.prototype.removeEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-
-  // all
-  if (0 == arguments.length) {
-    this._callbacks = {};
-    return this;
-  }
-
-  // specific event
-  var callbacks = this._callbacks['$' + event];
-  if (!callbacks) return this;
-
-  // remove all handlers
-  if (1 == arguments.length) {
-    delete this._callbacks['$' + event];
-    return this;
-  }
-
-  // remove specific handler
-  var cb;
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i];
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1);
-      break;
-    }
-  }
-
-  // Remove event specific arrays for event types that no
-  // one is subscribed for to avoid memory leak.
-  if (callbacks.length === 0) {
-    delete this._callbacks['$' + event];
-  }
-
-  return this;
-};
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
-
-Emitter.prototype.emit = function(event){
-  this._callbacks = this._callbacks || {};
-
-  var args = new Array(arguments.length - 1)
-    , callbacks = this._callbacks['$' + event];
-
-  for (var i = 1; i < arguments.length; i++) {
-    args[i - 1] = arguments[i];
-  }
-
-  if (callbacks) {
-    callbacks = callbacks.slice(0);
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
-      callbacks[i].apply(this, args);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
-Emitter.prototype.listeners = function(event){
-  this._callbacks = this._callbacks || {};
-  return this._callbacks['$' + event] || [];
-};
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
-
-Emitter.prototype.hasListeners = function(event){
-  return !! this.listeners(event).length;
-};
-
-
-/***/ }),
+/* 983 */,
 /* 984 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -84816,8 +84576,8 @@ var node_fetch = _interopDefault(__webpack_require__(454));
 var abortController = __webpack_require__(106);
 var FormData = _interopDefault(__webpack_require__(790));
 var util = __webpack_require__(669);
-var stream = __webpack_require__(413);
-var tunnel = __webpack_require__(426);
+var stream = __webpack_require__(794);
+var tunnel = __webpack_require__(413);
 var coreAuth = __webpack_require__(229);
 var logger$1 = __webpack_require__(928);
 var xml2js = __webpack_require__(992);
