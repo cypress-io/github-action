@@ -159,7 +159,9 @@ const restoreCachedNpm = () => {
   const NPM_CACHE = getNpmCache()
   return restoreCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey, [
     NPM_CACHE.restoreKeys
-  ])
+  ]).catch(e => {
+    console.warn('Restoring NPM cache error: %s', e.message)
+  })
 }
 
 const saveCachedNpm = () => {
@@ -179,7 +181,9 @@ const restoreCachedCypressBinary = () => {
     [CYPRESS_BINARY_CACHE.inputPath],
     CYPRESS_BINARY_CACHE.primaryKey,
     [CYPRESS_BINARY_CACHE.restoreKeys]
-  )
+  ).catch(e => {
+    console.warn('Restoring Cypress cache error: %s', e.message)
+  })
 }
 
 const saveCachedCypressBinary = () => {
