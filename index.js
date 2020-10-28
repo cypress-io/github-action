@@ -226,8 +226,24 @@ const install = () => {
   }
 }
 
+const listCypressBinaries = () => {
+  core.debug(
+    `Cypress versions in the cache folder ${CYPRESS_CACHE_FOLDER}`
+  )
+  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  return io.which('npx', true).then(npxPath => {
+    return exec.exec(
+      quote(npxPath),
+      ['cypress', 'cache', 'list'],
+      cypressCommandOptions
+    )
+  })
+}
+
 const verifyCypressBinary = () => {
-  core.debug('Verifying Cypress')
+  core.debug(
+    `Verifying Cypress using cache folder ${CYPRESS_CACHE_FOLDER}`
+  )
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   return io.which('npx', true).then(npxPath => {
     return exec.exec(
@@ -644,14 +660,18 @@ const installMaybe = () => {
     core.debug(`cypress cache hit ${cypressCacheHit}`)
 
     return install().then(() => {
-      if (npmCacheHit && cypressCacheHit) {
-        core.debug('no need to verify Cypress binary or save caches')
-        return Promise.resolve(undefined)
-      }
+      return listCypressBinaries().then(() => {
+        if (npmCacheHit && cypressCacheHit) {
+          core.debug(
+            'no need to verify Cypress binary or save caches'
+          )
+          return Promise.resolve(undefined)
+        }
 
-      return verifyCypressBinary()
-        .then(saveCachedNpm)
-        .then(saveCachedCypressBinary)
+        return verifyCypressBinary()
+          .then(saveCachedNpm)
+          .then(saveCachedCypressBinary)
+      })
     })
   })
 }
