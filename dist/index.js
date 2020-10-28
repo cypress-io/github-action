@@ -7187,8 +7187,12 @@ const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
 
 const startWorkingDirectory = process.cwd()
-const workingDirectory =
-  core.getInput('working-directory') || process.cwd()
+// seems the working directory should be absolute to work correctly
+// https://github.com/cypress-io/github-action/issues/211
+const workingDirectory = core.getInput('working-directory')
+  ? path.resolve(core.getInput('working-directory'))
+  : startWorkingDirectory
+core.debug(`working directory ${workingDirectory}`)
 
 /**
  * When running "npm install" or any other Cypress-related commands,
