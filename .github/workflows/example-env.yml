@@ -37,9 +37,9 @@ jobs:
           working-directory: examples/env
           # additional env variables to pass to Cypress specs
           # variables are automatically casted
-          # Cypress.env('host') // 'api.dev.local'
+          # Cypress.env('host') // 'http://api.dev.local'
           # Cypress.env('apiPort') // 4222
-          env: host=api.dev.local,apiPort=4222
+          env: host=http://api.dev.local,apiPort=4222
           spec: cypress/integration/spec.js
 
   with-action-env:
@@ -55,7 +55,7 @@ jobs:
         # via additional "env" blocks
         env:
           CYPRESS_apiPort: 4222
-          CYPRESS_host: api.dev.local
+          CYPRESS_host: http://api.dev.local
         with:
           working-directory: examples/env
           spec: cypress/integration/spec.js
@@ -75,6 +75,6 @@ jobs:
         env:
           CYPRESS_apiPort: 4222
         with:
-          env: host=api.dev.local
+          env: host=http://api.dev.local
           working-directory: examples/env
           spec: cypress/integration/spec.js
