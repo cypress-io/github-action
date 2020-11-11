@@ -75,6 +75,6 @@ jobs:
         env:
           CYPRESS_apiPort: 4222
         with:
-          env: host=api.dev.local
+          env: host=http://api.dev.local
           working-directory: examples/env
           spec: cypress/integration/spec.js
