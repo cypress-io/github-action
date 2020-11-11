@@ -11,8 +11,8 @@
     "renovate"
   ],
   "masterIssue": true,
-  "prConcurrentLimit": 3,
-  "prHourlyLimit": 2,
+  "prConcurrentLimit": 8,
+  "prHourlyLimit": 4,
   "timezone": "America/New_York",
   "schedule": [
     "every weekend"
