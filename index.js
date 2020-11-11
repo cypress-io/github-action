@@ -109,7 +109,9 @@ const useYarn = () => fs.existsSync(yarnFilename)
 
 const lockHash = () => {
   const lockFilename = useYarn() ? yarnFilename : packageLockFilename
-  return hasha.fromFileSync(lockFilename)
+  const fileHash = hasha.fromFileSync(lockFilename)
+  core.debug(`Hash from file ${lockFilename} is ${fileHash}`)
+  return fileHash
 }
 
 // enforce the same NPM cache folder across different operating systems
