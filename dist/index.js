@@ -8627,6 +8627,8 @@ const getNpmCache = () => {
     o.inputPath = NPM_CACHE_FOLDER
   }
 
+  // use exact restore key to prevent NPM cache from growing
+  // https://glebbahmutov.com/blog/do-not-let-npm-cache-snowball/
   o.restoreKeys = o.primaryKey = key
   return o
 }
@@ -8644,10 +8646,14 @@ core.debug(
 
 const getCypressBinaryCache = () => {
   const o = {
-    inputPath: CYPRESS_CACHE_FOLDER,
-    restoreKeys: `cypress-${platformAndArch}-`
+    inputPath: CYPRESS_CACHE_FOLDER
   }
-  o.primaryKey = o.restoreKeys + lockHash()
+  const hash = lockHash()
+  const key = `cypress-${platformAndArch}-${hash}`
+
+  // use only exact restore key to prevent cached folder growing in size
+  // https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
+  o.restoreKeys = o.primaryKey = key
   return o
 }
 
