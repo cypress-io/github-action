@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "cypress run",
-    "start": "node ."
+    "start": "node .",
+    "start2": "node ./index2"
   },
   "author": "",
   "license": "ISC",

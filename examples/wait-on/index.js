@@ -1,3 +1,6 @@
+// this server only starts listening to
+// the incoming requests after a delay
+
 // always log messages
 // useful because shows timestamps
 const log = require('debug')('*')
