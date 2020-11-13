@@ -8646,8 +8646,7 @@ core.debug(
 
 const getCypressBinaryCache = () => {
   const o = {
-    inputPath: CYPRESS_CACHE_FOLDER,
-    restoreKeys: `cypress-${platformAndArch}-`
+    inputPath: CYPRESS_CACHE_FOLDER
   }
   const hash = lockHash()
   const key = `cypress-${platformAndArch}-${hash}`
