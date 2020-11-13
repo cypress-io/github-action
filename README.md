@@ -840,6 +840,8 @@ Name | Description
 
 This action installs local dependencies using lock files. If `yarn.lock` file is found, the install uses `yarn --frozen-lockfile` command. Otherwise it expects to find `package-lock.json` and install using `npm ci` command.
 
+This action uses several production dependencies. The minimum Node version required to run this action depends on the minimum Node required by the dependencies.
+
 ### Debugging
 
 You can see verbose messages from GitHub Actions by setting the following secrets (from [Debugging Actions Guide](https://github.com/actions/toolkit/blob/master/docs/action-debugging.md#step-debug-logs))

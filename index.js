@@ -5,38 +5,13 @@ const exec = require('@actions/exec')
 const io = require('@actions/io')
 const { Octokit } = require('@octokit/core')
 const hasha = require('hasha')
-const got = require('got')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
-
-/**
- * A small utility for checking when an URL responds, kind of
- * a poor man's https://www.npmjs.com/package/wait-on
- */
-const ping = (url, timeout) => {
-  const start = +new Date()
-  return got(url, {
-    retry: {
-      retries(retry, error) {
-        const now = +new Date()
-        core.debug(
-          `${now - start}ms ${error.method} ${error.host} ${
-            error.code
-          }`
-        )
-        if (now - start > timeout) {
-          console.error('%s timed out', url)
-          return 0
-        }
-        return 1000
-      }
-    }
-  })
-}
+const { ping } = require('./src/ping')
 
 /**
  * Parses input command, finds the tool and
