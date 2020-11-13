@@ -6,7 +6,8 @@
   "scripts": {
     "test": "cypress run",
     "start": "node .",
-    "start2": "node ./index2"
+    "start2": "node ./index2",
+    "start3": "node ./index3"
   },
   "author": "",
   "license": "ISC",

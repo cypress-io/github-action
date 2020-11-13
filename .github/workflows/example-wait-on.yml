@@ -26,3 +26,16 @@ jobs:
           working-directory: examples/wait-on
           start: npm run start2
           wait-on: 'http://localhost:3050'
+
+  wait3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/wait-on
+          start: npm run start3
+          wait-on: 'http://localhost:3050'
