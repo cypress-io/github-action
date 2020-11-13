@@ -4,6 +4,36 @@
 
 ## Examples
 
+- [Basic](#basic)
+- [Explicit version](#explicit-version)
+- Run tests in a given [browser](#browser)
+    * using [Firefox](#firefox)
+    * using [Edge](#edge)
+    * using [headless mode](#headless)
+- Using [Docker image](#docker-image)
+- Specify [environment variables](#env)
+- Run only some [spec files](#specs)
+- Test [project in subfolder](#project)
+- [Record results](#record-test-results-on-cypress-dashboard) on Cypress Dashboard
+- Tag [recordings](#tag-recordings)
+- [Quiet output](#quiet-flag)
+- Store [test artifacts](#artifacts) on GitHub
+- Set Cypress [config values](#config)
+- Use specific [config file](#config-file)
+- Run tests in [parallel](#parallel)
+- [Build app](#build-app) before running the tests
+- [Start server](#start-server) before running the tests
+- [Wait for server](#wait-on) before running the tests
+- use [command prefix](#command-prefix)
+- use [own custom test command](#custom-test-command)
+- pass [custom build id](#custom-build-id) when recording to Dashboard
+- use different [working-directory](#working-directory)
+- use [custom cache key](#custom-cache-key)
+- run tests on multiple [Node versions](#node-versions)
+- split [install and tests](#split-install-and-tests) into separate jobs
+- use [custom install commands](#custom-install)
+- [more examples](#more-examples)
+
 ### Basic
 
 ```yml
@@ -64,44 +94,6 @@ jobs:
 
 [![Chrome example](https://github.com/cypress-io/github-action/workflows/example-chrome/badge.svg?branch=master)](.github/workflows/example-chrome.yml)
 
-### Headless
-
-Run the browser in headless mode
-
-```yml
-name: Chrome headless
-on: [push]
-jobs:
-  cypress-run:
-    runs-on: ubuntu-16.04
-    steps:
-      - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
-        with:
-          browser: chrome
-          headless: true
-```
-
-### Docker image
-
-You can run tests in a GH Action in your Docker container.
-
-```yml
-name: E2E in custom container
-on: [push]
-jobs:
-  cypress-run:
-    runs-on: ubuntu-16.04
-    # Cypress Docker image with Chrome v78
-    # and Firefox v70 pre-installed
-    container: cypress/browsers:node12.13.0-chrome78-ff70
-    steps:
-      - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
-        with:
-          browser: chrome
-```
-
 ### Firefox
 
 In order to run Firefox, you need to use non-root user (Firefox security restriction).
@@ -144,6 +136,44 @@ jobs:
 [![Edge example](https://github.com/cypress-io/github-action/workflows/example-edge/badge.svg?branch=master)](.github/workflows/example-edge.yml)
 
 **Note:** Microsoft has not released Edge for Linux yet, thus you need to run these tests on Windows or Mac runners with Edge preinstalled. You can use [`cypress info`](https://on.cypress.io/command-line#cypress-info) command to see the browsers installed on the machine.
+
+### Headless
+
+Run the browser in headless mode
+
+```yml
+name: Chrome headless
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+```
+
+### Docker image
+
+You can run tests in a GH Action in your Docker container.
+
+```yml
+name: E2E in custom container
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-16.04
+    # Cypress Docker image with Chrome v78
+    # and Firefox v70 pre-installed
+    container: cypress/browsers:node12.13.0-chrome78-ff70
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+```
 
 ### Env
 

@@ -17,5 +17,6 @@
   },
   "peacock.color": "#f9e64f",
   "editor.formatOnPaste": false,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "markdown.extension.toc.updateOnSave": false
 }
