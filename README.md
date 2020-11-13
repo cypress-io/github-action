@@ -543,6 +543,8 @@ jobs:
           wait-on: 'http://localhost:8080'
 ```
 
+[![wait-on example](https://github.com/cypress-io/github-action/workflows/example-wait-on/badge.svg?branch=master)](.github/workflows/example-wait-on.yml)
+
 By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout in seconds using `wait-on-timeout`.
 
 ```yml
