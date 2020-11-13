@@ -13,6 +13,10 @@ const port = 3050
 log('creating the server on port %d', port)
 log('will not respond for the first %d seconds', errorPeriodSeconds)
 
+setTimeout(function() {
+  log('from now on will answer all good')
+}, errorPeriodSeconds * 1000)
+
 const server = http.createServer((req, res) => {
   log('request %s %s', req.method, req.url)
   if (new Date() < endErrorsAt) {

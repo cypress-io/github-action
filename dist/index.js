@@ -84655,6 +84655,8 @@ const ping = (url, timeout) => {
         return 1000
       }
     }
+  }).then(() => {
+    core.debug(`pinging ${url} has finished ok`)
   })
 }
 
