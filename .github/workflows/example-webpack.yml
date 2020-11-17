@@ -1,0 +1,15 @@
+name: example-webpack
+on: [push]
+jobs:
+  wait:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/webpack
+          start: npm start
+          wait-on: 'http://localhost:8080'
