@@ -50,3 +50,17 @@ BREAKING CHANGE: requires Node 8 to run
 ```
 
 3. New versions of this action will be released automatically by the CI, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `/v1` branch. Thus every user that use `- uses: cypress-io/github-action@v2` will be using the new version automatically.
+
+## Updating the latest version in GitHub Marketplace
+
+Seems to be a manual process right now. After a new release has been created, go to the release and click "Edit"
+
+![Edit the release](images/edit-release.png)
+
+Review the release info, make sure the "publish ..." checkbox is checked
+
+![Review the release](images/review-release.png)
+
+After clicking "Update the release" check that the Marketplace [https://github.com/marketplace/actions/cypress-io](https://github.com/marketplace/actions/cypress-io) has been updated.
+
+![Latest release in marketplace](images/latest-release.png)
