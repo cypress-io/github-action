@@ -556,6 +556,8 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
     wait-on-timeout: 120
 ```
 
+See also [![Webpack Dev Server example](https://github.com/cypress-io/github-action/workflows/example-webpack/badge.svg?branch=master)](.github/workflows/example-webpack.yml)
+
 ### Command prefix
 
 You can prefix the default test command using the `command-prefix` option. This is useful for example when running [Percy](https://docs.percy.io/docs/cypress), which requires the test command to be wrapped with `percy exec --`.
