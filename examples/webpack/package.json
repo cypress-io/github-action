@@ -1,0 +1,17 @@
+{
+  "name": "example-webpack",
+  "version": "1.0.0",
+  "description": "Waiting for Webpack DevServer to start",
+  "scripts": {
+    "test": "cypress run",
+    "start": "webpack-dev-server"
+  },
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "5.6.0",
+    "webpack": "4",
+    "webpack-cli": "3",
+    "webpack-dev-server": "3.11.0"
+  }
+}
