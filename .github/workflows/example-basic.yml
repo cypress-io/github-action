@@ -1,8 +1,8 @@
 name: example-basic
 on: [push]
 jobs:
-  basic:
-    runs-on: ubuntu-latest
+  basic-ubuntu-18.04:
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -18,6 +18,18 @@ jobs:
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
+          build: npx cypress info
+
+  basic-ubuntu-20.04:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic
           build: npx cypress info
 
   basic-on-windows:
