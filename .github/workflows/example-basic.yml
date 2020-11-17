@@ -1,7 +1,7 @@
 name: example-basic
 on: [push]
 jobs:
-  basic-ubuntu-18.04:
+  basic-ubuntu-18:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
@@ -20,7 +20,7 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-ubuntu-20.04:
+  basic-ubuntu-20:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
