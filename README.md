@@ -580,6 +580,20 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
 
 See also [![Webpack Dev Server example](https://github.com/cypress-io/github-action/workflows/example-webpack/badge.svg?branch=master)](.github/workflows/example-webpack.yml)
 
+You can wait for multiple URLs to respond by separating urls with a comma
+
+```yml
+- uses: cypress-io/github-action@v2
+  with:
+    # API runs on port 3050
+    # Web server runs on port 8080
+    start: npm run api, npm run web
+    # wait for all services to respond
+    wait-on: 'http://localhost:3050, http://localhost:8080'
+```
+
+The action will wait for the first url to respond, then will check the second url, and so on.
+
 ### Command prefix
 
 You can prefix the default test command using the `command-prefix` option. This is useful for example when running [Percy](https://docs.percy.io/docs/cypress), which requires the test command to be wrapped with `percy exec --`.
