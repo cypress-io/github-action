@@ -16,6 +16,7 @@
     "cypress": "5.2.0"
   },
   "dependencies": {
+    "arg": "5.0.0",
     "debug": "4.2.0"
   }
 }

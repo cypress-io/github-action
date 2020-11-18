@@ -23,6 +23,7 @@
 - Run tests in [parallel](#parallel)
 - [Build app](#build-app) before running the tests
 - [Start server](#start-server) before running the tests
+- [Start multiple servers](#start-multiple-servers) before running the tests
 - [Wait for server](#wait-on) before running the tests
 - use [command prefix](#command-prefix)
 - use [own custom test command](#custom-test-command)
@@ -521,6 +522,27 @@ jobs:
 ```
 
 [![start example](https://github.com/cypress-io/github-action/workflows/example-start/badge.svg?branch=master)](.github/workflows/example-start.yml)
+
+**Note:** GitHub cleans up the running server processes automatically. This action does not stop them.
+
+### Start multiple servers
+
+You can start multiple server processes. For example, if you have an API to start using `npm run api` and the web server to start using `npm run web` you can put those commands in `start` using comma separation.
+
+```yml
+name: With servers
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: npm run api, npm run web
+```
 
 ### Wait-on
 

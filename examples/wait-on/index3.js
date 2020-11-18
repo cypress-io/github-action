@@ -5,10 +5,15 @@
 // useful because shows timestamps
 const log = require('debug')('*')
 const http = require('http')
+const arg = require('arg')
+
+const args = arg({
+  '--port': Number
+})
+const port = args['--port'] || 3050
 
 const errorPeriodSeconds = 40
 const endErrorsAt = +new Date() + errorPeriodSeconds * 1000
-const port = 3050
 
 log('creating the server on port %d', port)
 log('will not respond for the first %d seconds', errorPeriodSeconds)

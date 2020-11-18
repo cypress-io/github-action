@@ -38,3 +38,17 @@ jobs:
           working-directory: examples/wait-on
           start: npm run start3
           wait-on: 'http://localhost:3050'
+
+  wait-multiple:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/wait-on
+          # use different command formats
+          start: npm start -- --port 3050, npm run start2 -- --port 3060, node ./index3 --port 3070
+          # wait for the last server to respond
+          wait-on: 'http://localhost:3070'

@@ -270,7 +270,7 @@ const buildAppMaybe = () => {
   return execCommand(buildApp, true, 'build app')
 }
 
-const startServerMaybe = () => {
+const startServersMaybe = () => {
   let startCommand
 
   if (isWindows()) {
@@ -285,7 +285,21 @@ const startServerMaybe = () => {
     return
   }
 
-  return execCommand(startCommand, false, 'start server')
+  const separateStartCommands = startCommand
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+  core.debug(
+    `Separated start commands ${separateStartCommands.join(', ')}`
+  )
+
+  return separateStartCommands.map(startCommand => {
+    return execCommand(
+      startCommand,
+      false,
+      `start server "${startCommand}`
+    )
+  })
 }
 
 const waitOnMaybe = () => {
@@ -665,7 +679,7 @@ const installMaybe = () => {
 
 installMaybe()
   .then(buildAppMaybe)
-  .then(startServerMaybe)
+  .then(startServersMaybe)
   .then(waitOnMaybe)
   .then(runTests)
   .then(() => {
