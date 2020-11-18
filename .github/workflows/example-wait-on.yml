@@ -50,5 +50,5 @@ jobs:
           working-directory: examples/wait-on
           # use different command formats
           start: npm start -- --port 3050, npm run start2 -- --port 3060, node ./index3 --port 3070
-          # wait for the last server to respond
-          wait-on: 'http://localhost:3070'
+          # wait for all services to respond
+          wait-on: 'http://localhost:3050, http://localhost:3060, http://localhost:3070'
