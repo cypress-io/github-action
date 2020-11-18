@@ -8834,7 +8834,16 @@ const waitOnMaybe = () => {
 
   const waitTimeoutMs = parseFloat(waitOnTimeout) * 1000
 
-  return ping(waitOn, waitTimeoutMs)
+  const waitUrls = waitOn
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+  core.debug(`Waiting for urls ${waitUrls.join(', ')}`)
+
+  return waitUrls.reduce((prevPromise, url) => {
+    core.debug(`Waiting for url ${url}`)
+    return prevPromise.then(() => ping(url, waitTimeoutMs))
+  }, Promise.resolve())
 }
 
 const I = x => x
