@@ -324,9 +324,13 @@ const waitOnMaybe = () => {
     .filter(Boolean)
   core.debug(`Waiting for urls ${waitUrls.join(', ')}`)
 
+  // run every wait promise after the previous has finished
+  // to avoid "noise" of debug messages
   return waitUrls.reduce((prevPromise, url) => {
-    core.debug(`Waiting for url ${url}`)
-    return prevPromise.then(() => ping(url, waitTimeoutMs))
+    return prevPromise.then(() => {
+      core.debug(`Waiting for url ${url}`)
+      return ping(url, waitTimeoutMs)
+    })
   }, Promise.resolve())
 }
 
