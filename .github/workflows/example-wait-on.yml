@@ -48,5 +48,6 @@ jobs:
         uses: ./
         with:
           working-directory: examples/wait-on
-          start: npm start, npm run start2, npm run start3
-          wait-on: 'http://localhost:3050'
+          start: npm start -- --port 3050, npm run start2 -- --port 3060, npx run start3 --port 3070
+          # wait for the last server to respond
+          wait-on: 'http://localhost:3070'
