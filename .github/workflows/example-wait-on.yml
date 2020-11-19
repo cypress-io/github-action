@@ -53,6 +53,18 @@ jobs:
           # wait for all services to respond
           wait-on: 'http://localhost:3050, http://localhost:3060, http://localhost:3070'
 
+  wait-on-react-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/react-scripts
+          start: npm start
+          wait-on: 'http://localhost:3000'
+
   ping-cli:
     runs-on: ubuntu-latest
     steps:
