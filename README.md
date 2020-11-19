@@ -901,7 +901,7 @@ If you have a problem with `wait-on` not working, you can check the [src/ping.js
 - from another terminal call the `ping` yourself to validate the server is responding:
 
 ```
-$ node src/ping.js <url>
+$ node src/ping-cli.js <url>
 ```
 
 For example

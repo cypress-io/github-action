@@ -41,14 +41,3 @@ const ping = (url, timeout) => {
 }
 
 module.exports = { ping }
-
-if (!module.parent) {
-  const timeoutSeconds = 30
-  const url = process.argv[2]
-  console.log('pinging url %s for %d seconds', url, timeoutSeconds)
-  if (!url) {
-    console.error('Missing url to ping')
-    process.exit(1)
-  }
-  ping(url, timeoutSeconds * 1000)
-}
