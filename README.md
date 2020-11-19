@@ -594,6 +594,8 @@ You can wait for multiple URLs to respond by separating urls with a comma
 
 The action will wait for the first url to respond, then will check the second url, and so on.
 
+If this action times out waiting for the server to respond, please see [Debugging](#debugging) section in this README file.
+
 ### Command prefix
 
 You can prefix the default test command using the `command-prefix` option. This is useful for example when running [Percy](https://docs.percy.io/docs/cypress), which requires the test command to be wrapped with `percy exec --`.
@@ -880,7 +882,7 @@ This action installs local dependencies using lock files. If `yarn.lock` file is
 
 This action uses several production dependencies. The minimum Node version required to run this action depends on the minimum Node required by the dependencies.
 
-### Debugging
+## Debugging
 
 You can see verbose messages from GitHub Actions by setting the following secrets (from [Debugging Actions Guide](https://github.com/actions/toolkit/blob/master/docs/action-debugging.md#step-debug-logs))
 
@@ -890,6 +892,25 @@ ACTIONS_STEP_DEBUG: true
 ```
 
 The `ACTIONS_RUNNER_DEBUG` will show generic Actions messages, while `ACTIONS_STEP_DEBUG` will enable the `core.debug(...)` messages from this actions.
+
+If you have a problem with `wait-on` not working, you can check the [src/ping.js](src/ping.js) logic from the local machine.
+
+- clone this repository to the local machine
+- install dependencies with `npm install`
+- start your server
+- from another terminal call the `ping` yourself to validate the server is responding:
+
+```
+$ node src/ping.js <url>
+```
+
+For example
+
+```
+$ node src/ping.js https://example.cypress.io
+pinging url https://example.cypress.io for 30 seconds
+::debug::pinging https://example.cypress.io has finished ok
+```
 
 ## Development
 
