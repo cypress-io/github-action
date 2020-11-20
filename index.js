@@ -346,7 +346,8 @@ const waitOnMaybe = () => {
     return waitOnUrl(waitOn, timeoutSeconds)
   }
 
-  throw new Error(`Do not know how to wait on ${waitOn}`)
+  console.log('Waiting using command "%s"', waitOn)
+  return execCommand(waitOn, true)
 }
 
 const I = x => x

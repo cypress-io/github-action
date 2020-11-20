@@ -65,6 +65,19 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3000'
 
+  wait-using-custom-command:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/react-scripts
+          start: npm start
+          # let's use wait-on NPM package to check the URL
+          wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
+
   ping-cli:
     runs-on: ubuntu-latest
     steps:
