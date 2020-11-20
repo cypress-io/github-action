@@ -24,7 +24,7 @@ const execCommand = (
 ) => {
   const cwd = cypressCommandOptions.cwd
 
-  console.log('%s with command "%s"', label, fullCommand)
+  console.log('%s command "%s"', label, fullCommand)
   console.log('current working directory "%s"', cwd)
 
   const args = cliParser.parse(fullCommand)
