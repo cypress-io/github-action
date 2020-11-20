@@ -30,18 +30,17 @@ const ping = (url, timeout) => {
     errorCodes,
     retry: {
       limit,
-      calculateDelay({ error, retryCount }) {
+      calculateDelay({ error, attemptCount }) {
         const now = +new Date()
+        const elapsed = now - start
         core.debug(
-          `${now - start}ms ${error.method} ${error.host} ${
-            error.code
-          }`
+          `${elapsed}ms ${error.method} ${error.host} ${error.code} try ${attemptCount} of ${limit}`
         )
-        if (retryCount > limit) {
+        if (elapsed > timeout) {
           console.error(
             '%s timed out on retry %d of %d',
             url,
-            retryCount,
+            attemptCount,
             limit
           )
           return 0
@@ -50,7 +49,9 @@ const ping = (url, timeout) => {
       }
     }
   }).then(() => {
-    core.debug(`pinging ${url} has finished ok`)
+    const now = +new Date()
+    const elapsed = now - start
+    core.debug(`pinging ${url} has finished ok after ${elapsed}ms`)
   })
 }
 
