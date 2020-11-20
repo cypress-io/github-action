@@ -84684,12 +84684,15 @@ const ping = (url, timeout) => {
   const errorCodes = [...got.defaults.options.retry.errorCodes]
   errorCodes.push('ESOCKETTIMEDOUT')
 
+  // we expect the server to respond within a time limit
+  // and if it does not - retry up to total "timeout" duration
+  const individualPingTimeout = Math.min(timeout, 30000)
   const start = +new Date()
   return got(url, {
-    timeout: 1000,
+    timeout: individualPingTimeout,
     errorCodes,
     retry: {
-      limit: Math.ceil(timeout / 1000),
+      limit: Math.ceil(timeout / individualPingTimeout),
       calculateDelay({ error }) {
         const now = +new Date()
         core.debug(
