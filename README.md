@@ -24,7 +24,7 @@
 - [Build app](#build-app) before running the tests
 - [Start server](#start-server) before running the tests
 - [Start multiple servers](#start-multiple-servers) before running the tests
-- [Wait for server](#wait-on) before running the tests
+- [Wait for server](#wait-on) to respond before running the tests
 - use [command prefix](#command-prefix)
 - use [own custom test command](#custom-test-command)
 - pass [custom build id](#custom-build-id) when recording to Dashboard
@@ -614,6 +614,17 @@ You can wait for multiple URLs to respond by separating urls with a comma
 ```
 
 The action will wait for the first url to respond, then will check the second url, and so on.
+
+You can even use your own command (usually by using `npm`, `yarn`, `npx`) to wait for the server to respond. For example, if you want to use [wait-on](https://github.com/jeffbski/wait-on) utility to ping the server and run the Cypress tests after the server responds:
+
+```yml
+- uses: cypress-io/github-action@v2
+  with:
+    start: npm start
+    wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
+```
+
+See [example-wait-on.yml](.github/workflows/example-wait-on.yml) workflow file.
 
 If this action times out waiting for the server to respond, please see [Debugging](#debugging) section in this README file.
 
