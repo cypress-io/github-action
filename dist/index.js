@@ -84687,24 +84687,35 @@ const ping = (url, timeout) => {
   // we expect the server to respond within a time limit
   // and if it does not - retry up to total "timeout" duration
   const individualPingTimeout = Math.min(timeout, 30000)
+  const limit = Math.ceil(timeout / individualPingTimeout)
+
+  core.debug(`total ping timeout ${timeout}`)
+  core.debug(`individual ping timeout ${individualPingTimeout}ms`)
+  core.debug(`retries limit ${limit}`)
+
   const start = +new Date()
   return got(url, {
     timeout: individualPingTimeout,
     errorCodes,
     retry: {
-      limit: Math.ceil(timeout / individualPingTimeout),
-      calculateDelay({ error }) {
+      limit,
+      calculateDelay({ error, retryCount }) {
         const now = +new Date()
         core.debug(
           `${now - start}ms ${error.method} ${error.host} ${
             error.code
           }`
         )
-        if (now - start > timeout) {
-          console.error('%s timed out', url)
+        if (retryCount > limit) {
+          console.error(
+            '%s timed out on retry %d of %d',
+            url,
+            retryCount,
+            limit
+          )
           return 0
         }
-        return 1000
+        return individualPingTimeout
       }
     }
   }).then(() => {
