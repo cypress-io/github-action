@@ -84703,7 +84703,7 @@ const ping = (url, timeout) => {
         const now = +new Date()
         const elapsed = now - start
         core.debug(
-          `${elapsed}ms ${error.method} ${error.host} ${error.code} try ${attemptCount} of ${limit}`
+          `${elapsed}ms ${error.method} ${error.host} ${error.code} attempt ${attemptCount}`
         )
         if (elapsed > timeout) {
           console.error(
@@ -84714,6 +84714,14 @@ const ping = (url, timeout) => {
           )
           return 0
         }
+
+        // if the error code is ECONNREFUSED use shorter timeout
+        // because the server is probably starting
+        if (error.code === 'ECONNREFUSED') {
+          return 1000
+        }
+
+        // default "long" timeout
         return individualPingTimeout
       }
     }
