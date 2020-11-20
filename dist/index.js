@@ -8567,6 +8567,7 @@ const execCommand = (
 }
 
 const isWindows = () => os.platform() === 'win32'
+const isUrl = s => /^https?:\/\//.test(s)
 
 const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
@@ -8818,21 +8819,19 @@ const startServersMaybe = () => {
   })
 }
 
-const waitOnMaybe = () => {
-  const waitOn = core.getInput('wait-on')
-  if (!waitOn) {
-    return
-  }
-
-  const waitOnTimeout = core.getInput('wait-on-timeout') || '60'
-
+/**
+ * Pings give URL(s) until the timeout expires.
+ * @param {string} waitOn A single URL or comma-separated URLs
+ * @param {Number?} waitOnTimeout in seconds
+ */
+const waitOnUrl = (waitOn, waitOnTimeout = 60) => {
   console.log(
     'waiting on "%s" with timeout of %s seconds',
     waitOn,
     waitOnTimeout
   )
 
-  const waitTimeoutMs = parseFloat(waitOnTimeout) * 1000
+  const waitTimeoutMs = waitOnTimeout * 1000
 
   const waitUrls = waitOn
     .split(',')
@@ -8848,6 +8847,22 @@ const waitOnMaybe = () => {
       return ping(url, waitTimeoutMs)
     })
   }, Promise.resolve())
+}
+
+const waitOnMaybe = () => {
+  const waitOn = core.getInput('wait-on')
+  if (!waitOn) {
+    return
+  }
+
+  const waitOnTimeout = core.getInput('wait-on-timeout') || '60'
+  const timeoutSeconds = parseFloat(waitOnTimeout)
+
+  if (isUrl(waitOn)) {
+    return waitOnUrl(waitOn, timeoutSeconds)
+  }
+
+  throw new Error(`Do not know how to wait on ${waitOn}`)
 }
 
 const I = x => x
