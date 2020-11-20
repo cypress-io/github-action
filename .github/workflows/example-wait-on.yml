@@ -39,6 +39,18 @@ jobs:
           start: npm run start3
           wait-on: 'http://localhost:3050'
 
+  wait4:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/wait-on
+          start: npm run start4
+          wait-on: 'http://localhost:3050'
+
   wait-multiple:
     runs-on: ubuntu-latest
     steps:

@@ -1,5 +1,5 @@
 const { ping } = require('./ping')
-const timeoutSeconds = 30
+const timeoutSeconds = 60
 const url = process.argv[2]
 console.log('pinging url %s for %d seconds', url, timeoutSeconds)
 if (!url) {

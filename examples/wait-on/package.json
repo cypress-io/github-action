@@ -7,7 +7,8 @@
     "test": "cypress run",
     "start": "node .",
     "start2": "node ./index2",
-    "start3": "node ./index3"
+    "start3": "node ./index3",
+    "start4": "node ./index4"
   },
   "author": "",
   "license": "ISC",
