@@ -12,8 +12,6 @@ jobs:
       - name: Firefox
         uses: ./
         timeout-minutes: 3
-        env:
-          DEBUG: 'cypress:*'
         with:
           # let's show browser and system info
           build: npx cypress info
