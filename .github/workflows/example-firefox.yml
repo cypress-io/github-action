@@ -24,6 +24,8 @@ jobs:
       - name: Firefox
         uses: ./
         timeout-minutes: 3
+        env:
+          DEBUG: 'cypress:*'
         with:
           working-directory: examples/firefox
           browser: firefox
