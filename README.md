@@ -33,6 +33,7 @@
 - run tests on multiple [Node versions](#node-versions)
 - split [install and tests](#split-install-and-tests) into separate jobs
 - use [custom install commands](#custom-install)
+- install [only Cypress](#install-cypress-only) to avoid installing all dependencies
 - [more examples](#more-examples)
 
 ### Basic
@@ -894,6 +895,28 @@ See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-m
 ### Custom install
 
 Finally, you might not need this GH Action at all. For example, if you want to split the NPM dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself. See [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) for working example.
+
+### Install Cypress only
+
+If the project has many dependencies, but you want to install just Cypress you can combine this action with `actions/cache` and `npm i cypress` commands yourself.
+
+```yml
+- uses: actions/checkout@v2
+- uses: actions/cache@v2
+  with:
+    path: |
+      ~/.cache/Cypress
+      node_modules
+    key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+- run: npm i cypress
+- uses: cypress-io/github-action@v2
+  with:
+    install: false
+```
+
+See [.github/workflows/examples-install-only.yml](.github/workflows/examples-install-only.yml) file.
+
+[![Install only Cypress example](https://github.com/cypress-io/github-action/workflows/example-install-only/badge.svg?branch=master)](.github/workflows/example-install-only.yml)
 
 ### More examples
 
