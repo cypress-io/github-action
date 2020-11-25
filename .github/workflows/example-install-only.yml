@@ -6,7 +6,7 @@ jobs:
   install-cypress-only:
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
+      - name: Checkout 🛎
         uses: actions/checkout@v2
 
       # cache NPM modules and Cypress binary folder
@@ -14,17 +14,19 @@ jobs:
       # to make sure we use the precise Cypress version
       # (which is important when using ^ version in package.json)
       # see https://github.com/actions/cache
-      - name: Cache NPM and Cypress
+      - name: Cache NPM and Cypress 📦
         uses: actions/cache@v2
         with:
           path: |
             ~/.cache/Cypress
             node_modules
-          key: ${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Cypress tests
+      - name: Install Cypress 📥
+        run: npm i cypress
+
+      - name: Cypress tests 🧪
         uses: ./
         with:
           working-directory: examples/install-only
-          install: npm i cypress
-          command: npx cypress info
+          install: false
