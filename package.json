@@ -46,7 +46,7 @@
     "@types/node": "12.19.8",
     "@zeit/ncc": "0.22.3",
     "husky": "4.3.4",
-    "markdown-link-check": "3.8.3",
+    "markdown-link-check": "3.8.4",
     "prettier": "2.2.1",
     "stop-build": "1.1.0"
   },
