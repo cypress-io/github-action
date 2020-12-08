@@ -25,6 +25,7 @@
 - [Start server](#start-server) before running the tests
 - [Start multiple servers](#start-multiple-servers) before running the tests
 - [Wait for server](#wait-on) to respond before running the tests
+- use [custom install command](#custom-install-command)
 - use [command prefix](#command-prefix)
 - use [own custom test command](#custom-test-command)
 - pass [custom build id](#custom-build-id) when recording to Dashboard
@@ -632,6 +633,18 @@ You can even use your own command (usually by using `npm`, `yarn`, `npx`) to wai
 See [example-wait-on.yml](.github/workflows/example-wait-on.yml) workflow file.
 
 If this action times out waiting for the server to respond, please see [Debugging](#debugging) section in this README file.
+
+### Custom install command
+
+If you want to overwrite the install command
+
+```yml
+- uses: cypress-io/github-action@v2
+  with:
+    install-command: yarn --frozen-lockfile --silent
+```
+
+See [example-install-command.yml](.github/workflows/example-install-command.yml) workflow file.
 
 ### Command prefix
 
