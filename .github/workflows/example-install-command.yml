@@ -1,0 +1,15 @@
+name: example-install-command
+on: [push]
+jobs:
+  install-command:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Custom Yarn command
+        uses: ./
+        with:
+          working-directory: examples/install-command
+          # https://classic.yarnpkg.com/en/docs/cli/install
+          install-command: yarn --frozen-lockfile --silent

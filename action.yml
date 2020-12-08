@@ -35,6 +35,9 @@ inputs:
   install:
     description: 'Whether or not to run install'
     required: false
+  install-command:
+    description: 'Custom install command to use'
+    required: false
   runTests:
     description: 'Whether or not to run tests'
     required: false
