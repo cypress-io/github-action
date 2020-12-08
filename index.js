@@ -189,9 +189,16 @@ const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  // set NPM cache path in case the user has custom install command
+  core.exportVariable('npm_config_cache', NPM_CACHE_FOLDER)
 
   // Note: need to quote found tool to avoid Windows choking on
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
+  const installCommand = core.getInput('install-command')
+  if (installCommand) {
+    core.debug(`using custom install command "${installCommand}"`)
+    return execCommand(installCommand, true, 'install command')
+  }
 
   if (useYarn()) {
     core.debug('installing NPM dependencies using Yarn')
@@ -205,7 +212,6 @@ const install = () => {
     })
   } else {
     core.debug('installing NPM dependencies')
-    core.exportVariable('npm_config_cache', NPM_CACHE_FOLDER)
 
     return io.which('npm', true).then((npmPath) => {
       core.debug(`npm at "${npmPath}"`)
