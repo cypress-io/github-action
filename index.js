@@ -120,7 +120,7 @@ const getNpmCache = () => {
 
 // custom Cypress binary cache folder
 // see https://on.cypress.io/caching
-const CYPRESS_CACHE_FOLDER = path.join(
+const CYPRESS_CACHE_FOLDER = process.env.CYPRESS_CACHE_FOLDER || path.join(
   homeDirectory,
   '.cache',
   'Cypress'
