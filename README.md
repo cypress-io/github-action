@@ -965,6 +965,19 @@ ACTIONS_STEP_DEBUG: true
 
 The `ACTIONS_RUNNER_DEBUG` will show generic Actions messages, while `ACTIONS_STEP_DEBUG` will enable the `core.debug(...)` messages from this actions.
 
+### Logs from the test runner
+
+The above `ACTIONS_STEP_DEBUG` setting enables the debug logs from the action itself. To see the [Cypress debug logs](http://on.cypress.io/troubleshooting#Print-DEBUG-logs) add an environment variable to the action:
+
+```yml
+- name: Cypress tests with debug logs
+  uses: cypress-io/github-action@v2
+  env:
+    DEBUG: 'cypress:*'
+```
+
+### Debugging waiting for URL to respond
+
 If you have a problem with `wait-on` not working, you can check the [src/ping.js](src/ping.js) logic from the local machine.
 
 - clone this repository to the local machine
