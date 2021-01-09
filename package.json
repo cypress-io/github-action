@@ -45,7 +45,7 @@
   "devDependencies": {
     "@types/node": "12.19.12",
     "@zeit/ncc": "0.22.3",
-    "husky": "4.3.6",
+    "husky": "4.3.7",
     "markdown-link-check": "3.8.5",
     "prettier": "2.2.1",
     "stop-build": "1.1.0"
