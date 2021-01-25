@@ -34,7 +34,7 @@
     "@actions/core": "1.2.6",
     "@actions/exec": "1.0.4",
     "@actions/io": "1.0.2",
-    "@octokit/core": "2.5.4",
+    "@octokit/core": "3.2.5",
     "argument-vector": "1.0.2",
     "execa": "3.3.0",
     "find-yarn-workspace-root": "1.2.1",
