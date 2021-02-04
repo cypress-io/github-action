@@ -486,8 +486,10 @@ const runTestsUsingCommandLine = async () => {
   }
   const spec = core.getInput('spec')
   if (spec) {
+    const specLines = spec.split('\n').join(',')
+    core.debug(`extracted spec lines into: "${specLines}"`)
     cmd.push('--spec')
-    cmd.push(quoteArgument(spec))
+    cmd.push(quoteArgument(specLines))
   }
   const project = core.getInput('project')
   if (project) {

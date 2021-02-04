@@ -3,7 +3,7 @@ on: [push]
 jobs:
   start:
     # example where we pass custom base URL
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -16,3 +16,22 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
+
+  separate-specs:
+    # example where we pass specs to run via multiple lines
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/config
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3333'
+          config: baseUrl=http://localhost:3333
+          spec: |
+            cypress/integration/spec-a.js
+            cypress/integration/spec-b.js

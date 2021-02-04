@@ -1527,7 +1527,9 @@ function resolvePaths(patterns) {
         try {
             for (var _c = __asyncValues(globber.globGenerator()), _d; _d = yield _c.next(), !_d.done;) {
                 const file = _d.value;
-                const relativeFile = path.relative(workspace, file);
+                const relativeFile = path
+                    .relative(workspace, file)
+                    .replace(new RegExp(`\\${path.sep}`, 'g'), '/');
                 core.debug(`Matched: ${relativeFile}`);
                 // Paths are made relative so the tar entries are all relative to the root of the workspace.
                 paths.push(`${relativeFile}`);
@@ -9002,8 +9004,10 @@ const runTestsUsingCommandLine = async () => {
   }
   const spec = core.getInput('spec')
   if (spec) {
+    const specLines = spec.split('\n').join(',')
+    core.debug(`extracted spec lines into: "${specLines}"`)
     cmd.push('--spec')
-    cmd.push(quoteArgument(spec))
+    cmd.push(quoteArgument(specLines))
   }
   const project = core.getInput('project')
   if (project) {
@@ -22000,12 +22004,19 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const core = __webpack_require__(470);
-const fs = __webpack_require__(747);
-const globOptionsHelper = __webpack_require__(601);
-const path = __webpack_require__(622);
-const patternHelper = __webpack_require__(597);
+const core = __importStar(__webpack_require__(470));
+const fs = __importStar(__webpack_require__(747));
+const globOptionsHelper = __importStar(__webpack_require__(601));
+const path = __importStar(__webpack_require__(622));
+const patternHelper = __importStar(__webpack_require__(597));
 const internal_match_kind_1 = __webpack_require__(327);
 const internal_pattern_1 = __webpack_require__(923);
 const internal_search_state_1 = __webpack_require__(728);
@@ -51543,10 +51554,20 @@ module.exports.Parser = Parser;
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __webpack_require__(357);
-const path = __webpack_require__(622);
-const pathHelper = __webpack_require__(972);
+const path = __importStar(__webpack_require__(622));
+const pathHelper = __importStar(__webpack_require__(972));
+const assert_1 = __importDefault(__webpack_require__(357));
 const IS_WINDOWS = process.platform === 'win32';
 /**
  * Helper class for parsing paths into segments
@@ -51560,7 +51581,7 @@ class Path {
         this.segments = [];
         // String
         if (typeof itemPath === 'string') {
-            assert(itemPath, `Parameter 'itemPath' must not be empty`);
+            assert_1.default(itemPath, `Parameter 'itemPath' must not be empty`);
             // Normalize slashes and trim unnecessary trailing slash
             itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
             // Not rooted
@@ -51587,24 +51608,24 @@ class Path {
         // Array
         else {
             // Must not be empty
-            assert(itemPath.length > 0, `Parameter 'itemPath' must not be an empty array`);
+            assert_1.default(itemPath.length > 0, `Parameter 'itemPath' must not be an empty array`);
             // Each segment
             for (let i = 0; i < itemPath.length; i++) {
                 let segment = itemPath[i];
                 // Must not be empty
-                assert(segment, `Parameter 'itemPath' must not contain any empty segments`);
+                assert_1.default(segment, `Parameter 'itemPath' must not contain any empty segments`);
                 // Normalize slashes
                 segment = pathHelper.normalizeSeparators(itemPath[i]);
                 // Root segment
                 if (i === 0 && pathHelper.hasRoot(segment)) {
                     segment = pathHelper.safeTrimTrailingSeparator(segment);
-                    assert(segment === pathHelper.dirname(segment), `Parameter 'itemPath' root segment contains information for multiple segments`);
+                    assert_1.default(segment === pathHelper.dirname(segment), `Parameter 'itemPath' root segment contains information for multiple segments`);
                     this.segments.push(segment);
                 }
                 // All other segments
                 else {
                     // Must not contain slash
-                    assert(!segment.includes(path.sep), `Parameter 'itemPath' contains unexpected path separators`);
+                    assert_1.default(!segment.includes(path.sep), `Parameter 'itemPath' contains unexpected path separators`);
                     this.segments.push(segment);
                 }
             }
@@ -66003,8 +66024,15 @@ module.exports = copy
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const pathHelper = __webpack_require__(972);
+const pathHelper = __importStar(__webpack_require__(972));
 const internal_match_kind_1 = __webpack_require__(327);
 const IS_WINDOWS = process.platform === 'win32';
 /**
@@ -66437,8 +66465,15 @@ function retry () {
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const core = __webpack_require__(470);
+const core = __importStar(__webpack_require__(470));
 /**
  * Returns a copy with defaults filled in.
  */
@@ -83633,17 +83668,27 @@ module.exports = options => {
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __webpack_require__(357);
-const os = __webpack_require__(87);
-const path = __webpack_require__(622);
-const pathHelper = __webpack_require__(972);
+const os = __importStar(__webpack_require__(87));
+const path = __importStar(__webpack_require__(622));
+const pathHelper = __importStar(__webpack_require__(972));
+const assert_1 = __importDefault(__webpack_require__(357));
 const minimatch_1 = __webpack_require__(93);
 const internal_match_kind_1 = __webpack_require__(327);
 const internal_path_1 = __webpack_require__(383);
 const IS_WINDOWS = process.platform === 'win32';
 class Pattern {
-    constructor(patternOrNegate, segments) {
+    constructor(patternOrNegate, segments, homedir) {
         /**
          * Indicates whether matches should be excluded from the result set
          */
@@ -83657,9 +83702,9 @@ class Pattern {
         else {
             // Convert to pattern
             segments = segments || [];
-            assert(segments.length, `Parameter 'segments' must not empty`);
+            assert_1.default(segments.length, `Parameter 'segments' must not empty`);
             const root = Pattern.getLiteral(segments[0]);
-            assert(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
+            assert_1.default(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
             pattern = new internal_path_1.Path(segments).toString().trim();
             if (patternOrNegate) {
                 pattern = `!${pattern}`;
@@ -83671,7 +83716,7 @@ class Pattern {
             pattern = pattern.substr(1).trim();
         }
         // Normalize slashes and ensures absolute root
-        pattern = Pattern.fixupPattern(pattern);
+        pattern = Pattern.fixupPattern(pattern, homedir);
         // Segments
         this.segments = new internal_path_1.Path(pattern).segments;
         // Trailing slash indicates the pattern should only match directories, not regular files
@@ -83708,11 +83753,11 @@ class Pattern {
             // Normalize slashes
             itemPath = pathHelper.normalizeSeparators(itemPath);
             // Append a trailing slash. Otherwise Minimatch will not match the directory immediately
-            // preceeding the globstar. For example, given the pattern `/foo/**`, Minimatch returns
+            // preceding the globstar. For example, given the pattern `/foo/**`, Minimatch returns
             // false for `/foo` but returns true for `/foo/`. Append a trailing slash to handle that quirk.
             if (!itemPath.endsWith(path.sep)) {
                 // Note, this is safe because the constructor ensures the pattern has an absolute root.
-                // For example, formats like C: and C:foo on Windows are resolved to an aboslute root.
+                // For example, formats like C: and C:foo on Windows are resolved to an absolute root.
                 itemPath = `${itemPath}${path.sep}`;
             }
         }
@@ -83750,15 +83795,15 @@ class Pattern {
     /**
      * Normalizes slashes and ensures absolute root
      */
-    static fixupPattern(pattern) {
+    static fixupPattern(pattern, homedir) {
         // Empty
-        assert(pattern, 'pattern cannot be empty');
+        assert_1.default(pattern, 'pattern cannot be empty');
         // Must not contain `.` segment, unless first segment
         // Must not contain `..` segment
         const literalSegments = new internal_path_1.Path(pattern).segments.map(x => Pattern.getLiteral(x));
-        assert(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
+        assert_1.default(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
         // Must not contain globs in root, e.g. Windows UNC path \\foo\b*r
-        assert(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
+        assert_1.default(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
         // Normalize slashes
         pattern = pathHelper.normalizeSeparators(pattern);
         // Replace leading `.` segment
@@ -83767,9 +83812,9 @@ class Pattern {
         }
         // Replace leading `~` segment
         else if (pattern === '~' || pattern.startsWith(`~${path.sep}`)) {
-            const homedir = os.homedir();
-            assert(homedir, 'Unable to determine HOME directory');
-            assert(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
+            homedir = homedir || os.homedir();
+            assert_1.default(homedir, 'Unable to determine HOME directory');
+            assert_1.default(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
             pattern = Pattern.globEscape(homedir) + pattern.substr(1);
         }
         // Replace relative drive root, e.g. pattern is C: or C:foo
@@ -87423,9 +87468,19 @@ function onceStrict (fn) {
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __webpack_require__(357);
-const path = __webpack_require__(622);
+const path = __importStar(__webpack_require__(622));
+const assert_1 = __importDefault(__webpack_require__(357));
 const IS_WINDOWS = process.platform === 'win32';
 /**
  * Similar to path.dirname except normalizes the path separators and slightly better handling for Windows UNC paths.
@@ -87465,8 +87520,8 @@ exports.dirname = dirname;
  * or `C:` are expanded based on the current working directory.
  */
 function ensureAbsoluteRoot(root, itemPath) {
-    assert(root, `ensureAbsoluteRoot parameter 'root' must not be empty`);
-    assert(itemPath, `ensureAbsoluteRoot parameter 'itemPath' must not be empty`);
+    assert_1.default(root, `ensureAbsoluteRoot parameter 'root' must not be empty`);
+    assert_1.default(itemPath, `ensureAbsoluteRoot parameter 'itemPath' must not be empty`);
     // Already rooted
     if (hasAbsoluteRoot(itemPath)) {
         return itemPath;
@@ -87476,7 +87531,7 @@ function ensureAbsoluteRoot(root, itemPath) {
         // Check for itemPath like C: or C:foo
         if (itemPath.match(/^[A-Z]:[^\\/]|^[A-Z]:$/i)) {
             let cwd = process.cwd();
-            assert(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
+            assert_1.default(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
             // Drive letter matches cwd? Expand to cwd
             if (itemPath[0].toUpperCase() === cwd[0].toUpperCase()) {
                 // Drive only, e.g. C:
@@ -87501,11 +87556,11 @@ function ensureAbsoluteRoot(root, itemPath) {
         // Check for itemPath like \ or \foo
         else if (normalizeSeparators(itemPath).match(/^\\$|^\\[^\\]/)) {
             const cwd = process.cwd();
-            assert(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
+            assert_1.default(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
             return `${cwd[0]}:\\${itemPath.substr(1)}`;
         }
     }
-    assert(hasAbsoluteRoot(root), `ensureAbsoluteRoot parameter 'root' must have an absolute root`);
+    assert_1.default(hasAbsoluteRoot(root), `ensureAbsoluteRoot parameter 'root' must have an absolute root`);
     // Otherwise ensure root ends with a separator
     if (root.endsWith('/') || (IS_WINDOWS && root.endsWith('\\'))) {
         // Intentionally empty
@@ -87522,7 +87577,7 @@ exports.ensureAbsoluteRoot = ensureAbsoluteRoot;
  * `\\hello\share` and `C:\hello` (and using alternate separator).
  */
 function hasAbsoluteRoot(itemPath) {
-    assert(itemPath, `hasAbsoluteRoot parameter 'itemPath' must not be empty`);
+    assert_1.default(itemPath, `hasAbsoluteRoot parameter 'itemPath' must not be empty`);
     // Normalize separators
     itemPath = normalizeSeparators(itemPath);
     // Windows
@@ -87539,7 +87594,7 @@ exports.hasAbsoluteRoot = hasAbsoluteRoot;
  * `\`, `\hello`, `\\hello\share`, `C:`, and `C:\hello` (and using alternate separator).
  */
 function hasRoot(itemPath) {
-    assert(itemPath, `isRooted parameter 'itemPath' must not be empty`);
+    assert_1.default(itemPath, `isRooted parameter 'itemPath' must not be empty`);
     // Normalize separators
     itemPath = normalizeSeparators(itemPath);
     // Windows
@@ -88313,6 +88368,7 @@ var node_fetch = _interopDefault(__webpack_require__(454));
 var abortController = __webpack_require__(106);
 var FormData = _interopDefault(__webpack_require__(790));
 var util = __webpack_require__(669);
+var url = __webpack_require__(835);
 var stream = __webpack_require__(794);
 var tunnel = __webpack_require__(413);
 var coreAuth = __webpack_require__(229);
@@ -88496,7 +88552,7 @@ var Constants = {
      * @const
      * @type {string}
      */
-    coreHttpVersion: "1.2.0",
+    coreHttpVersion: "1.2.1",
     /**
      * Specifies HTTP.
      *
@@ -88589,6 +88645,17 @@ var Constants = {
         USER_AGENT: "User-Agent"
     }
 };
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+/**
+ * Default key used to access the XML attributes.
+ */
+var XML_ATTRKEY = "$";
+/**
+ * Default key used to access the XML value content.
+ */
+var XML_CHARKEY = "_";
 
 // Copyright (c) Microsoft Corporation.
 var validUuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
@@ -88737,7 +88804,9 @@ function prepareXMLRootList(obj, elementName, xmlNamespaceKey, xmlNamespace) {
     if (!xmlNamespaceKey || !xmlNamespace) {
         return _a = {}, _a[elementName] = obj, _a;
     }
-    return _b = {}, _b[elementName] = obj, _b.$ = (_c = {}, _c[xmlNamespaceKey] = xmlNamespace, _c), _b;
+    var result = (_b = {}, _b[elementName] = obj, _b);
+    result[XML_ATTRKEY] = (_c = {}, _c[xmlNamespaceKey] = xmlNamespace, _c);
+    return result;
 }
 /**
  * Applies the properties on the prototype of sourceCtors to the prototype of targetCtor
@@ -88788,17 +88857,6 @@ function getEnvironmentValue(name) {
     }
     return undefined;
 }
-
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-/**
- * Default key used to access the XML attributes.
- */
-var XML_ATTRKEY = "$";
-/**
- * Default key used to access the XML value content.
- */
-var XML_CHARKEY = "_";
 
 // Copyright (c) Microsoft Corporation.
 var Serializer = /** @class */ (function () {
@@ -89272,7 +89330,9 @@ function serializeDictionaryType(serializer, mapper, object, objectName, isXml, 
     // Add the namespace to the root element if needed
     if (isXml && mapper.xmlNamespace) {
         var xmlnsKey = mapper.xmlNamespacePrefix ? "xmlns:" + mapper.xmlNamespacePrefix : "xmlns";
-        return tslib.__assign(tslib.__assign({}, tempDictionary), { $: (_a = {}, _a[xmlnsKey] = mapper.xmlNamespace, _a) });
+        var result = tempDictionary;
+        result[XML_ATTRKEY] = (_a = {}, _a[xmlnsKey] = mapper.xmlNamespace, _a);
+        return result;
     }
     return tempDictionary;
 }
@@ -89899,7 +89959,7 @@ var WebResource = /** @class */ (function () {
         if (!this.headers.get("Content-Type")) {
             this.headers.set("Content-Type", "application/json; charset=utf-8");
         }
-        // set the request body. request.js automatically sets the Content-Length request header, so we need not set it explicilty
+        // set the request body. request.js automatically sets the Content-Length request header, so we need not set it explicitly
         this.body = options.body;
         if (options.body !== undefined && options.body !== null) {
             // body as a stream special case. set the body as-is and check for some special request headers specific to sending a stream.
@@ -90758,8 +90818,9 @@ var FetchHttpClient = /** @class */ (function () {
                                 if (typeof value === "function") {
                                     value = value();
                                 }
-                                // eslint-disable-next-line no-prototype-builtins
-                                if (value && value.hasOwnProperty("value") && value.hasOwnProperty("options")) {
+                                if (value &&
+                                    Object.prototype.hasOwnProperty.call(value, "value") &&
+                                    Object.prototype.hasOwnProperty.call(value, "options")) {
                                     requestForm_1.append(key, value.value, value.options);
                                 }
                                 else {
@@ -92179,6 +92240,12 @@ var AccessTokenRefresher = /** @class */ (function () {
 
 // Copyright (c) Microsoft Corporation.
 /**
+ * The automated token refresh will only start to happen at the
+ * expiration date minus the value of timeBetweenRefreshAttemptsInMs,
+ * which is by default 30 seconds.
+ */
+var timeBetweenRefreshAttemptsInMs = 30000;
+/**
  * Creates a new BearerTokenAuthenticationPolicy factory.
  *
  * @param credential The TokenCredential implementation that can supply the bearer token.
@@ -92193,12 +92260,6 @@ function bearerTokenAuthenticationPolicy(credential, scopes) {
         }
     };
 }
-/**
- * The automated token refresh will only start to happen at the
- * expiration date minus the value of timeBetweenRefreshAttemptsInMs,
- * which is by default 30 seconds.
- */
-var timeBetweenRefreshAttemptsInMs = 30000;
 /**
  *
  * Provides a RequestPolicy that can request a token from a TokenCredential
@@ -92858,10 +92919,15 @@ var ServiceClient = /** @class */ (function () {
                     var bearerTokenPolicyFactory = undefined;
                     // eslint-disable-next-line @typescript-eslint/no-this-alias
                     var serviceClient = _this;
+                    var serviceClientOptions = options;
                     return {
                         create: function (nextPolicy, options) {
+                            var credentialScopes = getCredentialScopes(serviceClientOptions, serviceClient.baseUri);
+                            if (!credentialScopes) {
+                                throw new Error("When using credential, the ServiceClient must contain a baseUri or a credentialScopes in ServiceClientOptions. Unable to create a bearerTokenAuthenticationPolicy");
+                            }
                             if (bearerTokenPolicyFactory === undefined || bearerTokenPolicyFactory === null) {
-                                bearerTokenPolicyFactory = bearerTokenAuthenticationPolicy(credentials, (serviceClient.baseUri || "") + "/.default");
+                                bearerTokenPolicyFactory = bearerTokenAuthenticationPolicy(credentials, credentialScopes);
                             }
                             return bearerTokenPolicyFactory.create(nextPolicy, options);
                         }
@@ -93387,6 +93453,46 @@ function flattenResponse(_response, responseSpec) {
     }
     return addOperationResponse(tslib.__assign(tslib.__assign({}, parsedHeaders), _response.parsedBody));
 }
+function getCredentialScopes(options, baseUri) {
+    if (options === null || options === void 0 ? void 0 : options.credentialScopes) {
+        var scopes = options.credentialScopes;
+        return Array.isArray(scopes)
+            ? scopes.map(function (scope) { return new url.URL(scope).toString(); })
+            : new url.URL(scopes).toString();
+    }
+    if (baseUri) {
+        return baseUri + "/.default";
+    }
+    return undefined;
+}
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * Creates a function called createSpan to create spans using the global tracer.
+ * @ignore
+ * @param spanConfig The name of the operation being performed.
+ * @param tracingOptions The options for the underlying http request.
+ */
+function createSpanFunction(_a) {
+    var packagePrefix = _a.packagePrefix, namespace = _a.namespace;
+    return function (operationName, operationOptions) {
+        var tracer = coreTracing.getTracer();
+        var tracingOptions = operationOptions.tracingOptions || {};
+        var spanOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { kind: api.SpanKind.INTERNAL });
+        var span = tracer.startSpan(packagePrefix + "." + operationName, spanOptions);
+        span.setAttribute("az.namespace", namespace);
+        var newSpanOptions = tracingOptions.spanOptions || {};
+        if (span.isRecording()) {
+            newSpanOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { parent: span.context(), attributes: tslib.__assign(tslib.__assign({}, spanOptions.attributes), { "az.namespace": namespace }) });
+        }
+        var newTracingOptions = tslib.__assign(tslib.__assign({}, tracingOptions), { spanOptions: newSpanOptions });
+        var newOperationOptions = tslib.__assign(tslib.__assign({}, operationOptions), { tracingOptions: newTracingOptions });
+        return {
+            span: span,
+            updatedOptions: newOperationOptions
+        };
+    };
+}
 
 // Copyright (c) Microsoft Corporation.
 var HeaderConstants = Constants.HeaderConstants;
@@ -93536,6 +93642,7 @@ exports.XML_CHARKEY = XML_CHARKEY;
 exports.applyMixins = applyMixins;
 exports.bearerTokenAuthenticationPolicy = bearerTokenAuthenticationPolicy;
 exports.createPipelineFromOptions = createPipelineFromOptions;
+exports.createSpanFunction = createSpanFunction;
 exports.delay = delay;
 exports.deserializationPolicy = deserializationPolicy;
 exports.deserializeResponseBody = deserializeResponseBody;
