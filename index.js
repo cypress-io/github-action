@@ -264,6 +264,21 @@ const getInputBool = (name, defaultValue = false) => {
   return defaultValue
 }
 
+/**
+ * Grabs the spec input from the workflow and normalizes
+ * it, since sometimes it can be multiline
+ * @returns {string|undefined}
+ */
+const getSpecsList = () => {
+  const spec = core.getInput('spec')
+  if (!spec) {
+    return
+  }
+  const specLines = spec.split('\n').join(',')
+  core.debug(`extracted spec lines into: "${specLines}"`)
+  return specLines
+}
+
 const buildAppMaybe = () => {
   const buildApp = core.getInput('build')
   if (!buildApp) {
@@ -484,12 +499,10 @@ const runTestsUsingCommandLine = async () => {
     cmd.push('--config')
     cmd.push(quoteArgument(configInput))
   }
-  const spec = core.getInput('spec')
+  const spec = getSpecsList()
   if (spec) {
-    const specLines = spec.split('\n').join(',')
-    core.debug(`extracted spec lines into: "${specLines}"`)
     cmd.push('--spec')
-    cmd.push(quoteArgument(specLines))
+    cmd.push(quoteArgument(spec))
   }
   const project = core.getInput('project')
   if (project) {
@@ -604,8 +617,9 @@ const runTests = async () => {
     cypressOptions.config = core.getInput('config')
     core.debug(`Cypress config "${cypressOptions.config}"`)
   }
-  if (core.getInput('spec')) {
-    cypressOptions.spec = core.getInput('spec')
+  const spec = getSpecsList()
+  if (spec) {
+    cypressOptions.spec = spec
   }
   if (core.getInput('config-file')) {
     cypressOptions.configFile = core.getInput('config-file')
