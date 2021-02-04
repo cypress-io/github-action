@@ -35,3 +35,22 @@ jobs:
           spec: |
             cypress/integration/spec-a.js
             cypress/integration/spec-b.js
+
+  separate-specs-with-wildcard:
+    # example where we pass specs to run via multiple lines and wildcards
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/config
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3333'
+          config: baseUrl=http://localhost:3333
+          spec: |
+            cypress/integration/spec-a.js
+            cypress/**/*-b.js
