@@ -1,3 +1,6 @@
+// a little CLI utility for testing pinging websites
+// node ./src/ping-cli <url>
+
 const { ping } = require('./ping')
 const timeoutSeconds = 60
 const url = process.argv[2]
