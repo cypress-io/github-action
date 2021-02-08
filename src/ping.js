@@ -26,11 +26,17 @@ const ping = (url, timeout) => {
 
   const start = +new Date()
   return got(url, {
+    headers: {
+      Accept: 'text/html, application/json, text/plain, */*'
+    },
     timeout: individualPingTimeout,
     errorCodes,
     retry: {
       limit,
       calculateDelay({ error, attemptCount }) {
+        if (error) {
+          core.debug(`got error ${JSON.stringify(error)}`)
+        }
         const now = +new Date()
         const elapsed = now - start
         core.debug(
