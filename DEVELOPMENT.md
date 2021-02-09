@@ -20,9 +20,9 @@ name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       # use specific commit pushed to GitHub
       - uses: cypress-io/github-action@2a1baeb
 ```

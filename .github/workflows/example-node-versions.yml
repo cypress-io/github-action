@@ -2,7 +2,7 @@ name: example-node-versions
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:

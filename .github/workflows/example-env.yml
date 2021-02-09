@@ -8,7 +8,7 @@ env:
   CYPRESS_environmentName: staging
 jobs:
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,7 +26,7 @@ jobs:
     # we are passing additional environment variables
     # using "--env" command line option
     # see https://on.cypress.io/configuration
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,7 +43,7 @@ jobs:
           spec: cypress/integration/spec.js
 
   with-action-env:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -65,7 +65,7 @@ jobs:
     # 'environmentName' value comes from the workflow's environment
     # 'apiPort' comes from the step's "env" block
     # 'host' is defined in the action's "with: env:" parameter
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2

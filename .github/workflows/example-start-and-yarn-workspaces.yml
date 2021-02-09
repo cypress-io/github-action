@@ -5,7 +5,7 @@ jobs:
     # the example has Yarn workspace in its "root" folder
     # examples/start-and-yarn-workspaces
     # and tests in a subfolder like "workspace-1"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
     # server start and waiting for the server
     # to respond before running tests
     # in each Yarn workspaces subfolder
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       # when one test fails, DO NOT cancel the other
       # containers, because this will kill Cypress processes

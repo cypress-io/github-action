@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
@@ -93,7 +93,7 @@ jobs:
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           browser: chrome
@@ -115,7 +115,7 @@ jobs:
       image: cypress/browsers:node12.16.1-chrome80-ff73
       options: --user 1001
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           browser: firefox
@@ -134,7 +134,7 @@ jobs:
   tests:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           browser: edge
@@ -155,7 +155,7 @@ jobs:
   cypress-run:
     runs-on: ubuntu-16.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           browser: chrome
@@ -176,7 +176,7 @@ jobs:
     # and Firefox v70 pre-installed
     container: cypress/browsers:node12.13.0-chrome78-ff70
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           browser: chrome
@@ -194,7 +194,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run with env
         uses: cypress-io/github-action@v2
@@ -212,7 +212,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run with env
         uses: cypress-io/github-action@v2
@@ -238,7 +238,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -269,7 +269,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -289,7 +289,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -322,7 +322,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
@@ -357,7 +357,7 @@ jobs:
       - run: node -v
 
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -387,7 +387,7 @@ jobs:
     runs-on: ubuntu-16.04
     name: Artifacts
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
       # after the test run completes
       # store videos and any screenshots
@@ -421,7 +421,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -444,7 +444,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -476,7 +476,7 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       # because of "record" and "parallel" parameters
       # these containers will load balance all found tests among themselves
@@ -510,7 +510,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -529,7 +529,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -546,7 +546,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -572,7 +572,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -591,7 +591,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -666,7 +666,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -687,7 +687,7 @@ You can overwrite the Cypress run command with your own
 ```yml
 steps:
   - name: Checkout 🛎
-    uses: actions/checkout@v1
+    uses: actions/checkout@v2
 
   - name: Custom tests 🧪
     uses: cypress-io/github-action@v1
@@ -712,7 +712,7 @@ jobs:
         # run 3 copies of the current job in parallel
         containers: [1, 2, 3]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           record: true
@@ -748,7 +748,7 @@ jobs:
   cypress-run:
     runs-on: ubuntu-16.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           start: npm start
@@ -814,7 +814,7 @@ jobs:
     # and tests in a subfolder like "workspace-1"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
         with:
           working-directory: examples/start-and-yarn-workspaces/workspace-1
@@ -846,7 +846,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       # run Cypress tests and record them under the same run
       # associated with commit SHA and just give a different group name
       - name: Cypress run
@@ -878,7 +878,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v2
 ```
 
@@ -1061,7 +1061,7 @@ jobs:
     # https://github.com/cypress-io/cypress-docker-images/tree/master/included
     container: cypress/included:3.8.3
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - run: cypress run
 ```
 
