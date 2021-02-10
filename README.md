@@ -454,6 +454,8 @@ jobs:
 
 ### Parallel
 
+**Note:** Cypress parallelization requires [Cypress Dashboard](https://on.cypress.io/dashboard-introduction) subscription.
+
 You can spin multiple containers running in parallel using `strategy: matrix` argument. Just add more dummy items to the `containers: [1, 2, ...]` array to spin more free or paid containers. Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization)
 
 ```yml
