@@ -953,6 +953,7 @@ Name | Description
 [cypress-gh-action-vue-example](https://github.com/cypress-io/cypress-gh-action-vue-example) | project was scaffolded using Vue CLI
 [gh-action-and-gh-integration](https://github.com/cypress-io/gh-action-and-gh-integration) | records to the dashboard and has [Cypress GH Integration](https://on.cypress.io/github-integration) app installed
 [test-personal-site](https://github.com/bahmutov/test-personal-site) | Testing an external website every night and by manually clicking a button.
+[cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) | Shows how to run different Cypress projects depending on changed files
 <!-- prettier-ignore-end -->
 
 ## Notes
