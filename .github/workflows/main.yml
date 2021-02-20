@@ -5,7 +5,7 @@ jobs:
   build-and-test-node10:
     runs-on: ubuntu-20.04
     name: Node10
-    steps:
+    steps: 
       - name: Checkout
         uses: actions/checkout@v2
       - uses: actions/setup-node@v1
