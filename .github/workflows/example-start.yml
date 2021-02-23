@@ -17,3 +17,22 @@ jobs:
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:5000'
+
+  start-multiple:
+    # example with web application build
+    # and several services to start
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/start
+          build: npm run build
+          start: |
+            npm start
+            npm run start2
+          wait-on: 'http://localhost:6000'
+          config: 'baseUrl=http://localhost:6000'

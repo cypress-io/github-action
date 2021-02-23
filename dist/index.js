@@ -8228,7 +8228,7 @@ const startServersMaybe = () => {
   }
   if (!startCommand) {
     core.debug('No start command found')
-    return
+    return Promise.resolve()
   }
 
   const separateStartCommands = startCommand
