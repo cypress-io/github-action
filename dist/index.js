@@ -8232,7 +8232,7 @@ const startServersMaybe = () => {
   }
 
   const separateStartCommands = startCommand
-    .split(',')
+    .split(/,\\n/)
     .map((s) => s.trim())
     .filter(Boolean)
   core.debug(
