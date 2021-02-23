@@ -8231,12 +8231,15 @@ const startServersMaybe = () => {
     return Promise.resolve()
   }
 
+  // allow commands to be separated using commas or newlines
   const separateStartCommands = startCommand
-    .split(/,\\n/)
+    .split(/,|\\n/)
     .map((s) => s.trim())
     .filter(Boolean)
   core.debug(
-    `Separated start commands ${separateStartCommands.join(', ')}`
+    `Separated ${
+      separateStartCommands.length
+    } start commands ${separateStartCommands.join(', ')}`
   )
 
   return separateStartCommands.map((startCommand) => {
