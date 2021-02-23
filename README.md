@@ -581,6 +581,17 @@ jobs:
           start: npm run api, npm run web
 ```
 
+You can place the start commands in separate lines
+
+```yml
+with:
+  start: |
+    npm run api
+    npm run web
+```
+
+[![start example](https://github.com/cypress-io/github-action/workflows/example-start/badge.svg?branch=master)](.github/workflows/example-start.yml)
+
 ### Wait-on
 
 If you are starting a local server and it takes a while to start, you can add a parameter `wait-on` and pass url to wait for the server to respond.

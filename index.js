@@ -37,7 +37,7 @@ const execCommand = (
     const toolArguments = args.slice(1)
     const argsString = toolArguments.join(' ')
     core.debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
-    core.debug('without waiting for the promise to resolve')
+    core.debug(`waiting for the command to finish? ${waitToFinish}`)
 
     const promise = exec.exec(
       quote(toolPath),
@@ -302,15 +302,18 @@ const startServersMaybe = () => {
   }
   if (!startCommand) {
     core.debug('No start command found')
-    return
+    return Promise.resolve()
   }
 
+  // allow commands to be separated using commas or newlines
   const separateStartCommands = startCommand
-    .split(',')
+    .split(/,|\n/)
     .map((s) => s.trim())
     .filter(Boolean)
   core.debug(
-    `Separated start commands ${separateStartCommands.join(', ')}`
+    `Separated ${
+      separateStartCommands.length
+    } start commands ${separateStartCommands.join(', ')}`
   )
 
   return separateStartCommands.map((startCommand) => {
@@ -710,6 +713,7 @@ const installMaybe = () => {
     core.debug(`cypress cache hit ${cypressCacheHit}`)
 
     return install().then(() => {
+      core.debug('install has finished')
       return listCypressBinaries().then(() => {
         if (npmCacheHit && cypressCacheHit) {
           core.debug(
@@ -718,6 +722,7 @@ const installMaybe = () => {
           return Promise.resolve(undefined)
         }
 
+        core.debug('verifying Cypress binary')
         return verifyCypressBinary()
           .then(saveCachedNpm)
           .then(saveCachedCypressBinary)
