@@ -37,7 +37,7 @@ const execCommand = (
     const toolArguments = args.slice(1)
     const argsString = toolArguments.join(' ')
     core.debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
-    core.debug('without waiting for the promise to resolve')
+    core.debug(`waiting for the command to finish? ${waitToFinish}`)
 
     const promise = exec.exec(
       quote(toolPath),
@@ -710,6 +710,7 @@ const installMaybe = () => {
     core.debug(`cypress cache hit ${cypressCacheHit}`)
 
     return install().then(() => {
+      core.debug('install has finished')
       return listCypressBinaries().then(() => {
         if (npmCacheHit && cypressCacheHit) {
           core.debug(
@@ -718,6 +719,7 @@ const installMaybe = () => {
           return Promise.resolve(undefined)
         }
 
+        core.debug('verifying Cypress binary')
         return verifyCypressBinary()
           .then(saveCachedNpm)
           .then(saveCachedCypressBinary)
