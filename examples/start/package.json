@@ -7,7 +7,7 @@
     "test": "cypress run",
     "build": "echo building ... server ... done!",
     "start": "serve public",
-    "start2": "serve -p 6000 public"
+    "start2": "serve -p 8000 public"
   },
   "author": "",
   "license": "ISC",

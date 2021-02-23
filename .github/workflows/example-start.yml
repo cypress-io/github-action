@@ -35,8 +35,8 @@ jobs:
           start: |
             npm start
             npm run start2
-          wait-on: 'http://localhost:6000'
-          config: 'baseUrl=http://localhost:6000'
+          wait-on: 'http://localhost:8000'
+          config: 'baseUrl=http://localhost:8000'
 
   start-multiple-commas:
     # example with web application build
@@ -53,5 +53,5 @@ jobs:
           build: npm run build
           # use commas to separate the commands
           start: npm start, npm run start2
-          wait-on: 'http://localhost:6000'
-          config: 'baseUrl=http://localhost:6000'
+          wait-on: 'http://localhost:8000'
+          config: 'baseUrl=http://localhost:8000'
