@@ -8233,7 +8233,7 @@ const startServersMaybe = () => {
 
   // allow commands to be separated using commas or newlines
   const separateStartCommands = startCommand
-    .split(/,|\\n/)
+    .split(/,|\n/)
     .map((s) => s.trim())
     .filter(Boolean)
   core.debug(
