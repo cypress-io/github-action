@@ -968,6 +968,7 @@ Name | Description
 [test-personal-site](https://github.com/bahmutov/test-personal-site) | Testing an external website every night and by manually clicking a button.
 [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) | Shows how to run different Cypress projects depending on changed files
 [cypress-examples](https://github.com/bahmutov/cypress-examples) | Shows separate install job from parallel test jobs
+[cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) | Shows a separate install job with the build step, and another job that runs the tests
 <!-- prettier-ignore-end -->
 
 ## Notes
