@@ -967,6 +967,7 @@ Name | Description
 [gh-action-and-gh-integration](https://github.com/cypress-io/gh-action-and-gh-integration) | records to the dashboard and has [Cypress GH Integration](https://on.cypress.io/github-integration) app installed
 [test-personal-site](https://github.com/bahmutov/test-personal-site) | Testing an external website every night and by manually clicking a button.
 [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) | Shows how to run different Cypress projects depending on changed files
+[cypress-examples](https://github.com/bahmutov/cypress-examples) | Shows separate install job from parallel test jobs
 <!-- prettier-ignore-end -->
 
 ## Notes
