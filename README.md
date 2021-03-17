@@ -35,6 +35,7 @@
 - split [install and tests](#split-install-and-tests) into separate jobs
 - use [custom install commands](#custom-install)
 - install [only Cypress](#install-cypress-only) to avoid installing all dependencies
+- [timeouts](#timeouts) to avoid hanging CI jobs
 - [more examples](#more-examples)
 
 ### Basic
@@ -954,12 +955,32 @@ See [.github/workflows/example-install-only.yml](.github/workflows/example-insta
 
 [![Install only Cypress example](https://github.com/cypress-io/github-action/workflows/example-install-only/badge.svg?branch=master)](.github/workflows/example-install-only.yml)
 
+### Timeouts
+
+You can tell the CI to stop the job or the individual step if it runs for longer then a given time limit. This is a good practice to ensure the hanging process does not accidentally use up all your CI minutes.
+
+```yml
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    # stop the job if it runs over 10 minutes
+    # to prevent a hanging process from using all your CI minutes
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cypress-io/github-action@v2
+        # you can specify individual step timeout too
+        timeout-minutes: 5
+```
+
+See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)
+
 ### More examples
 
 <!-- prettier-ignore-start -->
 Name | Description
 --- | ---
-[cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | uses Yarn, and runs in parallel on several versions of Node, also different browsers
+[cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | uses Yarn, and runs in parallel on several versions of Node, different browsers, and more.
 [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder
 [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies
 [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) | only install NPM dependencies, then install and cache Cypress binary yourself
