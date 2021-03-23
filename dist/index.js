@@ -8611,7 +8611,12 @@ const runTests = async () => {
 
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
+      console.error('More information might be available above')
+
       if (testResults.message) {
+        console.error(
+          'Cypress module has returned the following error message:'
+        )
         console.error(testResults.message)
       }
 
