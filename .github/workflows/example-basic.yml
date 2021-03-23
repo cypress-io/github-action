@@ -88,6 +88,9 @@ jobs:
         uses: ./
         with:
           working-directory: examples/basic
+          # since we do not install Cypress
+          # we should not attempt to run tests
+          runTests: false
         env:
           # skip the binary install
           CYPRESS_INSTALL_BINARY: 0
