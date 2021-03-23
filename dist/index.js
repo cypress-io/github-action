@@ -7982,6 +7982,13 @@ const execCommand = (
 const isWindows = () => os.platform() === 'win32'
 const isUrl = (s) => /^https?:\/\//.test(s)
 
+/**
+ * Returns true if the Cypress binary installation was skipped
+ * via an environment variable https://on.cypress.io/installing
+ */
+const isCypressBinarySkipped = () =>
+  process.env.CYPRESS_INSTALL_BINARY === '0'
+
 const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
 
@@ -8103,6 +8110,12 @@ const restoreCachedCypressBinary = () => {
 
 const saveCachedCypressBinary = () => {
   core.debug('saving Cypress binary')
+
+  if (isCypressBinarySkipped()) {
+    core.debug('Skipping Cypress cache save, binary is not installed')
+    return Promise.resolve()
+  }
+
   const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return saveCache(
     [CYPRESS_BINARY_CACHE.inputPath],
@@ -8151,6 +8164,12 @@ const listCypressBinaries = () => {
   core.debug(
     `Cypress versions in the cache folder ${CYPRESS_CACHE_FOLDER}`
   )
+
+  if (isCypressBinarySkipped()) {
+    core.debug('Skipping Cypress cache list, binary is not installed')
+    return Promise.resolve()
+  }
+
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   return io.which('npx', true).then((npxPath) => {
     return exec.exec(
@@ -8165,6 +8184,11 @@ const verifyCypressBinary = () => {
   core.debug(
     `Verifying Cypress using cache folder ${CYPRESS_CACHE_FOLDER}`
   )
+  if (isCypressBinarySkipped()) {
+    core.debug('Skipping Cypress verify, binary is not installed')
+    return Promise.resolve()
+  }
+
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   return io.which('npx', true).then((npxPath) => {
     return exec.exec(
