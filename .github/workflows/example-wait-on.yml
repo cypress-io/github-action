@@ -16,6 +16,20 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3050'
 
+  wait-server-starts-after-100-seconds:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/wait-on
+          start: npm run start-after-100-seconds
+          wait-on: 'http://localhost:3050'
+          wait-on-timeout: 110
+
   wait2:
     runs-on: ubuntu-20.04
     steps:

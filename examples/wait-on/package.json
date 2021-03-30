@@ -6,6 +6,7 @@
   "scripts": {
     "test": "cypress run",
     "start": "node .",
+    "start-after-100-seconds": "node . --delay 100",
     "start2": "node ./index2",
     "start-after-50-seconds": "node ./index2 --delay 50",
     "start-after-120-seconds": "node ./index2 --delay 120",

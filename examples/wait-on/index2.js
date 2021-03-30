@@ -19,6 +19,10 @@ const endErrorsAt = +new Date() + errorPeriodSeconds * 1000
 log('creating the server on port %d', port)
 log('will respond with errors for %d seconds', errorPeriodSeconds)
 
+setTimeout(() => {
+  log('server will start responding with OK from now on')
+}, errorPeriodSeconds * 1000)
+
 const server = http.createServer((req, res) => {
   log('request %s %s', req.method, req.url)
   if (new Date() < endErrorsAt) {
