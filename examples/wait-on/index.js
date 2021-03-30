@@ -8,12 +8,19 @@ const http = require('http')
 const arg = require('arg')
 
 const args = arg({
-  '--port': Number
+  '--port': Number,
+  '--delay': Number
 })
 const port = args['--port'] || 3050
+const createServerAfterSeconds = args['--delay'] || 7
 
-log('starting the server at port %d', port)
-setTimeout(function() {
+log(
+  'starting the server at port %d after %d seconds',
+  port,
+  createServerAfterSeconds
+)
+
+setTimeout(function () {
   log('creating the server on port %d', port)
   const server = http.createServer((req, res) => {
     log('request %s %s', req.method, req.url)
@@ -23,4 +30,4 @@ setTimeout(function() {
   server.listen(port, () => {
     log('server is listening at port %d', port)
   })
-}, 7000)
+}, createServerAfterSeconds * 1000)

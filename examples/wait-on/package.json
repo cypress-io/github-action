@@ -8,6 +8,7 @@
     "start": "node .",
     "start2": "node ./index2",
     "start-after-50-seconds": "node ./index2 --delay 50",
+    "start-after-120-seconds": "node ./index2 --delay 120",
     "start3": "node ./index3",
     "start4": "node ./index4"
   },
