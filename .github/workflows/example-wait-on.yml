@@ -10,6 +10,8 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
+          # wait for the URL to respond
+          # using the default parameter
           working-directory: examples/wait-on
           start: npm start
           wait-on: 'http://localhost:3050'
@@ -25,6 +27,19 @@ jobs:
         with:
           working-directory: examples/wait-on
           start: npm run start2
+          wait-on: 'http://localhost:3050'
+
+  wait2-delay-50:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/wait-on
+          start: npm run start-after-50-seconds
           wait-on: 'http://localhost:3050'
 
   wait3:

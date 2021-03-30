@@ -7,6 +7,7 @@
     "test": "cypress run",
     "start": "node .",
     "start2": "node ./index2",
+    "start-after-50-seconds": "node ./index2 --delay 50",
     "start3": "node ./index3",
     "start4": "node ./index4"
   },
@@ -14,7 +15,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "5.2.0"
+    "cypress": "6.8.0"
   },
   "dependencies": {
     "arg": "5.0.0",
