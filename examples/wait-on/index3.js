@@ -8,18 +8,19 @@ const http = require('http')
 const arg = require('arg')
 
 const args = arg({
-  '--port': Number
+  '--port': Number,
+  '--delay': Number
 })
 const port = args['--port'] || 3050
+const errorPeriodSeconds = args['--delay'] || 40
 
-const errorPeriodSeconds = 40
 const endErrorsAt = +new Date() + errorPeriodSeconds * 1000
 
 log('creating the server on port %d', port)
 log('will not respond for the first %d seconds', errorPeriodSeconds)
 
-setTimeout(function() {
-  log('from now on will answer all good')
+setTimeout(function () {
+  log('the server will now answer ok')
 }, errorPeriodSeconds * 1000)
 
 const server = http.createServer((req, res) => {

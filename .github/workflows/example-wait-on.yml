@@ -78,9 +78,26 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
+          # in this situation the server does not respond
+          # for the first period causing ETIMEDOUT errors
           working-directory: examples/wait-on
           start: npm run start3
           wait-on: 'http://localhost:3050'
+
+  wait3-for-200-seconds:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress tests
+        uses: ./
+        with:
+          # in this situation the server does not respond
+          # for the first period causing ETIMEDOUT errors
+          working-directory: examples/wait-on
+          start: npm run start3-after-200-seconds
+          wait-on: 'http://localhost:3050'
+          wait-on-timeout: 210
 
   wait4:
     runs-on: ubuntu-20.04
