@@ -2,7 +2,7 @@
 // node ./src/ping-cli <url>
 
 const { ping } = require('./ping')
-const timeoutSeconds = 60
+const timeoutSeconds = 30
 const url = process.argv[2]
 console.log('pinging url %s for %d seconds', url, timeoutSeconds)
 if (!url) {

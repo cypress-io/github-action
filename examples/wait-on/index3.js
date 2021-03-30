@@ -25,8 +25,9 @@ setTimeout(function () {
 
 const server = http.createServer((req, res) => {
   log('request %s %s', req.method, req.url)
-  if (new Date() < endErrorsAt) {
-    log('not responding')
+  const now = +new Date()
+  if (now < endErrorsAt) {
+    log('not responding, %d ms left', endErrorsAt - now)
     return
   }
 
