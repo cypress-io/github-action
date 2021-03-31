@@ -990,6 +990,7 @@ Name | Description
 [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) | Shows how to run different Cypress projects depending on changed files
 [cypress-examples](https://github.com/bahmutov/cypress-examples) | Shows separate install job from parallel test jobs
 [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) | Shows a separate install job with the build step, and another job that runs the tests
+[cypress-and-jest-typescript-example](https://github.com/cypress-io/cypress-and-jest-typescript-example) | Run E2E and Jest unit tests in parallel
 <!-- prettier-ignore-end -->
 
 ## Notes
@@ -1052,6 +1053,7 @@ Read [DEVELOPMENT.md](DEVELOPMENT.md)
 - Read our blog post [Drastically Simplify Testing on CI with Cypress GitHub Action](https://www.cypress.io/blog/2019/11/20/drastically-simplify-your-testing-with-cypress-github-action/)
 - Read [Test the Preview Vercel Deploys](https://glebbahmutov.com/blog/develop-preview-test/) blog post
 - [Building actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/building-actions) docs
+- practice using the Cypress GitHub Action by following the [Cypress on CI Workshop](https://github.com/cypress-io/cypress-workshop-ci)
 
 ## Extras
 
