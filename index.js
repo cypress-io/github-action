@@ -590,6 +590,21 @@ const runTestsUsingCommandLine = async () => {
   return exec.exec(quote(npxPath), cmd, opts)
 }
 
+const warnAboutIrrelevantInputs = (potentiallyIrrelevantInputs) => {
+  const irrelevantInputs = potentiallyIrrelevantInputs.filter(
+    (inputName) => core.getInput(inputName)
+  )
+  if (irrelevantInputs.length > 0) {
+    console.warn(
+      `Those inputs don't have any effect on this run: ${irrelevantInputs.join(
+        ', '
+      )}.`
+    )
+  }
+}
+
+const compact = (obj) => {}
+
 /**
  * Run Cypress tests by collecting input parameters
  * and using Cypress module API to run tests.
@@ -609,6 +624,22 @@ const runTests = async () => {
   const customCommand = core.getInput('command')
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)
+    warnAboutIrrelevantInputs([
+      'browser',
+      'ci-build-id',
+      'command-prefix',
+      'config',
+      'config-file',
+      'env',
+      'group',
+      'headless',
+      'parallel',
+      'project',
+      'quie',
+      'record',
+      'spec',
+      'tag'
+    ])
     return execCommand(customCommand, true, 'run tests')
   }
 
