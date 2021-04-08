@@ -36,6 +36,7 @@
 - use [custom install commands](#custom-install)
 - install [only Cypress](#install-cypress-only) to avoid installing all dependencies
 - [timeouts](#timeouts) to avoid hanging CI jobs
+- [print Cypress info](#print-cypress-info) like detected browsers
 - [more examples](#more-examples)
 
 ### Basic
