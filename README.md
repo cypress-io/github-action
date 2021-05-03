@@ -983,6 +983,7 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 <!-- prettier-ignore-start -->
 Name | Description
 --- | ---
+[cypress-gh-action-small-example](https://github.com/bahmutov/cypress-gh-action-small-example) | Runs tests and records them on Cypress Dashboard
 [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | uses Yarn, and runs in parallel on several versions of Node, different browsers, and more.
 [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder
 [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies
