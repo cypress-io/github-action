@@ -1,24 +1,7 @@
 name: example-basic
 on: [push]
 jobs:
-  basic-ubuntu-16:
-    runs-on: ubuntu-16.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cypress tests
-        # normally you would write
-        # uses: cypress-io/github-action@v2
-        uses: ./
-        # the parameters below are only necessary
-        # because we are running these examples in a monorepo
-        with:
-          working-directory: examples/basic
-          # just for full picture after installing Cypress
-          # print information about detected browsers, etc
-          # see https://on.cypress.io/command-line#cypress-info
-          build: npx cypress info
+  # note: Ubuntu 16 probably works, but is deprecated
 
   basic-ubuntu-18:
     runs-on: ubuntu-18.04
