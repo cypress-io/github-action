@@ -21,6 +21,7 @@
 - Set Cypress [config values](#config)
 - Use specific [config file](#config-file)
 - Run tests in [parallel](#parallel)
+- Run E2E and [Component tests](#component-tests)
 - [Build app](#build-app) before running the tests
 - [Start server](#start-server) before running the tests
 - [Start multiple servers](#start-multiple-servers) before running the tests
@@ -503,6 +504,25 @@ jobs:
 **Warning ⚠️:** Cypress actions use `GITHUB_TOKEN` to get the correct branch and the number of jobs run, making it possible to re-run without the need of pushing an empty commit. If you don't want to use the `GITHUB_TOKEN` you can still run your tests without problem with the only note that Cypress Dashboard API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name. If you attempt to re-run GitHub checks, the Dashboard thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
 
 The Cypress GH Action does not spawn or create any additional containers - it only links the multiple containers spawned using the matrix strategy into a single logical Dashboard run and into splitting the specs amongst the machines. See the [Cypress parallelization](https://on.cypress.io/parallelization) guide for the explanation.
+
+### Component tests
+
+You can run the [Cypress component tests](https://on.cypress.io/component-testing) after running E2E tests by calling the action again with a custom command:
+
+```yml
+- name: Run E2E tests 🧪
+  uses: cypress-io/github-action@v2
+
+- name: Run Component tests 🧪
+  uses: cypress-io/github-action@v2
+  with:
+    # we have already installed everything
+    install: false
+    # to run component tests we need to use "cypress run-ct"
+    command: yarn cypress run-ct
+```
+
+See the example project [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example)
 
 ### Build app
 
@@ -995,6 +1015,7 @@ Name | Description
 [cypress-examples](https://github.com/bahmutov/cypress-examples) | Shows separate install job from parallel test jobs
 [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) | Shows a separate install job with the build step, and another job that runs the tests
 [cypress-and-jest-typescript-example](https://github.com/cypress-io/cypress-and-jest-typescript-example) | Run E2E and Jest unit tests in parallel
+[cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example) | Run E2E and component tests using this action
 <!-- prettier-ignore-end -->
 
 ## Notes
