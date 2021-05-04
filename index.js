@@ -540,14 +540,17 @@ const runTestsUsingCommandLine = async () => {
     cmd.push(quoteArgument(configFileInput))
   }
 
-  const { branch, buildId } = await getCiBuildId()
-  if (branch) {
-    core.exportVariable('GH_BRANCH', branch)
-  }
+  if (record) {
+    // only include the ci-build-id if recording
+    const { branch, buildId } = await getCiBuildId()
+    if (branch) {
+      core.exportVariable('GH_BRANCH', branch)
+    }
 
-  cmd.push('--ci-build-id')
-  const ciBuildId = core.getInput('ci-build-id') || buildId
-  cmd.push(quoteArgument(ciBuildId))
+    cmd.push('--ci-build-id')
+    const ciBuildId = core.getInput('ci-build-id') || buildId
+    cmd.push(quoteArgument(ciBuildId))
+  }
 
   const browser = core.getInput('browser')
   if (browser) {
@@ -659,12 +662,14 @@ const runTests = async () => {
     cypressOptions.env = core.getInput('env')
   }
 
-  const { branch, buildId } = await getCiBuildId()
-  if (branch) {
-    core.exportVariable('GH_BRANCH', branch)
-  }
+  if (cypressOptions.record) {
+    const { branch, buildId } = await getCiBuildId()
+    if (branch) {
+      core.exportVariable('GH_BRANCH', branch)
+    }
 
-  cypressOptions.ciBuildId = core.getInput('ci-build-id') || buildId
+    cypressOptions.ciBuildId = core.getInput('ci-build-id') || buildId
+  }
 
   core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
