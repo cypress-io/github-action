@@ -6867,7 +6867,7 @@ const getCiBuildId = async () => {
 
   const [owner, repo] = GITHUB_REPOSITORY.split('/')
   let branch
-  let parallelId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
+  let buildId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
 
   if (GITHUB_TOKEN) {
     core.debug(
@@ -6915,16 +6915,14 @@ const getCiBuildId = async () => {
     ) {
       const jobId = runsList.data.jobs[0].id
       core.debug(`fetched run list with jobId ${jobId}`)
-      parallelId = `${GITHUB_RUN_ID}-${jobId}`
+      buildId = `${GITHUB_RUN_ID}-${jobId}`
     } else {
       core.debug('could not get run list data')
     }
   }
 
-  core.debug(
-    `determined branch ${branch} and parallel id ${parallelId}`
-  )
-  return { branch, parallelId }
+  core.debug(`determined branch ${branch} and build id ${buildId}`)
+  return { branch, buildId }
 }
 
 /**
@@ -6996,15 +6994,16 @@ const runTestsUsingCommandLine = async () => {
     cmd.push(quoteArgument(configFileInput))
   }
 
-  if (parallel || group) {
-    const { branch, parallelId } = await getCiBuildId()
+  if (record) {
+    // only include the ci-build-id if recording
+    const { branch, buildId } = await getCiBuildId()
     if (branch) {
       core.exportVariable('GH_BRANCH', branch)
     }
 
-    const customCiBuildId = core.getInput('ci-build-id') || parallelId
     cmd.push('--ci-build-id')
-    cmd.push(quoteArgument(customCiBuildId))
+    const ciBuildId = core.getInput('ci-build-id') || buildId
+    cmd.push(quoteArgument(ciBuildId))
   }
 
   const browser = core.getInput('browser')
@@ -7117,16 +7116,13 @@ const runTests = async () => {
     cypressOptions.env = core.getInput('env')
   }
 
-  if (cypressOptions.parallel || cypressOptions.group) {
-    const { branch, parallelId } = await getCiBuildId()
+  if (cypressOptions.record) {
+    const { branch, buildId } = await getCiBuildId()
     if (branch) {
       core.exportVariable('GH_BRANCH', branch)
     }
 
-    const customCiBuildId = core.getInput('ci-build-id') || parallelId
-    if (customCiBuildId) {
-      cypressOptions.ciBuildId = customCiBuildId
-    }
+    cypressOptions.ciBuildId = core.getInput('ci-build-id') || buildId
   }
 
   core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
