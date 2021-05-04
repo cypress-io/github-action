@@ -546,7 +546,8 @@ const runTestsUsingCommandLine = async () => {
   }
 
   cmd.push('--ci-build-id')
-  cmd.push(quoteArgument(core.getInput('ci-build-id') || buildId))
+  const ciBuildId = core.getInput('ci-build-id') || buildId
+  cmd.push(quoteArgument(ciBuildId))
 
   const browser = core.getInput('browser')
   if (browser) {
