@@ -6994,8 +6994,7 @@ const runTestsUsingCommandLine = async () => {
     cmd.push(quoteArgument(configFileInput))
   }
 
-  if (record) {
-    // only include the ci-build-id if recording
+  if (parallel || group) {
     const { branch, buildId } = await getCiBuildId()
     if (branch) {
       core.exportVariable('GH_BRANCH', branch)
@@ -7116,7 +7115,7 @@ const runTests = async () => {
     cypressOptions.env = core.getInput('env')
   }
 
-  if (cypressOptions.record) {
+  if (cypressOptions.parallel || cypressOptions.group) {
     const { branch, buildId } = await getCiBuildId()
     if (branch) {
       core.exportVariable('GH_BRANCH', branch)
