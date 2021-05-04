@@ -19,7 +19,7 @@ jobs:
 
   build-and-test-node14:
     runs-on: ubuntu-20.04
-    name: Node12
+    name: Node14
     steps:
       - name: Checkout
         uses: actions/checkout@v2
