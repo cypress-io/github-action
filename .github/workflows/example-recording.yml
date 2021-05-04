@@ -1,7 +1,7 @@
 name: example-recording
 on: [push]
 jobs:
-  basic:
+  parallel:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -32,3 +32,23 @@ jobs:
         run: |
           echo Cypress finished with: ${{ steps.cypress.outcome }}
           echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
+
+  group:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v2
+        uses: ./
+        with:
+          working-directory: examples/recording
+          record: true
+          # no parallel flag, just the group name
+          group: Recording group
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
