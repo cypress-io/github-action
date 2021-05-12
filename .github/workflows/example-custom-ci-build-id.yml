@@ -18,12 +18,15 @@ jobs:
     outputs:
       uuid: ${{ steps.uuid.outputs.value }}
     steps:
-      - name: 'uuid'
+      - name: Generate unique ID 💎
         id: uuid
         # take the current commit + timestamp together
         # the typical value would be something like
         # "sha-5d3fe...35d3-time-1620841214"
         run: echo "::set-output name=value::sha-$GITHUB_SHA-time-$(date +"%s")"
+
+      - name: Print unique ID 🖨`
+        run: echo "generated id ${{ steps.uuid.outputs.value }}"
 
   tests:
     needs: ['prepare']
@@ -38,7 +41,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Print custom build id 🖨
-        run: echo "Custom build id is ${{ needs.context.outputs.uuid }}"
+        run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
 
       - name: Tests using custom build id 🧪
         uses: ./
@@ -47,6 +50,9 @@ jobs:
           # since we are using a custom command
           command: |
             npx cypress run --record --parallel \
-              --ci-build-id ${{ needs.context.outputs.uuid }}
+              --ci-build-id ${{ needs.context.outputs.uuid }} \
               --group "all tests"
           working-directory: examples/recording
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
