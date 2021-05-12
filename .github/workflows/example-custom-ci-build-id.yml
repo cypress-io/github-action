@@ -43,11 +43,13 @@ jobs:
       - name: Smoke tests using custom build id 🧪
         uses: ./
         with:
+          # run just some specs in this group
           # we can pass the build id using action parameters
           record: true
           parallel: true
           group: '1 - smoke tests'
           ci-build-id: ${{ needs.prepare.outputs.uuid }}
+          spec: 'cypress/integration/spec-a.js'
           working-directory: examples/recording
         env:
           # pass the Dashboard record key as an environment variable
