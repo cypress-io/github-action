@@ -28,8 +28,37 @@ jobs:
       - name: Print unique ID 🖨`
         run: echo "generated id ${{ steps.uuid.outputs.value }}"
 
-  tests:
+  # let's run small subset of the tests
+  # and record it to the dashboard
+  smoke-tests:
     needs: ['prepare']
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+
+      - name: Print custom build id 🖨
+        run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
+
+      - name: Smoke tests using custom build id 🧪
+        uses: ./
+        with:
+          # we can pass the build id using action parameters
+          record: true
+          parallel: true
+          group: '1 - smoke tests'
+          ci-build-id: ${{ needs.prepare.outputs.uuid }}
+          working-directory: examples/recording
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+
+  # if smoke tests pass, run all tests, splitting them in parallel
+  # because we record with the same build id, smoke and these
+  # tests should be under the same logical recorded run
+  # under different groups
+  all-tests:
+    needs: ['prepare', 'smoke-tests']
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -43,15 +72,15 @@ jobs:
       - name: Print custom build id 🖨
         run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
 
-      - name: Tests using custom build id 🧪
+      - name: All tests using custom build id 🧪
         uses: ./
         with:
           # we can pass the build id using CLI argument
           # since we are using a custom command
           command: |
             npx cypress run --record --parallel \
-              --ci-build-id ${{ needs.context.outputs.uuid }} \
-              --group "all tests"
+              --ci-build-id ${{ needs.prepare.outputs.uuid }} \
+              --group "2 - all tests"
           working-directory: examples/recording
         env:
           # pass the Dashboard record key as an environment variable
