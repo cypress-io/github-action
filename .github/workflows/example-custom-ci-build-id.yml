@@ -1,0 +1,89 @@
+# Typically you would let this action
+# determine the unique build it to tie multiple parallel
+# test jobs together into a single logical Dashboard run.
+# But sometimes you need to execute Cypress using
+# your own custom command and pass your --ci-build-id
+# In that case it is important to make sure this build id
+# is generated _again_ on workflow re-run. This example
+# shows how to do create a unique ID then pass it to
+# multiple testing jobs running in parallel
+# based on the recipe written in
+# https://medium.com/attest-r-and-d/adding-a-unique-github-build-identifier-7aa2e83cadca
+name: example-custom-ci-build-id
+on: [push]
+jobs:
+  # single job that generates and outputs a common id
+  prepare:
+    runs-on: ubuntu-20.04
+    outputs:
+      uuid: ${{ steps.uuid.outputs.value }}
+    steps:
+      - name: Generate unique ID 💎
+        id: uuid
+        # take the current commit + timestamp together
+        # the typical value would be something like
+        # "sha-5d3fe...35d3-time-1620841214"
+        run: echo "::set-output name=value::sha-$GITHUB_SHA-time-$(date +"%s")"
+
+      - name: Print unique ID 🖨`
+        run: echo "generated id ${{ steps.uuid.outputs.value }}"
+
+  # let's run small subset of the tests
+  # and record it to the dashboard
+  smoke-tests:
+    needs: ['prepare']
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+
+      - name: Print custom build id 🖨
+        run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
+
+      - name: Smoke tests using custom build id 🧪
+        uses: ./
+        with:
+          # run just some specs in this group
+          # we can pass the build id using action parameters
+          record: true
+          parallel: true
+          group: '1 - smoke tests'
+          ci-build-id: ${{ needs.prepare.outputs.uuid }}
+          spec: 'cypress/integration/spec-a.js'
+          working-directory: examples/recording
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+
+  # if smoke tests pass, run all tests, splitting them in parallel
+  # because we record with the same build id, smoke and these
+  # tests should be under the same logical recorded run
+  # under different groups
+  all-tests:
+    needs: ['prepare', 'smoke-tests']
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 3 copies of the current job in parallel
+        containers: [1, 2, 3]
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+
+      - name: Print custom build id 🖨
+        run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
+
+      - name: All tests using custom build id 🧪
+        uses: ./
+        with:
+          # we can pass the build id using CLI argument
+          # since we are using a custom command
+          command: |
+            npx cypress run --record --parallel \
+              --ci-build-id ${{ needs.prepare.outputs.uuid }} \
+              --group "2 - all tests"
+          working-directory: examples/recording
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}

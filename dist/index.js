@@ -2761,7 +2761,30 @@ exports.NoopContextManager = NoopContextManager;
 /* 56 */,
 /* 57 */,
 /* 58 */,
-/* 59 */,
+/* 59 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=span.js.map
+
+/***/ }),
 /* 60 */,
 /* 61 */,
 /* 62 */,
@@ -2786,8 +2809,125 @@ exports.NoopContextManager = NoopContextManager;
 
 /***/ }),
 /* 66 */,
-/* 67 */,
-/* 68 */,
+/* 67 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DiagConsoleLogger = void 0;
+var consoleMap = [
+    { n: 'error', c: 'error' },
+    { n: 'warn', c: 'warn' },
+    { n: 'info', c: 'info' },
+    { n: 'debug', c: 'debug' },
+    { n: 'verbose', c: 'trace' },
+];
+/**
+ * A simple Immutable Console based diagnostic logger which will output any messages to the Console.
+ * If you want to limit the amount of logging to a specific level or lower use the
+ * {@link createLogLevelDiagLogger}
+ */
+var DiagConsoleLogger = /** @class */ (function () {
+    function DiagConsoleLogger() {
+        function _consoleFunc(funcName) {
+            return function () {
+                var orgArguments = arguments;
+                if (console) {
+                    // Some environments only expose the console when the F12 developer console is open
+                    var theFunc = console[funcName];
+                    if (typeof theFunc !== 'function') {
+                        // Not all environments support all functions
+                        theFunc = console.log;
+                    }
+                    // One last final check
+                    if (typeof theFunc === 'function') {
+                        return theFunc.apply(console, orgArguments);
+                    }
+                }
+            };
+        }
+        for (var i = 0; i < consoleMap.length; i++) {
+            this[consoleMap[i].n] = _consoleFunc(consoleMap[i].c);
+        }
+    }
+    return DiagConsoleLogger;
+}());
+exports.DiagConsoleLogger = DiagConsoleLogger;
+//# sourceMappingURL=consoleLogger.js.map
+
+/***/ }),
+/* 68 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+async function auth(token) {
+  const tokenType = token.split(/\./).length === 3 ? "app" : /^v\d+\./.test(token) ? "installation" : "oauth";
+  return {
+    type: "token",
+    token: token,
+    tokenType
+  };
+}
+
+/**
+ * Prefix token for usage in the Authorization header
+ *
+ * @param token OAuth token or JSON Web Token
+ */
+function withAuthorizationPrefix(token) {
+  if (token.split(/\./).length === 3) {
+    return `bearer ${token}`;
+  }
+
+  return `token ${token}`;
+}
+
+async function hook(token, request, route, parameters) {
+  const endpoint = request.endpoint.merge(route, parameters);
+  endpoint.headers.authorization = withAuthorizationPrefix(token);
+  return request(endpoint);
+}
+
+const createTokenAuth = function createTokenAuth(token) {
+  if (!token) {
+    throw new Error("[@octokit/auth-token] No token passed to createTokenAuth");
+  }
+
+  if (typeof token !== "string") {
+    throw new Error("[@octokit/auth-token] Token passed to createTokenAuth is not a string");
+  }
+
+  token = token.replace(/^(token|bearer) +/i, "");
+  return Object.assign(auth.bind(null, token), {
+    hook: hook.bind(null, token)
+  });
+};
+
+exports.createTokenAuth = createTokenAuth;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
 /* 69 */,
 /* 70 */
 /***/ (function(__unusedmodule, exports) {
@@ -2799,14 +2939,54 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 /***/ }),
 /* 71 */
-/***/ (function() {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
-if (typeof Symbol === undefined || !Symbol.asyncIterator) {
-    Symbol.asyncIterator = Symbol.for("Symbol.asyncIterator");
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createLogLevelDiagLogger = void 0;
+var types_1 = __webpack_require__(905);
+function createLogLevelDiagLogger(maxLevel, logger) {
+    if (maxLevel < types_1.DiagLogLevel.NONE) {
+        maxLevel = types_1.DiagLogLevel.NONE;
+    }
+    else if (maxLevel > types_1.DiagLogLevel.ALL) {
+        maxLevel = types_1.DiagLogLevel.ALL;
+    }
+    // In case the logger is null or undefined
+    logger = logger || {};
+    function _filterFunc(funcName, theLevel) {
+        var theFunc = logger[funcName];
+        if (typeof theFunc === 'function' && maxLevel >= theLevel) {
+            return theFunc.bind(logger);
+        }
+        return function () { };
+    }
+    return {
+        error: _filterFunc('error', types_1.DiagLogLevel.ERROR),
+        warn: _filterFunc('warn', types_1.DiagLogLevel.WARN),
+        info: _filterFunc('info', types_1.DiagLogLevel.INFO),
+        debug: _filterFunc('debug', types_1.DiagLogLevel.DEBUG),
+        verbose: _filterFunc('verbose', types_1.DiagLogLevel.VERBOSE),
+    };
 }
-//# sourceMappingURL=index.js.map
+exports.createLogLevelDiagLogger = createLogLevelDiagLogger;
+//# sourceMappingURL=logLevelLogger.js.map
 
 /***/ }),
 /* 72 */,
@@ -2819,8 +2999,8 @@ if (typeof Symbol === undefined || !Symbol.asyncIterator) {
 
 const util = __webpack_require__(669);
 const braces = __webpack_require__(783);
-const picomatch = __webpack_require__(827);
-const utils = __webpack_require__(224);
+const picomatch = __webpack_require__(558);
+const utils = __webpack_require__(583);
 const isEmptyString = val => typeof val === 'string' && (val === '' || val === './');
 
 /**
@@ -3285,7 +3465,74 @@ module.exports = micromatch;
 
 
 /***/ }),
-/* 75 */,
+/* 75 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.baggageEntryMetadataFromString = exports.createBaggage = void 0;
+var baggage_1 = __webpack_require__(181);
+var symbol_1 = __webpack_require__(387);
+__exportStar(__webpack_require__(513), exports);
+__exportStar(__webpack_require__(769), exports);
+/**
+ * Create a new Baggage with optional entries
+ *
+ * @param entries An array of baggage entries the new baggage should contain
+ */
+function createBaggage(entries) {
+    if (entries === void 0) { entries = {}; }
+    return new baggage_1.BaggageImpl(new Map(Object.entries(entries)));
+}
+exports.createBaggage = createBaggage;
+/**
+ * Create a serializable BaggageEntryMetadata object from a string.
+ *
+ * @param str string metadata. Format is currently not defined by the spec and has no special meaning.
+ *
+ */
+function baggageEntryMetadataFromString(str) {
+    if (typeof str !== 'string') {
+        // @TODO log diagnostic
+        str = '';
+    }
+    return {
+        __TYPE__: symbol_1.baggageEntryMetadataSymbol,
+        toString: function () {
+            return str;
+        },
+    };
+}
+exports.baggageEntryMetadataFromString = baggageEntryMetadataFromString;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
 /* 76 */,
 /* 77 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -4933,7 +5180,7 @@ const cacheable_lookup_1 = __webpack_require__(570);
 const CacheableRequest = __webpack_require__(390);
 const decompressResponse = __webpack_require__(861);
 // @ts-expect-error Missing types
-const http2wrapper = __webpack_require__(387);
+const http2wrapper = __webpack_require__(804);
 const lowercaseKeys = __webpack_require__(474);
 const is_1 = __webpack_require__(534);
 const get_body_size_1 = __webpack_require__(786);
@@ -7233,7 +7480,30 @@ installMaybe()
 
 
 /***/ }),
-/* 105 */,
+/* 105 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=link.js.map
+
+/***/ }),
 /* 106 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -7357,7 +7627,10 @@ function abortSignal(signal) {
     }
     var listeners = listenersMap.get(signal);
     if (listeners) {
-        listeners.forEach(function (listener) {
+        // Create a copy of listeners so mutations to the array
+        // (e.g. via removeListener calls) don't affect the listeners
+        // we invoke.
+        listeners.slice().forEach(function (listener) {
             listener.call(signal, { type: "abort" });
         });
     }
@@ -7522,8 +7795,489 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 /***/ }),
 /* 108 */,
-/* 109 */,
-/* 110 */,
+/* 109 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=Time.js.map
+
+/***/ }),
+/* 110 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+/*!
+ * Copyright (c) Microsoft and contributors. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for
+ * license information.
+ * 
+ * Azure Core LRO SDK for JavaScript - 1.0.4
+ */
+
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var tslib = __webpack_require__(205);
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * When a poller is manually stopped through the `stopPolling` method,
+ * the poller will be rejected with an instance of the PollerStoppedError.
+ */
+var PollerStoppedError = /** @class */ (function (_super) {
+    tslib.__extends(PollerStoppedError, _super);
+    function PollerStoppedError(message) {
+        var _this = _super.call(this, message) || this;
+        _this.name = "PollerStoppedError";
+        Object.setPrototypeOf(_this, PollerStoppedError.prototype);
+        return _this;
+    }
+    return PollerStoppedError;
+}(Error));
+/**
+ * When a poller is cancelled through the `cancelOperation` method,
+ * the poller will be rejected with an instance of the PollerCancelledError.
+ */
+var PollerCancelledError = /** @class */ (function (_super) {
+    tslib.__extends(PollerCancelledError, _super);
+    function PollerCancelledError(message) {
+        var _this = _super.call(this, message) || this;
+        _this.name = "PollerCancelledError";
+        Object.setPrototypeOf(_this, PollerCancelledError.prototype);
+        return _this;
+    }
+    return PollerCancelledError;
+}(Error));
+/**
+ * A class that represents the definition of a program that polls through consecutive requests
+ * until it reaches a state of completion.
+ *
+ * A poller can be executed manually, by polling request by request by calling to the `poll()` method repeatedly, until its operation is completed.
+ * It also provides a way to wait until the operation completes, by calling `pollUntilDone()` and waiting until the operation finishes.
+ * Pollers can also request the cancellation of the ongoing process to whom is providing the underlying long running operation.
+ *
+ * ```ts
+ * const poller = new MyPoller();
+ *
+ * // Polling just once:
+ * await poller.poll();
+ *
+ * // We can try to cancel the request here, by calling:
+ * //
+ * //     await poller.cancelOperation();
+ * //
+ *
+ * // Getting the final result:
+ * const result = await poller.pollUntilDone();
+ * ```
+ *
+ * The Poller is defined by two types, a type representing the state of the poller, which
+ * must include a basic set of properties from `PollOperationState<TResult>`,
+ * and a return type defined by `TResult`, which can be anything.
+ *
+ * The Poller class implements the `PollerLike` interface, which allows poller implementations to avoid having
+ * to export the Poller's class directly, and instead only export the already instantiated poller with the PollerLike type.
+ *
+ * ```ts
+ * class Client {
+ *   public async makePoller: PollerLike<MyOperationState, MyResult> {
+ *     const poller = new MyPoller({});
+ *     // It might be preferred to return the poller after the first request is made,
+ *     // so that some information can be obtained right away.
+ *     await poller.poll();
+ *     return poller;
+ *   }
+ * }
+ *
+ * const poller: PollerLike<MyOperationState, MyResult> = myClient.makePoller();
+ * ```
+ *
+ * A poller can be created through its constructor, then it can be polled until it's completed.
+ * At any point in time, the state of the poller can be obtained without delay through the getOperationState method.
+ * At any point in time, the intermediate forms of the result type can be requested without delay.
+ * Once the underlying operation is marked as completed, the poller will stop and the final value will be returned.
+ *
+ * ```ts
+ * const poller = myClient.makePoller();
+ * const state: MyOperationState = poller.getOperationState();
+ *
+ * // The intermediate result can be obtained at any time.
+ * const result: MyResult | undefined = poller.getResult();
+ *
+ * // The final result can only be obtained after the poller finishes.
+ * const result: MyResult = await poller.pollUntilDone();
+ * ```
+ *
+ */
+// eslint-disable-next-line no-use-before-define
+var Poller = /** @class */ (function () {
+    /**
+     * A poller needs to be initialized by passing in at least the basic properties of the `PollOperation<TState, TResult>`.
+     *
+     * When writing an implementation of a Poller, this implementation needs to deal with the initialization
+     * of any custom state beyond the basic definition of the poller. The basic poller assumes that the poller's
+     * operation has already been defined, at least its basic properties. The code below shows how to approach
+     * the definition of the constructor of a new custom poller.
+     *
+     * ```ts
+     * export class MyPoller extends Poller<MyOperationState, string> {
+     *   constructor({
+     *     // Anything you might need outside of the basics
+     *   }) {
+     *     let state: MyOperationState = {
+     *       privateProperty: private,
+     *       publicProperty: public,
+     *     };
+     *
+     *     const operation = {
+     *       state,
+     *       update,
+     *       cancel,
+     *       toString
+     *     }
+     *
+     *     // Sending the operation to the parent's constructor.
+     *     super(operation);
+     *
+     *     // You can assign more local properties here.
+     *   }
+     * }
+     * ```
+     *
+     * Inside of this constructor, a new promise is created. This will be used to
+     * tell the user when the poller finishes (see `pollUntilDone()`). The promise's
+     * resolve and reject methods are also used internally to control when to resolve
+     * or reject anyone waiting for the poller to finish.
+     *
+     * The constructor of a custom implementation of a poller is where any serialized version of
+     * a previous poller's operation should be deserialized into the operation sent to the
+     * base constructor. For example:
+     *
+     * ```ts
+     * export class MyPoller extends Poller<MyOperationState, string> {
+     *   constructor(
+     *     baseOperation: string | undefined
+     *   ) {
+     *     let state: MyOperationState = {};
+     *     if (baseOperation) {
+     *       state = {
+     *         ...JSON.parse(baseOperation).state,
+     *         ...state
+     *       };
+     *     }
+     *     const operation = {
+     *       state,
+     *       // ...
+     *     }
+     *     super(operation);
+     *   }
+     * }
+     * ```
+     *
+     * @param operation - Must contain the basic properties of `PollOperation<State, TResult>`.
+     */
+    function Poller(operation) {
+        var _this = this;
+        this.stopped = true;
+        this.pollProgressCallbacks = [];
+        this.operation = operation;
+        this.promise = new Promise(function (resolve, reject) {
+            _this.resolve = resolve;
+            _this.reject = reject;
+        });
+        // This prevents the UnhandledPromiseRejectionWarning in node.js from being thrown.
+        // The above warning would get thrown if `poller.poll` is called, it returns an error,
+        // and pullUntilDone did not have a .catch or await try/catch on it's return value.
+        this.promise.catch(function () {
+            /* intentionally blank */
+        });
+    }
+    /**
+     * @internal
+     * Starts a loop that will break only if the poller is done
+     * or if the poller is stopped.
+     */
+    Poller.prototype.startPolling = function () {
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            return tslib.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this.stopped) {
+                            this.stopped = false;
+                        }
+                        _a.label = 1;
+                    case 1:
+                        if (!(!this.isStopped() && !this.isDone())) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.poll()];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, this.delay()];
+                    case 3:
+                        _a.sent();
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * @internal
+     * pollOnce does one polling, by calling to the update method of the underlying
+     * poll operation to make any relevant change effective.
+     *
+     * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
+     *
+     * @param options - Optional properties passed to the operation's update method.
+     */
+    Poller.prototype.pollOnce = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, e_1;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 3, , 4]);
+                        if (!!this.isDone()) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.operation.update({
+                                abortSignal: options.abortSignal,
+                                fireProgress: this.fireProgress.bind(this)
+                            })];
+                    case 1:
+                        _a.operation = _b.sent();
+                        if (this.isDone() && this.resolve) {
+                            // If the poller has finished polling, this means we now have a result.
+                            // However, it can be the case that TResult is instantiated to void, so
+                            // we are not expecting a result anyway. To assert that we might not
+                            // have a result eventually after finishing polling, we cast the result
+                            // to TResult.
+                            this.resolve(this.operation.state.result);
+                        }
+                        _b.label = 2;
+                    case 2: return [3 /*break*/, 4];
+                    case 3:
+                        e_1 = _b.sent();
+                        this.operation.state.error = e_1;
+                        if (this.reject) {
+                            this.reject(e_1);
+                        }
+                        throw e_1;
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * @internal
+     * fireProgress calls the functions passed in via onProgress the method of the poller.
+     *
+     * It loops over all of the callbacks received from onProgress, and executes them, sending them
+     * the current operation state.
+     *
+     * @param state - The current operation state.
+     */
+    Poller.prototype.fireProgress = function (state) {
+        for (var _i = 0, _a = this.pollProgressCallbacks; _i < _a.length; _i++) {
+            var callback = _a[_i];
+            callback(state);
+        }
+    };
+    /**
+     * @internal
+     * Invokes the underlying operation's cancel method, and rejects the
+     * pollUntilDone promise.
+     */
+    Poller.prototype.cancelOnce = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this;
+                        return [4 /*yield*/, this.operation.cancel(options)];
+                    case 1:
+                        _a.operation = _b.sent();
+                        if (this.reject) {
+                            this.reject(new PollerCancelledError("Poller cancelled"));
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns a promise that will resolve once a single polling request finishes.
+     * It does this by calling the update method of the Poller's operation.
+     *
+     * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
+     *
+     * @param options - Optional properties passed to the operation's update method.
+     */
+    Poller.prototype.poll = function (options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        if (!this.pollOncePromise) {
+            this.pollOncePromise = this.pollOnce(options);
+            var clearPollOncePromise = function () {
+                _this.pollOncePromise = undefined;
+            };
+            this.pollOncePromise.then(clearPollOncePromise, clearPollOncePromise).catch(this.reject);
+        }
+        return this.pollOncePromise;
+    };
+    /**
+     * Returns a promise that will resolve once the underlying operation is completed.
+     */
+    Poller.prototype.pollUntilDone = function () {
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            return tslib.__generator(this, function (_a) {
+                if (this.stopped) {
+                    this.startPolling().catch(this.reject);
+                }
+                return [2 /*return*/, this.promise];
+            });
+        });
+    };
+    /**
+     * Invokes the provided callback after each polling is completed,
+     * sending the current state of the poller's operation.
+     *
+     * It returns a method that can be used to stop receiving updates on the given callback function.
+     */
+    Poller.prototype.onProgress = function (callback) {
+        var _this = this;
+        this.pollProgressCallbacks.push(callback);
+        return function () {
+            _this.pollProgressCallbacks = _this.pollProgressCallbacks.filter(function (c) { return c !== callback; });
+        };
+    };
+    /**
+     * Returns true if the poller has finished polling.
+     */
+    Poller.prototype.isDone = function () {
+        var state = this.operation.state;
+        return Boolean(state.isCompleted || state.isCancelled || state.error);
+    };
+    /**
+     * Stops the poller from continuing to poll.
+     */
+    Poller.prototype.stopPolling = function () {
+        if (!this.stopped) {
+            this.stopped = true;
+            if (this.reject) {
+                this.reject(new PollerStoppedError("This poller is already stopped"));
+            }
+        }
+    };
+    /**
+     * Returns true if the poller is stopped.
+     */
+    Poller.prototype.isStopped = function () {
+        return this.stopped;
+    };
+    /**
+     * Attempts to cancel the underlying operation.
+     *
+     * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
+     *
+     * If it's called again before it finishes, it will throw an error.
+     *
+     * @param options - Optional properties passed to the operation's update method.
+     */
+    Poller.prototype.cancelOperation = function (options) {
+        if (options === void 0) { options = {}; }
+        if (!this.stopped) {
+            this.stopped = true;
+        }
+        if (!this.cancelPromise) {
+            this.cancelPromise = this.cancelOnce(options);
+        }
+        else if (options.abortSignal) {
+            throw new Error("A cancel request is currently pending");
+        }
+        return this.cancelPromise;
+    };
+    /**
+     * Returns the state of the operation.
+     *
+     * Even though TState will be the same type inside any of the methods of any extension of the Poller class,
+     * implementations of the pollers can customize what's shared with the public by writing their own
+     * version of the `getOperationState` method, and by defining two types, one representing the internal state of the poller
+     * and a public type representing a safe to share subset of the properties of the internal state.
+     * Their definition of getOperationState can then return their public type.
+     *
+     * Example:
+     *
+     * ```ts
+     * // Let's say we have our poller's operation state defined as:
+     * interface MyOperationState extends PollOperationState<ResultType> {
+     *   privateProperty?: string;
+     *   publicProperty?: string;
+     * }
+     *
+     * // To allow us to have a true separation of public and private state, we have to define another interface:
+     * interface PublicState extends PollOperationState<ResultType> {
+     *   publicProperty?: string;
+     * }
+     *
+     * // Then, we define our Poller as follows:
+     * export class MyPoller extends Poller<MyOperationState, ResultType> {
+     *   // ... More content is needed here ...
+     *
+     *   public getOperationState(): PublicState {
+     *     const state: PublicState = this.operation.state;
+     *     return {
+     *       // Properties from PollOperationState<TResult>
+     *       isStarted: state.isStarted,
+     *       isCompleted: state.isCompleted,
+     *       isCancelled: state.isCancelled,
+     *       error: state.error,
+     *       result: state.result,
+     *
+     *       // The only other property needed by PublicState.
+     *       publicProperty: state.publicProperty
+     *     }
+     *   }
+     * }
+     * ```
+     *
+     * You can see this in the tests of this repository, go to the file:
+     * `../test/utils/testPoller.ts`
+     * and look for the getOperationState implementation.
+     */
+    Poller.prototype.getOperationState = function () {
+        return this.operation.state;
+    };
+    /**
+     * Returns the result value of the operation,
+     * regardless of the state of the poller.
+     * It can return undefined or an incomplete form of the final TResult value
+     * depending on the implementation.
+     */
+    Poller.prototype.getResult = function () {
+        var state = this.operation.state;
+        return state.result;
+    };
+    /**
+     * Returns a serialized version of the poller's operation
+     * by invoking the operation's toString method.
+     */
+    Poller.prototype.toString = function () {
+        return this.operation.toString();
+    };
+    return Poller;
+}());
+
+exports.Poller = Poller;
+exports.PollerCancelledError = PollerCancelledError;
+exports.PollerStoppedError = PollerStoppedError;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
 /* 111 */,
 /* 112 */,
 /* 113 */,
@@ -7789,7 +8543,125 @@ exports.default = parseBody;
 /***/ }),
 /* 122 */,
 /* 123 */,
-/* 124 */,
+/* 124 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+
+exports.isInteger = num => {
+  if (typeof num === 'number') {
+    return Number.isInteger(num);
+  }
+  if (typeof num === 'string' && num.trim() !== '') {
+    return Number.isInteger(Number(num));
+  }
+  return false;
+};
+
+/**
+ * Find a node of the given type
+ */
+
+exports.find = (node, type) => node.nodes.find(node => node.type === type);
+
+/**
+ * Find a node of the given type
+ */
+
+exports.exceedsLimit = (min, max, step = 1, limit) => {
+  if (limit === false) return false;
+  if (!exports.isInteger(min) || !exports.isInteger(max)) return false;
+  return ((Number(max) - Number(min)) / Number(step)) >= limit;
+};
+
+/**
+ * Escape the given node with '\\' before node.value
+ */
+
+exports.escapeNode = (block, n = 0, type) => {
+  let node = block.nodes[n];
+  if (!node) return;
+
+  if ((type && node.type === type) || node.type === 'open' || node.type === 'close') {
+    if (node.escaped !== true) {
+      node.value = '\\' + node.value;
+      node.escaped = true;
+    }
+  }
+};
+
+/**
+ * Returns true if the given brace node should be enclosed in literal braces
+ */
+
+exports.encloseBrace = node => {
+  if (node.type !== 'brace') return false;
+  if ((node.commas >> 0 + node.ranges >> 0) === 0) {
+    node.invalid = true;
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Returns true if a brace node is invalid.
+ */
+
+exports.isInvalidBrace = block => {
+  if (block.type !== 'brace') return false;
+  if (block.invalid === true || block.dollar) return true;
+  if ((block.commas >> 0 + block.ranges >> 0) === 0) {
+    block.invalid = true;
+    return true;
+  }
+  if (block.open !== true || block.close !== true) {
+    block.invalid = true;
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Returns true if a node is an open or close node
+ */
+
+exports.isOpenOrClose = node => {
+  if (node.type === 'open' || node.type === 'close') {
+    return true;
+  }
+  return node.open === true || node.close === true;
+};
+
+/**
+ * Reduce an array of text nodes.
+ */
+
+exports.reduce = nodes => nodes.reduce((acc, node) => {
+  if (node.type === 'text') acc.push(node.value);
+  if (node.type === 'range') node.type = 'text';
+  return acc;
+}, []);
+
+/**
+ * Flatten an array
+ */
+
+exports.flatten = (...args) => {
+  const result = [];
+  const flat = arr => {
+    for (let i = 0; i < arr.length; i++) {
+      let ele = arr[i];
+      Array.isArray(ele) ? flat(ele, result) : ele !== void 0 && result.push(ele);
+    }
+    return result;
+  };
+  flat(args);
+  return result;
+};
+
+
+/***/ }),
 /* 125 */,
 /* 126 */,
 /* 127 */,
@@ -8468,19 +9340,17 @@ var __createBinding;
         return (mod && mod.__esModule) ? mod : { "default": mod };
     };
 
-    __classPrivateFieldGet = function (receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
+    __classPrivateFieldGet = function (receiver, state, kind, f) {
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
     };
 
-    __classPrivateFieldSet = function (receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
+    __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     };
 
     exporter("__extends", __extends);
@@ -9556,8 +10426,7 @@ exports.NOOP_TRACER_PROVIDER = new NoopTracerProvider();
 
 /***/ }),
 /* 163 */,
-/* 164 */,
-/* 165 */
+/* 164 */
 /***/ (function(__unusedmodule, exports) {
 
 "use strict";
@@ -9578,137 +10447,49 @@ exports.NOOP_TRACER_PROVIDER = new NoopTracerProvider();
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-//# sourceMappingURL=Plugin.js.map
+//# sourceMappingURL=types.js.map
+
+/***/ }),
+/* 165 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(__webpack_require__(514), exports);
+//# sourceMappingURL=index.js.map
 
 /***/ }),
 /* 166 */,
 /* 167 */,
 /* 168 */,
 /* 169 */,
-/* 170 */,
-/* 171 */,
-/* 172 */,
-/* 173 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _rng = _interopRequireDefault(__webpack_require__(733));
-
-var _stringify = _interopRequireDefault(__webpack_require__(855));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// **`v1()` - Generate time-based UUID**
-//
-// Inspired by https://github.com/LiosK/UUID.js
-// and http://docs.python.org/library/uuid.html
-let _nodeId;
-
-let _clockseq; // Previous uuid creation time
-
-
-let _lastMSecs = 0;
-let _lastNSecs = 0; // See https://github.com/uuidjs/uuid for API details
-
-function v1(options, buf, offset) {
-  let i = buf && offset || 0;
-  const b = buf || new Array(16);
-  options = options || {};
-  let node = options.node || _nodeId;
-  let clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
-  // specified.  We do this lazily to minimize issues related to insufficient
-  // system entropy.  See #189
-
-  if (node == null || clockseq == null) {
-    const seedBytes = options.random || (options.rng || _rng.default)();
-
-    if (node == null) {
-      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-      node = _nodeId = [seedBytes[0] | 0x01, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
-    }
-
-    if (clockseq == null) {
-      // Per 4.2.2, randomize (14 bit) clockseq
-      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-    }
-  } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-
-
-  let msecs = options.msecs !== undefined ? options.msecs : Date.now(); // Per 4.2.1.2, use count of uuid's generated during the current clock
-  // cycle to simulate higher resolution clock
-
-  let nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
-
-  const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
-
-  if (dt < 0 && options.clockseq === undefined) {
-    clockseq = clockseq + 1 & 0x3fff;
-  } // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-  // time interval
-
-
-  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-    nsecs = 0;
-  } // Per 4.2.1.2 Throw error if too many uuids are requested
-
-
-  if (nsecs >= 10000) {
-    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
-  }
-
-  _lastMSecs = msecs;
-  _lastNSecs = nsecs;
-  _clockseq = clockseq; // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-
-  msecs += 12219292800000; // `time_low`
-
-  const tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-  b[i++] = tl >>> 24 & 0xff;
-  b[i++] = tl >>> 16 & 0xff;
-  b[i++] = tl >>> 8 & 0xff;
-  b[i++] = tl & 0xff; // `time_mid`
-
-  const tmh = msecs / 0x100000000 * 10000 & 0xfffffff;
-  b[i++] = tmh >>> 8 & 0xff;
-  b[i++] = tmh & 0xff; // `time_high_and_version`
-
-  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-
-  b[i++] = tmh >>> 16 & 0xff; // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-
-  b[i++] = clockseq >>> 8 | 0x80; // `clock_seq_low`
-
-  b[i++] = clockseq & 0xff; // `node`
-
-  for (let n = 0; n < 6; ++n) {
-    b[i + n] = node[n];
-  }
-
-  return buf || (0, _stringify.default)(b);
-}
-
-var _default = v1;
-exports.default = _default;
-
-/***/ }),
-/* 174 */,
-/* 175 */,
-/* 176 */,
-/* 177 */,
-/* 178 */,
-/* 179 */,
-/* 180 */,
-/* 181 */
+/* 170 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 "use strict";
@@ -10160,6 +10941,198 @@ module.exports = ClientRequest;
 
 
 /***/ }),
+/* 171 */,
+/* 172 */,
+/* 173 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _rng = _interopRequireDefault(__webpack_require__(733));
+
+var _stringify = _interopRequireDefault(__webpack_require__(855));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+let _nodeId;
+
+let _clockseq; // Previous uuid creation time
+
+
+let _lastMSecs = 0;
+let _lastNSecs = 0; // See https://github.com/uuidjs/uuid for API details
+
+function v1(options, buf, offset) {
+  let i = buf && offset || 0;
+  const b = buf || new Array(16);
+  options = options || {};
+  let node = options.node || _nodeId;
+  let clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+
+  if (node == null || clockseq == null) {
+    const seedBytes = options.random || (options.rng || _rng.default)();
+
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [seedBytes[0] | 0x01, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
+    }
+
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+
+
+  let msecs = options.msecs !== undefined ? options.msecs : Date.now(); // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+
+  let nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
+
+  const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
+
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  } // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+
+
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  } // Per 4.2.1.2 Throw error if too many uuids are requested
+
+
+  if (nsecs >= 10000) {
+    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq; // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+
+  msecs += 12219292800000; // `time_low`
+
+  const tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff; // `time_mid`
+
+  const tmh = msecs / 0x100000000 * 10000 & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff; // `time_high_and_version`
+
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+
+  b[i++] = tmh >>> 16 & 0xff; // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+
+  b[i++] = clockseq >>> 8 | 0x80; // `clock_seq_low`
+
+  b[i++] = clockseq & 0xff; // `node`
+
+  for (let n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf || (0, _stringify.default)(b);
+}
+
+var _default = v1;
+exports.default = _default;
+
+/***/ }),
+/* 174 */,
+/* 175 */,
+/* 176 */,
+/* 177 */,
+/* 178 */,
+/* 179 */,
+/* 180 */,
+/* 181 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaggageImpl = void 0;
+var BaggageImpl = /** @class */ (function () {
+    function BaggageImpl(entries) {
+        this._entries = entries ? new Map(entries) : new Map();
+    }
+    BaggageImpl.prototype.getEntry = function (key) {
+        var entry = this._entries.get(key);
+        if (!entry) {
+            return undefined;
+        }
+        return Object.assign({}, entry);
+    };
+    BaggageImpl.prototype.getAllEntries = function () {
+        return Array.from(this._entries.entries()).map(function (_a) {
+            var k = _a[0], v = _a[1];
+            return [k, v];
+        });
+    };
+    BaggageImpl.prototype.setEntry = function (key, entry) {
+        var newBaggage = new BaggageImpl(this._entries);
+        newBaggage._entries.set(key, entry);
+        return newBaggage;
+    };
+    BaggageImpl.prototype.removeEntry = function (key) {
+        var newBaggage = new BaggageImpl(this._entries);
+        newBaggage._entries.delete(key);
+        return newBaggage;
+    };
+    BaggageImpl.prototype.removeEntries = function () {
+        var keys = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            keys[_i] = arguments[_i];
+        }
+        var newBaggage = new BaggageImpl(this._entries);
+        for (var _a = 0, keys_1 = keys; _a < keys_1.length; _a++) {
+            var key = keys_1[_a];
+            newBaggage._entries.delete(key);
+        }
+        return newBaggage;
+    };
+    BaggageImpl.prototype.clear = function () {
+        return new BaggageImpl();
+    };
+    return BaggageImpl;
+}());
+exports.BaggageImpl = BaggageImpl;
+//# sourceMappingURL=baggage.js.map
+
+/***/ }),
 /* 182 */,
 /* 183 */,
 /* 184 */,
@@ -10442,66 +11415,310 @@ module.exports = {
 /* 203 */,
 /* 204 */,
 /* 205 */
-/***/ (function(__unusedmodule, exports) {
+/***/ (function(module) {
 
-//TODO: handle reviver/dehydrate function like normal
-//and handle indentation, like normal.
-//if anyone needs this... please send pull request.
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
 
-exports.stringify = function stringify (o) {
-  if('undefined' == typeof o) return o
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
 
-  if(o && Buffer.isBuffer(o))
-    return JSON.stringify(':base64:' + o.toString('base64'))
-
-  if(o && o.toJSON)
-    o =  o.toJSON()
-
-  if(o && 'object' === typeof o) {
-    var s = ''
-    var array = Array.isArray(o)
-    s = array ? '[' : '{'
-    var first = true
-
-    for(var k in o) {
-      var ignore = 'function' == typeof o[k] || (!array && 'undefined' === typeof o[k])
-      if(Object.hasOwnProperty.call(o, k) && !ignore) {
-        if(!first)
-          s += ','
-        first = false
-        if (array) {
-          if(o[k] == undefined)
-            s += 'null'
-          else
-            s += stringify(o[k])
-        } else if (o[k] !== void(0)) {
-          s += stringify(k) + ':' + stringify(o[k])
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+/* global global, define, System, Reflect, Promise */
+var __extends;
+var __assign;
+var __rest;
+var __decorate;
+var __param;
+var __metadata;
+var __awaiter;
+var __generator;
+var __exportStar;
+var __values;
+var __read;
+var __spread;
+var __spreadArrays;
+var __spreadArray;
+var __await;
+var __asyncGenerator;
+var __asyncDelegator;
+var __asyncValues;
+var __makeTemplateObject;
+var __importStar;
+var __importDefault;
+var __classPrivateFieldGet;
+var __classPrivateFieldSet;
+var __createBinding;
+(function (factory) {
+    var root = typeof global === "object" ? global : typeof self === "object" ? self : typeof this === "object" ? this : {};
+    if (typeof define === "function" && define.amd) {
+        define("tslib", ["exports"], function (exports) { factory(createExporter(root, createExporter(exports))); });
+    }
+    else if ( true && typeof module.exports === "object") {
+        factory(createExporter(root, createExporter(module.exports)));
+    }
+    else {
+        factory(createExporter(root));
+    }
+    function createExporter(exports, previous) {
+        if (exports !== root) {
+            if (typeof Object.create === "function") {
+                Object.defineProperty(exports, "__esModule", { value: true });
+            }
+            else {
+                exports.__esModule = true;
+            }
         }
-      }
+        return function (id, v) { return exports[id] = previous ? previous(id, v) : v; };
     }
+})
+(function (exporter) {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
 
-    s += array ? ']' : '}'
+    __extends = function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
 
-    return s
-  } else if ('string' === typeof o) {
-    return JSON.stringify(/^:/.test(o) ? ':' + o : o)
-  } else if ('undefined' === typeof o) {
-    return 'null';
-  } else
-    return JSON.stringify(o)
-}
+    __assign = Object.assign || function (t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
 
-exports.parse = function (s) {
-  return JSON.parse(s, function (key, value) {
-    if('string' === typeof value) {
-      if(/^:base64:/.test(value))
-        return Buffer.from(value.substring(8), 'base64')
-      else
-        return /^:/.test(value) ? value.substring(1) : value 
-    }
-    return value
-  })
-}
+    __rest = function (s, e) {
+        var t = {};
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+            t[p] = s[p];
+        if (s != null && typeof Object.getOwnPropertySymbols === "function")
+            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+                if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                    t[p[i]] = s[p[i]];
+            }
+        return t;
+    };
+
+    __decorate = function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+
+    __param = function (paramIndex, decorator) {
+        return function (target, key) { decorator(target, key, paramIndex); }
+    };
+
+    __metadata = function (metadataKey, metadataValue) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
+    };
+
+    __awaiter = function (thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    };
+
+    __generator = function (thisArg, body) {
+        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+            if (f) throw new TypeError("Generator is already executing.");
+            while (_) try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+                if (y = 0, t) op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0: case 1: t = op; break;
+                    case 4: _.label++; return { value: op[1], done: false };
+                    case 5: _.label++; y = op[1]; op = [0]; continue;
+                    case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                        if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                        if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                        if (t[2]) _.ops.pop();
+                        _.trys.pop(); continue;
+                }
+                op = body.call(thisArg, _);
+            } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+            if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+    };
+
+    __exportStar = function(m, o) {
+        for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
+    };
+
+    __createBinding = Object.create ? (function(o, m, k, k2) {
+        if (k2 === undefined) k2 = k;
+        Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    }) : (function(o, m, k, k2) {
+        if (k2 === undefined) k2 = k;
+        o[k2] = m[k];
+    });
+
+    __values = function (o) {
+        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+        if (m) return m.call(o);
+        if (o && typeof o.length === "number") return {
+            next: function () {
+                if (o && i >= o.length) o = void 0;
+                return { value: o && o[i++], done: !o };
+            }
+        };
+        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+    };
+
+    __read = function (o, n) {
+        var m = typeof Symbol === "function" && o[Symbol.iterator];
+        if (!m) return o;
+        var i = m.call(o), r, ar = [], e;
+        try {
+            while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+        }
+        catch (error) { e = { error: error }; }
+        finally {
+            try {
+                if (r && !r.done && (m = i["return"])) m.call(i);
+            }
+            finally { if (e) throw e.error; }
+        }
+        return ar;
+    };
+
+    /** @deprecated */
+    __spread = function () {
+        for (var ar = [], i = 0; i < arguments.length; i++)
+            ar = ar.concat(__read(arguments[i]));
+        return ar;
+    };
+
+    /** @deprecated */
+    __spreadArrays = function () {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
+
+    __spreadArray = function (to, from) {
+        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+            to[j] = from[i];
+        return to;
+    };
+
+    __await = function (v) {
+        return this instanceof __await ? (this.v = v, this) : new __await(v);
+    };
+
+    __asyncGenerator = function (thisArg, _arguments, generator) {
+        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+        var g = generator.apply(thisArg, _arguments || []), i, q = [];
+        return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+        function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+        function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
+        function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
+        function fulfill(value) { resume("next", value); }
+        function reject(value) { resume("throw", value); }
+        function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
+    };
+
+    __asyncDelegator = function (o) {
+        var i, p;
+        return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
+        function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
+    };
+
+    __asyncValues = function (o) {
+        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+        var m = o[Symbol.asyncIterator], i;
+        return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+        function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+    };
+
+    __makeTemplateObject = function (cooked, raw) {
+        if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+        return cooked;
+    };
+
+    var __setModuleDefault = Object.create ? (function(o, v) {
+        Object.defineProperty(o, "default", { enumerable: true, value: v });
+    }) : function(o, v) {
+        o["default"] = v;
+    };
+
+    __importStar = function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+
+    __importDefault = function (mod) {
+        return (mod && mod.__esModule) ? mod : { "default": mod };
+    };
+
+    __classPrivateFieldGet = function (receiver, state, kind, f) {
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+    };
+
+    __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+    };
+
+    exporter("__extends", __extends);
+    exporter("__assign", __assign);
+    exporter("__rest", __rest);
+    exporter("__decorate", __decorate);
+    exporter("__param", __param);
+    exporter("__metadata", __metadata);
+    exporter("__awaiter", __awaiter);
+    exporter("__generator", __generator);
+    exporter("__exportStar", __exportStar);
+    exporter("__createBinding", __createBinding);
+    exporter("__values", __values);
+    exporter("__read", __read);
+    exporter("__spread", __spread);
+    exporter("__spreadArrays", __spreadArrays);
+    exporter("__spreadArray", __spreadArray);
+    exporter("__await", __await);
+    exporter("__asyncGenerator", __asyncGenerator);
+    exporter("__asyncDelegator", __asyncDelegator);
+    exporter("__asyncValues", __asyncValues);
+    exporter("__makeTemplateObject", __makeTemplateObject);
+    exporter("__importStar", __importStar);
+    exporter("__importDefault", __importDefault);
+    exporter("__classPrivateFieldGet", __classPrivateFieldGet);
+    exporter("__classPrivateFieldSet", __classPrivateFieldSet);
+});
 
 
 /***/ }),
@@ -10824,70 +12041,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 "use strict";
 
-
-const path = __webpack_require__(622);
-const win32 = process.platform === 'win32';
-const {
-  REGEX_BACKSLASH,
-  REGEX_REMOVE_BACKSLASH,
-  REGEX_SPECIAL_CHARS,
-  REGEX_SPECIAL_CHARS_GLOBAL
-} = __webpack_require__(199);
-
-exports.isObject = val => val !== null && typeof val === 'object' && !Array.isArray(val);
-exports.hasRegexChars = str => REGEX_SPECIAL_CHARS.test(str);
-exports.isRegexChar = str => str.length === 1 && exports.hasRegexChars(str);
-exports.escapeRegex = str => str.replace(REGEX_SPECIAL_CHARS_GLOBAL, '\\$1');
-exports.toPosixSlashes = str => str.replace(REGEX_BACKSLASH, '/');
-
-exports.removeBackslashes = str => {
-  return str.replace(REGEX_REMOVE_BACKSLASH, match => {
-    return match === '\\' ? '' : match;
-  });
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-
-exports.supportsLookbehinds = () => {
-  const segs = process.version.slice(1).split('.').map(Number);
-  if (segs.length === 3 && segs[0] >= 9 || (segs[0] === 8 && segs[1] >= 10)) {
-    return true;
-  }
-  return false;
-};
-
-exports.isWindows = options => {
-  if (options && typeof options.windows === 'boolean') {
-    return options.windows;
-  }
-  return win32 === true || path.sep === '\\';
-};
-
-exports.escapeLast = (input, char, lastIdx) => {
-  const idx = input.lastIndexOf(char, lastIdx);
-  if (idx === -1) return input;
-  if (input[idx - 1] === '\\') return exports.escapeLast(input, char, idx - 1);
-  return `${input.slice(0, idx)}\\${input.slice(idx)}`;
-};
-
-exports.removePrefix = (input, state = {}) => {
-  let output = input;
-  if (output.startsWith('./')) {
-    output = output.slice(2);
-    state.prefix = './';
-  }
-  return output;
-};
-
-exports.wrapOutput = (input, state = {}, options = {}) => {
-  const prepend = options.contains ? '' : '^';
-  const append = options.contains ? '' : '$';
-
-  let output = `${prepend}(?:${input})${append}`;
-  if (state.negated === true) {
-    output = `(?:^(?!${output}).*$)`;
-  }
-  return output;
-};
-
+Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(__webpack_require__(67), exports);
+__exportStar(__webpack_require__(905), exports);
+//# sourceMappingURL=index.js.map
 
 /***/ }),
 /* 225 */
@@ -10895,118 +12077,23 @@ exports.wrapOutput = (input, state = {}, options = {}) => {
 
 "use strict";
 
-
-exports.isInteger = num => {
-  if (typeof num === 'number') {
-    return Number.isInteger(num);
-  }
-  if (typeof num === 'string' && num.trim() !== '') {
-    return Number.isInteger(Number(num));
-  }
-  return false;
-};
-
-/**
- * Find a node of the given type
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
-exports.find = (node, type) => node.nodes.find(node => node.type === type);
-
-/**
- * Find a node of the given type
- */
-
-exports.exceedsLimit = (min, max, step = 1, limit) => {
-  if (limit === false) return false;
-  if (!exports.isInteger(min) || !exports.isInteger(max)) return false;
-  return ((Number(max) - Number(min)) / Number(step)) >= limit;
-};
-
-/**
- * Escape the given node with '\\' before node.value
- */
-
-exports.escapeNode = (block, n = 0, type) => {
-  let node = block.nodes[n];
-  if (!node) return;
-
-  if ((type && node.type === type) || node.type === 'open' || node.type === 'close') {
-    if (node.escaped !== true) {
-      node.value = '\\' + node.value;
-      node.escaped = true;
-    }
-  }
-};
-
-/**
- * Returns true if the given brace node should be enclosed in literal braces
- */
-
-exports.encloseBrace = node => {
-  if (node.type !== 'brace') return false;
-  if ((node.commas >> 0 + node.ranges >> 0) === 0) {
-    node.invalid = true;
-    return true;
-  }
-  return false;
-};
-
-/**
- * Returns true if a brace node is invalid.
- */
-
-exports.isInvalidBrace = block => {
-  if (block.type !== 'brace') return false;
-  if (block.invalid === true || block.dollar) return true;
-  if ((block.commas >> 0 + block.ranges >> 0) === 0) {
-    block.invalid = true;
-    return true;
-  }
-  if (block.open !== true || block.close !== true) {
-    block.invalid = true;
-    return true;
-  }
-  return false;
-};
-
-/**
- * Returns true if a node is an open or close node
- */
-
-exports.isOpenOrClose = node => {
-  if (node.type === 'open' || node.type === 'close') {
-    return true;
-  }
-  return node.open === true || node.close === true;
-};
-
-/**
- * Reduce an array of text nodes.
- */
-
-exports.reduce = nodes => nodes.reduce((acc, node) => {
-  if (node.type === 'text') acc.push(node.value);
-  if (node.type === 'range') node.type = 'text';
-  return acc;
-}, []);
-
-/**
- * Flatten an array
- */
-
-exports.flatten = (...args) => {
-  const result = [];
-  const flat = arr => {
-    for (let i = 0; i < arr.length; i++) {
-      let ele = arr[i];
-      Array.isArray(ele) ? flat(ele, result) : ele !== void 0 && result.push(ele);
-    }
-    return result;
-  };
-  flat(args);
-  return result;
-};
-
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=Sampler.js.map
 
 /***/ }),
 /* 226 */
@@ -11469,6 +12556,114 @@ var AzureKeyCredential = /** @class */ (function () {
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 /**
+ * Helper TypeGuard that checks if something is defined or not.
+ * @param thing - Anything
+ * @internal
+ */
+function isDefined(thing) {
+    return typeof thing !== "undefined" && thing !== null;
+}
+/**
+ * Helper TypeGuard that checks if the input is an object with the specified properties.
+ * Note: The properties may be inherited.
+ * @param thing - Anything.
+ * @param properties - The name of the properties that should appear in the object.
+ * @internal
+ */
+function isObjectWithProperties(thing, properties) {
+    if (!isDefined(thing) || typeof thing !== "object") {
+        return false;
+    }
+    for (var _i = 0, properties_1 = properties; _i < properties_1.length; _i++) {
+        var property = properties_1[_i];
+        if (!objectHasProperty(thing, property)) {
+            return false;
+        }
+    }
+    return true;
+}
+/**
+ * Helper TypeGuard that checks if the input is an object with the specified property.
+ * Note: The property may be inherited.
+ * @param thing - Any object.
+ * @param property - The name of the property that should appear in the object.
+ * @internal
+ */
+function objectHasProperty(thing, property) {
+    return typeof thing === "object" && property in thing;
+}
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * A static name/key-based credential that supports updating
+ * the underlying name and key values.
+ */
+var AzureNamedKeyCredential = /** @class */ (function () {
+    /**
+     * Create an instance of an AzureNamedKeyCredential for use
+     * with a service client.
+     *
+     * @param name - The initial value of the name to use in authentication.
+     * @param key - The initial value of the key to use in authentication.
+     */
+    function AzureNamedKeyCredential(name, key) {
+        if (!name || !key) {
+            throw new TypeError("name and key must be non-empty strings");
+        }
+        this._name = name;
+        this._key = key;
+    }
+    Object.defineProperty(AzureNamedKeyCredential.prototype, "key", {
+        /**
+         * The value of the key to be used in authentication.
+         */
+        get: function () {
+            return this._key;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(AzureNamedKeyCredential.prototype, "name", {
+        /**
+         * The value of the name to be used in authentication.
+         */
+        get: function () {
+            return this._name;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    /**
+     * Change the value of the key.
+     *
+     * Updates will take effect upon the next request after
+     * updating the key value.
+     *
+     * @param newName - The new name value to be used.
+     * @param newKey - The new key value to be used.
+     */
+    AzureNamedKeyCredential.prototype.update = function (newName, newKey) {
+        if (!newName || !newKey) {
+            throw new TypeError("newName and newKey must be non-empty strings");
+        }
+        this._name = newName;
+        this._key = newKey;
+    };
+    return AzureNamedKeyCredential;
+}());
+/**
+ * Tests an object to determine whether it implements NamedKeyCredential.
+ *
+ * @param credential - The assumed NamedKeyCredential to be tested.
+ */
+function isNamedKeyCredential(credential) {
+    return (isObjectWithProperties(credential, ["name", "key"]) &&
+        typeof credential.key === "string" &&
+        typeof credential.name === "string");
+}
+
+// Copyright (c) Microsoft Corporation.
+/**
  * A static-signature-based credential that supports updating
  * the underlying signature value.
  */
@@ -11511,6 +12706,14 @@ var AzureSASCredential = /** @class */ (function () {
     };
     return AzureSASCredential;
 }());
+/**
+ * Tests an object to determine whether it implements SASCredential.
+ *
+ * @param credential - The assumed SASCredential to be tested.
+ */
+function isSASCredential(credential) {
+    return (isObjectWithProperties(credential, ["signature"]) && typeof credential.signature === "string");
+}
 
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
@@ -11532,7 +12735,10 @@ function isTokenCredential(credential) {
 }
 
 exports.AzureKeyCredential = AzureKeyCredential;
+exports.AzureNamedKeyCredential = AzureNamedKeyCredential;
 exports.AzureSASCredential = AzureSASCredential;
+exports.isNamedKeyCredential = isNamedKeyCredential;
+exports.isSASCredential = isSASCredential;
 exports.isTokenCredential = isTokenCredential;
 //# sourceMappingURL=index.js.map
 
@@ -13035,19 +14241,17 @@ var __createBinding;
         return (mod && mod.__esModule) ? mod : { "default": mod };
     };
 
-    __classPrivateFieldGet = function (receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
+    __classPrivateFieldGet = function (receiver, state, kind, f) {
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
     };
 
-    __classPrivateFieldSet = function (receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
+    __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     };
 
     exporter("__extends", __extends);
@@ -13108,7 +14312,7 @@ var NoOpSpan = /** @class */ (function () {
     };
     /**
      * Marks the end of Span execution.
-     * @param _endTime The time to use as the Span's end time. Defaults to
+     * @param _endTime - The time to use as the Span's end time. Defaults to
      * the current time.
      */
     NoOpSpan.prototype.end = function (_endTime) {
@@ -13116,37 +14320,37 @@ var NoOpSpan = /** @class */ (function () {
     };
     /**
      * Sets an attribute on the Span
-     * @param _key the attribute key
-     * @param _value the attribute value
+     * @param _key - The attribute key
+     * @param _value - The attribute value
      */
     NoOpSpan.prototype.setAttribute = function (_key, _value) {
         return this;
     };
     /**
      * Sets attributes on the Span
-     * @param _attributes the attributes to add
+     * @param _attributes - The attributes to add
      */
     NoOpSpan.prototype.setAttributes = function (_attributes) {
         return this;
     };
     /**
      * Adds an event to the Span
-     * @param _name The name of the event
-     * @param _attributes The associated attributes to add for this event
+     * @param _name - The name of the event
+     * @param _attributes - The associated attributes to add for this event
      */
     NoOpSpan.prototype.addEvent = function (_name, _attributes) {
         return this;
     };
     /**
      * Sets a status on the span. Overrides the default of CanonicalCode.OK.
-     * @param _status The status to set.
+     * @param _status - The status to set.
      */
     NoOpSpan.prototype.setStatus = function (_status) {
         return this;
     };
     /**
      * Updates the name of the Span
-     * @param _name the new Span name
+     * @param _name - the new Span name
      */
     NoOpSpan.prototype.updateName = function (_name) {
         return this;
@@ -13170,8 +14374,8 @@ var NoOpTracer = /** @class */ (function () {
     }
     /**
      * Starts a new Span.
-     * @param _name The name of the span.
-     * @param _options The SpanOptions used during Span creation.
+     * @param _name - The name of the span.
+     * @param _options - The SpanOptions used during Span creation.
      */
     NoOpTracer.prototype.startSpan = function (_name, _options) {
         return new NoOpSpan();
@@ -13184,16 +14388,16 @@ var NoOpTracer = /** @class */ (function () {
     };
     /**
      * Executes the given function within the context provided by a Span.
-     * @param _span The span that provides the context.
-     * @param fn The function to be executed.
+     * @param _span - The span that provides the context.
+     * @param fn - The function to be executed.
      */
     NoOpTracer.prototype.withSpan = function (_span, fn) {
         return fn();
     };
     /**
      * Bind a Span as the target's scope
-     * @param target An object to bind the scope.
-     * @param _span A specific Span to use. Otherwise, use the current one.
+     * @param target - An object to bind the scope.
+     * @param _span - A specific Span to use. Otherwise, use the current one.
      */
     NoOpTracer.prototype.bind = function (target, _span) {
         return target;
@@ -13258,7 +14462,7 @@ function getDefaultTracer() {
 }
 /**
  * Sets the global tracer, enabling tracing for the Azure SDK.
- * @param tracer An OpenTelemetry Tracer instance.
+ * @param tracer - An OpenTelemetry Tracer instance.
  */
 function setTracer(tracer) {
     var cache = getCache();
@@ -13279,7 +14483,6 @@ function getTracer() {
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 /**
- * @ignore
  * @internal
  */
 var OpenCensusTraceStateWrapper = /** @class */ (function () {
@@ -13342,7 +14545,7 @@ var OpenCensusSpanWrapper = /** @class */ (function () {
     };
     /**
      * Marks the end of Span execution.
-     * @param endTime The time to use as the Span's end time. Defaults to
+     * @param endTime - The time to use as the Span's end time. Defaults to
      * the current time.
      */
     OpenCensusSpanWrapper.prototype.end = function (_endTime) {
@@ -13362,8 +14565,8 @@ var OpenCensusSpanWrapper = /** @class */ (function () {
     };
     /**
      * Sets an attribute on the Span
-     * @param key the attribute key
-     * @param value the attribute value
+     * @param key - The attribute key
+     * @param value - The attribute value
      */
     OpenCensusSpanWrapper.prototype.setAttribute = function (key, value) {
         this._span.addAttribute(key, value);
@@ -13371,7 +14574,7 @@ var OpenCensusSpanWrapper = /** @class */ (function () {
     };
     /**
      * Sets attributes on the Span
-     * @param attributes the attributes to add
+     * @param attributes - The attributes to add
      */
     OpenCensusSpanWrapper.prototype.setAttributes = function (attributes) {
         this._span.attributes = attributes;
@@ -13379,15 +14582,15 @@ var OpenCensusSpanWrapper = /** @class */ (function () {
     };
     /**
      * Adds an event to the Span
-     * @param name The name of the event
-     * @param attributes The associated attributes to add for this event
+     * @param name - The name of the event
+     * @param attributes - The associated attributes to add for this event
      */
     OpenCensusSpanWrapper.prototype.addEvent = function (_name, _attributes) {
         throw new Error("Method not implemented.");
     };
     /**
      * Sets a status on the span. Overrides the default of CanonicalCode.OK.
-     * @param status The status to set.
+     * @param status - The status to set.
      */
     OpenCensusSpanWrapper.prototype.setStatus = function (status) {
         this._span.setStatus(status.code, status.message);
@@ -13395,7 +14598,7 @@ var OpenCensusSpanWrapper = /** @class */ (function () {
     };
     /**
      * Updates the name of the Span
-     * @param name the new Span name
+     * @param name - The new Span name
      */
     OpenCensusSpanWrapper.prototype.updateName = function (name) {
         this._span.name = name;
@@ -13418,7 +14621,7 @@ var OpenCensusSpanWrapper = /** @class */ (function () {
 var OpenCensusTracerWrapper = /** @class */ (function () {
     /**
      * Create a new wrapper around a given OpenCensus Tracer.
-     * @param tracer The OpenCensus Tracer to wrap.
+     * @param tracer - The OpenCensus Tracer to wrap.
      */
     function OpenCensusTracerWrapper(tracer) {
         this._tracer = tracer;
@@ -13431,8 +14634,8 @@ var OpenCensusTracerWrapper = /** @class */ (function () {
     };
     /**
      * Starts a new Span.
-     * @param name The name of the span.
-     * @param options The SpanOptions used during Span creation.
+     * @param name - The name of the span.
+     * @param options - The SpanOptions used during Span creation.
      */
     OpenCensusTracerWrapper.prototype.startSpan = function (name, options) {
         return new OpenCensusSpanWrapper(this, name, options);
@@ -13445,16 +14648,16 @@ var OpenCensusTracerWrapper = /** @class */ (function () {
     };
     /**
      * Executes the given function within the context provided by a Span.
-     * @param _span The span that provides the context.
-     * @param _fn The function to be executed.
+     * @param _span - The span that provides the context.
+     * @param _fn - The function to be executed.
      */
     OpenCensusTracerWrapper.prototype.withSpan = function (_span, _fn) {
         throw new Error("Method not implemented.");
     };
     /**
      * Bind a Span as the target's scope
-     * @param target An object to bind the scope.
-     * @param _span A specific Span to use. Otherwise, use the current one.
+     * @param target - An object to bind the scope.
+     * @param _span - A specific Span to use. Otherwise, use the current one.
      */
     OpenCensusTracerWrapper.prototype.bind = function (_target, _span) {
         throw new Error("Method not implemented.");
@@ -13470,12 +14673,12 @@ var TestSpan = /** @class */ (function (_super) {
     tslib.__extends(TestSpan, _super);
     /**
      * Starts a new Span.
-     * @param parentTracer The tracer that created this Span
-     * @param name The name of the span.
-     * @param context The SpanContext this span belongs to
-     * @param kind The SpanKind of this Span
-     * @param parentSpanId The identifier of the parent Span
-     * @param startTime The startTime of the event (defaults to now)
+     * @param parentTracer-  The tracer that created this Span
+     * @param name - The name of the span.
+     * @param context - The SpanContext this span belongs to
+     * @param kind - The SpanKind of this Span
+     * @param parentSpanId - The identifier of the parent Span
+     * @param startTime - The startTime of the event (defaults to now)
      */
     function TestSpan(parentTracer, name, context, kind, parentSpanId, startTime) {
         if (startTime === void 0) { startTime = Date.now(); }
@@ -13507,7 +14710,7 @@ var TestSpan = /** @class */ (function (_super) {
     };
     /**
      * Marks the end of Span execution.
-     * @param _endTime The time to use as the Span's end time. Defaults to
+     * @param _endTime - The time to use as the Span's end time. Defaults to
      * the current time.
      */
     TestSpan.prototype.end = function (_endTime) {
@@ -13515,7 +14718,7 @@ var TestSpan = /** @class */ (function (_super) {
     };
     /**
      * Sets a status on the span. Overrides the default of CanonicalCode.OK.
-     * @param status The status to set.
+     * @param status - The status to set.
      */
     TestSpan.prototype.setStatus = function (status) {
         this.status = status;
@@ -13529,8 +14732,8 @@ var TestSpan = /** @class */ (function (_super) {
     };
     /**
      * Sets an attribute on the Span
-     * @param key the attribute key
-     * @param value the attribute value
+     * @param key - The attribute key
+     * @param value - The attribute value
      */
     TestSpan.prototype.setAttribute = function (key, value) {
         this.attributes[key] = value;
@@ -13538,7 +14741,7 @@ var TestSpan = /** @class */ (function (_super) {
     };
     /**
      * Sets attributes on the Span
-     * @param attributes the attributes to add
+     * @param attributes - The attributes to add
      */
     TestSpan.prototype.setAttributes = function (attributes) {
         for (var _i = 0, _a = Object.keys(attributes); _i < _a.length; _i++) {
@@ -13595,7 +14798,7 @@ var TestTracer = /** @class */ (function (_super) {
     /**
      * Return all Spans for a particular trace, grouped by their
      * parent Span in a tree-like structure
-     * @param traceId The traceId to return the graph for
+     * @param traceId - The traceId to return the graph for
      */
     TestTracer.prototype.getSpanGraph = function (traceId) {
         var traceSpans = this.knownSpans.filter(function (span) {
@@ -13628,8 +14831,8 @@ var TestTracer = /** @class */ (function (_super) {
     };
     /**
      * Starts a new Span.
-     * @param name The name of the span.
-     * @param options The SpanOptions used during Span creation.
+     * @param name - The name of the span.
+     * @param options - The SpanOptions used during Span creation.
      */
     TestTracer.prototype.startSpan = function (name, options) {
         if (options === void 0) { options = {}; }
@@ -13672,11 +14875,53 @@ var TestTracer = /** @class */ (function (_super) {
 }(NoOpTracer));
 
 // Copyright (c) Microsoft Corporation.
+/**
+ * Creates a function that can be used to create spans using the global tracer.
+ *
+ * Usage:
+ *
+ * ```typescript
+ * // once
+ * const createSpan = createSpanFunction({ packagePrefix: "Azure.Data.AppConfiguration", namespace: "Microsoft.AppConfiguration" });
+ *
+ * // in each operation
+ * const span = createSpan("deleteConfigurationSetting", operationOptions);
+ *    // code...
+ * span.end();
+ * ```
+ *
+ * @hidden
+ * @param args - allows configuration of the prefix for each span as well as the az.namespace field.
+ */
+function createSpanFunction(args) {
+    return function (operationName, operationOptions) {
+        var tracer = getTracer();
+        var tracingOptions = (operationOptions === null || operationOptions === void 0 ? void 0 : operationOptions.tracingOptions) || {};
+        var spanOptions = tslib.__assign({ kind: api.SpanKind.INTERNAL }, tracingOptions.spanOptions);
+        var spanName = args.packagePrefix ? args.packagePrefix + "." + operationName : operationName;
+        var span = tracer.startSpan(spanName, spanOptions);
+        if (args.namespace) {
+            span.setAttribute("az.namespace", args.namespace);
+        }
+        var newSpanOptions = tracingOptions.spanOptions || {};
+        if (span.isRecording() && args.namespace) {
+            newSpanOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { parent: span.context(), attributes: tslib.__assign(tslib.__assign({}, spanOptions.attributes), { "az.namespace": args.namespace }) });
+        }
+        var newTracingOptions = tslib.__assign(tslib.__assign({}, tracingOptions), { spanOptions: newSpanOptions });
+        var newOperationOptions = tslib.__assign(tslib.__assign({}, operationOptions), { tracingOptions: newTracingOptions });
+        return {
+            span: span,
+            updatedOptions: newOperationOptions
+        };
+    };
+}
+
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 var VERSION = "00";
 /**
  * Generates a `SpanContext` given a `traceparent` header value.
- * @param traceParent Serialized span context data as a `traceparent` header value.
+ * @param traceParent - Serialized span context data as a `traceparent` header value.
  * @returns The `SpanContext` generated from the `traceparent` value.
  */
 function extractSpanContextFromTraceParentHeader(traceParentHeader) {
@@ -13698,7 +14943,7 @@ function extractSpanContextFromTraceParentHeader(traceParentHeader) {
 }
 /**
  * Generates a `traceparent` value given a span context.
- * @param spanContext Contains context for a specific span.
+ * @param spanContext - Contains context for a specific span.
  * @returns The `spanContext` represented as a `traceparent` value.
  */
 function getTraceParentHeader(spanContext) {
@@ -13725,6 +14970,7 @@ exports.OpenCensusSpanWrapper = OpenCensusSpanWrapper;
 exports.OpenCensusTracerWrapper = OpenCensusTracerWrapper;
 exports.TestSpan = TestSpan;
 exports.TestTracer = TestTracer;
+exports.createSpanFunction = createSpanFunction;
 exports.extractSpanContextFromTraceParentHeader = extractSpanContextFromTraceParentHeader;
 exports.getTraceParentHeader = getTraceParentHeader;
 exports.getTracer = getTracer;
@@ -13777,7 +15023,17 @@ exports.setTracer = setTracer;
 /* 272 */,
 /* 273 */,
 /* 274 */,
-/* 275 */,
+/* 275 */
+/***/ (function() {
+
+"use strict";
+
+if (typeof Symbol === undefined || !Symbol.asyncIterator) {
+    Symbol.asyncIterator = Symbol.for("Symbol.asyncIterator");
+}
+//# sourceMappingURL=index.js.map
+
+/***/ }),
 /* 276 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -15463,7 +16719,106 @@ exports.create = create;
 /***/ }),
 /* 282 */,
 /* 283 */,
-/* 284 */,
+/* 284 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ContextAPI = void 0;
+var NoopContextManager_1 = __webpack_require__(813);
+var global_utils_1 = __webpack_require__(361);
+var API_NAME = 'context';
+var NOOP_CONTEXT_MANAGER = new NoopContextManager_1.NoopContextManager();
+/**
+ * Singleton object which represents the entry point to the OpenTelemetry Context API
+ */
+var ContextAPI = /** @class */ (function () {
+    /** Empty private constructor prevents end users from constructing a new instance of the API */
+    function ContextAPI() {
+    }
+    /** Get the singleton instance of the Context API */
+    ContextAPI.getInstance = function () {
+        if (!this._instance) {
+            this._instance = new ContextAPI();
+        }
+        return this._instance;
+    };
+    /**
+     * Set the current context manager. Returns the initialized context manager
+     */
+    ContextAPI.prototype.setGlobalContextManager = function (contextManager) {
+        global_utils_1.registerGlobal(API_NAME, contextManager);
+        return contextManager;
+    };
+    /**
+     * Get the currently active context
+     */
+    ContextAPI.prototype.active = function () {
+        return this._getContextManager().active();
+    };
+    /**
+     * Execute a function with an active context
+     *
+     * @param context context to be active during function execution
+     * @param fn function to execute in a context
+     * @param thisArg optional receiver to be used for calling fn
+     * @param args optional arguments forwarded to fn
+     */
+    ContextAPI.prototype.with = function (context, fn, thisArg) {
+        var _a;
+        var args = [];
+        for (var _i = 3; _i < arguments.length; _i++) {
+            args[_i - 3] = arguments[_i];
+        }
+        return (_a = this._getContextManager()).with.apply(_a, __spreadArrays([context, fn, thisArg], args));
+    };
+    /**
+     * Bind a context to a target function or event emitter
+     *
+     * @param target function or event emitter to bind
+     * @param context context to bind to the event emitter or function. Defaults to the currently active context
+     */
+    ContextAPI.prototype.bind = function (target, context) {
+        if (context === void 0) { context = this.active(); }
+        return this._getContextManager().bind(target, context);
+    };
+    ContextAPI.prototype._getContextManager = function () {
+        return global_utils_1.getGlobal(API_NAME) || NOOP_CONTEXT_MANAGER;
+    };
+    /** Disable and remove the global context manager */
+    ContextAPI.prototype.disable = function () {
+        this._getContextManager().disable();
+        global_utils_1.unregisterGlobal(API_NAME);
+    };
+    return ContextAPI;
+}());
+exports.ContextAPI = ContextAPI;
+//# sourceMappingURL=context.js.map
+
+/***/ }),
 /* 285 */,
 /* 286 */,
 /* 287 */,
@@ -15889,7 +17244,7 @@ exports.default = _default;
 
 
 const EventEmitter = __webpack_require__(614);
-const JSONB = __webpack_require__(205);
+const JSONB = __webpack_require__(555);
 
 const loadStore = opts => {
 	const adapters = {
@@ -16721,7 +18076,48 @@ var MatchKind;
 /* 328 */,
 /* 329 */,
 /* 330 */,
-/* 331 */,
+/* 331 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NOOP_TRACER_PROVIDER = exports.NoopTracerProvider = void 0;
+var NoopTracer_1 = __webpack_require__(980);
+/**
+ * An implementation of the {@link TracerProvider} which returns an impotent
+ * Tracer for all calls to `getTracer`.
+ *
+ * All operations are no-op.
+ */
+var NoopTracerProvider = /** @class */ (function () {
+    function NoopTracerProvider() {
+    }
+    NoopTracerProvider.prototype.getTracer = function (_name, _version) {
+        return NoopTracer_1.NOOP_TRACER;
+    };
+    return NoopTracerProvider;
+}());
+exports.NoopTracerProvider = NoopTracerProvider;
+exports.NOOP_TRACER_PROVIDER = new NoopTracerProvider();
+//# sourceMappingURL=NoopTracerProvider.js.map
+
+/***/ }),
 /* 332 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -16934,7 +18330,122 @@ module.exports =
 /***/ }),
 /* 335 */,
 /* 336 */,
-/* 337 */,
+/* 337 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.isCompatible = exports._makeCompatibilityCheck = void 0;
+var version_1 = __webpack_require__(936);
+var re = /^(\d+)\.(\d+)\.(\d+)(?:-(.*))?$/;
+/**
+ * Create a function to test an API version to see if it is compatible with the provided ownVersion.
+ *
+ * The returned function has the following semantics:
+ * - Exact match is always compatible
+ * - Major versions must match exactly
+ *    - 1.x package cannot use global 2.x package
+ *    - 2.x package cannot use global 1.x package
+ * - The minor version of the API module requesting access to the global API must be less than or equal to the minor version of this API
+ *    - 1.3 package may use 1.4 global because the later global contains all functions 1.3 expects
+ *    - 1.4 package may NOT use 1.3 global because it may try to call functions which don't exist on 1.3
+ * - If the major version is 0, the minor version is treated as the major and the patch is treated as the minor
+ * - Patch and build tag differences are not considered at this time
+ *
+ * @param ownVersion version which should be checked against
+ */
+function _makeCompatibilityCheck(ownVersion) {
+    var acceptedVersions = new Set([ownVersion]);
+    var rejectedVersions = new Set();
+    var myVersionMatch = ownVersion.match(re);
+    if (!myVersionMatch) {
+        // we cannot guarantee compatibility so we always return noop
+        return function () { return false; };
+    }
+    var ownVersionParsed = {
+        major: +myVersionMatch[1],
+        minor: +myVersionMatch[2],
+        patch: +myVersionMatch[3],
+    };
+    function _reject(v) {
+        rejectedVersions.add(v);
+        return false;
+    }
+    function _accept(v) {
+        acceptedVersions.add(v);
+        return true;
+    }
+    return function isCompatible(globalVersion) {
+        if (acceptedVersions.has(globalVersion)) {
+            return true;
+        }
+        if (rejectedVersions.has(globalVersion)) {
+            return false;
+        }
+        var globalVersionMatch = globalVersion.match(re);
+        if (!globalVersionMatch) {
+            // cannot parse other version
+            // we cannot guarantee compatibility so we always noop
+            return _reject(globalVersion);
+        }
+        var globalVersionParsed = {
+            major: +globalVersionMatch[1],
+            minor: +globalVersionMatch[2],
+            patch: +globalVersionMatch[3],
+        };
+        // major versions must match
+        if (ownVersionParsed.major !== globalVersionParsed.major) {
+            return _reject(globalVersion);
+        }
+        if (ownVersionParsed.major === 0) {
+            if (ownVersionParsed.minor === globalVersionParsed.minor &&
+                ownVersionParsed.patch <= globalVersionParsed.patch) {
+                return _accept(globalVersion);
+            }
+            return _reject(globalVersion);
+        }
+        if (ownVersionParsed.minor <= globalVersionParsed.minor) {
+            return _accept(globalVersion);
+        }
+        return _reject(globalVersion);
+    };
+}
+exports._makeCompatibilityCheck = _makeCompatibilityCheck;
+/**
+ * Test an API version to see if it is compatible with this API.
+ *
+ * - Exact match is always compatible
+ * - Major versions must match exactly
+ *    - 1.x package cannot use global 2.x package
+ *    - 2.x package cannot use global 1.x package
+ * - The minor version of the API module requesting access to the global API must be less than or equal to the minor version of this API
+ *    - 1.3 package may use 1.4 global because the later global contains all functions 1.3 expects
+ *    - 1.4 package may NOT use 1.3 global because it may try to call functions which don't exist on 1.3
+ * - If the major version is 0, the minor version is treated as the major and the patch is treated as the minor
+ * - Patch and build tag differences are not considered at this time
+ *
+ * @param version version of the API requesting an instance of the global API
+ */
+exports.isCompatible = _makeCompatibilityCheck(version_1.VERSION);
+//# sourceMappingURL=semver.js.map
+
+/***/ }),
 /* 338 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -17020,7 +18531,7 @@ exports.Store = Store;
 /***/ }),
 /* 339 */,
 /* 340 */
-/***/ (function(__unusedmodule, exports) {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
@@ -17040,30 +18551,54 @@ exports.Store = Store;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SamplingDecision = void 0;
+exports.NoopSpan = void 0;
+var spancontext_utils_1 = __webpack_require__(787);
 /**
- * A sampling decision that determines how a {@link Span} will be recorded
- * and collected.
+ * The NoopSpan is the default {@link Span} that is used when no Span
+ * implementation is available. All operations are no-op including context
+ * propagation.
  */
-var SamplingDecision;
-(function (SamplingDecision) {
-    /**
-     * `Span.isRecording() === false`, span will not be recorded and all events
-     * and attributes will be dropped.
-     */
-    SamplingDecision[SamplingDecision["NOT_RECORD"] = 0] = "NOT_RECORD";
-    /**
-     * `Span.isRecording() === true`, but `Sampled` flag in {@link TraceFlags}
-     * MUST NOT be set.
-     */
-    SamplingDecision[SamplingDecision["RECORD"] = 1] = "RECORD";
-    /**
-     * `Span.isRecording() === true` AND `Sampled` flag in {@link TraceFlags}
-     * MUST be set.
-     */
-    SamplingDecision[SamplingDecision["RECORD_AND_SAMPLED"] = 2] = "RECORD_AND_SAMPLED";
-})(SamplingDecision = exports.SamplingDecision || (exports.SamplingDecision = {}));
-//# sourceMappingURL=SamplingResult.js.map
+var NoopSpan = /** @class */ (function () {
+    function NoopSpan(_spanContext) {
+        if (_spanContext === void 0) { _spanContext = spancontext_utils_1.INVALID_SPAN_CONTEXT; }
+        this._spanContext = _spanContext;
+    }
+    // Returns a SpanContext.
+    NoopSpan.prototype.context = function () {
+        return this._spanContext;
+    };
+    // By default does nothing
+    NoopSpan.prototype.setAttribute = function (_key, _value) {
+        return this;
+    };
+    // By default does nothing
+    NoopSpan.prototype.setAttributes = function (_attributes) {
+        return this;
+    };
+    // By default does nothing
+    NoopSpan.prototype.addEvent = function (_name, _attributes) {
+        return this;
+    };
+    // By default does nothing
+    NoopSpan.prototype.setStatus = function (_status) {
+        return this;
+    };
+    // By default does nothing
+    NoopSpan.prototype.updateName = function (_name) {
+        return this;
+    };
+    // By default does nothing
+    NoopSpan.prototype.end = function (_endTime) { };
+    // isRecording always returns false for noopSpan.
+    NoopSpan.prototype.isRecording = function () {
+        return false;
+    };
+    // By default does nothing
+    NoopSpan.prototype.recordException = function (_exception, _time) { };
+    return NoopSpan;
+}());
+exports.NoopSpan = NoopSpan;
+//# sourceMappingURL=NoopSpan.js.map
 
 /***/ }),
 /* 341 */
@@ -17350,7 +18885,76 @@ module.exports = require("assert");
 /* 358 */,
 /* 359 */,
 /* 360 */,
-/* 361 */,
+/* 361 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.unregisterGlobal = exports.getGlobal = exports.registerGlobal = void 0;
+var __1 = __webpack_require__(827);
+var platform_1 = __webpack_require__(165);
+var version_1 = __webpack_require__(936);
+var semver_1 = __webpack_require__(337);
+var major = version_1.VERSION.split('.')[0];
+var GLOBAL_OPENTELEMETRY_API_KEY = Symbol.for("io.opentelemetry.js.api." + major);
+var _global = platform_1._globalThis;
+function registerGlobal(type, instance, allowOverride) {
+    var _a;
+    if (allowOverride === void 0) { allowOverride = false; }
+    _global[GLOBAL_OPENTELEMETRY_API_KEY] = (_a = _global[GLOBAL_OPENTELEMETRY_API_KEY]) !== null && _a !== void 0 ? _a : {
+        version: version_1.VERSION,
+    };
+    var api = _global[GLOBAL_OPENTELEMETRY_API_KEY];
+    if (!allowOverride && api[type]) {
+        // already registered an API of this type
+        var err = new Error("@opentelemetry/api: Attempted duplicate registration of API: " + type);
+        __1.diag.error(err.stack || err.message);
+        return;
+    }
+    if (api.version !== version_1.VERSION) {
+        // All registered APIs must be of the same version exactly
+        var err = new Error('@opentelemetry/api: All API registration versions must match');
+        __1.diag.error(err.stack || err.message);
+        return;
+    }
+    api[type] = instance;
+}
+exports.registerGlobal = registerGlobal;
+function getGlobal(type) {
+    var _a, _b;
+    var globalVersion = (_a = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _a === void 0 ? void 0 : _a.version;
+    if (!globalVersion || !semver_1.isCompatible(globalVersion)) {
+        return;
+    }
+    return (_b = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _b === void 0 ? void 0 : _b[type];
+}
+exports.getGlobal = getGlobal;
+function unregisterGlobal(type) {
+    var api = _global[GLOBAL_OPENTELEMETRY_API_KEY];
+    if (api) {
+        delete api[type];
+    }
+}
+exports.unregisterGlobal = unregisterGlobal;
+//# sourceMappingURL=global-utils.js.map
+
+/***/ }),
 /* 362 */,
 /* 363 */
 /***/ (function(module) {
@@ -17396,7 +19000,7 @@ function register(state, name, method, options) {
 const path = __webpack_require__(622);
 const scan = __webpack_require__(537);
 const parse = __webpack_require__(806);
-const utils = __webpack_require__(224);
+const utils = __webpack_require__(583);
 const constants = __webpack_require__(199);
 const isObject = val => val && typeof val === 'object' && !Array.isArray(val);
 
@@ -17748,17 +19352,17 @@ module.exports = picomatch;
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var coreHttp = __webpack_require__(999);
-var tslib = __webpack_require__(815);
+var tslib = __webpack_require__(608);
 var api = __webpack_require__(440);
 var logger$1 = __webpack_require__(928);
 var abortController = __webpack_require__(106);
 var os = __webpack_require__(87);
+var crypto = __webpack_require__(417);
+var coreTracing = __webpack_require__(263);
 var stream = __webpack_require__(794);
 __webpack_require__(510);
-var crypto = __webpack_require__(417);
-var coreLro = __webpack_require__(889);
+var coreLro = __webpack_require__(110);
 var events = __webpack_require__(614);
-var coreTracing = __webpack_require__(263);
 var fs = __webpack_require__(747);
 var util = __webpack_require__(669);
 
@@ -20441,6 +22045,78 @@ var ContainerRestoreHeaders = {
         }
     }
 };
+var ContainerRenameHeaders = {
+    serializedName: "container-rename-headers",
+    type: {
+        name: "Composite",
+        className: "ContainerRenameHeaders",
+        modelProperties: {
+            clientRequestId: {
+                serializedName: "x-ms-client-request-id",
+                type: {
+                    name: "String"
+                }
+            },
+            requestId: {
+                serializedName: "x-ms-request-id",
+                type: {
+                    name: "String"
+                }
+            },
+            version: {
+                serializedName: "x-ms-version",
+                type: {
+                    name: "String"
+                }
+            },
+            date: {
+                serializedName: "date",
+                type: {
+                    name: "DateTimeRfc1123"
+                }
+            },
+            errorCode: {
+                serializedName: "x-ms-error-code",
+                type: {
+                    name: "String"
+                }
+            }
+        }
+    }
+};
+var ContainerSubmitBatchHeaders = {
+    serializedName: "container-submitbatch-headers",
+    type: {
+        name: "Composite",
+        className: "ContainerSubmitBatchHeaders",
+        modelProperties: {
+            contentType: {
+                serializedName: "content-type",
+                type: {
+                    name: "String"
+                }
+            },
+            requestId: {
+                serializedName: "x-ms-request-id",
+                type: {
+                    name: "String"
+                }
+            },
+            version: {
+                serializedName: "x-ms-version",
+                type: {
+                    name: "String"
+                }
+            },
+            errorCode: {
+                serializedName: "x-ms-error-code",
+                type: {
+                    name: "String"
+                }
+            }
+        }
+    }
+};
 var ContainerAcquireLeaseHeaders = {
     serializedName: "container-acquirelease-headers",
     type: {
@@ -21085,6 +22761,12 @@ var BlobDownloadHeaders = {
                 serializedName: "x-ms-version-id",
                 type: {
                     name: "String"
+                }
+            },
+            isCurrentVersion: {
+                serializedName: "x-ms-is-current-version",
+                type: {
+                    name: "Boolean"
                 }
             },
             acceptRanges: {
@@ -24653,7 +26335,7 @@ var comp10 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'expiry',
+        defaultValue: 'lease',
         type: {
             name: "String"
         }
@@ -24665,7 +26347,7 @@ var comp11 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'snapshot',
+        defaultValue: 'expiry',
         type: {
             name: "String"
         }
@@ -24677,7 +26359,7 @@ var comp12 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'copy',
+        defaultValue: 'snapshot',
         type: {
             name: "String"
         }
@@ -24689,7 +26371,7 @@ var comp13 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'tier',
+        defaultValue: 'copy',
         type: {
             name: "String"
         }
@@ -24701,7 +26383,7 @@ var comp14 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'query',
+        defaultValue: 'tier',
         type: {
             name: "String"
         }
@@ -24713,7 +26395,7 @@ var comp15 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'tags',
+        defaultValue: 'query',
         type: {
             name: "String"
         }
@@ -24725,7 +26407,7 @@ var comp16 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'page',
+        defaultValue: 'tags',
         type: {
             name: "String"
         }
@@ -24737,7 +26419,7 @@ var comp17 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'pagelist',
+        defaultValue: 'page',
         type: {
             name: "String"
         }
@@ -24749,7 +26431,7 @@ var comp18 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'incrementalcopy',
+        defaultValue: 'pagelist',
         type: {
             name: "String"
         }
@@ -24761,7 +26443,7 @@ var comp19 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'appendblock',
+        defaultValue: 'incrementalcopy',
         type: {
             name: "String"
         }
@@ -24785,7 +26467,7 @@ var comp20 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'seal',
+        defaultValue: 'appendblock',
         type: {
             name: "String"
         }
@@ -24797,13 +26479,25 @@ var comp21 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'block',
+        defaultValue: 'seal',
         type: {
             name: "String"
         }
     }
 };
 var comp22 = {
+    parameterPath: "comp",
+    mapper: {
+        required: true,
+        isConstant: true,
+        serializedName: "comp",
+        defaultValue: 'block',
+        type: {
+            name: "String"
+        }
+    }
+};
+var comp23 = {
     parameterPath: "comp",
     mapper: {
         required: true,
@@ -24893,7 +26587,7 @@ var comp9 = {
         required: true,
         isConstant: true,
         serializedName: "comp",
-        defaultValue: 'lease',
+        defaultValue: 'rename',
         type: {
             name: "String"
         }
@@ -25754,6 +27448,16 @@ var snapshot = {
         }
     }
 };
+var sourceContainerName = {
+    parameterPath: "sourceContainerName",
+    mapper: {
+        required: true,
+        serializedName: "x-ms-source-container-name",
+        type: {
+            name: "String"
+        }
+    }
+};
 var sourceContentCrc64 = {
     parameterPath: [
         "options",
@@ -25978,7 +27682,7 @@ var version = {
         required: true,
         isConstant: true,
         serializedName: "x-ms-version",
-        defaultValue: '2020-04-08',
+        defaultValue: '2020-06-12',
         type: {
             name: "String"
         }
@@ -26362,10 +28066,12 @@ var Mappers$1 = /*#__PURE__*/Object.freeze({
     ContainerListBlobFlatSegmentHeaders: ContainerListBlobFlatSegmentHeaders,
     ContainerListBlobHierarchySegmentHeaders: ContainerListBlobHierarchySegmentHeaders,
     ContainerReleaseLeaseHeaders: ContainerReleaseLeaseHeaders,
+    ContainerRenameHeaders: ContainerRenameHeaders,
     ContainerRenewLeaseHeaders: ContainerRenewLeaseHeaders,
     ContainerRestoreHeaders: ContainerRestoreHeaders,
     ContainerSetAccessPolicyHeaders: ContainerSetAccessPolicyHeaders,
     ContainerSetMetadataHeaders: ContainerSetMetadataHeaders,
+    ContainerSubmitBatchHeaders: ContainerSubmitBatchHeaders,
     ListBlobsFlatSegmentResponse: ListBlobsFlatSegmentResponse,
     ListBlobsHierarchySegmentResponse: ListBlobsHierarchySegmentResponse,
     SignedIdentifier: SignedIdentifier,
@@ -26424,6 +28130,20 @@ var Container = /** @class */ (function () {
         return this.client.sendOperationRequest({
             options: options
         }, restoreOperationSpec, callback);
+    };
+    Container.prototype.rename = function (sourceContainerName, options, callback) {
+        return this.client.sendOperationRequest({
+            sourceContainerName: sourceContainerName,
+            options: options
+        }, renameOperationSpec, callback);
+    };
+    Container.prototype.submitBatch = function (body, contentLength, multipartContentType, options, callback) {
+        return this.client.sendOperationRequest({
+            body: body,
+            contentLength: contentLength,
+            multipartContentType: multipartContentType,
+            options: options
+        }, submitBatchOperationSpec$1, callback);
     };
     Container.prototype.acquireLease = function (options, callback) {
         return this.client.sendOperationRequest({
@@ -26712,6 +28432,81 @@ var restoreOperationSpec = {
     isXML: true,
     serializer: serializer$1
 };
+var renameOperationSpec = {
+    httpMethod: "PUT",
+    path: "{containerName}",
+    urlParameters: [
+        url
+    ],
+    queryParameters: [
+        timeoutInSeconds,
+        restype2,
+        comp9
+    ],
+    headerParameters: [
+        version,
+        requestId,
+        sourceContainerName,
+        sourceLeaseId
+    ],
+    responses: {
+        200: {
+            headersMapper: ContainerRenameHeaders
+        },
+        default: {
+            bodyMapper: StorageError,
+            headersMapper: ContainerRenameHeaders
+        }
+    },
+    isXML: true,
+    serializer: serializer$1
+};
+var submitBatchOperationSpec$1 = {
+    httpMethod: "POST",
+    path: "{containerName}",
+    urlParameters: [
+        url
+    ],
+    queryParameters: [
+        timeoutInSeconds,
+        restype2,
+        comp4
+    ],
+    headerParameters: [
+        contentLength,
+        multipartContentType,
+        version,
+        requestId
+    ],
+    requestBody: {
+        parameterPath: "body",
+        mapper: {
+            required: true,
+            serializedName: "body",
+            type: {
+                name: "Stream"
+            }
+        }
+    },
+    contentType: "application/xml; charset=utf-8",
+    responses: {
+        202: {
+            bodyMapper: {
+                serializedName: "parsedResponse",
+                type: {
+                    name: "Stream"
+                }
+            },
+            headersMapper: ContainerSubmitBatchHeaders
+        },
+        default: {
+            bodyMapper: StorageError,
+            headersMapper: ContainerSubmitBatchHeaders
+        }
+    },
+    isXML: true,
+    serializer: serializer$1
+};
 var acquireLeaseOperationSpec = {
     httpMethod: "PUT",
     path: "{containerName}",
@@ -26720,7 +28515,7 @@ var acquireLeaseOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9,
+        comp10,
         restype2
     ],
     headerParameters: [
@@ -26752,7 +28547,7 @@ var releaseLeaseOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9,
+        comp10,
         restype2
     ],
     headerParameters: [
@@ -26783,7 +28578,7 @@ var renewLeaseOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9,
+        comp10,
         restype2
     ],
     headerParameters: [
@@ -26814,7 +28609,7 @@ var breakLeaseOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9,
+        comp10,
         restype2
     ],
     headerParameters: [
@@ -26845,7 +28640,7 @@ var changeLeaseOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9,
+        comp10,
         restype2
     ],
     headerParameters: [
@@ -27055,7 +28850,7 @@ var Blob$1 = /** @class */ (function () {
         return this.client.sendOperationRequest({
             renameSource: renameSource,
             options: options
-        }, renameOperationSpec, callback);
+        }, renameOperationSpec$1, callback);
     };
     Blob.prototype.undelete = function (options, callback) {
         return this.client.sendOperationRequest({
@@ -27352,7 +29147,7 @@ var getAccessControlOperationSpec = {
     isXML: true,
     serializer: serializer$2
 };
-var renameOperationSpec = {
+var renameOperationSpec$1 = {
     httpMethod: "PUT",
     path: "{filesystem}/{path}",
     urlParameters: [
@@ -27431,7 +29226,7 @@ var setExpiryOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp10
+        comp11
     ],
     headerParameters: [
         version,
@@ -27534,7 +29329,7 @@ var acquireLeaseOperationSpec$1 = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9
+        comp10
     ],
     headerParameters: [
         duration,
@@ -27568,7 +29363,7 @@ var releaseLeaseOperationSpec$1 = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9
+        comp10
     ],
     headerParameters: [
         leaseId1,
@@ -27601,7 +29396,7 @@ var renewLeaseOperationSpec$1 = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9
+        comp10
     ],
     headerParameters: [
         leaseId1,
@@ -27634,7 +29429,7 @@ var changeLeaseOperationSpec$1 = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9
+        comp10
     ],
     headerParameters: [
         leaseId1,
@@ -27668,7 +29463,7 @@ var breakLeaseOperationSpec$1 = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp9
+        comp10
     ],
     headerParameters: [
         breakPeriod,
@@ -27701,7 +29496,7 @@ var createSnapshotOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp11
+        comp12
     ],
     headerParameters: [
         metadata,
@@ -27822,7 +29617,7 @@ var abortCopyFromURLOperationSpec = {
     queryParameters: [
         copyId,
         timeoutInSeconds,
-        comp12
+        comp13
     ],
     headerParameters: [
         version,
@@ -27852,7 +29647,7 @@ var setTierOperationSpec = {
         snapshot,
         versionId,
         timeoutInSeconds,
-        comp13
+        comp14
     ],
     headerParameters: [
         tier1,
@@ -27911,7 +29706,7 @@ var queryOperationSpec = {
     queryParameters: [
         snapshot,
         timeoutInSeconds,
-        comp14
+        comp15
     ],
     headerParameters: [
         version,
@@ -27971,7 +29766,7 @@ var getTagsOperationSpec = {
         timeoutInSeconds,
         snapshot,
         versionId,
-        comp15
+        comp16
     ],
     headerParameters: [
         version,
@@ -28001,7 +29796,7 @@ var setTagsOperationSpec = {
     queryParameters: [
         timeoutInSeconds,
         versionId,
-        comp15
+        comp16
     ],
     headerParameters: [
         version,
@@ -28192,7 +29987,7 @@ var uploadPagesOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp16
+        comp17
     ],
     headerParameters: [
         contentLength,
@@ -28247,7 +30042,7 @@ var clearPagesOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp16
+        comp17
     ],
     headerParameters: [
         contentLength,
@@ -28289,7 +30084,7 @@ var uploadPagesFromURLOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp16
+        comp17
     ],
     headerParameters: [
         sourceUrl,
@@ -28340,7 +30135,7 @@ var getPageRangesOperationSpec = {
     queryParameters: [
         snapshot,
         timeoutInSeconds,
-        comp17
+        comp18
     ],
     headerParameters: [
         range0,
@@ -28376,7 +30171,7 @@ var getPageRangesDiffOperationSpec = {
         snapshot,
         timeoutInSeconds,
         prevsnapshot,
-        comp17
+        comp18
     ],
     headerParameters: [
         prevSnapshotUrl,
@@ -28482,7 +30277,7 @@ var copyIncrementalOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp18
+        comp19
     ],
     headerParameters: [
         copySource,
@@ -28624,7 +30419,7 @@ var appendBlockOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp19
+        comp20
     ],
     headerParameters: [
         contentLength,
@@ -28676,7 +30471,7 @@ var appendBlockFromUrlOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp19
+        comp20
     ],
     headerParameters: [
         sourceUrl,
@@ -28724,7 +30519,7 @@ var sealOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp20
+        comp21
     ],
     headerParameters: [
         version,
@@ -28957,7 +30752,7 @@ var stageBlockOperationSpec = {
     queryParameters: [
         blockId,
         timeoutInSeconds,
-        comp21
+        comp22
     ],
     headerParameters: [
         contentLength,
@@ -29003,7 +30798,7 @@ var stageBlockFromURLOperationSpec = {
     queryParameters: [
         blockId,
         timeoutInSeconds,
-        comp21
+        comp22
     ],
     headerParameters: [
         contentLength,
@@ -29043,7 +30838,7 @@ var commitBlockListOperationSpec = {
     ],
     queryParameters: [
         timeoutInSeconds,
-        comp22
+        comp23
     ],
     headerParameters: [
         transactionalContentMD5,
@@ -29097,7 +30892,7 @@ var getBlockListOperationSpec = {
         snapshot,
         listType,
         timeoutInSeconds,
-        comp22
+        comp23
     ],
     headerParameters: [
         version,
@@ -29121,14 +30916,14 @@ var getBlockListOperationSpec = {
 
 // Copyright (c) Microsoft Corporation.
 /**
- * The @azure/logger configuration for this package.
+ * The `@azure/logger` configuration for this package.
  */
 var logger = logger$1.createClientLogger("storage-blob");
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-var SDK_VERSION = "12.4.1";
-var SERVICE_VERSION = "2020-04-08";
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+var SDK_VERSION = "12.5.0";
+var SERVICE_VERSION = "2020-06-12";
 var BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES = 256 * 1024 * 1024; // 256MB
 var BLOCK_BLOB_MAX_STAGE_BLOCK_BYTES = 4000 * 1024 * 1024; // 4000MB
 var BLOCK_BLOB_MAX_BLOCKS = 50000;
@@ -29321,7 +31116,7 @@ var StorageBlobLoggingAllowedQueryParameters = [
     "snapshot"
 ];
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * Reserved URL characters must be properly escaped for Storage services like Blob or File.
  *
@@ -29372,9 +31167,7 @@ var StorageBlobLoggingAllowedQueryParameters = [
  * @see https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
  * @see https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-shares--directories--files--and-metadata
  *
- * @export
- * @param {string} url
- * @returns {string}
+ * @param url -
  */
 function escapeURLPath(url) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29413,9 +31206,8 @@ function getValueInConnString(connectionString, argument) {
 /**
  * Extracts the parts of an Azure Storage account connection string.
  *
- * @export
- * @param {string} connectionString Connection string.
- * @returns {ConnectionString}  String key value pairs of the storage account's url and credentials.
+ * @param connectionString - Connection string.
+ * @returns String key value pairs of the storage account's url and credentials.
  */
 function extractConnectionStringParts(connectionString) {
     var proxyUri = "";
@@ -29483,8 +31275,7 @@ function extractConnectionStringParts(connectionString) {
 /**
  * Internal escape method implemented Strategy Two mentioned in escapeURL() description.
  *
- * @param {string} text
- * @returns {string}
+ * @param text -
  */
 function escape(text) {
     return encodeURIComponent(text)
@@ -29497,10 +31288,9 @@ function escape(text) {
  * Append a string to URL path. Will remove duplicated "/" in front of the string
  * when URL path ends with a "/".
  *
- * @export
- * @param {string} url Source URL string
- * @param {string} name String to be appended to URL
- * @returns {string} An updated URL string
+ * @param url - Source URL string
+ * @param name - String to be appended to URL
+ * @returns An updated URL string
  */
 function appendToURLPath(url, name) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29513,11 +31303,10 @@ function appendToURLPath(url, name) {
  * Set URL parameter name and value. If name exists in URL parameters, old value
  * will be replaced by name key. If not provide value, the parameter will be deleted.
  *
- * @export
- * @param {string} url Source URL string
- * @param {string} name Parameter name
- * @param {string} [value] Parameter value
- * @returns {string} An updated URL string
+ * @param url - Source URL string
+ * @param name - Parameter name
+ * @param value - Parameter value
+ * @returns An updated URL string
  */
 function setURLParameter(url, name, value) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29527,10 +31316,8 @@ function setURLParameter(url, name, value) {
 /**
  * Get URL parameter by name.
  *
- * @export
- * @param {string} url
- * @param {string} name
- * @returns {(string | string[] | undefined)}
+ * @param url -
+ * @param name -
  */
 function getURLParameter(url, name) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29539,9 +31326,8 @@ function getURLParameter(url, name) {
 /**
  * Set URL host.
  *
- * @export
- * @param {string} url Source URL string
- * @param {string} host New host string
+ * @param url - Source URL string
+ * @param host - New host string
  * @returns An updated URL string
  */
 function setURLHost(url, host) {
@@ -29552,9 +31338,7 @@ function setURLHost(url, host) {
 /**
  * Get URL path from an URL string.
  *
- * @export
- * @param {string} url Source URL string
- * @returns {(string | undefined)}
+ * @param url - Source URL string
  */
 function getURLPath(url) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29563,9 +31347,7 @@ function getURLPath(url) {
 /**
  * Get URL scheme from an URL string.
  *
- * @export
- * @param {string} url Source URL string
- * @returns {(string | undefined)}
+ * @param url - Source URL string
  */
 function getURLScheme(url) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29574,9 +31356,7 @@ function getURLScheme(url) {
 /**
  * Get URL path and query from an URL string.
  *
- * @export
- * @param {string} url Source URL string
- * @returns {(string | undefined)}
+ * @param url - Source URL string
  */
 function getURLPathAndQuery(url) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29594,9 +31374,7 @@ function getURLPathAndQuery(url) {
 /**
  * Get URL query key value pairs from an URL string.
  *
- * @export
- * @param {string} url
- * @returns {{[key: string]: string}}
+ * @param url -
  */
 function getURLQueries(url) {
     var queryString = coreHttp.URLBuilder.parse(url).getQuery();
@@ -29624,10 +31402,9 @@ function getURLQueries(url) {
 /**
  * Append a string to URL query.
  *
- * @export
- * @param {string} url Source URL string.
- * @param {string} queryParts String to be appended to the URL query.
- * @returns {string} An updated URL string.
+ * @param url - Source URL string.
+ * @param queryParts - String to be appended to the URL query.
+ * @returns An updated URL string.
  */
 function appendToURLQuery(url, queryParts) {
     var urlParsed = coreHttp.URLBuilder.parse(url);
@@ -29644,11 +31421,10 @@ function appendToURLQuery(url, queryParts) {
 /**
  * Rounds a date off to seconds.
  *
- * @export
- * @param {Date} date
- * @param {boolean} [withMilliseconds=true] If true, YYYY-MM-DDThh:mm:ss.fffffffZ will be returned;
+ * @param date -
+ * @param withMilliseconds - If true, YYYY-MM-DDThh:mm:ss.fffffffZ will be returned;
  *                                          If false, YYYY-MM-DDThh:mm:ssZ will be returned.
- * @returns {string} Date string in ISO8061 format, with or without 7 milliseconds component
+ * @returns Date string in ISO8061 format, with or without 7 milliseconds component
  */
 function truncatedISO8061Date(date, withMilliseconds) {
     if (withMilliseconds === void 0) { withMilliseconds = true; }
@@ -29661,9 +31437,7 @@ function truncatedISO8061Date(date, withMilliseconds) {
 /**
  * Base64 encode.
  *
- * @export
- * @param {string} content
- * @returns {string}
+ * @param content -
  */
 function base64encode(content) {
     return !coreHttp.isNode ? btoa(content) : Buffer.from(content).toString("base64");
@@ -29671,9 +31445,7 @@ function base64encode(content) {
 /**
  * Generate a 64 bytes base64 block ID string.
  *
- * @export
- * @param {number} blockIndex
- * @returns {string}
+ * @param blockIndex -
  */
 function generateBlockID(blockIDPrefix, blockIndex) {
     // To generate a 64 bytes base64 string, source string should be 48
@@ -29691,10 +31463,9 @@ function generateBlockID(blockIDPrefix, blockIndex) {
 /**
  * Delay specified time interval.
  *
- * @export
- * @param {number} timeInMs
- * @param {AbortSignalLike} [aborter]
- * @param {Error} [abortError]
+ * @param timeInMs -
+ * @param aborter -
+ * @param abortError -
  */
 function delay(timeInMs, aborter, abortError) {
     return tslib.__awaiter(this, void 0, void 0, function () {
@@ -29724,11 +31495,9 @@ function delay(timeInMs, aborter, abortError) {
 /**
  * String.prototype.padStart()
  *
- * @export
- * @param {string} currentString
- * @param {number} targetLength
- * @param {string} [padString=" "]
- * @returns {string}
+ * @param currentString -
+ * @param targetLength -
+ * @param padString -
  */
 function padStart(currentString, targetLength, padString) {
     if (padString === void 0) { padString = " "; }
@@ -29752,18 +31521,16 @@ function padStart(currentString, targetLength, padString) {
 /**
  * If two strings are equal when compared case insensitive.
  *
- * @export
- * @param {string} str1
- * @param {string} str2
- * @returns {boolean}
+ * @param str1 -
+ * @param str2 -
  */
 function iEqual(str1, str2) {
     return str1.toLocaleLowerCase() === str2.toLocaleLowerCase();
 }
 /**
  * Extracts account name from the url
- * @param {string} url url to extract the account name from
- * @returns {string} with the account name
+ * @param url - url to extract the account name from
+ * @returns with the account name
  */
 function getAccountNameFromUrl(url) {
     var parsedUrl = coreHttp.URLBuilder.parse(url);
@@ -29803,9 +31570,7 @@ function isIpEndpointStyle(parsedUrl) {
 /**
  * Convert Tags to encoded string.
  *
- * @export
- * @param {Tags} tags
- * @returns {string | undefined}
+ * @param tags -
  */
 function toBlobTagsString(tags) {
     if (tags === undefined) {
@@ -29823,9 +31588,7 @@ function toBlobTagsString(tags) {
 /**
  * Convert Tags type to BlobTags.
  *
- * @export
- * @param {Tags} [tags]
- * @returns {(BlobTags | undefined)}
+ * @param tags -
  */
 function toBlobTags(tags) {
     if (tags === undefined) {
@@ -29848,9 +31611,7 @@ function toBlobTags(tags) {
 /**
  * Covert BlobTags to Tags type.
  *
- * @export
- * @param {BlobTags} [tags]
- * @returns {(Tags | undefined)}
+ * @param tags -
  */
 function toTags(tags) {
     if (tags === undefined) {
@@ -29866,9 +31627,7 @@ function toTags(tags) {
 /**
  * Convert BlobQueryTextConfiguration to QuerySerialization type.
  *
- * @export
- * @param {(BlobQueryJsonTextConfiguration | BlobQueryCsvTextConfiguration | BlobQueryArrowConfiguration)} [textConfiguration]
- * @returns {(QuerySerialization | undefined)}
+ * @param textConfiguration -
  */
 function toQuerySerialization(textConfiguration) {
     if (textConfiguration === undefined) {
@@ -29949,17 +31708,15 @@ function parseObjectReplicationRecord(objectReplicationRecord) {
 /**
  * Attach a TokenCredential to an object.
  *
- * @export
- * @param {T} thing
- * @param {TokenCredential} credential
- * @returns {T}
+ * @param thing -
+ * @param credential -
  */
 function attachCredential(thing, credential) {
     thing.credential = credential;
     return thing;
 }
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * StorageBrowserPolicy will handle differences between Node.js and browser runtime, including:
  *
@@ -29970,17 +31727,13 @@ function attachCredential(thing, credential) {
  * 2. Remove cookie header for security
  *
  * 3. Remove content-length header to avoid browsers warning
- *
- * @class StorageBrowserPolicy
- * @extends {BaseRequestPolicy}
  */
 var StorageBrowserPolicy = /** @class */ (function (_super) {
     tslib.__extends(StorageBrowserPolicy, _super);
     /**
      * Creates an instance of StorageBrowserPolicy.
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @memberof StorageBrowserPolicy
+     * @param nextPolicy -
+     * @param options -
      */
     function StorageBrowserPolicy(nextPolicy, options) {
         return _super.call(this, nextPolicy, options) || this;
@@ -29988,9 +31741,7 @@ var StorageBrowserPolicy = /** @class */ (function (_super) {
     /**
      * Sends out request.
      *
-     * @param {WebResource} request
-     * @returns {Promise<HttpOperationResponse>}
-     * @memberof StorageBrowserPolicy
+     * @param request -
      */
     StorageBrowserPolicy.prototype.sendRequest = function (request) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -30004,13 +31755,9 @@ var StorageBrowserPolicy = /** @class */ (function (_super) {
     return StorageBrowserPolicy;
 }(coreHttp.BaseRequestPolicy));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * StorageBrowserPolicyFactory is a factory class helping generating StorageBrowserPolicy objects.
- *
- * @export
- * @class StorageBrowserPolicyFactory
- * @implements {RequestPolicyFactory}
  */
 var StorageBrowserPolicyFactory = /** @class */ (function () {
     function StorageBrowserPolicyFactory() {
@@ -30018,10 +31765,8 @@ var StorageBrowserPolicyFactory = /** @class */ (function () {
     /**
      * Creates a StorageBrowserPolicyFactory object.
      *
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @returns {StorageBrowserPolicy}
-     * @memberof StorageBrowserPolicyFactory
+     * @param nextPolicy -
+     * @param options -
      */
     StorageBrowserPolicyFactory.prototype.create = function (nextPolicy, options) {
         return new StorageBrowserPolicy(nextPolicy, options);
@@ -30029,7 +31774,7 @@ var StorageBrowserPolicyFactory = /** @class */ (function () {
     return StorageBrowserPolicyFactory;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 (function (StorageRetryPolicyType) {
     /**
      * Exponential retry. Retry time delay grows exponentially.
@@ -30052,19 +31797,15 @@ var DEFAULT_RETRY_OPTIONS = {
 var RETRY_ABORT_ERROR = new abortController.AbortError("The operation was aborted.");
 /**
  * Retry policy with exponential retry and linear retry implemented.
- *
- * @class RetryPolicy
- * @extends {BaseRequestPolicy}
  */
 var StorageRetryPolicy = /** @class */ (function (_super) {
     tslib.__extends(StorageRetryPolicy, _super);
     /**
      * Creates an instance of RetryPolicy.
      *
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @param {StorageRetryOptions} [retryOptions=DEFAULT_RETRY_OPTIONS]
-     * @memberof StorageRetryPolicy
+     * @param nextPolicy -
+     * @param options -
+     * @param retryOptions -
      */
     function StorageRetryPolicy(nextPolicy, options, retryOptions) {
         if (retryOptions === void 0) { retryOptions = DEFAULT_RETRY_OPTIONS; }
@@ -30097,9 +31838,7 @@ var StorageRetryPolicy = /** @class */ (function (_super) {
     /**
      * Sends request.
      *
-     * @param {WebResource} request
-     * @returns {Promise<HttpOperationResponse>}
-     * @memberof StorageRetryPolicy
+     * @param request -
      */
     StorageRetryPolicy.prototype.sendRequest = function (request) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -30111,15 +31850,12 @@ var StorageRetryPolicy = /** @class */ (function (_super) {
     /**
      * Decide and perform next retry. Won't mutate request parameter.
      *
-     * @protected
-     * @param {WebResource} request
-     * @param {boolean} secondaryHas404  If attempt was against the secondary & it returned a StatusNotFound (404), then
+     * @param request -
+     * @param secondaryHas404 -  If attempt was against the secondary & it returned a StatusNotFound (404), then
      *                                   the resource was not found. This may be due to replication delay. So, in this
      *                                   case, we'll never try the secondary again for this operation.
-     * @param {number} attempt           How many retries has been attempted to performed, starting from 1, which includes
+     * @param attempt -           How many retries has been attempted to performed, starting from 1, which includes
      *                                   the attempt will be performed by this method call.
-     * @returns {Promise<HttpOperationResponse>}
-     * @memberof StorageRetryPolicy
      */
     StorageRetryPolicy.prototype.attemptSendRequest = function (request, secondaryHas404, attempt) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -30170,13 +31906,10 @@ var StorageRetryPolicy = /** @class */ (function (_super) {
     /**
      * Decide whether to retry according to last HTTP response and retry counters.
      *
-     * @protected
-     * @param {boolean} isPrimaryRetry
-     * @param {number} attempt
-     * @param {HttpOperationResponse} [response]
-     * @param {RestError} [err]
-     * @returns {boolean}
-     * @memberof StorageRetryPolicy
+     * @param isPrimaryRetry -
+     * @param attempt -
+     * @param response -
+     * @param err -
      */
     StorageRetryPolicy.prototype.shouldRetry = function (isPrimaryRetry, attempt, response, err) {
         if (attempt >= this.retryOptions.maxTries) {
@@ -30232,11 +31965,9 @@ var StorageRetryPolicy = /** @class */ (function (_super) {
     /**
      * Delay a calculated time between retries.
      *
-     * @private
-     * @param {boolean} isPrimaryRetry
-     * @param {number} attempt
-     * @param {AbortSignalLike} [abortSignal]
-     * @memberof StorageRetryPolicy
+     * @param isPrimaryRetry -
+     * @param attempt -
+     * @param abortSignal -
      */
     StorageRetryPolicy.prototype.delay = function (isPrimaryRetry, attempt, abortSignal) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -30264,19 +31995,14 @@ var StorageRetryPolicy = /** @class */ (function (_super) {
     return StorageRetryPolicy;
 }(coreHttp.BaseRequestPolicy));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * StorageRetryPolicyFactory is a factory class helping generating {@link StorageRetryPolicy} objects.
- *
- * @export
- * @class StorageRetryPolicyFactory
- * @implements {RequestPolicyFactory}
  */
 var StorageRetryPolicyFactory = /** @class */ (function () {
     /**
      * Creates an instance of StorageRetryPolicyFactory.
-     * @param {StorageRetryOptions} [retryOptions]
-     * @memberof StorageRetryPolicyFactory
+     * @param retryOptions -
      */
     function StorageRetryPolicyFactory(retryOptions) {
         this.retryOptions = retryOptions;
@@ -30284,10 +32010,8 @@ var StorageRetryPolicyFactory = /** @class */ (function () {
     /**
      * Creates a StorageRetryPolicy object.
      *
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @returns {StorageRetryPolicy}
-     * @memberof StorageRetryPolicyFactory
+     * @param nextPolicy -
+     * @param options -
      */
     StorageRetryPolicyFactory.prototype.create = function (nextPolicy, options) {
         return new StorageRetryPolicy(nextPolicy, options, this.retryOptions);
@@ -30295,15 +32019,10 @@ var StorageRetryPolicyFactory = /** @class */ (function () {
     return StorageRetryPolicyFactory;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * Credential policy used to sign HTTP(S) requests before sending. This is an
  * abstract class.
- *
- * @export
- * @abstract
- * @class CredentialPolicy
- * @extends {BaseRequestPolicy}
  */
 var CredentialPolicy = /** @class */ (function (_super) {
     tslib.__extends(CredentialPolicy, _super);
@@ -30313,9 +32032,7 @@ var CredentialPolicy = /** @class */ (function (_super) {
     /**
      * Sends out request.
      *
-     * @param {WebResource} request
-     * @returns {Promise<HttpOperationResponse>}
-     * @memberof CredentialPolicy
+     * @param request -
      */
     CredentialPolicy.prototype.sendRequest = function (request) {
         return this._nextPolicy.sendRequest(this.signRequest(request));
@@ -30324,11 +32041,7 @@ var CredentialPolicy = /** @class */ (function (_super) {
      * Child classes must implement this method with request signing. This method
      * will be executed in {@link sendRequest}.
      *
-     * @protected
-     * @abstract
-     * @param {WebResource} request
-     * @returns {WebResource}
-     * @memberof CredentialPolicy
+     * @param request -
      */
     CredentialPolicy.prototype.signRequest = function (request) {
         // Child classes must override this method with request signing. This method
@@ -30338,22 +32051,17 @@ var CredentialPolicy = /** @class */ (function (_super) {
     return CredentialPolicy;
 }(coreHttp.BaseRequestPolicy));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * AnonymousCredentialPolicy is used with HTTP(S) requests that read public resources
  * or for use with Shared Access Signatures (SAS).
- *
- * @export
- * @class AnonymousCredentialPolicy
- * @extends {CredentialPolicy}
  */
 var AnonymousCredentialPolicy = /** @class */ (function (_super) {
     tslib.__extends(AnonymousCredentialPolicy, _super);
     /**
      * Creates an instance of AnonymousCredentialPolicy.
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @memberof AnonymousCredentialPolicy
+     * @param nextPolicy -
+     * @param options -
      */
     function AnonymousCredentialPolicy(nextPolicy, options) {
         return _super.call(this, nextPolicy, options) || this;
@@ -30361,15 +32069,11 @@ var AnonymousCredentialPolicy = /** @class */ (function (_super) {
     return AnonymousCredentialPolicy;
 }(CredentialPolicy));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 /**
  * Credential is an abstract class for Azure Storage HTTP requests signing. This
  * class will host an credentialPolicyCreator factory which generates CredentialPolicy.
- *
- * @export
- * @abstract
- * @class Credential
  */
 var Credential = /** @class */ (function () {
     function Credential() {
@@ -30377,10 +32081,8 @@ var Credential = /** @class */ (function () {
     /**
      * Creates a RequestPolicy object.
      *
-     * @param {RequestPolicy} _nextPolicy
-     * @param {RequestPolicyOptions} _options
-     * @returns {RequestPolicy}
-     * @memberof Credential
+     * @param _nextPolicy -
+     * @param _options -
      */
     Credential.prototype.create = function (
     // tslint:disable-next-line:variable-name
@@ -30392,16 +32094,12 @@ var Credential = /** @class */ (function () {
     return Credential;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * AnonymousCredential provides a credentialPolicyCreator member used to create
  * AnonymousCredentialPolicy objects. AnonymousCredentialPolicy is used with
  * HTTP(S) requests that read public resources or for use with Shared Access
  * Signatures (SAS).
- *
- * @export
- * @class AnonymousCredential
- * @extends {Credential}
  */
 var AnonymousCredential = /** @class */ (function (_super) {
     tslib.__extends(AnonymousCredential, _super);
@@ -30411,10 +32109,8 @@ var AnonymousCredential = /** @class */ (function (_super) {
     /**
      * Creates an {@link AnonymousCredentialPolicy} object.
      *
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @returns {AnonymousCredentialPolicy}
-     * @memberof AnonymousCredential
+     * @param nextPolicy -
+     * @param options -
      */
     AnonymousCredential.prototype.create = function (nextPolicy, options) {
         return new AnonymousCredentialPolicy(nextPolicy, options);
@@ -30422,21 +32118,17 @@ var AnonymousCredential = /** @class */ (function (_super) {
     return AnonymousCredential;
 }(Credential));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * TelemetryPolicy is a policy used to tag user-agent header for every requests.
- *
- * @class TelemetryPolicy
- * @extends {BaseRequestPolicy}
  */
 var TelemetryPolicy = /** @class */ (function (_super) {
     tslib.__extends(TelemetryPolicy, _super);
     /**
      * Creates an instance of TelemetryPolicy.
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @param {string} telemetry
-     * @memberof TelemetryPolicy
+     * @param nextPolicy -
+     * @param options -
+     * @param telemetry -
      */
     function TelemetryPolicy(nextPolicy, options, telemetry) {
         var _this = _super.call(this, nextPolicy, options) || this;
@@ -30446,9 +32138,7 @@ var TelemetryPolicy = /** @class */ (function (_super) {
     /**
      * Sends out request.
      *
-     * @param {WebResource} request
-     * @returns {Promise<HttpOperationResponse>}
-     * @memberof TelemetryPolicy
+     * @param request -
      */
     TelemetryPolicy.prototype.sendRequest = function (request) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -30468,19 +32158,14 @@ var TelemetryPolicy = /** @class */ (function (_super) {
     return TelemetryPolicy;
 }(coreHttp.BaseRequestPolicy));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * TelemetryPolicyFactory is a factory class helping generating {@link TelemetryPolicy} objects.
- *
- * @export
- * @class TelemetryPolicyFactory
- * @implements {RequestPolicyFactory}
  */
 var TelemetryPolicyFactory = /** @class */ (function () {
     /**
      * Creates an instance of TelemetryPolicyFactory.
-     * @param {UserAgentOptions} [telemetry]
-     * @memberof TelemetryPolicyFactory
+     * @param telemetry -
      */
     function TelemetryPolicyFactory(telemetry) {
         var userAgentInfo = [];
@@ -30507,10 +32192,8 @@ var TelemetryPolicyFactory = /** @class */ (function () {
     /**
      * Creates a TelemetryPolicy object.
      *
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @returns {TelemetryPolicy}
-     * @memberof TelemetryPolicyFactory
+     * @param nextPolicy -
+     * @param options -
      */
     TelemetryPolicyFactory.prototype.create = function (nextPolicy, options) {
         return new TelemetryPolicy(nextPolicy, options, this.telemetryString);
@@ -30524,7 +32207,7 @@ function getCachedDefaultHttpClient() {
     return _defaultHttpClient;
 }
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * A Pipeline class containing HTTP request policies.
  * You can create a default Pipeline by calling {@link newPipeline}.
@@ -30532,17 +32215,13 @@ function getCachedDefaultHttpClient() {
  *
  * Refer to {@link newPipeline} and provided policies before implementing your
  * customized Pipeline.
- *
- * @export
- * @class Pipeline
  */
 var Pipeline = /** @class */ (function () {
     /**
      * Creates an instance of Pipeline. Customize HTTPClient by implementing IHttpClient interface.
      *
-     * @param {RequestPolicyFactory[]} factories
-     * @param {PipelineOptions} [options={}]
-     * @memberof Pipeline
+     * @param factories -
+     * @param options -
      */
     function Pipeline(factories, options) {
         if (options === void 0) { options = {}; }
@@ -30555,8 +32234,7 @@ var Pipeline = /** @class */ (function () {
      * Transfer Pipeline object to ServiceClientOptions object which is required by
      * ServiceClient constructor.
      *
-     * @returns {ServiceClientOptions} The ServiceClientOptions object from this Pipeline.
-     * @memberof Pipeline
+     * @returns The ServiceClientOptions object from this Pipeline.
      */
     Pipeline.prototype.toServiceClientOptions = function () {
         return {
@@ -30569,10 +32247,9 @@ var Pipeline = /** @class */ (function () {
 /**
  * Creates a new Pipeline object with Credential provided.
  *
- * @export
- * @param {StorageSharedKeyCredential | AnonymousCredential | TokenCredential} credential  Such as AnonymousCredential, StorageSharedKeyCredential or any credential from the @azure/identity package to authenticate requests to the service. You can also provide an object that implements the TokenCredential interface. If not specified, AnonymousCredential is used.
- * @param {StoragePipelineOptions} [pipelineOptions] Optional. Options.
- * @returns {Pipeline} A new Pipeline object.
+ * @param credential -  Such as AnonymousCredential, StorageSharedKeyCredential or any credential from the `@azure/identity` package to authenticate requests to the service. You can also provide an object that implements the TokenCredential interface. If not specified, AnonymousCredential is used.
+ * @param pipelineOptions - Optional. Options.
+ * @returns A new Pipeline object.
  */
 function newPipeline(credential, pipelineOptions) {
     if (pipelineOptions === void 0) { pipelineOptions = {}; }
@@ -30611,27 +32288,1578 @@ function newPipeline(credential, pipelineOptions) {
     return new Pipeline(factories, pipelineOptions);
 }
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
+/**
+ * StorageSharedKeyCredentialPolicy is a policy used to sign HTTP request with a shared key.
+ */
+var StorageSharedKeyCredentialPolicy = /** @class */ (function (_super) {
+    tslib.__extends(StorageSharedKeyCredentialPolicy, _super);
+    /**
+     * Creates an instance of StorageSharedKeyCredentialPolicy.
+     * @param nextPolicy -
+     * @param options -
+     * @param factory -
+     */
+    function StorageSharedKeyCredentialPolicy(nextPolicy, options, factory) {
+        var _this = _super.call(this, nextPolicy, options) || this;
+        _this.factory = factory;
+        return _this;
+    }
+    /**
+     * Signs request.
+     *
+     * @param request -
+     */
+    StorageSharedKeyCredentialPolicy.prototype.signRequest = function (request) {
+        request.headers.set(HeaderConstants.X_MS_DATE, new Date().toUTCString());
+        if (request.body && typeof request.body === "string" && request.body.length > 0) {
+            request.headers.set(HeaderConstants.CONTENT_LENGTH, Buffer.byteLength(request.body));
+        }
+        var stringToSign = [
+            request.method.toUpperCase(),
+            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_LANGUAGE),
+            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_ENCODING),
+            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_LENGTH),
+            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_MD5),
+            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_TYPE),
+            this.getHeaderValueToSign(request, HeaderConstants.DATE),
+            this.getHeaderValueToSign(request, HeaderConstants.IF_MODIFIED_SINCE),
+            this.getHeaderValueToSign(request, HeaderConstants.IF_MATCH),
+            this.getHeaderValueToSign(request, HeaderConstants.IF_NONE_MATCH),
+            this.getHeaderValueToSign(request, HeaderConstants.IF_UNMODIFIED_SINCE),
+            this.getHeaderValueToSign(request, HeaderConstants.RANGE)
+        ].join("\n") +
+            "\n" +
+            this.getCanonicalizedHeadersString(request) +
+            this.getCanonicalizedResourceString(request);
+        var signature = this.factory.computeHMACSHA256(stringToSign);
+        request.headers.set(HeaderConstants.AUTHORIZATION, "SharedKey " + this.factory.accountName + ":" + signature);
+        // console.log(`[URL]:${request.url}`);
+        // console.log(`[HEADERS]:${request.headers.toString()}`);
+        // console.log(`[STRING TO SIGN]:${JSON.stringify(stringToSign)}`);
+        // console.log(`[KEY]: ${request.headers.get(HeaderConstants.AUTHORIZATION)}`);
+        return request;
+    };
+    /**
+     * Retrieve header value according to shared key sign rules.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
+     *
+     * @param request -
+     * @param headerName -
+     */
+    StorageSharedKeyCredentialPolicy.prototype.getHeaderValueToSign = function (request, headerName) {
+        var value = request.headers.get(headerName);
+        if (!value) {
+            return "";
+        }
+        // When using version 2015-02-21 or later, if Content-Length is zero, then
+        // set the Content-Length part of the StringToSign to an empty string.
+        // https://docs.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
+        if (headerName === HeaderConstants.CONTENT_LENGTH && value === "0") {
+            return "";
+        }
+        return value;
+    };
+    /**
+     * To construct the CanonicalizedHeaders portion of the signature string, follow these steps:
+     * 1. Retrieve all headers for the resource that begin with x-ms-, including the x-ms-date header.
+     * 2. Convert each HTTP header name to lowercase.
+     * 3. Sort the headers lexicographically by header name, in ascending order.
+     *    Each header may appear only once in the string.
+     * 4. Replace any linear whitespace in the header value with a single space.
+     * 5. Trim any whitespace around the colon in the header.
+     * 6. Finally, append a new-line character to each canonicalized header in the resulting list.
+     *    Construct the CanonicalizedHeaders string by concatenating all headers in this list into a single string.
+     *
+     * @param request -
+     */
+    StorageSharedKeyCredentialPolicy.prototype.getCanonicalizedHeadersString = function (request) {
+        var headersArray = request.headers.headersArray().filter(function (value) {
+            return value.name.toLowerCase().startsWith(HeaderConstants.PREFIX_FOR_STORAGE);
+        });
+        headersArray.sort(function (a, b) {
+            return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+        });
+        // Remove duplicate headers
+        headersArray = headersArray.filter(function (value, index, array) {
+            if (index > 0 && value.name.toLowerCase() === array[index - 1].name.toLowerCase()) {
+                return false;
+            }
+            return true;
+        });
+        var canonicalizedHeadersStringToSign = "";
+        headersArray.forEach(function (header) {
+            canonicalizedHeadersStringToSign += header.name
+                .toLowerCase()
+                .trimRight() + ":" + header.value.trimLeft() + "\n";
+        });
+        return canonicalizedHeadersStringToSign;
+    };
+    /**
+     * Retrieves the webResource canonicalized resource string.
+     *
+     * @param request -
+     */
+    StorageSharedKeyCredentialPolicy.prototype.getCanonicalizedResourceString = function (request) {
+        var path = getURLPath(request.url) || "/";
+        var canonicalizedResourceString = "";
+        canonicalizedResourceString += "/" + this.factory.accountName + path;
+        var queries = getURLQueries(request.url);
+        var lowercaseQueries = {};
+        if (queries) {
+            var queryKeys = [];
+            for (var key in queries) {
+                if (queries.hasOwnProperty(key)) {
+                    var lowercaseKey = key.toLowerCase();
+                    lowercaseQueries[lowercaseKey] = queries[key];
+                    queryKeys.push(lowercaseKey);
+                }
+            }
+            queryKeys.sort();
+            for (var _i = 0, queryKeys_1 = queryKeys; _i < queryKeys_1.length; _i++) {
+                var key = queryKeys_1[_i];
+                canonicalizedResourceString += "\n" + key + ":" + decodeURIComponent(lowercaseQueries[key]);
+            }
+        }
+        return canonicalizedResourceString;
+    };
+    return StorageSharedKeyCredentialPolicy;
+}(CredentialPolicy));
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * ONLY AVAILABLE IN NODE.JS RUNTIME.
+ *
+ * StorageSharedKeyCredential for account key authorization of Azure Storage service.
+ */
+var StorageSharedKeyCredential = /** @class */ (function (_super) {
+    tslib.__extends(StorageSharedKeyCredential, _super);
+    /**
+     * Creates an instance of StorageSharedKeyCredential.
+     * @param accountName -
+     * @param accountKey -
+     */
+    function StorageSharedKeyCredential(accountName, accountKey) {
+        var _this = _super.call(this) || this;
+        _this.accountName = accountName;
+        _this.accountKey = Buffer.from(accountKey, "base64");
+        return _this;
+    }
+    /**
+     * Creates a StorageSharedKeyCredentialPolicy object.
+     *
+     * @param nextPolicy -
+     * @param options -
+     */
+    StorageSharedKeyCredential.prototype.create = function (nextPolicy, options) {
+        return new StorageSharedKeyCredentialPolicy(nextPolicy, options, this);
+    };
+    /**
+     * Generates a hash signature for an HTTP request or for a SAS.
+     *
+     * @param stringToSign -
+     */
+    StorageSharedKeyCredential.prototype.computeHMACSHA256 = function (stringToSign) {
+        return crypto.createHmac("sha256", this.accountKey)
+            .update(stringToSign, "utf8")
+            .digest("base64");
+    };
+    return StorageSharedKeyCredential;
+}(Credential));
+
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for
+ * license information.
+ *
+ * Code generated by Microsoft (R) AutoRest Code Generator.
+ * Changes may cause incorrect behavior and will be lost if the code is
+ * regenerated.
+ */
+var packageName = "azure-storage-blob";
+var packageVersion = "12.5.0";
+var StorageClientContext = /** @class */ (function (_super) {
+    tslib.__extends(StorageClientContext, _super);
+    /**
+     * Initializes a new instance of the StorageClientContext class.
+     * @param url The URL of the service account, container, or blob that is the targe of the desired
+     * operation.
+     * @param [options] The parameter options
+     */
+    function StorageClientContext(url, options) {
+        var _this = this;
+        if (url == undefined) {
+            throw new Error("'url' cannot be null.");
+        }
+        if (!options) {
+            options = {};
+        }
+        if (!options.userAgent) {
+            var defaultUserAgent = coreHttp.getDefaultUserAgentValue();
+            options.userAgent = packageName + "/" + packageVersion + " " + defaultUserAgent;
+        }
+        _this = _super.call(this, undefined, options) || this;
+        _this.version = '2020-06-12';
+        _this.baseUri = "{url}";
+        _this.requestContentType = "application/json; charset=utf-8";
+        _this.url = url;
+        return _this;
+    }
+    return StorageClientContext;
+}(coreHttp.ServiceClient));
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * A StorageClient represents a based URL class for {@link BlobServiceClient}, {@link ContainerClient}
+ * and etc.
+ */
+var StorageClient = /** @class */ (function () {
+    /**
+     * Creates an instance of StorageClient.
+     * @param url - url to resource
+     * @param pipeline - request policy pipeline.
+     */
+    function StorageClient(url, pipeline) {
+        // URL should be encoded and only once, protocol layer shouldn't encode URL again
+        this.url = escapeURLPath(url);
+        this.accountName = getAccountNameFromUrl(url);
+        this.pipeline = pipeline;
+        this.storageClientContext = new StorageClientContext(this.url, pipeline.toServiceClientOptions());
+        this.isHttps = iEqual(getURLScheme(this.url) || "", "https");
+        this.credential = new AnonymousCredential();
+        for (var _i = 0, _a = this.pipeline.factories; _i < _a.length; _i++) {
+            var factory = _a[_i];
+            if ((coreHttp.isNode && factory instanceof StorageSharedKeyCredential) ||
+                factory instanceof AnonymousCredential) {
+                this.credential = factory;
+            }
+            else if (coreHttp.isTokenCredential(factory.credential)) {
+                // Only works if the factory has been attached a "credential" property.
+                // We do that in newPipeline() when using TokenCredential.
+                this.credential = factory.credential;
+            }
+        }
+        // Override protocol layer's default content-type
+        var storageClientContext = this.storageClientContext;
+        storageClientContext.requestContentType = undefined;
+    }
+    return StorageClient;
+}());
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * Creates a span using the global tracer.
+ * @internal
+ */
+var createSpan = coreTracing.createSpanFunction({
+    packagePrefix: "Azure.Storage.Blob",
+    namespace: "Microsoft.Storage"
+});
+/**
+ * @internal
+ *
+ * Adapt the tracing options from OperationOptions to what they need to be for
+ * RequestOptionsBase (when we update to later OpenTelemetry versions this is now
+ * two separate fields, not just one).
+ */
+function convertTracingToRequestOptionsBase(options) {
+    var _a;
+    return {
+        spanOptions: (_a = options === null || options === void 0 ? void 0 : options.tracingOptions) === null || _a === void 0 ? void 0 : _a.spanOptions
+    };
+}
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+/**
+ * ONLY AVAILABLE IN NODE.JS RUNTIME.
+ *
+ * This is a helper class to construct a string representing the permissions granted by a ServiceSAS to a blob. Setting
+ * a value to true means that any SAS which uses these permissions will grant permissions for that operation. Once all
+ * the values are set, this should be serialized with toString and set as the permissions field on a
+ * {@link BlobSASSignatureValues} object. It is possible to construct the permissions string without this class, but
+ * the order of the permissions is particular and this class guarantees correctness.
+ */
+var BlobSASPermissions = /** @class */ (function () {
+    function BlobSASPermissions() {
+        /**
+         * Specifies Read access granted.
+         */
+        this.read = false;
+        /**
+         * Specifies Add access granted.
+         */
+        this.add = false;
+        /**
+         * Specifies Create access granted.
+         */
+        this.create = false;
+        /**
+         * Specifies Write access granted.
+         */
+        this.write = false;
+        /**
+         * Specifies Delete access granted.
+         */
+        this.delete = false;
+        /**
+         * Specifies Delete version access granted.
+         */
+        this.deleteVersion = false;
+        /**
+         * Specfies Tag access granted.
+         */
+        this.tag = false;
+        /**
+         * Specifies Move access granted.
+         */
+        this.move = false;
+        /**
+         * Specifies Execute access granted.
+         */
+        this.execute = false;
+    }
+    /**
+     * Creates a {@link BlobSASPermissions} from the specified permissions string. This method will throw an
+     * Error if it encounters a character that does not correspond to a valid permission.
+     *
+     * @param permissions -
+     */
+    BlobSASPermissions.parse = function (permissions) {
+        var blobSASPermissions = new BlobSASPermissions();
+        for (var _i = 0, permissions_1 = permissions; _i < permissions_1.length; _i++) {
+            var char = permissions_1[_i];
+            switch (char) {
+                case "r":
+                    blobSASPermissions.read = true;
+                    break;
+                case "a":
+                    blobSASPermissions.add = true;
+                    break;
+                case "c":
+                    blobSASPermissions.create = true;
+                    break;
+                case "w":
+                    blobSASPermissions.write = true;
+                    break;
+                case "d":
+                    blobSASPermissions.delete = true;
+                    break;
+                case "x":
+                    blobSASPermissions.deleteVersion = true;
+                    break;
+                case "t":
+                    blobSASPermissions.tag = true;
+                    break;
+                case "m":
+                    blobSASPermissions.move = true;
+                    break;
+                case "e":
+                    blobSASPermissions.execute = true;
+                    break;
+                default:
+                    throw new RangeError("Invalid permission: " + char);
+            }
+        }
+        return blobSASPermissions;
+    };
+    /**
+     * Creates a {@link BlobSASPermissions} from a raw object which contains same keys as it
+     * and boolean values for them.
+     *
+     * @param permissionLike -
+     */
+    BlobSASPermissions.from = function (permissionLike) {
+        var blobSASPermissions = new BlobSASPermissions();
+        if (permissionLike.read) {
+            blobSASPermissions.read = true;
+        }
+        if (permissionLike.add) {
+            blobSASPermissions.add = true;
+        }
+        if (permissionLike.create) {
+            blobSASPermissions.create = true;
+        }
+        if (permissionLike.write) {
+            blobSASPermissions.write = true;
+        }
+        if (permissionLike.delete) {
+            blobSASPermissions.delete = true;
+        }
+        if (permissionLike.deleteVersion) {
+            blobSASPermissions.deleteVersion = true;
+        }
+        if (permissionLike.tag) {
+            blobSASPermissions.tag = true;
+        }
+        if (permissionLike.move) {
+            blobSASPermissions.move = true;
+        }
+        if (permissionLike.execute) {
+            blobSASPermissions.execute = true;
+        }
+        return blobSASPermissions;
+    };
+    /**
+     * Converts the given permissions to a string. Using this method will guarantee the permissions are in an
+     * order accepted by the service.
+     *
+     * @returns A string which represents the BlobSASPermissions
+     */
+    BlobSASPermissions.prototype.toString = function () {
+        var permissions = [];
+        if (this.read) {
+            permissions.push("r");
+        }
+        if (this.add) {
+            permissions.push("a");
+        }
+        if (this.create) {
+            permissions.push("c");
+        }
+        if (this.write) {
+            permissions.push("w");
+        }
+        if (this.delete) {
+            permissions.push("d");
+        }
+        if (this.deleteVersion) {
+            permissions.push("x");
+        }
+        if (this.tag) {
+            permissions.push("t");
+        }
+        if (this.move) {
+            permissions.push("m");
+        }
+        if (this.execute) {
+            permissions.push("e");
+        }
+        return permissions.join("");
+    };
+    return BlobSASPermissions;
+}());
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+/**
+ * This is a helper class to construct a string representing the permissions granted by a ServiceSAS to a container.
+ * Setting a value to true means that any SAS which uses these permissions will grant permissions for that operation.
+ * Once all the values are set, this should be serialized with toString and set as the permissions field on a
+ * {@link BlobSASSignatureValues} object. It is possible to construct the permissions string without this class, but
+ * the order of the permissions is particular and this class guarantees correctness.
+ */
+var ContainerSASPermissions = /** @class */ (function () {
+    function ContainerSASPermissions() {
+        /**
+         * Specifies Read access granted.
+         */
+        this.read = false;
+        /**
+         * Specifies Add access granted.
+         */
+        this.add = false;
+        /**
+         * Specifies Create access granted.
+         */
+        this.create = false;
+        /**
+         * Specifies Write access granted.
+         */
+        this.write = false;
+        /**
+         * Specifies Delete access granted.
+         */
+        this.delete = false;
+        /**
+         * Specifies Delete version access granted.
+         */
+        this.deleteVersion = false;
+        /**
+         * Specifies List access granted.
+         */
+        this.list = false;
+        /**
+         * Specfies Tag access granted.
+         */
+        this.tag = false;
+        /**
+         * Specifies Move access granted.
+         */
+        this.move = false;
+        /**
+         * Specifies Execute access granted.
+         */
+        this.execute = false;
+    }
+    /**
+     * Creates an {@link ContainerSASPermissions} from the specified permissions string. This method will throw an
+     * Error if it encounters a character that does not correspond to a valid permission.
+     *
+     * @param permissions -
+     */
+    ContainerSASPermissions.parse = function (permissions) {
+        var containerSASPermissions = new ContainerSASPermissions();
+        for (var _i = 0, permissions_1 = permissions; _i < permissions_1.length; _i++) {
+            var char = permissions_1[_i];
+            switch (char) {
+                case "r":
+                    containerSASPermissions.read = true;
+                    break;
+                case "a":
+                    containerSASPermissions.add = true;
+                    break;
+                case "c":
+                    containerSASPermissions.create = true;
+                    break;
+                case "w":
+                    containerSASPermissions.write = true;
+                    break;
+                case "d":
+                    containerSASPermissions.delete = true;
+                    break;
+                case "l":
+                    containerSASPermissions.list = true;
+                    break;
+                case "t":
+                    containerSASPermissions.tag = true;
+                    break;
+                case "x":
+                    containerSASPermissions.deleteVersion = true;
+                    break;
+                case "m":
+                    containerSASPermissions.move = true;
+                    break;
+                case "e":
+                    containerSASPermissions.execute = true;
+                    break;
+                default:
+                    throw new RangeError("Invalid permission " + char);
+            }
+        }
+        return containerSASPermissions;
+    };
+    /**
+     * Creates a {@link ContainerSASPermissions} from a raw object which contains same keys as it
+     * and boolean values for them.
+     *
+     * @param permissionLike -
+     */
+    ContainerSASPermissions.from = function (permissionLike) {
+        var containerSASPermissions = new ContainerSASPermissions();
+        if (permissionLike.read) {
+            containerSASPermissions.read = true;
+        }
+        if (permissionLike.add) {
+            containerSASPermissions.add = true;
+        }
+        if (permissionLike.create) {
+            containerSASPermissions.create = true;
+        }
+        if (permissionLike.write) {
+            containerSASPermissions.write = true;
+        }
+        if (permissionLike.delete) {
+            containerSASPermissions.delete = true;
+        }
+        if (permissionLike.list) {
+            containerSASPermissions.list = true;
+        }
+        if (permissionLike.deleteVersion) {
+            containerSASPermissions.deleteVersion = true;
+        }
+        if (permissionLike.tag) {
+            containerSASPermissions.tag = true;
+        }
+        if (permissionLike.move) {
+            containerSASPermissions.move = true;
+        }
+        if (permissionLike.execute) {
+            containerSASPermissions.execute = true;
+        }
+        return containerSASPermissions;
+    };
+    /**
+     * Converts the given permissions to a string. Using this method will guarantee the permissions are in an
+     * order accepted by the service.
+     *
+     * The order of the characters should be as specified here to ensure correctness.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
+     *
+     */
+    ContainerSASPermissions.prototype.toString = function () {
+        var permissions = [];
+        if (this.read) {
+            permissions.push("r");
+        }
+        if (this.add) {
+            permissions.push("a");
+        }
+        if (this.create) {
+            permissions.push("c");
+        }
+        if (this.write) {
+            permissions.push("w");
+        }
+        if (this.delete) {
+            permissions.push("d");
+        }
+        if (this.deleteVersion) {
+            permissions.push("x");
+        }
+        if (this.list) {
+            permissions.push("l");
+        }
+        if (this.tag) {
+            permissions.push("t");
+        }
+        if (this.move) {
+            permissions.push("m");
+        }
+        if (this.execute) {
+            permissions.push("e");
+        }
+        return permissions.join("");
+    };
+    return ContainerSASPermissions;
+}());
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * ONLY AVAILABLE IN NODE.JS RUNTIME.
+ *
+ * UserDelegationKeyCredential is only used for generation of user delegation SAS.
+ * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-user-delegation-sas
+ */
+var UserDelegationKeyCredential = /** @class */ (function () {
+    /**
+     * Creates an instance of UserDelegationKeyCredential.
+     * @param accountName -
+     * @param userDelegationKey -
+     */
+    function UserDelegationKeyCredential(accountName, userDelegationKey) {
+        this.accountName = accountName;
+        this.userDelegationKey = userDelegationKey;
+        this.key = Buffer.from(userDelegationKey.value, "base64");
+    }
+    /**
+     * Generates a hash signature for an HTTP request or for a SAS.
+     *
+     * @param stringToSign -
+     */
+    UserDelegationKeyCredential.prototype.computeHMACSHA256 = function (stringToSign) {
+        // console.log(`stringToSign: ${JSON.stringify(stringToSign)}`);
+        return crypto.createHmac("sha256", this.key)
+            .update(stringToSign, "utf8")
+            .digest("base64");
+    };
+    return UserDelegationKeyCredential;
+}());
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+/**
+ * Generate SasIPRange format string. For example:
+ *
+ * "8.8.8.8" or "1.1.1.1-255.255.255.255"
+ *
+ * @param ipRange -
+ */
+function ipRangeToString(ipRange) {
+    return ipRange.end ? ipRange.start + "-" + ipRange.end : ipRange.start;
+}
+
+// Copyright (c) Microsoft Corporation.
+(function (SASProtocol) {
+    /**
+     * Protocol that allows HTTPS only
+     */
+    SASProtocol["Https"] = "https";
+    /**
+     * Protocol that allows both HTTPS and HTTP
+     */
+    SASProtocol["HttpsAndHttp"] = "https,http";
+})(exports.SASProtocol || (exports.SASProtocol = {}));
+/**
+ * Represents the components that make up an Azure Storage SAS' query parameters. This type is not constructed directly
+ * by the user; it is only generated by the {@link AccountSASSignatureValues} and {@link BlobSASSignatureValues}
+ * types. Once generated, it can be encoded into a {@code String} and appended to a URL directly (though caution should
+ * be taken here in case there are existing query parameters, which might affect the appropriate means of appending
+ * these query parameters).
+ *
+ * NOTE: Instances of this class are immutable.
+ */
+var SASQueryParameters = /** @class */ (function () {
+    function SASQueryParameters(version, signature, permissionsOrOptions, services, resourceTypes, protocol, startsOn, expiresOn, ipRange, identifier, resource, cacheControl, contentDisposition, contentEncoding, contentLanguage, contentType, userDelegationKey, preauthorizedAgentObjectId, correlationId) {
+        this.version = version;
+        this.signature = signature;
+        if (permissionsOrOptions !== undefined && typeof permissionsOrOptions !== "string") {
+            // SASQueryParametersOptions
+            this.permissions = permissionsOrOptions.permissions;
+            this.services = permissionsOrOptions.services;
+            this.resourceTypes = permissionsOrOptions.resourceTypes;
+            this.protocol = permissionsOrOptions.protocol;
+            this.startsOn = permissionsOrOptions.startsOn;
+            this.expiresOn = permissionsOrOptions.expiresOn;
+            this.ipRangeInner = permissionsOrOptions.ipRange;
+            this.identifier = permissionsOrOptions.identifier;
+            this.resource = permissionsOrOptions.resource;
+            this.cacheControl = permissionsOrOptions.cacheControl;
+            this.contentDisposition = permissionsOrOptions.contentDisposition;
+            this.contentEncoding = permissionsOrOptions.contentEncoding;
+            this.contentLanguage = permissionsOrOptions.contentLanguage;
+            this.contentType = permissionsOrOptions.contentType;
+            if (permissionsOrOptions.userDelegationKey) {
+                this.signedOid = permissionsOrOptions.userDelegationKey.signedObjectId;
+                this.signedTenantId = permissionsOrOptions.userDelegationKey.signedTenantId;
+                this.signedStartsOn = permissionsOrOptions.userDelegationKey.signedStartsOn;
+                this.signedExpiresOn = permissionsOrOptions.userDelegationKey.signedExpiresOn;
+                this.signedService = permissionsOrOptions.userDelegationKey.signedService;
+                this.signedVersion = permissionsOrOptions.userDelegationKey.signedVersion;
+                this.preauthorizedAgentObjectId = permissionsOrOptions.preauthorizedAgentObjectId;
+                this.correlationId = permissionsOrOptions.correlationId;
+            }
+        }
+        else {
+            this.services = services;
+            this.resourceTypes = resourceTypes;
+            this.expiresOn = expiresOn;
+            this.permissions = permissionsOrOptions;
+            this.protocol = protocol;
+            this.startsOn = startsOn;
+            this.ipRangeInner = ipRange;
+            this.identifier = identifier;
+            this.resource = resource;
+            this.cacheControl = cacheControl;
+            this.contentDisposition = contentDisposition;
+            this.contentEncoding = contentEncoding;
+            this.contentLanguage = contentLanguage;
+            this.contentType = contentType;
+            if (userDelegationKey) {
+                this.signedOid = userDelegationKey.signedObjectId;
+                this.signedTenantId = userDelegationKey.signedTenantId;
+                this.signedStartsOn = userDelegationKey.signedStartsOn;
+                this.signedExpiresOn = userDelegationKey.signedExpiresOn;
+                this.signedService = userDelegationKey.signedService;
+                this.signedVersion = userDelegationKey.signedVersion;
+                this.preauthorizedAgentObjectId = preauthorizedAgentObjectId;
+                this.correlationId = correlationId;
+            }
+        }
+    }
+    Object.defineProperty(SASQueryParameters.prototype, "ipRange", {
+        /**
+         * Optional. IP range allowed for this SAS.
+         *
+         * @readonly
+         */
+        get: function () {
+            if (this.ipRangeInner) {
+                return {
+                    end: this.ipRangeInner.end,
+                    start: this.ipRangeInner.start
+                };
+            }
+            return undefined;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    /**
+     * Encodes all SAS query parameters into a string that can be appended to a URL.
+     *
+     */
+    SASQueryParameters.prototype.toString = function () {
+        var params = [
+            "sv",
+            "ss",
+            "srt",
+            "spr",
+            "st",
+            "se",
+            "sip",
+            "si",
+            "skoid",
+            "sktid",
+            "skt",
+            "ske",
+            "sks",
+            "skv",
+            "sr",
+            "sp",
+            "sig",
+            "rscc",
+            "rscd",
+            "rsce",
+            "rscl",
+            "rsct",
+            "saoid",
+            "scid"
+        ];
+        var queries = [];
+        for (var _i = 0, params_1 = params; _i < params_1.length; _i++) {
+            var param = params_1[_i];
+            switch (param) {
+                case "sv":
+                    this.tryAppendQueryParameter(queries, param, this.version);
+                    break;
+                case "ss":
+                    this.tryAppendQueryParameter(queries, param, this.services);
+                    break;
+                case "srt":
+                    this.tryAppendQueryParameter(queries, param, this.resourceTypes);
+                    break;
+                case "spr":
+                    this.tryAppendQueryParameter(queries, param, this.protocol);
+                    break;
+                case "st":
+                    this.tryAppendQueryParameter(queries, param, this.startsOn ? truncatedISO8061Date(this.startsOn, false) : undefined);
+                    break;
+                case "se":
+                    this.tryAppendQueryParameter(queries, param, this.expiresOn ? truncatedISO8061Date(this.expiresOn, false) : undefined);
+                    break;
+                case "sip":
+                    this.tryAppendQueryParameter(queries, param, this.ipRange ? ipRangeToString(this.ipRange) : undefined);
+                    break;
+                case "si":
+                    this.tryAppendQueryParameter(queries, param, this.identifier);
+                    break;
+                case "skoid": // Signed object ID
+                    this.tryAppendQueryParameter(queries, param, this.signedOid);
+                    break;
+                case "sktid": // Signed tenant ID
+                    this.tryAppendQueryParameter(queries, param, this.signedTenantId);
+                    break;
+                case "skt": // Signed key start time
+                    this.tryAppendQueryParameter(queries, param, this.signedStartsOn ? truncatedISO8061Date(this.signedStartsOn, false) : undefined);
+                    break;
+                case "ske": // Signed key expiry time
+                    this.tryAppendQueryParameter(queries, param, this.signedExpiresOn ? truncatedISO8061Date(this.signedExpiresOn, false) : undefined);
+                    break;
+                case "sks": // Signed key service
+                    this.tryAppendQueryParameter(queries, param, this.signedService);
+                    break;
+                case "skv": // Signed key version
+                    this.tryAppendQueryParameter(queries, param, this.signedVersion);
+                    break;
+                case "sr":
+                    this.tryAppendQueryParameter(queries, param, this.resource);
+                    break;
+                case "sp":
+                    this.tryAppendQueryParameter(queries, param, this.permissions);
+                    break;
+                case "sig":
+                    this.tryAppendQueryParameter(queries, param, this.signature);
+                    break;
+                case "rscc":
+                    this.tryAppendQueryParameter(queries, param, this.cacheControl);
+                    break;
+                case "rscd":
+                    this.tryAppendQueryParameter(queries, param, this.contentDisposition);
+                    break;
+                case "rsce":
+                    this.tryAppendQueryParameter(queries, param, this.contentEncoding);
+                    break;
+                case "rscl":
+                    this.tryAppendQueryParameter(queries, param, this.contentLanguage);
+                    break;
+                case "rsct":
+                    this.tryAppendQueryParameter(queries, param, this.contentType);
+                    break;
+                case "saoid":
+                    this.tryAppendQueryParameter(queries, param, this.preauthorizedAgentObjectId);
+                    break;
+                case "scid":
+                    this.tryAppendQueryParameter(queries, param, this.correlationId);
+                    break;
+            }
+        }
+        return queries.join("&");
+    };
+    /**
+     * A private helper method used to filter and append query key/value pairs into an array.
+     *
+     * @param queries -
+     * @param key -
+     * @param value -
+     */
+    SASQueryParameters.prototype.tryAppendQueryParameter = function (queries, key, value) {
+        if (!value) {
+            return;
+        }
+        key = encodeURIComponent(key);
+        value = encodeURIComponent(value);
+        if (key.length > 0 && value.length > 0) {
+            queries.push(key + "=" + value);
+        }
+    };
+    return SASQueryParameters;
+}());
+
+// Copyright (c) Microsoft Corporation.
+function generateBlobSASQueryParameters(blobSASSignatureValues, sharedKeyCredentialOrUserDelegationKey, accountName) {
+    var version = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
+    var sharedKeyCredential = sharedKeyCredentialOrUserDelegationKey instanceof StorageSharedKeyCredential
+        ? sharedKeyCredentialOrUserDelegationKey
+        : undefined;
+    var userDelegationKeyCredential;
+    if (sharedKeyCredential === undefined && accountName !== undefined) {
+        userDelegationKeyCredential = new UserDelegationKeyCredential(accountName, sharedKeyCredentialOrUserDelegationKey);
+    }
+    if (sharedKeyCredential === undefined && userDelegationKeyCredential === undefined) {
+        throw TypeError("Invalid sharedKeyCredential, userDelegationKey or accountName.");
+    }
+    // Version 2019-12-12 adds support for the blob tags permission.
+    // Version 2018-11-09 adds support for the signed resource and signed blob snapshot time fields.
+    // https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas#constructing-the-signature-string
+    if (version >= "2018-11-09") {
+        if (sharedKeyCredential !== undefined) {
+            return generateBlobSASQueryParameters20181109(blobSASSignatureValues, sharedKeyCredential);
+        }
+        else {
+            // Version 2020-02-10 delegation SAS signature construction includes preauthorizedAgentObjectId, agentObjectId, correlationId.
+            if (version >= "2020-02-10") {
+                return generateBlobSASQueryParametersUDK20200210(blobSASSignatureValues, userDelegationKeyCredential);
+            }
+            else {
+                return generateBlobSASQueryParametersUDK20181109(blobSASSignatureValues, userDelegationKeyCredential);
+            }
+        }
+    }
+    if (version >= "2015-04-05") {
+        if (sharedKeyCredential !== undefined) {
+            return generateBlobSASQueryParameters20150405(blobSASSignatureValues, sharedKeyCredential);
+        }
+        else {
+            throw new RangeError("'version' must be >= '2018-11-09' when generating user delegation SAS using user delegation key.");
+        }
+    }
+    throw new RangeError("'version' must be >= '2015-04-05'.");
+}
+/**
+ * ONLY AVAILABLE IN NODE.JS RUNTIME.
+ * IMPLEMENTATION FOR API VERSION FROM 2015-04-05 AND BEFORE 2018-11-09.
+ *
+ * Creates an instance of SASQueryParameters.
+ *
+ * Only accepts required settings needed to create a SAS. For optional settings please
+ * set corresponding properties directly, such as permissions, startsOn and identifier.
+ *
+ * WARNING: When identifier is not provided, permissions and expiresOn are required.
+ * You MUST assign value to identifier or expiresOn & permissions manually if you initial with
+ * this constructor.
+ *
+ * @param blobSASSignatureValues -
+ * @param sharedKeyCredential -
+ */
+function generateBlobSASQueryParameters20150405(blobSASSignatureValues, sharedKeyCredential) {
+    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
+    if (!blobSASSignatureValues.identifier &&
+        !(blobSASSignatureValues.permissions && blobSASSignatureValues.expiresOn)) {
+        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when 'identifier' is not provided.");
+    }
+    var resource = "c";
+    if (blobSASSignatureValues.blobName) {
+        resource = "b";
+    }
+    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
+    var verifiedPermissions;
+    if (blobSASSignatureValues.permissions) {
+        if (blobSASSignatureValues.blobName) {
+            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+        else {
+            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+    }
+    // Signature is generated on the un-url-encoded values.
+    var stringToSign = [
+        verifiedPermissions ? verifiedPermissions : "",
+        blobSASSignatureValues.startsOn
+            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
+            : "",
+        blobSASSignatureValues.expiresOn
+            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
+            : "",
+        getCanonicalName(sharedKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
+        blobSASSignatureValues.identifier,
+        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
+        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
+        blobSASSignatureValues.version,
+        blobSASSignatureValues.cacheControl ? blobSASSignatureValues.cacheControl : "",
+        blobSASSignatureValues.contentDisposition ? blobSASSignatureValues.contentDisposition : "",
+        blobSASSignatureValues.contentEncoding ? blobSASSignatureValues.contentEncoding : "",
+        blobSASSignatureValues.contentLanguage ? blobSASSignatureValues.contentLanguage : "",
+        blobSASSignatureValues.contentType ? blobSASSignatureValues.contentType : ""
+    ].join("\n");
+    var signature = sharedKeyCredential.computeHMACSHA256(stringToSign);
+    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType);
+}
+/**
+ * ONLY AVAILABLE IN NODE.JS RUNTIME.
+ * IMPLEMENTATION FOR API VERSION FROM 2018-11-09.
+ *
+ * Creates an instance of SASQueryParameters.
+ *
+ * Only accepts required settings needed to create a SAS. For optional settings please
+ * set corresponding properties directly, such as permissions, startsOn and identifier.
+ *
+ * WARNING: When identifier is not provided, permissions and expiresOn are required.
+ * You MUST assign value to identifier or expiresOn & permissions manually if you initial with
+ * this constructor.
+ *
+ * @param blobSASSignatureValues -
+ * @param sharedKeyCredential -
+ */
+function generateBlobSASQueryParameters20181109(blobSASSignatureValues, sharedKeyCredential) {
+    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
+    if (!blobSASSignatureValues.identifier &&
+        !(blobSASSignatureValues.permissions && blobSASSignatureValues.expiresOn)) {
+        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when 'identifier' is not provided.");
+    }
+    var resource = "c";
+    var timestamp = blobSASSignatureValues.snapshotTime;
+    if (blobSASSignatureValues.blobName) {
+        resource = "b";
+        if (blobSASSignatureValues.snapshotTime) {
+            resource = "bs";
+        }
+        else if (blobSASSignatureValues.versionId) {
+            resource = "bv";
+            timestamp = blobSASSignatureValues.versionId;
+        }
+    }
+    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
+    var verifiedPermissions;
+    if (blobSASSignatureValues.permissions) {
+        if (blobSASSignatureValues.blobName) {
+            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+        else {
+            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+    }
+    // Signature is generated on the un-url-encoded values.
+    var stringToSign = [
+        verifiedPermissions ? verifiedPermissions : "",
+        blobSASSignatureValues.startsOn
+            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
+            : "",
+        blobSASSignatureValues.expiresOn
+            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
+            : "",
+        getCanonicalName(sharedKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
+        blobSASSignatureValues.identifier,
+        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
+        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
+        blobSASSignatureValues.version,
+        resource,
+        timestamp,
+        blobSASSignatureValues.cacheControl ? blobSASSignatureValues.cacheControl : "",
+        blobSASSignatureValues.contentDisposition ? blobSASSignatureValues.contentDisposition : "",
+        blobSASSignatureValues.contentEncoding ? blobSASSignatureValues.contentEncoding : "",
+        blobSASSignatureValues.contentLanguage ? blobSASSignatureValues.contentLanguage : "",
+        blobSASSignatureValues.contentType ? blobSASSignatureValues.contentType : ""
+    ].join("\n");
+    var signature = sharedKeyCredential.computeHMACSHA256(stringToSign);
+    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType);
+}
+/**
+ * ONLY AVAILABLE IN NODE.JS RUNTIME.
+ * IMPLEMENTATION FOR API VERSION FROM 2018-11-09.
+ *
+ * Creates an instance of SASQueryParameters.
+ *
+ * Only accepts required settings needed to create a SAS. For optional settings please
+ * set corresponding properties directly, such as permissions, startsOn.
+ *
+ * WARNING: identifier will be ignored, permissions and expiresOn are required.
+ *
+ * @param blobSASSignatureValues -
+ * @param userDelegationKeyCredential -
+ */
+function generateBlobSASQueryParametersUDK20181109(blobSASSignatureValues, userDelegationKeyCredential) {
+    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
+    // Stored access policies are not supported for a user delegation SAS.
+    if (!blobSASSignatureValues.permissions || !blobSASSignatureValues.expiresOn) {
+        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when generating user delegation SAS.");
+    }
+    var resource = "c";
+    var timestamp = blobSASSignatureValues.snapshotTime;
+    if (blobSASSignatureValues.blobName) {
+        resource = "b";
+        if (blobSASSignatureValues.snapshotTime) {
+            resource = "bs";
+        }
+        else if (blobSASSignatureValues.versionId) {
+            resource = "bv";
+            timestamp = blobSASSignatureValues.versionId;
+        }
+    }
+    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
+    var verifiedPermissions;
+    if (blobSASSignatureValues.permissions) {
+        if (blobSASSignatureValues.blobName) {
+            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+        else {
+            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+    }
+    // Signature is generated on the un-url-encoded values.
+    var stringToSign = [
+        verifiedPermissions ? verifiedPermissions : "",
+        blobSASSignatureValues.startsOn
+            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
+            : "",
+        blobSASSignatureValues.expiresOn
+            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
+            : "",
+        getCanonicalName(userDelegationKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
+        userDelegationKeyCredential.userDelegationKey.signedObjectId,
+        userDelegationKeyCredential.userDelegationKey.signedTenantId,
+        userDelegationKeyCredential.userDelegationKey.signedStartsOn
+            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedStartsOn, false)
+            : "",
+        userDelegationKeyCredential.userDelegationKey.signedExpiresOn
+            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedExpiresOn, false)
+            : "",
+        userDelegationKeyCredential.userDelegationKey.signedService,
+        userDelegationKeyCredential.userDelegationKey.signedVersion,
+        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
+        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
+        blobSASSignatureValues.version,
+        resource,
+        timestamp,
+        blobSASSignatureValues.cacheControl,
+        blobSASSignatureValues.contentDisposition,
+        blobSASSignatureValues.contentEncoding,
+        blobSASSignatureValues.contentLanguage,
+        blobSASSignatureValues.contentType
+    ].join("\n");
+    var signature = userDelegationKeyCredential.computeHMACSHA256(stringToSign);
+    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType, userDelegationKeyCredential.userDelegationKey);
+}
+/**
+ * ONLY AVAILABLE IN NODE.JS RUNTIME.
+ * IMPLEMENTATION FOR API VERSION FROM 2020-02-10.
+ *
+ * Creates an instance of SASQueryParameters.
+ *
+ * Only accepts required settings needed to create a SAS. For optional settings please
+ * set corresponding properties directly, such as permissions, startsOn.
+ *
+ * WARNING: identifier will be ignored, permissions and expiresOn are required.
+ *
+ * @param blobSASSignatureValues -
+ * @param userDelegationKeyCredential -
+ */
+function generateBlobSASQueryParametersUDK20200210(blobSASSignatureValues, userDelegationKeyCredential) {
+    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
+    // Stored access policies are not supported for a user delegation SAS.
+    if (!blobSASSignatureValues.permissions || !blobSASSignatureValues.expiresOn) {
+        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when generating user delegation SAS.");
+    }
+    var resource = "c";
+    var timestamp = blobSASSignatureValues.snapshotTime;
+    if (blobSASSignatureValues.blobName) {
+        resource = "b";
+        if (blobSASSignatureValues.snapshotTime) {
+            resource = "bs";
+        }
+        else if (blobSASSignatureValues.versionId) {
+            resource = "bv";
+            timestamp = blobSASSignatureValues.versionId;
+        }
+    }
+    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
+    var verifiedPermissions;
+    if (blobSASSignatureValues.permissions) {
+        if (blobSASSignatureValues.blobName) {
+            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+        else {
+            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
+        }
+    }
+    // Signature is generated on the un-url-encoded values.
+    var stringToSign = [
+        verifiedPermissions ? verifiedPermissions : "",
+        blobSASSignatureValues.startsOn
+            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
+            : "",
+        blobSASSignatureValues.expiresOn
+            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
+            : "",
+        getCanonicalName(userDelegationKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
+        userDelegationKeyCredential.userDelegationKey.signedObjectId,
+        userDelegationKeyCredential.userDelegationKey.signedTenantId,
+        userDelegationKeyCredential.userDelegationKey.signedStartsOn
+            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedStartsOn, false)
+            : "",
+        userDelegationKeyCredential.userDelegationKey.signedExpiresOn
+            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedExpiresOn, false)
+            : "",
+        userDelegationKeyCredential.userDelegationKey.signedService,
+        userDelegationKeyCredential.userDelegationKey.signedVersion,
+        blobSASSignatureValues.preauthorizedAgentObjectId,
+        undefined,
+        blobSASSignatureValues.correlationId,
+        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
+        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
+        blobSASSignatureValues.version,
+        resource,
+        timestamp,
+        blobSASSignatureValues.cacheControl,
+        blobSASSignatureValues.contentDisposition,
+        blobSASSignatureValues.contentEncoding,
+        blobSASSignatureValues.contentLanguage,
+        blobSASSignatureValues.contentType
+    ].join("\n");
+    var signature = userDelegationKeyCredential.computeHMACSHA256(stringToSign);
+    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType, userDelegationKeyCredential.userDelegationKey, blobSASSignatureValues.preauthorizedAgentObjectId, blobSASSignatureValues.correlationId);
+}
+function getCanonicalName(accountName, containerName, blobName) {
+    // Container: "/blob/account/containerName"
+    // Blob:      "/blob/account/containerName/blobName"
+    var elements = ["/blob/" + accountName + "/" + containerName];
+    if (blobName) {
+        elements.push("/" + blobName);
+    }
+    return elements.join("");
+}
+function SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues) {
+    var version = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
+    if (blobSASSignatureValues.snapshotTime && version < "2018-11-09") {
+        throw RangeError("'version' must be >= '2018-11-09' when providing 'snapshotTime'.");
+    }
+    if (blobSASSignatureValues.blobName === undefined && blobSASSignatureValues.snapshotTime) {
+        throw RangeError("Must provide 'blobName' when providing 'snapshotTime'.");
+    }
+    if (blobSASSignatureValues.versionId && version < "2019-10-10") {
+        throw RangeError("'version' must be >= '2019-10-10' when providing 'versionId'.");
+    }
+    if (blobSASSignatureValues.blobName === undefined && blobSASSignatureValues.versionId) {
+        throw RangeError("Must provide 'blobName' when providing 'versionId'.");
+    }
+    if (blobSASSignatureValues.permissions &&
+        blobSASSignatureValues.permissions.deleteVersion &&
+        version < "2019-10-10") {
+        throw RangeError("'version' must be >= '2019-10-10' when providing 'x' permission.");
+    }
+    if (blobSASSignatureValues.permissions &&
+        blobSASSignatureValues.permissions.tag &&
+        version < "2019-12-12") {
+        throw RangeError("'version' must be >= '2019-12-12' when providing 't' permission.");
+    }
+    if (version < "2020-02-10" &&
+        blobSASSignatureValues.permissions &&
+        (blobSASSignatureValues.permissions.move || blobSASSignatureValues.permissions.execute)) {
+        throw RangeError("'version' must be >= '2020-02-10' when providing the 'm' or 'e' permission.");
+    }
+    if (version < "2020-02-10" &&
+        (blobSASSignatureValues.preauthorizedAgentObjectId || blobSASSignatureValues.correlationId)) {
+        throw RangeError("'version' must be >= '2020-02-10' when providing 'preauthorizedAgentObjectId' or 'correlationId'.");
+    }
+    blobSASSignatureValues.version = version;
+    return blobSASSignatureValues;
+}
+
+/**
+ * A client that manages leases for a {@link ContainerClient} or a {@link BlobClient}.
+ */
+var BlobLeaseClient = /** @class */ (function () {
+    /**
+     * Creates an instance of BlobLeaseClient.
+     * @param client - The client to make the lease operation requests.
+     * @param leaseId - Initial proposed lease id.
+     */
+    function BlobLeaseClient(client, leaseId) {
+        var clientContext = new StorageClientContext(client.url, client.pipeline.toServiceClientOptions());
+        this._url = client.url;
+        if (client.name === undefined) {
+            this._isContainer = true;
+            this._containerOrBlobOperation = new Container(clientContext);
+        }
+        else {
+            this._isContainer = false;
+            this._containerOrBlobOperation = new Blob$1(clientContext);
+        }
+        if (!leaseId) {
+            leaseId = coreHttp.generateUuid();
+        }
+        this._leaseId = leaseId;
+    }
+    Object.defineProperty(BlobLeaseClient.prototype, "leaseId", {
+        /**
+         * Gets the lease Id.
+         *
+         * @readonly
+         */
+        get: function () {
+            return this._leaseId;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(BlobLeaseClient.prototype, "url", {
+        /**
+         * Gets the url.
+         *
+         * @readonly
+         */
+        get: function () {
+            return this._url;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    /**
+     * Establishes and manages a lock on a container for delete operations, or on a blob
+     * for write and delete operations.
+     * The lock duration can be 15 to 60 seconds, or can be infinite.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+     * and
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+     *
+     * @param duration - Must be between 15 to 60 seconds, or infinite (-1)
+     * @param options - option to configure lease management operations.
+     * @returns Response data for acquire lease operation.
+     */
+    BlobLeaseClient.prototype.acquireLease = function (duration, options) {
+        var _a, _b, _c, _d, _e, _f;
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _g, span, updatedOptions, e_1;
+            return tslib.__generator(this, function (_h) {
+                switch (_h.label) {
+                    case 0:
+                        _g = createSpan("BlobLeaseClient-acquireLease", options), span = _g.span, updatedOptions = _g.updatedOptions;
+                        if (this._isContainer &&
+                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
+                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
+                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
+                        }
+                        _h.label = 1;
+                    case 1:
+                        _h.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this._containerOrBlobOperation.acquireLease(tslib.__assign({ abortSignal: options.abortSignal, duration: duration, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }), proposedLeaseId: this._leaseId }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _h.sent()];
+                    case 3:
+                        e_1 = _h.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_1.message
+                        });
+                        throw e_1;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * To change the ID of the lease.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+     * and
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+     *
+     * @param proposedLeaseId - the proposed new lease Id.
+     * @param options - option to configure lease management operations.
+     * @returns Response data for change lease operation.
+     */
+    BlobLeaseClient.prototype.changeLease = function (proposedLeaseId, options) {
+        var _a, _b, _c, _d, _e, _f;
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _g, span, updatedOptions, response, e_2;
+            return tslib.__generator(this, function (_h) {
+                switch (_h.label) {
+                    case 0:
+                        _g = createSpan("BlobLeaseClient-changeLease", options), span = _g.span, updatedOptions = _g.updatedOptions;
+                        if (this._isContainer &&
+                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
+                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
+                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
+                        }
+                        _h.label = 1;
+                    case 1:
+                        _h.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this._containerOrBlobOperation.changeLease(this._leaseId, proposedLeaseId, tslib.__assign({ abortSignal: options.abortSignal, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2:
+                        response = _h.sent();
+                        this._leaseId = proposedLeaseId;
+                        return [2 /*return*/, response];
+                    case 3:
+                        e_2 = _h.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_2.message
+                        });
+                        throw e_2;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * To free the lease if it is no longer needed so that another client may
+     * immediately acquire a lease against the container or the blob.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+     * and
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+     *
+     * @param options - option to configure lease management operations.
+     * @returns Response data for release lease operation.
+     */
+    BlobLeaseClient.prototype.releaseLease = function (options) {
+        var _a, _b, _c, _d, _e, _f;
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _g, span, updatedOptions, e_3;
+            return tslib.__generator(this, function (_h) {
+                switch (_h.label) {
+                    case 0:
+                        _g = createSpan("BlobLeaseClient-releaseLease", options), span = _g.span, updatedOptions = _g.updatedOptions;
+                        if (this._isContainer &&
+                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
+                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
+                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
+                        }
+                        _h.label = 1;
+                    case 1:
+                        _h.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this._containerOrBlobOperation.releaseLease(this._leaseId, tslib.__assign({ abortSignal: options.abortSignal, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _h.sent()];
+                    case 3:
+                        e_3 = _h.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_3.message
+                        });
+                        throw e_3;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * To renew the lease.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+     * and
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+     *
+     * @param options - Optional option to configure lease management operations.
+     * @returns Response data for renew lease operation.
+     */
+    BlobLeaseClient.prototype.renewLease = function (options) {
+        var _a, _b, _c, _d, _e, _f;
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _g, span, updatedOptions, e_4;
+            return tslib.__generator(this, function (_h) {
+                switch (_h.label) {
+                    case 0:
+                        _g = createSpan("BlobLeaseClient-renewLease", options), span = _g.span, updatedOptions = _g.updatedOptions;
+                        if (this._isContainer &&
+                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
+                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
+                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
+                        }
+                        _h.label = 1;
+                    case 1:
+                        _h.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this._containerOrBlobOperation.renewLease(this._leaseId, tslib.__assign({ abortSignal: options.abortSignal, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _h.sent()];
+                    case 3:
+                        e_4 = _h.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_4.message
+                        });
+                        throw e_4;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * To end the lease but ensure that another client cannot acquire a new lease
+     * until the current lease period has expired.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+     * and
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+     *
+     * @param breakPeriod - Break period
+     * @param options - Optional options to configure lease management operations.
+     * @returns Response data for break lease operation.
+     */
+    BlobLeaseClient.prototype.breakLease = function (breakPeriod, options) {
+        var _a, _b, _c, _d, _e, _f;
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _g, span, updatedOptions, operationOptions, e_5;
+            return tslib.__generator(this, function (_h) {
+                switch (_h.label) {
+                    case 0:
+                        _g = createSpan("BlobLeaseClient-breakLease", options), span = _g.span, updatedOptions = _g.updatedOptions;
+                        if (this._isContainer &&
+                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
+                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
+                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
+                        }
+                        _h.label = 1;
+                    case 1:
+                        _h.trys.push([1, 3, 4, 5]);
+                        operationOptions = tslib.__assign({ abortSignal: options.abortSignal, breakPeriod: breakPeriod, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions));
+                        return [4 /*yield*/, this._containerOrBlobOperation.breakLease(operationOptions)];
+                    case 2: return [2 /*return*/, _h.sent()];
+                    case 3:
+                        e_5 = _h.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_5.message
+                        });
+                        throw e_5;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return BlobLeaseClient;
+}());
+
+// Copyright (c) Microsoft Corporation.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
  * A Node.js ReadableStream will internally retry when internal ReadableStream unexpected ends.
- *
- * @class RetriableReadableStream
- * @extends {Readable}
  */
 var RetriableReadableStream = /** @class */ (function (_super) {
     tslib.__extends(RetriableReadableStream, _super);
     /**
      * Creates an instance of RetriableReadableStream.
      *
-     * @param {NodeJS.ReadableStream} source The current ReadableStream returned from getter
-     * @param {ReadableStreamGetter} getter A method calling downloading request returning
+     * @param source - The current ReadableStream returned from getter
+     * @param getter - A method calling downloading request returning
      *                                      a new ReadableStream from specified offset
-     * @param {number} offset Offset position in original data source to read
-     * @param {number} count How much data in original data source to read
-     * @param {RetriableReadableStreamOptions} [options={}]
-     * @memberof RetriableReadableStream
+     * @param offset - Offset position in original data source to read
+     * @param count - How much data in original data source to read
+     * @param options -
      */
     function RetriableReadableStream(source, getter, offset, count, options) {
         if (options === void 0) { options = {}; }
@@ -30730,7 +33958,7 @@ var RetriableReadableStream = /** @class */ (function (_super) {
     return RetriableReadableStream;
 }(stream.Readable));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
@@ -30740,21 +33968,16 @@ var RetriableReadableStream = /** @class */ (function (_super) {
  *
  * The {@link readableStreamBody} stream will retry underlayer, you can just use it as a normal Node.js
  * Readable stream.
- *
- * @export
- * @class BlobDownloadResponse
- * @implements {BlobDownloadResponseParsed}
  */
 var BlobDownloadResponse = /** @class */ (function () {
     /**
      * Creates an instance of BlobDownloadResponse.
      *
-     * @param {BlobDownloadResponseParsed} originalResponse
-     * @param {ReadableStreamGetter} getter
-     * @param {number} offset
-     * @param {number} count
-     * @param {RetriableReadableStreamOptions} [options={}]
-     * @memberof BlobDownloadResponse
+     * @param originalResponse -
+     * @param getter -
+     * @param offset -
+     * @param count -
+     * @param options -
      */
     function BlobDownloadResponse(originalResponse, getter, offset, count, options) {
         if (options === void 0) { options = {}; }
@@ -30767,8 +33990,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * requests for partial file content.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.acceptRanges;
@@ -30782,8 +34003,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * for the file.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.cacheControl;
@@ -30798,8 +34017,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * response.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentDisposition;
@@ -30813,8 +34030,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * for the Content-Encoding request header.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentEncoding;
@@ -30828,8 +34043,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * for the Content-Language request header.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentLanguage;
@@ -30843,8 +34056,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * page blob. This header is not returned for block blobs or append blobs.
          *
          * @readonly
-         * @type {(number | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.blobSequenceNumber;
@@ -30858,8 +34069,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * 'BlockBlob', 'PageBlob', 'AppendBlob'.
          *
          * @readonly
-         * @type {(BlobType | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.blobType;
@@ -30873,8 +34082,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * response body.
          *
          * @readonly
-         * @type {(number | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentLength;
@@ -30894,8 +34101,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * header.
          *
          * @readonly
-         * @type {(Uint8Array | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentMD5;
@@ -30910,8 +34115,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * header.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentRange;
@@ -30925,8 +34128,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * The default content type is 'application/octet-stream'
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentType;
@@ -30941,8 +34142,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * can specify the time of a completed, aborted, or failed copy attempt.
          *
          * @readonly
-         * @type {(Date | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.copyCompletedOn;
@@ -30956,8 +34155,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * File operation where this file was the destination file.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.copyId;
@@ -30973,8 +34170,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * Content-Length bytes copied.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.copyProgress;
@@ -30989,8 +34184,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * was the destination file.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.copySource;
@@ -31005,8 +34198,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * 'success', 'aborted', 'failed'
          *
          * @readonly
-         * @type {(CopyStatusType | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.copyStatus;
@@ -31021,8 +34212,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * non-fatal copy operation failure.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.copyStatusDescription;
@@ -31037,8 +34226,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * values include: 'infinite', 'fixed'.
          *
          * @readonly
-         * @type {(LeaseDurationType | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.leaseDuration;
@@ -31052,8 +34239,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * values include: 'available', 'leased', 'expired', 'breaking', 'broken'.
          *
          * @readonly
-         * @type {(LeaseStateType | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.leaseState;
@@ -31067,8 +34252,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * blob. Possible values include: 'locked', 'unlocked'.
          *
          * @readonly
-         * @type {(LeaseStatusType | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.leaseStatus;
@@ -31082,8 +34265,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * indicates the time at which the response was initiated.
          *
          * @readonly
-         * @type {(Date | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.date;
@@ -31097,8 +34278,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * present in the blob. This header is returned only for append blobs.
          *
          * @readonly
-         * @type {(number | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.blobCommittedBlockCount;
@@ -31112,8 +34291,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * perform operations conditionally, in quotes.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.etag;
@@ -31126,8 +34303,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * The number of tags associated with the blob
          *
          * @readonly
-         * @type {(number | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.tagCount;
@@ -31140,8 +34315,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * The error code.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.errorCode;
@@ -31158,8 +34331,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * are encrypted).
          *
          * @readonly
-         * @type {(boolean | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.isServerEncrypted;
@@ -31176,8 +34347,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * latter calculated from the requested range.
          *
          * @readonly
-         * @type {(Uint8Array | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.blobContentMD5;
@@ -31192,8 +34361,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * the last modified time.
          *
          * @readonly
-         * @type {(Date | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.lastModified;
@@ -31207,8 +34374,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * last read or written to.
          *
          * @readonly
-         * @type {(Date | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.lastAccessed;
@@ -31222,8 +34387,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * to associate with a file storage object.
          *
          * @readonly
-         * @type {(Metadata | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.metadata;
@@ -31237,8 +34400,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * that was made and can be used for troubleshooting the request.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.requestId;
@@ -31252,8 +34413,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * response with the same value.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.clientRequestId;
@@ -31267,8 +34426,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * to execute the request.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.version;
@@ -31281,11 +34438,21 @@ var BlobDownloadResponse = /** @class */ (function () {
          * Indicates the versionId of the downloaded blob version.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.versionId;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(BlobDownloadResponse.prototype, "isCurrentVersion", {
+        /**
+         * Indicates whether version of this blob is a current version.
+         *
+         * @readonly
+         */
+        get: function () {
+            return this.originalResponse.isCurrentVersion;
         },
         enumerable: false,
         configurable: true
@@ -31296,8 +34463,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * when the blob was encrypted with a customer-provided key.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.encryptionKeySha256;
@@ -31311,9 +34476,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * true, then the request returns a crc64 for the range, as long as the range size is less than
          * or equal to 4 MB. If both x-ms-range-get-content-crc64 & x-ms-range-get-content-md5 is
          * specified in the same request, it will fail with 400(Bad Request)
-         *
-         * @type {(Uint8Array | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.contentCrc64;
@@ -31326,8 +34488,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * Object Replication Policy Id of the destination blob.
          *
          * @readonly
-         * @type {(string| undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.objectReplicationDestinationPolicyId;
@@ -31340,8 +34500,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * Parsed Object Replication Policy Id, Rule Id(s) and status of the source blob.
          *
          * @readonly
-         * @type {(ObjectReplicationPolicy[] | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.objectReplicationSourceProperties;
@@ -31354,8 +34512,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * If this blob has been sealed.
          *
          * @readonly
-         * @type {(boolean | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.isSealed;
@@ -31369,8 +34525,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * Always undefined in node.js.
          *
          * @readonly
-         * @type {(Promise<Blob> | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse.blobBody;
@@ -31386,8 +34540,6 @@ var BlobDownloadResponse = /** @class */ (function () {
          * It will automatically retry when internal read stream unexpected ends.
          *
          * @readonly
-         * @type {(NodeJS.ReadableStream | undefined)}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return coreHttp.isNode ? this.blobDownloadStream : undefined;
@@ -31398,9 +34550,6 @@ var BlobDownloadResponse = /** @class */ (function () {
     Object.defineProperty(BlobDownloadResponse.prototype, "_response", {
         /**
          * The HTTP response.
-         *
-         * @type {HttpResponse}
-         * @memberof BlobDownloadResponse
          */
         get: function () {
             return this.originalResponse._response;
@@ -31441,12 +34590,9 @@ var AvroParser = /** @class */ (function () {
     /**
      * Reads a fixed number of bytes from the stream.
      *
-     * @static
-     * @param {AvroReadable} [stream]
-     * @param {number} [length]
-     * @param {AvroParserReadOptions} [options={}]
-     * @returns {Promise<Uint8Array>}
-     * @memberof AvroParser
+     * @param stream -
+     * @param length -
+     * @param options -
      */
     AvroParser.readFixedBytes = function (stream, length, options) {
         if (options === void 0) { options = {}; }
@@ -31468,11 +34614,8 @@ var AvroParser = /** @class */ (function () {
     /**
      * Reads a single byte from the stream.
      *
-     * @static
-     * @param {AvroReadable} [stream]
-     * @param {AvroParserReadOptions} [options={}]
-     * @returns {Promise<number>}
-     * @memberof AvroParser
+     * @param stream -
+     * @param options -
      */
     AvroParser.readByte = function (stream, options) {
         if (options === void 0) { options = {}; }
@@ -31755,7 +34898,7 @@ var AvroType = /** @class */ (function () {
      * Determines the AvroType from the Avro Schema.
      */
     AvroType.fromSchema = function (schema) {
-        if (typeof schema == "string") {
+        if (typeof schema === "string") {
             return AvroType.fromStringSchema(schema);
         }
         else if (Array.isArray(schema)) {
@@ -32275,23 +35418,19 @@ var AvroReadableFromStream = /** @class */ (function (_super) {
     return AvroReadableFromStream;
 }(AvroReadable));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
  * A Node.js BlobQuickQueryStream will internally parse avro data stream for blob query.
- *
- * @class BlobQuickQueryStream
- * @extends {Readable}
  */
 var BlobQuickQueryStream = /** @class */ (function (_super) {
     tslib.__extends(BlobQuickQueryStream, _super);
     /**
      * Creates an instance of BlobQuickQueryStream.
      *
-     * @param {NodeJS.ReadableStream} source The current ReadableStream returned from getter
-     * @param {BlobQuickQueryStreamOptions} [options={}]
-     * @memberof BlobQuickQueryStream
+     * @param source - The current ReadableStream returned from getter
+     * @param options -
      */
     function BlobQuickQueryStream(source, options) {
         if (options === void 0) { options = {}; }
@@ -32401,24 +35540,19 @@ var BlobQuickQueryStream = /** @class */ (function (_super) {
     return BlobQuickQueryStream;
 }(stream.Readable));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
  * BlobQueryResponse implements BlobDownloadResponseModel interface, and in Node.js runtime it will
  * parse avor data returned by blob query.
- *
- * @export
- * @class BlobQueryResponse
- * @implements {BlobDownloadResponseModel}
  */
 var BlobQueryResponse = /** @class */ (function () {
     /**
      * Creates an instance of BlobQueryResponse.
      *
-     * @param {BlobQueryResponseModel} originalResponse
-     * @param {BlobQuickQueryStreamOptions} [options={}]
-     * @memberof BlobQueryResponse
+     * @param originalResponse -
+     * @param options -
      */
     function BlobQueryResponse(originalResponse, options) {
         if (options === void 0) { options = {}; }
@@ -32431,8 +35565,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * requests for partial file content.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.acceptRanges;
@@ -32446,8 +35578,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * for the file.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.cacheControl;
@@ -32462,8 +35592,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * response.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentDisposition;
@@ -32477,8 +35605,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * for the Content-Encoding request header.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentEncoding;
@@ -32492,8 +35618,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * for the Content-Language request header.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentLanguage;
@@ -32507,8 +35631,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * page blob. This header is not returned for block blobs or append blobs.
          *
          * @readonly
-         * @type {(number | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.blobSequenceNumber;
@@ -32522,8 +35644,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * 'BlockBlob', 'PageBlob', 'AppendBlob'.
          *
          * @readonly
-         * @type {(BlobType | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.blobType;
@@ -32537,8 +35657,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * response body.
          *
          * @readonly
-         * @type {(number | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentLength;
@@ -32558,8 +35676,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * header.
          *
          * @readonly
-         * @type {(Uint8Array | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentMD5;
@@ -32574,8 +35690,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * header.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentRange;
@@ -32589,8 +35703,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * The default content type is 'application/octet-stream'
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentType;
@@ -32605,8 +35717,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * can specify the time of a completed, aborted, or failed copy attempt.
          *
          * @readonly
-         * @type {(Date | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return undefined;
@@ -32620,8 +35730,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * File operation where this file was the destination file.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.copyId;
@@ -32637,8 +35745,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * Content-Length bytes copied.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.copyProgress;
@@ -32653,8 +35759,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * was the destination file.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.copySource;
@@ -32669,8 +35773,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * 'success', 'aborted', 'failed'
          *
          * @readonly
-         * @type {(CopyStatusType | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.copyStatus;
@@ -32685,8 +35787,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * non-fatal copy operation failure.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.copyStatusDescription;
@@ -32701,8 +35801,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * values include: 'infinite', 'fixed'.
          *
          * @readonly
-         * @type {(LeaseDurationType | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.leaseDuration;
@@ -32716,8 +35814,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * values include: 'available', 'leased', 'expired', 'breaking', 'broken'.
          *
          * @readonly
-         * @type {(LeaseStateType | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.leaseState;
@@ -32731,8 +35827,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * blob. Possible values include: 'locked', 'unlocked'.
          *
          * @readonly
-         * @type {(LeaseStatusType | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.leaseStatus;
@@ -32746,8 +35840,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * indicates the time at which the response was initiated.
          *
          * @readonly
-         * @type {(Date | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.date;
@@ -32761,8 +35853,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * present in the blob. This header is returned only for append blobs.
          *
          * @readonly
-         * @type {(number | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.blobCommittedBlockCount;
@@ -32776,8 +35866,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * perform operations conditionally, in quotes.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.etag;
@@ -32790,8 +35878,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * The error code.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.errorCode;
@@ -32808,8 +35894,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * are encrypted).
          *
          * @readonly
-         * @type {(boolean | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.isServerEncrypted;
@@ -32826,8 +35910,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * latter calculated from the requested range.
          *
          * @readonly
-         * @type {(Uint8Array | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.blobContentMD5;
@@ -32842,8 +35924,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * the last modified time.
          *
          * @readonly
-         * @type {(Date | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.lastModified;
@@ -32857,8 +35937,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * to associate with a file storage object.
          *
          * @readonly
-         * @type {(Metadata | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.metadata;
@@ -32872,8 +35950,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * that was made and can be used for troubleshooting the request.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.requestId;
@@ -32887,8 +35963,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * response with the same value.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.clientRequestId;
@@ -32902,8 +35976,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * to execute the request.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.version;
@@ -32917,8 +35989,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * when the blob was encrypted with a customer-provided key.
          *
          * @readonly
-         * @type {(string | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.encryptionKeySha256;
@@ -32932,9 +36002,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * true, then the request returns a crc64 for the range, as long as the range size is less than
          * or equal to 4 MB. If both x-ms-range-get-content-crc64 & x-ms-range-get-content-md5 is
          * specified in the same request, it will fail with 400(Bad Request)
-         *
-         * @type {(Uint8Array | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse.contentCrc64;
@@ -32948,8 +36015,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * Always undefined in node.js.
          *
          * @readonly
-         * @type {(Promise<Blob> | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return undefined;
@@ -32965,8 +36030,6 @@ var BlobQueryResponse = /** @class */ (function () {
          * It will parse avor data returned by blob query.
          *
          * @readonly
-         * @type {(NodeJS.ReadableStream | undefined)}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return coreHttp.isNode ? this.blobDownloadStream : undefined;
@@ -32977,9 +36040,6 @@ var BlobQueryResponse = /** @class */ (function () {
     Object.defineProperty(BlobQueryResponse.prototype, "_response", {
         /**
          * The HTTP response.
-         *
-         * @type {HttpResponse}
-         * @memberof BlobQueryResponse
          */
         get: function () {
             return this.originalResponse._response;
@@ -32990,253 +36050,7 @@ var BlobQueryResponse = /** @class */ (function () {
     return BlobQueryResponse;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-/**
- * StorageSharedKeyCredentialPolicy is a policy used to sign HTTP request with a shared key.
- *
- * @export
- * @class StorageSharedKeyCredentialPolicy
- * @extends {CredentialPolicy}
- */
-var StorageSharedKeyCredentialPolicy = /** @class */ (function (_super) {
-    tslib.__extends(StorageSharedKeyCredentialPolicy, _super);
-    /**
-     * Creates an instance of StorageSharedKeyCredentialPolicy.
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @param {StorageSharedKeyCredential} factory
-     * @memberof StorageSharedKeyCredentialPolicy
-     */
-    function StorageSharedKeyCredentialPolicy(nextPolicy, options, factory) {
-        var _this = _super.call(this, nextPolicy, options) || this;
-        _this.factory = factory;
-        return _this;
-    }
-    /**
-     * Signs request.
-     *
-     * @protected
-     * @param {WebResource} request
-     * @returns {WebResource}
-     * @memberof StorageSharedKeyCredentialPolicy
-     */
-    StorageSharedKeyCredentialPolicy.prototype.signRequest = function (request) {
-        request.headers.set(HeaderConstants.X_MS_DATE, new Date().toUTCString());
-        if (request.body && typeof request.body === "string" && request.body.length > 0) {
-            request.headers.set(HeaderConstants.CONTENT_LENGTH, Buffer.byteLength(request.body));
-        }
-        var stringToSign = [
-            request.method.toUpperCase(),
-            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_LANGUAGE),
-            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_ENCODING),
-            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_LENGTH),
-            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_MD5),
-            this.getHeaderValueToSign(request, HeaderConstants.CONTENT_TYPE),
-            this.getHeaderValueToSign(request, HeaderConstants.DATE),
-            this.getHeaderValueToSign(request, HeaderConstants.IF_MODIFIED_SINCE),
-            this.getHeaderValueToSign(request, HeaderConstants.IF_MATCH),
-            this.getHeaderValueToSign(request, HeaderConstants.IF_NONE_MATCH),
-            this.getHeaderValueToSign(request, HeaderConstants.IF_UNMODIFIED_SINCE),
-            this.getHeaderValueToSign(request, HeaderConstants.RANGE)
-        ].join("\n") +
-            "\n" +
-            this.getCanonicalizedHeadersString(request) +
-            this.getCanonicalizedResourceString(request);
-        var signature = this.factory.computeHMACSHA256(stringToSign);
-        request.headers.set(HeaderConstants.AUTHORIZATION, "SharedKey " + this.factory.accountName + ":" + signature);
-        // console.log(`[URL]:${request.url}`);
-        // console.log(`[HEADERS]:${request.headers.toString()}`);
-        // console.log(`[STRING TO SIGN]:${JSON.stringify(stringToSign)}`);
-        // console.log(`[KEY]: ${request.headers.get(HeaderConstants.AUTHORIZATION)}`);
-        return request;
-    };
-    /**
-     * Retrieve header value according to shared key sign rules.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
-     *
-     * @private
-     * @param {WebResource} request
-     * @param {string} headerName
-     * @returns {string}
-     * @memberof StorageSharedKeyCredentialPolicy
-     */
-    StorageSharedKeyCredentialPolicy.prototype.getHeaderValueToSign = function (request, headerName) {
-        var value = request.headers.get(headerName);
-        if (!value) {
-            return "";
-        }
-        // When using version 2015-02-21 or later, if Content-Length is zero, then
-        // set the Content-Length part of the StringToSign to an empty string.
-        // https://docs.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
-        if (headerName === HeaderConstants.CONTENT_LENGTH && value === "0") {
-            return "";
-        }
-        return value;
-    };
-    /**
-     * To construct the CanonicalizedHeaders portion of the signature string, follow these steps:
-     * 1. Retrieve all headers for the resource that begin with x-ms-, including the x-ms-date header.
-     * 2. Convert each HTTP header name to lowercase.
-     * 3. Sort the headers lexicographically by header name, in ascending order.
-     *    Each header may appear only once in the string.
-     * 4. Replace any linear whitespace in the header value with a single space.
-     * 5. Trim any whitespace around the colon in the header.
-     * 6. Finally, append a new-line character to each canonicalized header in the resulting list.
-     *    Construct the CanonicalizedHeaders string by concatenating all headers in this list into a single string.
-     *
-     * @private
-     * @param {WebResource} request
-     * @returns {string}
-     * @memberof StorageSharedKeyCredentialPolicy
-     */
-    StorageSharedKeyCredentialPolicy.prototype.getCanonicalizedHeadersString = function (request) {
-        var headersArray = request.headers.headersArray().filter(function (value) {
-            return value.name.toLowerCase().startsWith(HeaderConstants.PREFIX_FOR_STORAGE);
-        });
-        headersArray.sort(function (a, b) {
-            return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-        });
-        // Remove duplicate headers
-        headersArray = headersArray.filter(function (value, index, array) {
-            if (index > 0 && value.name.toLowerCase() === array[index - 1].name.toLowerCase()) {
-                return false;
-            }
-            return true;
-        });
-        var canonicalizedHeadersStringToSign = "";
-        headersArray.forEach(function (header) {
-            canonicalizedHeadersStringToSign += header.name
-                .toLowerCase()
-                .trimRight() + ":" + header.value.trimLeft() + "\n";
-        });
-        return canonicalizedHeadersStringToSign;
-    };
-    /**
-     * Retrieves the webResource canonicalized resource string.
-     *
-     * @private
-     * @param {WebResource} request
-     * @returns {string}
-     * @memberof StorageSharedKeyCredentialPolicy
-     */
-    StorageSharedKeyCredentialPolicy.prototype.getCanonicalizedResourceString = function (request) {
-        var path = getURLPath(request.url) || "/";
-        var canonicalizedResourceString = "";
-        canonicalizedResourceString += "/" + this.factory.accountName + path;
-        var queries = getURLQueries(request.url);
-        var lowercaseQueries = {};
-        if (queries) {
-            var queryKeys = [];
-            for (var key in queries) {
-                if (queries.hasOwnProperty(key)) {
-                    var lowercaseKey = key.toLowerCase();
-                    lowercaseQueries[lowercaseKey] = queries[key];
-                    queryKeys.push(lowercaseKey);
-                }
-            }
-            queryKeys.sort();
-            for (var _i = 0, queryKeys_1 = queryKeys; _i < queryKeys_1.length; _i++) {
-                var key = queryKeys_1[_i];
-                canonicalizedResourceString += "\n" + key + ":" + decodeURIComponent(lowercaseQueries[key]);
-            }
-        }
-        return canonicalizedResourceString;
-    };
-    return StorageSharedKeyCredentialPolicy;
-}(CredentialPolicy));
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
-/**
- * ONLY AVAILABLE IN NODE.JS RUNTIME.
- *
- * StorageSharedKeyCredential for account key authorization of Azure Storage service.
- *
- * @export
- * @class StorageSharedKeyCredential
- * @extends {Credential}
- */
-var StorageSharedKeyCredential = /** @class */ (function (_super) {
-    tslib.__extends(StorageSharedKeyCredential, _super);
-    /**
-     * Creates an instance of StorageSharedKeyCredential.
-     * @param {string} accountName
-     * @param {string} accountKey
-     * @memberof StorageSharedKeyCredential
-     */
-    function StorageSharedKeyCredential(accountName, accountKey) {
-        var _this = _super.call(this) || this;
-        _this.accountName = accountName;
-        _this.accountKey = Buffer.from(accountKey, "base64");
-        return _this;
-    }
-    /**
-     * Creates a StorageSharedKeyCredentialPolicy object.
-     *
-     * @param {RequestPolicy} nextPolicy
-     * @param {RequestPolicyOptions} options
-     * @returns {StorageSharedKeyCredentialPolicy}
-     * @memberof StorageSharedKeyCredential
-     */
-    StorageSharedKeyCredential.prototype.create = function (nextPolicy, options) {
-        return new StorageSharedKeyCredentialPolicy(nextPolicy, options, this);
-    };
-    /**
-     * Generates a hash signature for an HTTP request or for a SAS.
-     *
-     * @param {string} stringToSign
-     * @returns {string}
-     * @memberof StorageSharedKeyCredential
-     */
-    StorageSharedKeyCredential.prototype.computeHMACSHA256 = function (stringToSign) {
-        return crypto.createHmac("sha256", this.accountKey)
-            .update(stringToSign, "utf8")
-            .digest("base64");
-    };
-    return StorageSharedKeyCredential;
-}(Credential));
-
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for
- * license information.
- *
- * Code generated by Microsoft (R) AutoRest Code Generator.
- * Changes may cause incorrect behavior and will be lost if the code is
- * regenerated.
- */
-var packageName = "azure-storage-blob";
-var packageVersion = "12.4.1";
-var StorageClientContext = /** @class */ (function (_super) {
-    tslib.__extends(StorageClientContext, _super);
-    /**
-     * Initializes a new instance of the StorageClientContext class.
-     * @param url The URL of the service account, container, or blob that is the targe of the desired
-     * operation.
-     * @param [options] The parameter options
-     */
-    function StorageClientContext(url, options) {
-        var _this = this;
-        if (url == undefined) {
-            throw new Error("'url' cannot be null.");
-        }
-        if (!options) {
-            options = {};
-        }
-        if (!options.userAgent) {
-            var defaultUserAgent = coreHttp.getDefaultUserAgentValue();
-            options.userAgent = packageName + "/" + packageVersion + " " + defaultUserAgent;
-        }
-        _this = _super.call(this, undefined, options) || this;
-        _this.version = '2020-04-08';
-        _this.baseUri = "{url}";
-        _this.requestContentType = "application/json; charset=utf-8";
-        _this.url = url;
-        return _this;
-    }
-    return StorageClientContext;
-}(coreHttp.ServiceClient));
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 (function (BlockBlobTier) {
     /**
      * Optimized for storing data that is accessed frequently.
@@ -33313,11 +36127,12 @@ function ensureCpkIfSpecified(cpk, isHttps) {
     }
 }
 
+// Copyright (c) Microsoft Corporation.
 /**
  * Function that converts PageRange and ClearRange to a common Range object.
  * PageRange and ClearRange have start and end while Range offset and count
  * this function normalizes to Range.
- * @param response Model PageBlob Range response
+ * @param response - Model PageBlob Range response
  */
 function rangeResponseFromModel(response) {
     var pageRange = (response._response.parsedBody.pageRange || []).map(function (x) { return ({
@@ -33335,7 +36150,7 @@ function rangeResponseFromModel(response) {
             } }) });
 }
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * This is the poller returned by {@link BlobClient.beginCopyFromURL}.
  * This can not be instantiated directly outside of this package.
@@ -33494,16 +36309,14 @@ function makeBlobBeginCopyFromURLPollOperation(state) {
     };
 }
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 /**
  * Generate a range string. For example:
  *
  * "bytes=255-" or "bytes=0-511"
  *
- * @export
- * @param {Range} iRange
- * @returns {string}
+ * @param iRange -
  */
 function rangeToString(iRange) {
     if (iRange.offset < 0) {
@@ -33517,53 +36330,9 @@ function rangeToString(iRange) {
         : "bytes=" + iRange.offset + "-";
 }
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-/**
- * A StorageClient represents a based URL class for {@link BlobServiceClient}, {@link ContainerClient}
- * and etc.
- *
- * @export
- * @class StorageClient
- */
-var StorageClient = /** @class */ (function () {
-    /**
-     * Creates an instance of StorageClient.
-     * @param {string} url url to resource
-     * @param {Pipeline} pipeline request policy pipeline.
-     * @memberof StorageClient
-     */
-    function StorageClient(url, pipeline) {
-        // URL should be encoded and only once, protocol layer shouldn't encode URL again
-        this.url = escapeURLPath(url);
-        this.accountName = getAccountNameFromUrl(url);
-        this.pipeline = pipeline;
-        this.storageClientContext = new StorageClientContext(this.url, pipeline.toServiceClientOptions());
-        this.isHttps = iEqual(getURLScheme(this.url) || "", "https");
-        this.credential = new AnonymousCredential();
-        for (var _i = 0, _a = this.pipeline.factories; _i < _a.length; _i++) {
-            var factory = _a[_i];
-            if ((coreHttp.isNode && factory instanceof StorageSharedKeyCredential) ||
-                factory instanceof AnonymousCredential) {
-                this.credential = factory;
-            }
-            else if (coreHttp.isTokenCredential(factory.credential)) {
-                // Only works if the factory has been attached a "credential" property.
-                // We do that in newPipeline() when using TokenCredential.
-                this.credential = factory.credential;
-            }
-        }
-        // Override protocol layer's default content-type
-        var storageClientContext = this.storageClientContext;
-        storageClientContext.requestContentType = undefined;
-    }
-    return StorageClient;
-}());
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * States for Batch.
- *
- * @enum {number}
  */
 var BatchStates;
 (function (BatchStates) {
@@ -33574,57 +36343,33 @@ var BatchStates;
  * Batch provides basic parallel execution with concurrency limits.
  * Will stop execute left operations when one of the executed operation throws an error.
  * But Batch cannot cancel ongoing operations, you need to cancel them by yourself.
- *
- * @export
- * @class Batch
  */
 var Batch = /** @class */ (function () {
     /**
      * Creates an instance of Batch.
-     * @param {number} [concurrency=5]
-     * @memberof Batch
+     * @param concurrency -
      */
     function Batch(concurrency) {
         if (concurrency === void 0) { concurrency = 5; }
         /**
          * Number of active operations under execution.
-         *
-         * @private
-         * @type {number}
-         * @memberof Batch
          */
         this.actives = 0;
         /**
          * Number of completed operations under execution.
-         *
-         * @private
-         * @type {number}
-         * @memberof Batch
          */
         this.completed = 0;
         /**
          * Offset of next operation to be executed.
-         *
-         * @private
-         * @type {number}
-         * @memberof Batch
          */
         this.offset = 0;
         /**
          * Operation array to be executed.
-         *
-         * @private
-         * @type {Operation[]}
-         * @memberof Batch
          */
         this.operations = [];
         /**
          * States of Batch. When an error happens, state will turn into error.
          * Batch will stop execute left operations.
-         *
-         * @private
-         * @type {BatchStates}
-         * @memberof Batch
          */
         this.state = BatchStates.Good;
         if (concurrency < 1) {
@@ -33636,8 +36381,7 @@ var Batch = /** @class */ (function () {
     /**
      * Add a operation into queue.
      *
-     * @param {Operation} operation
-     * @memberof Batch
+     * @param operation -
      */
     Batch.prototype.addOperation = function (operation) {
         var _this = this;
@@ -33667,8 +36411,6 @@ var Batch = /** @class */ (function () {
     /**
      * Start execute operations in the queue.
      *
-     * @returns {Promise<void>}
-     * @memberof Batch
      */
     Batch.prototype.do = function () {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -33691,9 +36433,6 @@ var Batch = /** @class */ (function () {
     /**
      * Get next operation to be executed. Return null when reaching ends.
      *
-     * @private
-     * @returns {(Operation | null)}
-     * @memberof Batch
      */
     Batch.prototype.nextOperation = function () {
         if (this.offset < this.operations.length) {
@@ -33705,9 +36444,6 @@ var Batch = /** @class */ (function () {
      * Start execute operations. One one the most important difference between
      * this method with do() is that do() wraps as an sync method.
      *
-     * @private
-     * @returns {void}
-     * @memberof Batch
      */
     Batch.prototype.parallelExecute = function () {
         if (this.state === BatchStates.Error) {
@@ -33730,12 +36466,9 @@ var Batch = /** @class */ (function () {
     return Batch;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * This class generates a readable stream from the data in an array of buffers.
- *
- * @export
- * @class BuffersStream
  */
 var BuffersStream = /** @class */ (function (_super) {
     tslib.__extends(BuffersStream, _super);
@@ -33743,9 +36476,8 @@ var BuffersStream = /** @class */ (function (_super) {
      * Creates an instance of BuffersStream that will emit the data
      * contained in the array of buffers.
      *
-     * @param {Buffer[]} buffers Array of buffers containing the data
-     * @param {number} byteLength The total length of data contained in the buffers
-     * @memberof BuffersStream
+     * @param buffers - Array of buffers containing the data
+     * @param byteLength - The total length of data contained in the buffers
      */
     function BuffersStream(buffers, byteLength, options) {
         var _this = _super.call(this, options) || this;
@@ -33768,8 +36500,7 @@ var BuffersStream = /** @class */ (function (_super) {
     /**
      * Internal _read() that will be called when the stream wants to pull more data in.
      *
-     * @param {number} size Optional. The size of data to be read
-     * @memberof BuffersStream
+     * @param size - Optional. The size of data to be read
      */
     BuffersStream.prototype._read = function (size) {
         if (this.pushedBytesLength >= this.byteLength) {
@@ -33820,7 +36551,7 @@ var BuffersStream = /** @class */ (function (_super) {
     return BuffersStream;
 }(stream.Readable));
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * maxBufferLength is max size of each buffer in the pooled buffers.
  */
@@ -33833,19 +36564,12 @@ var maxBufferLength = __webpack_require__(293).constants.MAX_LENGTH;
  * into the internal "buffer" serially with respect to the total length.
  * Then by calling PooledBuffer.getReadableStream(), you can get a readable stream
  * assembled from all the data in the internal "buffer".
- *
- * @export
- * @class BufferScheduler
  */
 var PooledBuffer = /** @class */ (function () {
     function PooledBuffer(capacity, buffers, totalLength) {
         /**
          * Internal buffers used to keep the data.
          * Each buffer has a length of the maxBufferLength except last one.
-         *
-         * @private
-         * @type {Buffer[]}
-         * @memberof PooledBuffer
          */
         this.buffers = [];
         this.capacity = capacity;
@@ -33878,11 +36602,9 @@ var PooledBuffer = /** @class */ (function () {
      * with respect to the total length and the total capacity of the internal buffers.
      * Data copied will be shift out of the input buffers.
      *
-     * @param {Buffer[]} buffers Input buffers containing the data to be filled in the pooled buffer
-     * @param {number} totalLength Total length of the data to be filled in.
+     * @param buffers - Input buffers containing the data to be filled in the pooled buffer
+     * @param totalLength - Total length of the data to be filled in.
      *
-     * @returns {void}
-     * @memberof PooledBuffer
      */
     PooledBuffer.prototype.fill = function (buffers, totalLength) {
         this._size = Math.min(this.capacity, totalLength);
@@ -33912,8 +36634,6 @@ var PooledBuffer = /** @class */ (function () {
     /**
      * Get the readable stream assembled from all the data in the internal buffers.
      *
-     * @returns {Readable}
-     * @memberof PooledBuffer
      */
     PooledBuffer.prototype.getReadableStream = function () {
         return new BuffersStream(this.buffers, this.size);
@@ -33921,7 +36641,7 @@ var PooledBuffer = /** @class */ (function () {
     return PooledBuffer;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * This class accepts a Node.js Readable stream as input, and keeps reading data
  * from the stream into the internal buffer structure, until it reaches maxBuffers.
@@ -33934,7 +36654,7 @@ var PooledBuffer = /** @class */ (function () {
  *
  * NUM_OF_ALL_BUFFERS = BUFFERS_IN_INCOMING + BUFFERS_IN_OUTGOING + BUFFERS_UNDER_HANDLING
  *
- * NUM_OF_ALL_BUFFERS <= maxBuffers
+ * NUM_OF_ALL_BUFFERS lesser than or equal to maxBuffers
  *
  * PERFORMANCE IMPROVEMENT TIPS:
  * 1. Input stream highWaterMark is better to set a same value with bufferSize
@@ -33943,70 +36663,43 @@ var PooledBuffer = /** @class */ (function () {
  *    reduce the possibility when a outgoing handler waits for the stream data.
  *    in this situation, outgoing handlers are blocked.
  *    Outgoing queue shouldn't be empty.
- * @export
- * @class BufferScheduler
  */
 var BufferScheduler = /** @class */ (function () {
     /**
      * Creates an instance of BufferScheduler.
      *
-     * @param {Readable} readable A Node.js Readable stream
-     * @param {number} bufferSize Buffer size of every maintained buffer
-     * @param {number} maxBuffers How many buffers can be allocated
-     * @param {OutgoingHandler} outgoingHandler An async function scheduled to be
+     * @param readable - A Node.js Readable stream
+     * @param bufferSize - Buffer size of every maintained buffer
+     * @param maxBuffers - How many buffers can be allocated
+     * @param outgoingHandler - An async function scheduled to be
      *                                          triggered when a buffer fully filled
      *                                          with stream data
-     * @param {number} concurrency Concurrency of executing outgoingHandlers (>0)
-     * @param {string} [encoding] [Optional] Encoding of Readable stream when it's a string stream
-     * @memberof BufferScheduler
+     * @param concurrency - Concurrency of executing outgoingHandlers (>0)
+     * @param encoding - [Optional] Encoding of Readable stream when it's a string stream
      */
     function BufferScheduler(readable, bufferSize, maxBuffers, outgoingHandler, concurrency, encoding) {
         /**
          * An internal event emitter.
-         *
-         * @private
-         * @type {EventEmitter}
-         * @memberof BufferScheduler
          */
         this.emitter = new events.EventEmitter();
         /**
          * An internal offset marker to track data offset in bytes of next outgoingHandler.
-         *
-         * @private
-         * @type {number}
-         * @memberof BufferScheduler
          */
         this.offset = 0;
         /**
          * An internal marker to track whether stream is end.
-         *
-         * @private
-         * @type {boolean}
-         * @memberof BufferScheduler
          */
         this.isStreamEnd = false;
         /**
          * An internal marker to track whether stream or outgoingHandler returns error.
-         *
-         * @private
-         * @type {boolean}
-         * @memberof BufferScheduler
          */
         this.isError = false;
         /**
          * How many handlers are executing.
-         *
-         * @private
-         * @type {number}
-         * @memberof BufferScheduler
          */
         this.executingOutgoingHandlers = 0;
         /**
          * How many buffers have been allocated.
-         *
-         * @private
-         * @type {number}
-         * @memberof BufferScheduler
          */
         this.numBuffers = 0;
         /**
@@ -34015,34 +36708,18 @@ var BufferScheduler = /** @class */ (function () {
          * data received from the stream, when data in unresolvedDataArray exceeds the
          * blockSize defined, it will try to concat a blockSize of buffer, fill into available
          * buffers from incoming and push to outgoing array.
-         *
-         * @private
-         * @type {Buffer[]}
-         * @memberof BufferScheduler
          */
         this.unresolvedDataArray = [];
         /**
          * How much data consisted in unresolvedDataArray.
-         *
-         * @private
-         * @type {number}
-         * @memberof BufferScheduler
          */
         this.unresolvedLength = 0;
         /**
          * The array includes all the available buffers can be used to fill data from stream.
-         *
-         * @private
-         * @type {PooledBuffer[]}
-         * @memberof BufferScheduler
          */
         this.incoming = [];
         /**
          * The array (queue) includes all the buffers filled from stream data.
-         *
-         * @private
-         * @type {PooledBuffer[]}
-         * @memberof BufferScheduler
          */
         this.outgoing = [];
         if (bufferSize <= 0) {
@@ -34065,8 +36742,6 @@ var BufferScheduler = /** @class */ (function () {
      * Start the scheduler, will return error when stream of any of the outgoingHandlers
      * returns error.
      *
-     * @returns {Promise<void>}
-     * @memberof BufferScheduler
      */
     BufferScheduler.prototype.do = function () {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -34119,9 +36794,7 @@ var BufferScheduler = /** @class */ (function () {
     /**
      * Insert a new data into unresolved array.
      *
-     * @private
-     * @param {Buffer} data
-     * @memberof BufferScheduler
+     * @param data -
      */
     BufferScheduler.prototype.appendUnresolvedData = function (data) {
         this.unresolvedDataArray.push(data);
@@ -34131,9 +36804,6 @@ var BufferScheduler = /** @class */ (function () {
      * Try to shift a buffer with size in blockSize. The buffer returned may be less
      * than blockSize when data in unresolvedDataArray is less than bufferSize.
      *
-     * @private
-     * @returns {PooledBuffer}
-     * @memberof BufferScheduler
      */
     BufferScheduler.prototype.shiftBufferFromUnresolvedDataArray = function (buffer) {
         if (!buffer) {
@@ -34152,9 +36822,7 @@ var BufferScheduler = /** @class */ (function () {
      *
      * Return false when available buffers in incoming are not enough, else true.
      *
-     * @private
-     * @returns {boolean} Return false when buffers in incoming are not enough, else true.
-     * @memberof BufferScheduler
+     * @returns Return false when buffers in incoming are not enough, else true.
      */
     BufferScheduler.prototype.resolveData = function () {
         while (this.unresolvedLength >= this.bufferSize) {
@@ -34181,9 +36849,6 @@ var BufferScheduler = /** @class */ (function () {
     /**
      * Try to trigger a outgoing handler for every buffer in outgoing. Stop when
      * concurrency reaches.
-     *
-     * @private
-     * @memberof BufferScheduler
      */
     BufferScheduler.prototype.triggerOutgoingHandlers = function () {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -34205,10 +36870,7 @@ var BufferScheduler = /** @class */ (function () {
     /**
      * Trigger a outgoing handler for a buffer shifted from outgoing.
      *
-     * @private
-     * @param {Buffer} buffer
-     * @returns {Promise<any>}
-     * @memberof BufferScheduler
+     * @param buffer -
      */
     BufferScheduler.prototype.triggerOutgoingHandler = function (buffer) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -34242,9 +36904,7 @@ var BufferScheduler = /** @class */ (function () {
     /**
      * Return buffer used by outgoing handler into incoming.
      *
-     * @private
-     * @param {Buffer} buffer
-     * @memberof BufferScheduler
+     * @param buffer -
      */
     BufferScheduler.prototype.reuseBuffer = function (buffer) {
         this.incoming.push(buffer);
@@ -34257,37 +36917,13 @@ var BufferScheduler = /** @class */ (function () {
 
 // Copyright (c) Microsoft Corporation.
 /**
- * Creates a span using the global tracer.
- * @param name The name of the operation being performed.
- * @param tracingOptions The options for the underlying http request.
- */
-function createSpan(operationName, tracingOptions) {
-    if (tracingOptions === void 0) { tracingOptions = {}; }
-    var tracer = coreTracing.getTracer();
-    var spanOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { kind: api.SpanKind.INTERNAL });
-    var span = tracer.startSpan("Azure.Storage.Blob." + operationName, spanOptions);
-    span.setAttribute("az.namespace", "Microsoft.Storage");
-    var newOptions = tracingOptions.spanOptions || {};
-    if (span.isRecording()) {
-        newOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { parent: span.context(), attributes: tslib.__assign(tslib.__assign({}, spanOptions.attributes), { "az.namespace": "Microsoft.Storage" }) });
-    }
-    return {
-        span: span,
-        spanOptions: newOptions
-    };
-}
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
-/**
  * Reads a readable stream into buffer. Fill the buffer from offset to end.
  *
- * @export
- * @param {NodeJS.ReadableStream} stream A Node.js Readable stream
- * @param {Buffer} buffer Buffer to be filled, length must >= offset
- * @param {number} offset From which position in the buffer to be filled, inclusive
- * @param {number} end To which position in the buffer to be filled, exclusive
- * @param {string} [encoding] Encoding of the Readable stream
- * @returns {Promise<void>}
+ * @param stream - A Node.js Readable stream
+ * @param buffer - Buffer to be filled, length must greater than or equal to offset
+ * @param offset - From which position in the buffer to be filled, inclusive
+ * @param end - To which position in the buffer to be filled, exclusive
+ * @param encoding - Encoding of the Readable stream
  */
 function streamToBuffer(stream, buffer, offset, end, encoding) {
     return tslib.__awaiter(this, void 0, void 0, function () {
@@ -34327,12 +36963,11 @@ function streamToBuffer(stream, buffer, offset, end, encoding) {
 /**
  * Reads a readable stream into buffer entirely.
  *
- * @export
- * @param {NodeJS.ReadableStream} stream A Node.js Readable stream
- * @param {Buffer} buffer Buffer to be filled, length must >= offset
- * @param {string} [encoding] Encoding of the Readable stream
- * @returns {Promise<number>} with the count of bytes read.
- * @throws {RangeError} If buffer size is not big enough.
+ * @param stream - A Node.js Readable stream
+ * @param buffer - Buffer to be filled, length must greater than or equal to offset
+ * @param encoding - Encoding of the Readable stream
+ * @returns with the count of bytes read.
+ * @throws `RangeError` If buffer size is not big enough.
  */
 function streamToBuffer2(stream, buffer, encoding) {
     return tslib.__awaiter(this, void 0, void 0, function () {
@@ -34369,10 +37004,8 @@ function streamToBuffer2(stream, buffer, encoding) {
  *
  * Writes the content of a readstream to a local file. Returns a Promise which is completed after the file handle is closed.
  *
- * @export
- * @param {NodeJS.ReadableStream} rs The read stream.
- * @param {string} file Destination file path.
- * @returns {Promise<void>}
+ * @param rs - The read stream.
+ * @param file - Destination file path.
  */
 function readStreamToLocalFile(rs, file) {
     return tslib.__awaiter(this, void 0, void 0, function () {
@@ -34399,1107 +37032,9 @@ function readStreamToLocalFile(rs, file) {
 var fsStat = util.promisify(fs.stat);
 var fsCreateReadStream = fs.createReadStream;
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-/**
- * ONLY AVAILABLE IN NODE.JS RUNTIME.
- *
- * This is a helper class to construct a string representing the permissions granted by a ServiceSAS to a blob. Setting
- * a value to true means that any SAS which uses these permissions will grant permissions for that operation. Once all
- * the values are set, this should be serialized with toString and set as the permissions field on a
- * {@link BlobSASSignatureValues} object. It is possible to construct the permissions string without this class, but
- * the order of the permissions is particular and this class guarantees correctness.
- *
- * @export
- * @class BlobSASPermissions
- */
-var BlobSASPermissions = /** @class */ (function () {
-    function BlobSASPermissions() {
-        /**
-         * Specifies Read access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.read = false;
-        /**
-         * Specifies Add access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.add = false;
-        /**
-         * Specifies Create access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.create = false;
-        /**
-         * Specifies Write access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.write = false;
-        /**
-         * Specifies Delete access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.delete = false;
-        /**
-         * Specifies Delete version access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.deleteVersion = false;
-        /**
-         * Specfies Tag access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.tag = false;
-        /**
-         * Specifies Move access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.move = false;
-        /**
-         * Specifies Execute access granted.
-         *
-         * @type {boolean}
-         * @memberof BlobSASPermissions
-         */
-        this.execute = false;
-    }
-    /**
-     * Creates a {@link BlobSASPermissions} from the specified permissions string. This method will throw an
-     * Error if it encounters a character that does not correspond to a valid permission.
-     *
-     * @static
-     * @param {string} permissions
-     * @returns {BlobSASPermissions}
-     * @memberof BlobSASPermissions
-     */
-    BlobSASPermissions.parse = function (permissions) {
-        var blobSASPermissions = new BlobSASPermissions();
-        for (var _i = 0, permissions_1 = permissions; _i < permissions_1.length; _i++) {
-            var char = permissions_1[_i];
-            switch (char) {
-                case "r":
-                    blobSASPermissions.read = true;
-                    break;
-                case "a":
-                    blobSASPermissions.add = true;
-                    break;
-                case "c":
-                    blobSASPermissions.create = true;
-                    break;
-                case "w":
-                    blobSASPermissions.write = true;
-                    break;
-                case "d":
-                    blobSASPermissions.delete = true;
-                    break;
-                case "x":
-                    blobSASPermissions.deleteVersion = true;
-                    break;
-                case "t":
-                    blobSASPermissions.tag = true;
-                    break;
-                case "m":
-                    blobSASPermissions.move = true;
-                    break;
-                case "e":
-                    blobSASPermissions.execute = true;
-                    break;
-                default:
-                    throw new RangeError("Invalid permission: " + char);
-            }
-        }
-        return blobSASPermissions;
-    };
-    /**
-     * Creates a {@link BlobSASPermissions} from a raw object which contains same keys as it
-     * and boolean values for them.
-     *
-     * @static
-     * @param {BlobSASPermissionsLike} permissionLike
-     * @returns {BlobSASPermissions}
-     * @memberof BlobSASPermissions
-     */
-    BlobSASPermissions.from = function (permissionLike) {
-        var blobSASPermissions = new BlobSASPermissions();
-        if (permissionLike.read) {
-            blobSASPermissions.read = true;
-        }
-        if (permissionLike.add) {
-            blobSASPermissions.add = true;
-        }
-        if (permissionLike.create) {
-            blobSASPermissions.create = true;
-        }
-        if (permissionLike.write) {
-            blobSASPermissions.write = true;
-        }
-        if (permissionLike.delete) {
-            blobSASPermissions.delete = true;
-        }
-        if (permissionLike.deleteVersion) {
-            blobSASPermissions.deleteVersion = true;
-        }
-        if (permissionLike.tag) {
-            blobSASPermissions.tag = true;
-        }
-        if (permissionLike.move) {
-            blobSASPermissions.move = true;
-        }
-        if (permissionLike.execute) {
-            blobSASPermissions.execute = true;
-        }
-        return blobSASPermissions;
-    };
-    /**
-     * Converts the given permissions to a string. Using this method will guarantee the permissions are in an
-     * order accepted by the service.
-     *
-     * @returns {string} A string which represents the BlobSASPermissions
-     * @memberof BlobSASPermissions
-     */
-    BlobSASPermissions.prototype.toString = function () {
-        var permissions = [];
-        if (this.read) {
-            permissions.push("r");
-        }
-        if (this.add) {
-            permissions.push("a");
-        }
-        if (this.create) {
-            permissions.push("c");
-        }
-        if (this.write) {
-            permissions.push("w");
-        }
-        if (this.delete) {
-            permissions.push("d");
-        }
-        if (this.deleteVersion) {
-            permissions.push("x");
-        }
-        if (this.tag) {
-            permissions.push("t");
-        }
-        if (this.move) {
-            permissions.push("m");
-        }
-        if (this.execute) {
-            permissions.push("e");
-        }
-        return permissions.join("");
-    };
-    return BlobSASPermissions;
-}());
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-/**
- * This is a helper class to construct a string representing the permissions granted by a ServiceSAS to a container.
- * Setting a value to true means that any SAS which uses these permissions will grant permissions for that operation.
- * Once all the values are set, this should be serialized with toString and set as the permissions field on a
- * {@link BlobSASSignatureValues} object. It is possible to construct the permissions string without this class, but
- * the order of the permissions is particular and this class guarantees correctness.
- *
- * @export
- * @class ContainerSASPermissions
- */
-var ContainerSASPermissions = /** @class */ (function () {
-    function ContainerSASPermissions() {
-        /**
-         * Specifies Read access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.read = false;
-        /**
-         * Specifies Add access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.add = false;
-        /**
-         * Specifies Create access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.create = false;
-        /**
-         * Specifies Write access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.write = false;
-        /**
-         * Specifies Delete access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.delete = false;
-        /**
-         * Specifies Delete version access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.deleteVersion = false;
-        /**
-         * Specifies List access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.list = false;
-        /**
-         * Specfies Tag access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.tag = false;
-        /**
-         * Specifies Move access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.move = false;
-        /**
-         * Specifies Execute access granted.
-         *
-         * @type {boolean}
-         * @memberof ContainerSASPermissions
-         */
-        this.execute = false;
-    }
-    /**
-     * Creates an {@link ContainerSASPermissions} from the specified permissions string. This method will throw an
-     * Error if it encounters a character that does not correspond to a valid permission.
-     *
-     * @static
-     * @param {string} permissions
-     * @returns {ContainerSASPermissions}
-     * @memberof ContainerSASPermissions
-     */
-    ContainerSASPermissions.parse = function (permissions) {
-        var containerSASPermissions = new ContainerSASPermissions();
-        for (var _i = 0, permissions_1 = permissions; _i < permissions_1.length; _i++) {
-            var char = permissions_1[_i];
-            switch (char) {
-                case "r":
-                    containerSASPermissions.read = true;
-                    break;
-                case "a":
-                    containerSASPermissions.add = true;
-                    break;
-                case "c":
-                    containerSASPermissions.create = true;
-                    break;
-                case "w":
-                    containerSASPermissions.write = true;
-                    break;
-                case "d":
-                    containerSASPermissions.delete = true;
-                    break;
-                case "l":
-                    containerSASPermissions.list = true;
-                    break;
-                case "t":
-                    containerSASPermissions.tag = true;
-                    break;
-                case "x":
-                    containerSASPermissions.deleteVersion = true;
-                    break;
-                case "m":
-                    containerSASPermissions.move = true;
-                    break;
-                case "e":
-                    containerSASPermissions.execute = true;
-                    break;
-                default:
-                    throw new RangeError("Invalid permission " + char);
-            }
-        }
-        return containerSASPermissions;
-    };
-    /**
-     * Creates a {@link ContainerSASPermissions} from a raw object which contains same keys as it
-     * and boolean values for them.
-     *
-     * @static
-     * @param {ContainerSASPermissionsLike} permissionLike
-     * @returns {ContainerSASPermissions}
-     * @memberof ContainerSASPermissions
-     */
-    ContainerSASPermissions.from = function (permissionLike) {
-        var containerSASPermissions = new ContainerSASPermissions();
-        if (permissionLike.read) {
-            containerSASPermissions.read = true;
-        }
-        if (permissionLike.add) {
-            containerSASPermissions.add = true;
-        }
-        if (permissionLike.create) {
-            containerSASPermissions.create = true;
-        }
-        if (permissionLike.write) {
-            containerSASPermissions.write = true;
-        }
-        if (permissionLike.delete) {
-            containerSASPermissions.delete = true;
-        }
-        if (permissionLike.list) {
-            containerSASPermissions.list = true;
-        }
-        if (permissionLike.deleteVersion) {
-            containerSASPermissions.deleteVersion = true;
-        }
-        if (permissionLike.tag) {
-            containerSASPermissions.tag = true;
-        }
-        if (permissionLike.move) {
-            containerSASPermissions.move = true;
-        }
-        if (permissionLike.execute) {
-            containerSASPermissions.execute = true;
-        }
-        return containerSASPermissions;
-    };
-    /**
-     * Converts the given permissions to a string. Using this method will guarantee the permissions are in an
-     * order accepted by the service.
-     *
-     * The order of the characters should be as specified here to ensure correctness.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
-     *
-     * @returns {string}
-     * @memberof ContainerSASPermissions
-     */
-    ContainerSASPermissions.prototype.toString = function () {
-        var permissions = [];
-        if (this.read) {
-            permissions.push("r");
-        }
-        if (this.add) {
-            permissions.push("a");
-        }
-        if (this.create) {
-            permissions.push("c");
-        }
-        if (this.write) {
-            permissions.push("w");
-        }
-        if (this.delete) {
-            permissions.push("d");
-        }
-        if (this.deleteVersion) {
-            permissions.push("x");
-        }
-        if (this.list) {
-            permissions.push("l");
-        }
-        if (this.tag) {
-            permissions.push("t");
-        }
-        if (this.move) {
-            permissions.push("m");
-        }
-        if (this.execute) {
-            permissions.push("e");
-        }
-        return permissions.join("");
-    };
-    return ContainerSASPermissions;
-}());
-
-/**
- * ONLY AVAILABLE IN NODE.JS RUNTIME.
- *
- * UserDelegationKeyCredential is only used for generation of user delegation SAS.
- * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-user-delegation-sas
- *
- * @export
- * @class UserDelegationKeyCredential
- */
-var UserDelegationKeyCredential = /** @class */ (function () {
-    /**
-     * Creates an instance of UserDelegationKeyCredential.
-     * @param {string} accountName
-     * @param {UserDelegationKey} userDelegationKey
-     * @memberof UserDelegationKeyCredential
-     */
-    function UserDelegationKeyCredential(accountName, userDelegationKey) {
-        this.accountName = accountName;
-        this.userDelegationKey = userDelegationKey;
-        this.key = Buffer.from(userDelegationKey.value, "base64");
-    }
-    /**
-     * Generates a hash signature for an HTTP request or for a SAS.
-     *
-     * @param {string} stringToSign
-     * @returns {string}
-     * @memberof UserDelegationKeyCredential
-     */
-    UserDelegationKeyCredential.prototype.computeHMACSHA256 = function (stringToSign) {
-        // console.log(`stringToSign: ${JSON.stringify(stringToSign)}`);
-        return crypto.createHmac("sha256", this.key)
-            .update(stringToSign, "utf8")
-            .digest("base64");
-    };
-    return UserDelegationKeyCredential;
-}());
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-/**
- * Generate SasIPRange format string. For example:
- *
- * "8.8.8.8" or "1.1.1.1-255.255.255.255"
- *
- * @export
- * @param {SasIPRange} ipRange
- * @returns {string}
- */
-function ipRangeToString(ipRange) {
-    return ipRange.end ? ipRange.start + "-" + ipRange.end : ipRange.start;
-}
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
-(function (SASProtocol) {
-    /**
-     * Protocol that allows HTTPS only
-     */
-    SASProtocol["Https"] = "https";
-    /**
-     * Protocol that allows both HTTPS and HTTP
-     */
-    SASProtocol["HttpsAndHttp"] = "https,http";
-})(exports.SASProtocol || (exports.SASProtocol = {}));
-/**
- * Represents the components that make up an Azure Storage SAS' query parameters. This type is not constructed directly
- * by the user; it is only generated by the {@link AccountSASSignatureValues} and {@link BlobSASSignatureValues}
- * types. Once generated, it can be encoded into a {@code String} and appended to a URL directly (though caution should
- * be taken here in case there are existing query parameters, which might affect the appropriate means of appending
- * these query parameters).
- *
- * NOTE: Instances of this class are immutable.
- *
- * @export
- * @class SASQueryParameters
- */
-var SASQueryParameters = /** @class */ (function () {
-    function SASQueryParameters(version, signature, permissionsOrOptions, services, resourceTypes, protocol, startsOn, expiresOn, ipRange, identifier, resource, cacheControl, contentDisposition, contentEncoding, contentLanguage, contentType, userDelegationKey, preauthorizedAgentObjectId, correlationId) {
-        this.version = version;
-        this.signature = signature;
-        if (permissionsOrOptions !== undefined && typeof permissionsOrOptions !== "string") {
-            // SASQueryParametersOptions
-            this.permissions = permissionsOrOptions.permissions;
-            this.services = permissionsOrOptions.services;
-            this.resourceTypes = permissionsOrOptions.resourceTypes;
-            this.protocol = permissionsOrOptions.protocol;
-            this.startsOn = permissionsOrOptions.startsOn;
-            this.expiresOn = permissionsOrOptions.expiresOn;
-            this.ipRangeInner = permissionsOrOptions.ipRange;
-            this.identifier = permissionsOrOptions.identifier;
-            this.resource = permissionsOrOptions.resource;
-            this.cacheControl = permissionsOrOptions.cacheControl;
-            this.contentDisposition = permissionsOrOptions.contentDisposition;
-            this.contentEncoding = permissionsOrOptions.contentEncoding;
-            this.contentLanguage = permissionsOrOptions.contentLanguage;
-            this.contentType = permissionsOrOptions.contentType;
-            if (permissionsOrOptions.userDelegationKey) {
-                this.signedOid = permissionsOrOptions.userDelegationKey.signedObjectId;
-                this.signedTenantId = permissionsOrOptions.userDelegationKey.signedTenantId;
-                this.signedStartsOn = permissionsOrOptions.userDelegationKey.signedStartsOn;
-                this.signedExpiresOn = permissionsOrOptions.userDelegationKey.signedExpiresOn;
-                this.signedService = permissionsOrOptions.userDelegationKey.signedService;
-                this.signedVersion = permissionsOrOptions.userDelegationKey.signedVersion;
-                this.preauthorizedAgentObjectId = permissionsOrOptions.preauthorizedAgentObjectId;
-                this.correlationId = permissionsOrOptions.correlationId;
-            }
-        }
-        else {
-            this.services = services;
-            this.resourceTypes = resourceTypes;
-            this.expiresOn = expiresOn;
-            this.permissions = permissionsOrOptions;
-            this.protocol = protocol;
-            this.startsOn = startsOn;
-            this.ipRangeInner = ipRange;
-            this.identifier = identifier;
-            this.resource = resource;
-            this.cacheControl = cacheControl;
-            this.contentDisposition = contentDisposition;
-            this.contentEncoding = contentEncoding;
-            this.contentLanguage = contentLanguage;
-            this.contentType = contentType;
-            if (userDelegationKey) {
-                this.signedOid = userDelegationKey.signedObjectId;
-                this.signedTenantId = userDelegationKey.signedTenantId;
-                this.signedStartsOn = userDelegationKey.signedStartsOn;
-                this.signedExpiresOn = userDelegationKey.signedExpiresOn;
-                this.signedService = userDelegationKey.signedService;
-                this.signedVersion = userDelegationKey.signedVersion;
-                this.preauthorizedAgentObjectId = preauthorizedAgentObjectId;
-                this.correlationId = correlationId;
-            }
-        }
-    }
-    Object.defineProperty(SASQueryParameters.prototype, "ipRange", {
-        /**
-         * Optional. IP range allowed for this SAS.
-         *
-         * @readonly
-         * @type {(SasIPRange | undefined)}
-         * @memberof SASQueryParameters
-         */
-        get: function () {
-            if (this.ipRangeInner) {
-                return {
-                    end: this.ipRangeInner.end,
-                    start: this.ipRangeInner.start
-                };
-            }
-            return undefined;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    /**
-     * Encodes all SAS query parameters into a string that can be appended to a URL.
-     *
-     * @returns {string}
-     * @memberof SASQueryParameters
-     */
-    SASQueryParameters.prototype.toString = function () {
-        var params = [
-            "sv",
-            "ss",
-            "srt",
-            "spr",
-            "st",
-            "se",
-            "sip",
-            "si",
-            "skoid",
-            "sktid",
-            "skt",
-            "ske",
-            "sks",
-            "skv",
-            "sr",
-            "sp",
-            "sig",
-            "rscc",
-            "rscd",
-            "rsce",
-            "rscl",
-            "rsct",
-            "saoid",
-            "scid"
-        ];
-        var queries = [];
-        for (var _i = 0, params_1 = params; _i < params_1.length; _i++) {
-            var param = params_1[_i];
-            switch (param) {
-                case "sv":
-                    this.tryAppendQueryParameter(queries, param, this.version);
-                    break;
-                case "ss":
-                    this.tryAppendQueryParameter(queries, param, this.services);
-                    break;
-                case "srt":
-                    this.tryAppendQueryParameter(queries, param, this.resourceTypes);
-                    break;
-                case "spr":
-                    this.tryAppendQueryParameter(queries, param, this.protocol);
-                    break;
-                case "st":
-                    this.tryAppendQueryParameter(queries, param, this.startsOn ? truncatedISO8061Date(this.startsOn, false) : undefined);
-                    break;
-                case "se":
-                    this.tryAppendQueryParameter(queries, param, this.expiresOn ? truncatedISO8061Date(this.expiresOn, false) : undefined);
-                    break;
-                case "sip":
-                    this.tryAppendQueryParameter(queries, param, this.ipRange ? ipRangeToString(this.ipRange) : undefined);
-                    break;
-                case "si":
-                    this.tryAppendQueryParameter(queries, param, this.identifier);
-                    break;
-                case "skoid": // Signed object ID
-                    this.tryAppendQueryParameter(queries, param, this.signedOid);
-                    break;
-                case "sktid": // Signed tenant ID
-                    this.tryAppendQueryParameter(queries, param, this.signedTenantId);
-                    break;
-                case "skt": // Signed key start time
-                    this.tryAppendQueryParameter(queries, param, this.signedStartsOn ? truncatedISO8061Date(this.signedStartsOn, false) : undefined);
-                    break;
-                case "ske": // Signed key expiry time
-                    this.tryAppendQueryParameter(queries, param, this.signedExpiresOn ? truncatedISO8061Date(this.signedExpiresOn, false) : undefined);
-                    break;
-                case "sks": // Signed key service
-                    this.tryAppendQueryParameter(queries, param, this.signedService);
-                    break;
-                case "skv": // Signed key version
-                    this.tryAppendQueryParameter(queries, param, this.signedVersion);
-                    break;
-                case "sr":
-                    this.tryAppendQueryParameter(queries, param, this.resource);
-                    break;
-                case "sp":
-                    this.tryAppendQueryParameter(queries, param, this.permissions);
-                    break;
-                case "sig":
-                    this.tryAppendQueryParameter(queries, param, this.signature);
-                    break;
-                case "rscc":
-                    this.tryAppendQueryParameter(queries, param, this.cacheControl);
-                    break;
-                case "rscd":
-                    this.tryAppendQueryParameter(queries, param, this.contentDisposition);
-                    break;
-                case "rsce":
-                    this.tryAppendQueryParameter(queries, param, this.contentEncoding);
-                    break;
-                case "rscl":
-                    this.tryAppendQueryParameter(queries, param, this.contentLanguage);
-                    break;
-                case "rsct":
-                    this.tryAppendQueryParameter(queries, param, this.contentType);
-                    break;
-                case "saoid":
-                    this.tryAppendQueryParameter(queries, param, this.preauthorizedAgentObjectId);
-                    break;
-                case "scid":
-                    this.tryAppendQueryParameter(queries, param, this.correlationId);
-                    break;
-            }
-        }
-        return queries.join("&");
-    };
-    /**
-     * A private helper method used to filter and append query key/value pairs into an array.
-     *
-     * @private
-     * @param {string[]} queries
-     * @param {string} key
-     * @param {string} [value]
-     * @returns {void}
-     * @memberof SASQueryParameters
-     */
-    SASQueryParameters.prototype.tryAppendQueryParameter = function (queries, key, value) {
-        if (!value) {
-            return;
-        }
-        key = encodeURIComponent(key);
-        value = encodeURIComponent(value);
-        if (key.length > 0 && value.length > 0) {
-            queries.push(key + "=" + value);
-        }
-    };
-    return SASQueryParameters;
-}());
-
-// Copyright (c) Microsoft Corporation. All rights reserved.
-function generateBlobSASQueryParameters(blobSASSignatureValues, sharedKeyCredentialOrUserDelegationKey, accountName) {
-    var version = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
-    var sharedKeyCredential = sharedKeyCredentialOrUserDelegationKey instanceof StorageSharedKeyCredential
-        ? sharedKeyCredentialOrUserDelegationKey
-        : undefined;
-    var userDelegationKeyCredential;
-    if (sharedKeyCredential === undefined && accountName !== undefined) {
-        userDelegationKeyCredential = new UserDelegationKeyCredential(accountName, sharedKeyCredentialOrUserDelegationKey);
-    }
-    if (sharedKeyCredential === undefined && userDelegationKeyCredential === undefined) {
-        throw TypeError("Invalid sharedKeyCredential, userDelegationKey or accountName.");
-    }
-    // Version 2019-12-12 adds support for the blob tags permission.
-    // Version 2018-11-09 adds support for the signed resource and signed blob snapshot time fields.
-    // https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas#constructing-the-signature-string
-    if (version >= "2018-11-09") {
-        if (sharedKeyCredential !== undefined) {
-            return generateBlobSASQueryParameters20181109(blobSASSignatureValues, sharedKeyCredential);
-        }
-        else {
-            // Version 2020-02-10 delegation SAS signature construction includes preauthorizedAgentObjectId, agentObjectId, correlationId.
-            if (version >= "2020-02-10") {
-                return generateBlobSASQueryParametersUDK20200210(blobSASSignatureValues, userDelegationKeyCredential);
-            }
-            else {
-                return generateBlobSASQueryParametersUDK20181109(blobSASSignatureValues, userDelegationKeyCredential);
-            }
-        }
-    }
-    if (version >= "2015-04-05") {
-        if (sharedKeyCredential !== undefined) {
-            return generateBlobSASQueryParameters20150405(blobSASSignatureValues, sharedKeyCredential);
-        }
-        else {
-            throw new RangeError("'version' must be >= '2018-11-09' when generating user delegation SAS using user delegation key.");
-        }
-    }
-    throw new RangeError("'version' must be >= '2015-04-05'.");
-}
-/**
- * ONLY AVAILABLE IN NODE.JS RUNTIME.
- * IMPLEMENTATION FOR API VERSION FROM 2015-04-05 AND BEFORE 2018-11-09.
- *
- * Creates an instance of SASQueryParameters.
- *
- * Only accepts required settings needed to create a SAS. For optional settings please
- * set corresponding properties directly, such as permissions, startsOn and identifier.
- *
- * WARNING: When identifier is not provided, permissions and expiresOn are required.
- * You MUST assign value to identifier or expiresOn & permissions manually if you initial with
- * this constructor.
- *
- * @param {BlobSASSignatureValues} blobSASSignatureValues
- * @param {StorageSharedKeyCredential} sharedKeyCredential
- * @returns {SASQueryParameters}
- */
-function generateBlobSASQueryParameters20150405(blobSASSignatureValues, sharedKeyCredential) {
-    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
-    if (!blobSASSignatureValues.identifier &&
-        !(blobSASSignatureValues.permissions && blobSASSignatureValues.expiresOn)) {
-        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when 'identifier' is not provided.");
-    }
-    var resource = "c";
-    if (blobSASSignatureValues.blobName) {
-        resource = "b";
-    }
-    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
-    var verifiedPermissions;
-    if (blobSASSignatureValues.permissions) {
-        if (blobSASSignatureValues.blobName) {
-            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-        else {
-            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-    }
-    // Signature is generated on the un-url-encoded values.
-    var stringToSign = [
-        verifiedPermissions ? verifiedPermissions : "",
-        blobSASSignatureValues.startsOn
-            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
-            : "",
-        blobSASSignatureValues.expiresOn
-            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
-            : "",
-        getCanonicalName(sharedKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
-        blobSASSignatureValues.identifier,
-        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
-        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
-        blobSASSignatureValues.version,
-        blobSASSignatureValues.cacheControl ? blobSASSignatureValues.cacheControl : "",
-        blobSASSignatureValues.contentDisposition ? blobSASSignatureValues.contentDisposition : "",
-        blobSASSignatureValues.contentEncoding ? blobSASSignatureValues.contentEncoding : "",
-        blobSASSignatureValues.contentLanguage ? blobSASSignatureValues.contentLanguage : "",
-        blobSASSignatureValues.contentType ? blobSASSignatureValues.contentType : ""
-    ].join("\n");
-    var signature = sharedKeyCredential.computeHMACSHA256(stringToSign);
-    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType);
-}
-/**
- * ONLY AVAILABLE IN NODE.JS RUNTIME.
- * IMPLEMENTATION FOR API VERSION FROM 2018-11-09.
- *
- * Creates an instance of SASQueryParameters.
- *
- * Only accepts required settings needed to create a SAS. For optional settings please
- * set corresponding properties directly, such as permissions, startsOn and identifier.
- *
- * WARNING: When identifier is not provided, permissions and expiresOn are required.
- * You MUST assign value to identifier or expiresOn & permissions manually if you initial with
- * this constructor.
- *
- * @param {BlobSASSignatureValues} blobSASSignatureValues
- * @param {StorageSharedKeyCredential} sharedKeyCredential
- * @returns {SASQueryParameters}
- */
-function generateBlobSASQueryParameters20181109(blobSASSignatureValues, sharedKeyCredential) {
-    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
-    if (!blobSASSignatureValues.identifier &&
-        !(blobSASSignatureValues.permissions && blobSASSignatureValues.expiresOn)) {
-        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when 'identifier' is not provided.");
-    }
-    var resource = "c";
-    var timestamp = blobSASSignatureValues.snapshotTime;
-    if (blobSASSignatureValues.blobName) {
-        resource = "b";
-        if (blobSASSignatureValues.snapshotTime) {
-            resource = "bs";
-        }
-        else if (blobSASSignatureValues.versionId) {
-            resource = "bv";
-            timestamp = blobSASSignatureValues.versionId;
-        }
-    }
-    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
-    var verifiedPermissions;
-    if (blobSASSignatureValues.permissions) {
-        if (blobSASSignatureValues.blobName) {
-            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-        else {
-            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-    }
-    // Signature is generated on the un-url-encoded values.
-    var stringToSign = [
-        verifiedPermissions ? verifiedPermissions : "",
-        blobSASSignatureValues.startsOn
-            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
-            : "",
-        blobSASSignatureValues.expiresOn
-            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
-            : "",
-        getCanonicalName(sharedKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
-        blobSASSignatureValues.identifier,
-        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
-        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
-        blobSASSignatureValues.version,
-        resource,
-        timestamp,
-        blobSASSignatureValues.cacheControl ? blobSASSignatureValues.cacheControl : "",
-        blobSASSignatureValues.contentDisposition ? blobSASSignatureValues.contentDisposition : "",
-        blobSASSignatureValues.contentEncoding ? blobSASSignatureValues.contentEncoding : "",
-        blobSASSignatureValues.contentLanguage ? blobSASSignatureValues.contentLanguage : "",
-        blobSASSignatureValues.contentType ? blobSASSignatureValues.contentType : ""
-    ].join("\n");
-    var signature = sharedKeyCredential.computeHMACSHA256(stringToSign);
-    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType);
-}
-/**
- * ONLY AVAILABLE IN NODE.JS RUNTIME.
- * IMPLEMENTATION FOR API VERSION FROM 2018-11-09.
- *
- * Creates an instance of SASQueryParameters.
- *
- * Only accepts required settings needed to create a SAS. For optional settings please
- * set corresponding properties directly, such as permissions, startsOn.
- *
- * WARNING: identifier will be ignored, permissions and expiresOn are required.
- *
- * @param {BlobSASSignatureValues} blobSASSignatureValues
- * @param {UserDelegationKeyCredential} userDelegationKeyCredential
- * @returns {SASQueryParameters}
- */
-function generateBlobSASQueryParametersUDK20181109(blobSASSignatureValues, userDelegationKeyCredential) {
-    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
-    // Stored access policies are not supported for a user delegation SAS.
-    if (!blobSASSignatureValues.permissions || !blobSASSignatureValues.expiresOn) {
-        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when generating user delegation SAS.");
-    }
-    var resource = "c";
-    var timestamp = blobSASSignatureValues.snapshotTime;
-    if (blobSASSignatureValues.blobName) {
-        resource = "b";
-        if (blobSASSignatureValues.snapshotTime) {
-            resource = "bs";
-        }
-        else if (blobSASSignatureValues.versionId) {
-            resource = "bv";
-            timestamp = blobSASSignatureValues.versionId;
-        }
-    }
-    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
-    var verifiedPermissions;
-    if (blobSASSignatureValues.permissions) {
-        if (blobSASSignatureValues.blobName) {
-            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-        else {
-            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-    }
-    // Signature is generated on the un-url-encoded values.
-    var stringToSign = [
-        verifiedPermissions ? verifiedPermissions : "",
-        blobSASSignatureValues.startsOn
-            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
-            : "",
-        blobSASSignatureValues.expiresOn
-            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
-            : "",
-        getCanonicalName(userDelegationKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
-        userDelegationKeyCredential.userDelegationKey.signedObjectId,
-        userDelegationKeyCredential.userDelegationKey.signedTenantId,
-        userDelegationKeyCredential.userDelegationKey.signedStartsOn
-            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedStartsOn, false)
-            : "",
-        userDelegationKeyCredential.userDelegationKey.signedExpiresOn
-            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedExpiresOn, false)
-            : "",
-        userDelegationKeyCredential.userDelegationKey.signedService,
-        userDelegationKeyCredential.userDelegationKey.signedVersion,
-        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
-        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
-        blobSASSignatureValues.version,
-        resource,
-        timestamp,
-        blobSASSignatureValues.cacheControl,
-        blobSASSignatureValues.contentDisposition,
-        blobSASSignatureValues.contentEncoding,
-        blobSASSignatureValues.contentLanguage,
-        blobSASSignatureValues.contentType
-    ].join("\n");
-    var signature = userDelegationKeyCredential.computeHMACSHA256(stringToSign);
-    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType, userDelegationKeyCredential.userDelegationKey);
-}
-/**
- * ONLY AVAILABLE IN NODE.JS RUNTIME.
- * IMPLEMENTATION FOR API VERSION FROM 2020-02-10.
- *
- * Creates an instance of SASQueryParameters.
- *
- * Only accepts required settings needed to create a SAS. For optional settings please
- * set corresponding properties directly, such as permissions, startsOn.
- *
- * WARNING: identifier will be ignored, permissions and expiresOn are required.
- *
- * @param {BlobSASSignatureValues} blobSASSignatureValues
- * @param {UserDelegationKeyCredential} userDelegationKeyCredential
- * @returns {SASQueryParameters}
- */
-function generateBlobSASQueryParametersUDK20200210(blobSASSignatureValues, userDelegationKeyCredential) {
-    blobSASSignatureValues = SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues);
-    // Stored access policies are not supported for a user delegation SAS.
-    if (!blobSASSignatureValues.permissions || !blobSASSignatureValues.expiresOn) {
-        throw new RangeError("Must provide 'permissions' and 'expiresOn' for Blob SAS generation when generating user delegation SAS.");
-    }
-    var resource = "c";
-    var timestamp = blobSASSignatureValues.snapshotTime;
-    if (blobSASSignatureValues.blobName) {
-        resource = "b";
-        if (blobSASSignatureValues.snapshotTime) {
-            resource = "bs";
-        }
-        else if (blobSASSignatureValues.versionId) {
-            resource = "bv";
-            timestamp = blobSASSignatureValues.versionId;
-        }
-    }
-    // Calling parse and toString guarantees the proper ordering and throws on invalid characters.
-    var verifiedPermissions;
-    if (blobSASSignatureValues.permissions) {
-        if (blobSASSignatureValues.blobName) {
-            verifiedPermissions = BlobSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-        else {
-            verifiedPermissions = ContainerSASPermissions.parse(blobSASSignatureValues.permissions.toString()).toString();
-        }
-    }
-    // Signature is generated on the un-url-encoded values.
-    var stringToSign = [
-        verifiedPermissions ? verifiedPermissions : "",
-        blobSASSignatureValues.startsOn
-            ? truncatedISO8061Date(blobSASSignatureValues.startsOn, false)
-            : "",
-        blobSASSignatureValues.expiresOn
-            ? truncatedISO8061Date(blobSASSignatureValues.expiresOn, false)
-            : "",
-        getCanonicalName(userDelegationKeyCredential.accountName, blobSASSignatureValues.containerName, blobSASSignatureValues.blobName),
-        userDelegationKeyCredential.userDelegationKey.signedObjectId,
-        userDelegationKeyCredential.userDelegationKey.signedTenantId,
-        userDelegationKeyCredential.userDelegationKey.signedStartsOn
-            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedStartsOn, false)
-            : "",
-        userDelegationKeyCredential.userDelegationKey.signedExpiresOn
-            ? truncatedISO8061Date(userDelegationKeyCredential.userDelegationKey.signedExpiresOn, false)
-            : "",
-        userDelegationKeyCredential.userDelegationKey.signedService,
-        userDelegationKeyCredential.userDelegationKey.signedVersion,
-        blobSASSignatureValues.preauthorizedAgentObjectId,
-        undefined,
-        blobSASSignatureValues.correlationId,
-        blobSASSignatureValues.ipRange ? ipRangeToString(blobSASSignatureValues.ipRange) : "",
-        blobSASSignatureValues.protocol ? blobSASSignatureValues.protocol : "",
-        blobSASSignatureValues.version,
-        resource,
-        timestamp,
-        blobSASSignatureValues.cacheControl,
-        blobSASSignatureValues.contentDisposition,
-        blobSASSignatureValues.contentEncoding,
-        blobSASSignatureValues.contentLanguage,
-        blobSASSignatureValues.contentType
-    ].join("\n");
-    var signature = userDelegationKeyCredential.computeHMACSHA256(stringToSign);
-    return new SASQueryParameters(blobSASSignatureValues.version, signature, verifiedPermissions, undefined, undefined, blobSASSignatureValues.protocol, blobSASSignatureValues.startsOn, blobSASSignatureValues.expiresOn, blobSASSignatureValues.ipRange, blobSASSignatureValues.identifier, resource, blobSASSignatureValues.cacheControl, blobSASSignatureValues.contentDisposition, blobSASSignatureValues.contentEncoding, blobSASSignatureValues.contentLanguage, blobSASSignatureValues.contentType, userDelegationKeyCredential.userDelegationKey, blobSASSignatureValues.preauthorizedAgentObjectId, blobSASSignatureValues.correlationId);
-}
-function getCanonicalName(accountName, containerName, blobName) {
-    // Container: "/blob/account/containerName"
-    // Blob:      "/blob/account/containerName/blobName"
-    var elements = ["/blob/" + accountName + "/" + containerName];
-    if (blobName) {
-        elements.push("/" + blobName);
-    }
-    return elements.join("");
-}
-function SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues) {
-    var version = blobSASSignatureValues.version ? blobSASSignatureValues.version : SERVICE_VERSION;
-    if (blobSASSignatureValues.snapshotTime && version < "2018-11-09") {
-        throw RangeError("'version' must be >= '2018-11-09' when providing 'snapshotTime'.");
-    }
-    if (blobSASSignatureValues.blobName === undefined && blobSASSignatureValues.snapshotTime) {
-        throw RangeError("Must provide 'blobName' when providing 'snapshotTime'.");
-    }
-    if (blobSASSignatureValues.versionId && version < "2019-10-10") {
-        throw RangeError("'version' must be >= '2019-10-10' when providing 'versionId'.");
-    }
-    if (blobSASSignatureValues.blobName === undefined && blobSASSignatureValues.versionId) {
-        throw RangeError("Must provide 'blobName' when providing 'versionId'.");
-    }
-    if (blobSASSignatureValues.permissions &&
-        blobSASSignatureValues.permissions.deleteVersion &&
-        version < "2019-10-10") {
-        throw RangeError("'version' must be >= '2019-10-10' when providing 'x' permission.");
-    }
-    if (blobSASSignatureValues.permissions &&
-        blobSASSignatureValues.permissions.tag &&
-        version < "2019-12-12") {
-        throw RangeError("'version' must be >= '2019-12-12' when providing 't' permission.");
-    }
-    if (version < "2020-02-10" &&
-        blobSASSignatureValues.permissions &&
-        (blobSASSignatureValues.permissions.move || blobSASSignatureValues.permissions.execute)) {
-        throw RangeError("'version' must be >= '2020-02-10' when providing the 'm' or 'e' permission.");
-    }
-    if (version < "2020-02-10" &&
-        (blobSASSignatureValues.preauthorizedAgentObjectId || blobSASSignatureValues.correlationId)) {
-        throw RangeError("'version' must be >= '2020-02-10' when providing 'preauthorizedAgentObjectId' or 'correlationId'.");
-    }
-    blobSASSignatureValues.version = version;
-    return blobSASSignatureValues;
-}
-
 /**
  * A BlobClient represents a URL to an Azure Storage blob; the blob may be a block blob,
  * append blob, or page blob.
- *
- * @export
- * @class BlobClient
  */
 var BlobClient = /** @class */ (function (_super) {
     tslib.__extends(BlobClient, _super);
@@ -35590,9 +37125,8 @@ var BlobClient = /** @class */ (function (_super) {
      * Creates a new BlobClient object identical to the source but with the specified snapshot timestamp.
      * Provide "" will remove the snapshot and return a Client to the base blob.
      *
-     * @param {string} snapshot The snapshot timestamp.
-     * @returns {BlobClient} A new BlobClient object identical to the source but with the specified snapshot timestamp
-     * @memberof BlobClient
+     * @param snapshot - The snapshot timestamp.
+     * @returns A new BlobClient object identical to the source but with the specified snapshot timestamp
      */
     BlobClient.prototype.withSnapshot = function (snapshot) {
         return new BlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot.length === 0 ? undefined : snapshot), this.pipeline);
@@ -35601,9 +37135,8 @@ var BlobClient = /** @class */ (function (_super) {
      * Creates a new BlobClient object pointing to a version of this blob.
      * Provide "" will remove the versionId and return a Client to the base blob.
      *
-     * @param {string} versionId The versionId.
-     * @returns {BlobClient} A new BlobClient object pointing to the version of this blob.
-     * @memberof BlobClient
+     * @param versionId - The versionId.
+     * @returns A new BlobClient object pointing to the version of this blob.
      */
     BlobClient.prototype.withVersion = function (versionId) {
         return new BlobClient(setURLParameter(this.url, URLConstants.Parameters.VERSIONID, versionId.length === 0 ? undefined : versionId), this.pipeline);
@@ -35611,8 +37144,6 @@ var BlobClient = /** @class */ (function (_super) {
     /**
      * Creates a AppendBlobClient object.
      *
-     * @returns {AppendBlobClient}
-     * @memberof BlobClient
      */
     BlobClient.prototype.getAppendBlobClient = function () {
         return new AppendBlobClient(this.url, this.pipeline);
@@ -35620,8 +37151,6 @@ var BlobClient = /** @class */ (function (_super) {
     /**
      * Creates a BlockBlobClient object.
      *
-     * @returns {BlockBlobClient}
-     * @memberof BlobClient
      */
     BlobClient.prototype.getBlockBlobClient = function () {
         return new BlockBlobClient(this.url, this.pipeline);
@@ -35629,8 +37158,6 @@ var BlobClient = /** @class */ (function (_super) {
     /**
      * Creates a PageBlobClient object.
      *
-     * @returns {PageBlobClient}
-     * @memberof BlobClient
      */
     BlobClient.prototype.getPageBlobClient = function () {
         return new PageBlobClient(this.url, this.pipeline);
@@ -35644,11 +37171,10 @@ var BlobClient = /** @class */ (function (_super) {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob
      *
-     * @param {number} [offset] From which position of the blob to download, >= 0
-     * @param {number} [count] How much data to be downloaded, > 0. Will download to the end when undefined
-     * @param {BlobDownloadOptions} [options] Optional options to Blob Download operation.
-     * @returns {Promise<BlobDownloadResponseParsed>}
-     * @memberof BlobClient
+     * @param offset - From which position of the blob to download, greater than or equal to 0
+     * @param count - How much data to be downloaded, greater than 0. Will download to the end when undefined
+     * @param options - Optional options to Blob Download operation.
+     *
      *
      * Example usage (Node.js):
      *
@@ -35700,7 +37226,7 @@ var BlobClient = /** @class */ (function (_super) {
         if (offset === void 0) { offset = 0; }
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, res_1, wrappedRes, e_1;
+            var _b, span, updatedOptions, res_1, wrappedRes, e_1;
             var _this = this;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
@@ -35708,22 +37234,11 @@ var BlobClient = /** @class */ (function (_super) {
                         options.conditions = options.conditions || {};
                         options.conditions = options.conditions || {};
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        _b = createSpan("BlobClient-download", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-download", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.download({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                onDownloadProgress: coreHttp.isNode ? undefined : options.onProgress,
-                                range: offset === 0 && !count ? undefined : rangeToString({ offset: offset, count: count }),
-                                rangeGetContentMD5: options.rangeGetContentMD5,
-                                rangeGetContentCRC64: options.rangeGetContentCrc64,
-                                snapshot: options.snapshot,
-                                cpkInfo: options.customerProvidedKey,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.download(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), onDownloadProgress: coreHttp.isNode ? undefined : options.onProgress, range: offset === 0 && !count ? undefined : rangeToString({ offset: offset, count: count }), rangeGetContentMD5: options.rangeGetContentMD5, rangeGetContentCRC64: options.rangeGetContentCrc64, snapshot: options.snapshot, cpkInfo: options.customerProvidedKey }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2:
                         res_1 = _c.sent();
                         wrappedRes = tslib.__assign(tslib.__assign({}, res_1), { _response: res_1._response, objectReplicationDestinationPolicyId: res_1.objectReplicationPolicyId, objectReplicationSourceProperties: parseObjectReplicationRecord(res_1.objectReplicationRules) });
@@ -35803,18 +37318,16 @@ var BlobClient = /** @class */ (function (_super) {
      * applications. Vice versa new blobs might be added by other clients or applications after this
      * function completes.
      *
-     * @param {BlobExistsOptions} [options] options to Exists operation.
-     * @returns {Promise<boolean>}
-     * @memberof BlobClient
+     * @param options - options to Exists operation.
      */
     BlobClient.prototype.exists = function (options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_2;
+            var _a, span, updatedOptions, e_2;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobClient-exists", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobClient-exists", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
@@ -35823,7 +37336,7 @@ var BlobClient = /** @class */ (function (_super) {
                                 abortSignal: options.abortSignal,
                                 customerProvidedKey: options.customerProvidedKey,
                                 conditions: options.conditions,
-                                tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions })
+                                tracingOptions: updatedOptions.tracingOptions
                             })];
                     case 2:
                         _b.sent();
@@ -35860,31 +37373,23 @@ var BlobClient = /** @class */ (function (_super) {
      * the methods of {@link ContainerClient} that list blobs using the `includeMetadata` option, which
      * will retain their original casing.
      *
-     * @param {BlobGetPropertiesOptions} [options] Optional options to Get Properties operation.
-     * @returns {Promise<BlobGetPropertiesResponse>}
-     * @memberof BlobClient
+     * @param options - Optional options to Get Properties operation.
      */
     BlobClient.prototype.getProperties = function (options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, res, e_3;
+            var _b, span, updatedOptions, res, e_3;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-getProperties", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-getProperties", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         options.conditions = options.conditions || {};
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blobContext.getProperties({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                cpkInfo: options.customerProvidedKey,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.getProperties(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), cpkInfo: options.customerProvidedKey }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2:
                         res = _c.sent();
                         return [2 /*return*/, tslib.__assign(tslib.__assign({}, res), { _response: res._response, objectReplicationDestinationPolicyId: res.objectReplicationPolicyId, objectReplicationSourceProperties: parseObjectReplicationRecord(res.objectReplicationRules) })];
@@ -35910,30 +37415,22 @@ var BlobClient = /** @class */ (function (_super) {
      * Blob operation.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-blob
      *
-     * @param {BlobDeleteOptions} [options] Optional options to Blob Delete operation.
-     * @returns {Promise<BlobDeleteResponse>}
-     * @memberof BlobClient
+     * @param options - Optional options to Blob Delete operation.
      */
     BlobClient.prototype.delete = function (options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_4;
+            var _b, span, updatedOptions, e_4;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-delete", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-delete", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.deleteMethod({
-                                abortSignal: options.abortSignal,
-                                deleteSnapshots: options.deleteSnapshots,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.deleteMethod(tslib.__assign({ abortSignal: options.abortSignal, deleteSnapshots: options.deleteSnapshots, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_4 = _c.sent();
@@ -35957,23 +37454,21 @@ var BlobClient = /** @class */ (function (_super) {
      * Blob operation.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-blob
      *
-     * @param {BlobDeleteOptions} [options] Optional options to Blob Delete operation.
-     * @returns {Promise<BlobDeleteIfExistsResponse>}
-     * @memberof BlobClient
+     * @param options - Optional options to Blob Delete operation.
      */
     BlobClient.prototype.deleteIfExists = function (options) {
         var _a, _b;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _c, span, spanOptions, res, e_5;
+            var _c, span, updatedOptions, res, e_5;
             return tslib.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        _c = createSpan("BlobClient-deleteIfExists", options.tracingOptions), span = _c.span, spanOptions = _c.spanOptions;
+                        _c = createSpan("BlobClient-deleteIfExists", options), span = _c.span, updatedOptions = _c.updatedOptions;
                         _d.label = 1;
                     case 1:
                         _d.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.delete(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.delete(updatedOptions)];
                     case 2:
                         res = _d.sent();
                         return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: true }, res), { _response: res._response // _response is made non-enumerable
@@ -36006,25 +37501,20 @@ var BlobClient = /** @class */ (function (_super) {
      * or later.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/undelete-blob
      *
-     * @param {BlobUndeleteOptions} [options] Optional options to Blob Undelete operation.
-     * @returns {Promise<BlobUndeleteResponse>}
-     * @memberof BlobClient
+     * @param options - Optional options to Blob Undelete operation.
      */
     BlobClient.prototype.undelete = function (options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_6;
+            var _a, span, updatedOptions, e_6;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobClient-undelete", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobClient-undelete", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.undelete({
-                                abortSignal: options.abortSignal,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.undelete(tslib.__assign({ abortSignal: options.abortSignal }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_6 = _b.sent();
@@ -36048,35 +37538,26 @@ var BlobClient = /** @class */ (function (_super) {
      * these blob HTTP headers without a value will be cleared.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-properties
      *
-     * @param {BlobHTTPHeaders} [blobHTTPHeaders] If no value provided, or no value provided for
+     * @param blobHTTPHeaders - If no value provided, or no value provided for
      *                                                   the specified blob HTTP headers, these blob HTTP
      *                                                   headers without a value will be cleared.
-     * @param {BlobSetHTTPHeadersOptions} [options] Optional options to Blob Set HTTP Headers operation.
-     * @returns {Promise<BlobSetHTTPHeadersResponse>}
-     * @memberof BlobClient
+     * @param options - Optional options to Blob Set HTTP Headers operation.
      */
     BlobClient.prototype.setHTTPHeaders = function (blobHTTPHeaders, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_7;
+            var _b, span, updatedOptions, e_7;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-setHTTPHeaders", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-setHTTPHeaders", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blobContext.setHTTPHeaders({
-                                abortSignal: options.abortSignal,
-                                blobHTTPHeaders: blobHTTPHeaders,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                cpkInfo: options.customerProvidedKey,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.setHTTPHeaders(tslib.__assign({ abortSignal: options.abortSignal, blobHTTPHeaders: blobHTTPHeaders, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), cpkInfo: options.customerProvidedKey }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_7 = _c.sent();
@@ -36100,35 +37581,25 @@ var BlobClient = /** @class */ (function (_super) {
      * metadata will be removed.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-metadata
      *
-     * @param {Metadata} [metadata] Replace existing metadata with this value.
+     * @param metadata - Replace existing metadata with this value.
      *                               If no value provided the existing metadata will be removed.
-     * @param {BlobSetMetadataOptions} [options] Optional options to Set Metadata operation.
-     * @returns {Promise<BlobSetMetadataResponse>}
-     * @memberof BlobClient
+     * @param options - Optional options to Set Metadata operation.
      */
     BlobClient.prototype.setMetadata = function (metadata, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_8;
+            var _b, span, updatedOptions, e_8;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-setMetadata", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-setMetadata", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blobContext.setMetadata({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                metadata: metadata,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.setMetadata(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, metadata: metadata, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_8 = _c.sent();
@@ -36151,30 +37622,22 @@ var BlobClient = /** @class */ (function (_super) {
      * Valid tag key and value characters include lower and upper case letters, digits (0-9),
      * space (' '), plus ('+'), minus ('-'), period ('.'), foward slash ('/'), colon (':'), equals ('='), and underscore ('_').
      *
-     * @param {Tags} tags
-     * @param {BlobSetTagsOptions} [options={}]
-     * @returns {Promise<BlobSetTagsResponse>}
-     * @memberof BlobClient
+     * @param tags -
+     * @param options -
      */
     BlobClient.prototype.setTags = function (tags, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_9;
+            var _b, span, updatedOptions, e_9;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-setTags", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-setTags", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.setTags({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions,
-                                tags: toBlobTags(tags)
-                            })];
+                        return [4 /*yield*/, this.blobContext.setTags(tslib.__assign(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)), { tags: toBlobTags(tags) }))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_9 = _c.sent();
@@ -36194,28 +37657,21 @@ var BlobClient = /** @class */ (function (_super) {
     /**
      * Gets the tags associated with the underlying blob.
      *
-     * @param {BlobGetTagsOptions} [options={}]
-     * @returns {Promise<BlobGetTagsResponse>}
-     * @memberof BlobClient
+     * @param options -
      */
     BlobClient.prototype.getTags = function (options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, response, wrappedResponse, e_10;
+            var _b, span, updatedOptions, response, wrappedResponse, e_10;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-getTags", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-getTags", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.getTags({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.getTags(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2:
                         response = _c.sent();
                         wrappedResponse = tslib.__assign(tslib.__assign({}, response), { _response: response._response, tags: toTags({ blobTagSet: response.blobTagSet }) || {} });
@@ -36238,9 +37694,8 @@ var BlobClient = /** @class */ (function (_super) {
     /**
      * Get a {@link BlobLeaseClient} that manages leases on the blob.
      *
-     * @param {string} [proposeLeaseId] Initial proposed lease Id.
-     * @returns {BlobLeaseClient} A new BlobLeaseClient object for managing leases on the blob.
-     * @memberof BlobClient
+     * @param proposeLeaseId - Initial proposed lease Id.
+     * @returns A new BlobLeaseClient object for managing leases on the blob.
      */
     BlobClient.prototype.getBlobLeaseClient = function (proposeLeaseId) {
         return new BlobLeaseClient(this, proposeLeaseId);
@@ -36249,33 +37704,23 @@ var BlobClient = /** @class */ (function (_super) {
      * Creates a read-only snapshot of a blob.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/snapshot-blob
      *
-     * @param {BlobCreateSnapshotOptions} [options] Optional options to the Blob Create Snapshot operation.
-     * @returns {Promise<BlobCreateSnapshotResponse>}
-     * @memberof BlobClient
+     * @param options - Optional options to the Blob Create Snapshot operation.
      */
     BlobClient.prototype.createSnapshot = function (options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_11;
+            var _b, span, updatedOptions, e_11;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-createSnapshot", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-createSnapshot", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blobContext.createSnapshot({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                metadata: options.metadata,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.createSnapshot(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, metadata: options.metadata, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_11 = _c.sent();
@@ -36361,8 +37806,8 @@ var BlobClient = /** @class */ (function (_super) {
      * }
      * ```
      *
-     * @param {string} copySource url to the source Azure Blob/File.
-     * @param {BlobBeginCopyFromURLOptions} [options] Optional options to the Blob Start Copy From URL operation.
+     * @param copySource - url to the source Azure Blob/File.
+     * @param options - Optional options to the Blob Start Copy From URL operation.
      */
     BlobClient.prototype.beginCopyFromURL = function (copySource, options) {
         if (options === void 0) { options = {}; }
@@ -36420,27 +37865,21 @@ var BlobClient = /** @class */ (function (_super) {
      * length and full metadata. Version 2012-02-12 and newer.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/abort-copy-blob
      *
-     * @param {string} copyId Id of the Copy From URL operation.
-     * @param {BlobAbortCopyFromURLOptions} [options] Optional options to the Blob Abort Copy From URL operation.
-     * @returns {Promise<BlobAbortCopyFromURLResponse>}
-     * @memberof BlobClient
+     * @param copyId - Id of the Copy From URL operation.
+     * @param options - Optional options to the Blob Abort Copy From URL operation.
      */
     BlobClient.prototype.abortCopyFromURL = function (copyId, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_12;
+            var _a, span, updatedOptions, e_12;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobClient-abortCopyFromURL", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobClient-abortCopyFromURL", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.abortCopyFromURL(copyId, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.abortCopyFromURL(copyId, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_12 = _b.sent();
@@ -36462,40 +37901,29 @@ var BlobClient = /** @class */ (function (_super) {
      * return a response until the copy is complete.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-blob-from-url
      *
-     * @param {string} copySource The source URL to copy from, Shared Access Signature(SAS) maybe needed for authentication
-     * @param {BlobSyncCopyFromURLOptions} [options={}]
-     * @returns {Promise<BlobCopyFromURLResponse>}
-     * @memberof BlobClient
+     * @param copySource - The source URL to copy from, Shared Access Signature(SAS) maybe needed for authentication
+     * @param options -
      */
     BlobClient.prototype.syncCopyFromURL = function (copySource, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_13;
+            var _b, span, updatedOptions, e_13;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-syncCopyFromURL", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-syncCopyFromURL", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         options.sourceConditions = options.sourceConditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.copyFromURL(copySource, {
-                                abortSignal: options.abortSignal,
-                                metadata: options.metadata,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                sourceModifiedAccessConditions: {
+                        return [4 /*yield*/, this.blobContext.copyFromURL(copySource, tslib.__assign({ abortSignal: options.abortSignal, metadata: options.metadata, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), sourceModifiedAccessConditions: {
                                     sourceIfMatch: options.sourceConditions.ifMatch,
                                     sourceIfModifiedSince: options.sourceConditions.ifModifiedSince,
                                     sourceIfNoneMatch: options.sourceConditions.ifNoneMatch,
                                     sourceIfUnmodifiedSince: options.sourceConditions.ifUnmodifiedSince
-                                },
-                                sourceContentMD5: options.sourceContentMD5,
-                                blobTagsString: toBlobTagsString(options.tags),
-                                spanOptions: spanOptions
-                            })];
+                                }, sourceContentMD5: options.sourceContentMD5, blobTagsString: toBlobTagsString(options.tags) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_13 = _c.sent();
@@ -36520,30 +37948,22 @@ var BlobClient = /** @class */ (function (_super) {
      * storage type. This operation does not update the blob's ETag.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-tier
      *
-     * @param {BlockBlobTier | PremiumPageBlobTier | string} tier The tier to be set on the blob. Valid values are Hot, Cool, or Archive.
-     * @param {BlobSetTierOptions} [options] Optional options to the Blob Set Tier operation.
-     * @returns {Promise<BlobsSetTierResponse>}
-     * @memberof BlobClient
+     * @param tier - The tier to be set on the blob. Valid values are Hot, Cool, or Archive.
+     * @param options - Optional options to the Blob Set Tier operation.
      */
     BlobClient.prototype.setAccessTier = function (tier, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_14;
+            var _b, span, updatedOptions, e_14;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-setAccessTier", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-setAccessTier", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.setTier(toAccessTier(tier), {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                rehydratePriority: options.rehydratePriority,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blobContext.setTier(toAccessTier(tier), tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), rehydratePriority: options.rehydratePriority }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_14 = _c.sent();
@@ -36563,7 +37983,7 @@ var BlobClient = /** @class */ (function (_super) {
     BlobClient.prototype.downloadToBuffer = function (param1, param2, param3, param4) {
         if (param4 === void 0) { param4 = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var buffer, offset, count, options, _a, span, spanOptions, response, transferProgress_1, batch, _loop_1, off, e_15;
+            var buffer, offset, count, options, _a, span, updatedOptions, response, transferProgress_1, batch, _loop_1, off, e_15;
             var _this = this;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -36581,7 +38001,7 @@ var BlobClient = /** @class */ (function (_super) {
                             count = typeof param2 === "number" ? param2 : 0;
                             options = param3 || {};
                         }
-                        _a = createSpan("BlobClient-downloadToBuffer", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobClient-downloadToBuffer", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 5, 6, 7]);
@@ -36598,13 +38018,13 @@ var BlobClient = /** @class */ (function (_super) {
                             throw new RangeError("offset option must be >= 0");
                         }
                         if (count && count <= 0) {
-                            throw new RangeError("count option must be > 0");
+                            throw new RangeError("count option must be greater than 0");
                         }
                         if (!options.conditions) {
                             options.conditions = {};
                         }
                         if (!!count) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.getProperties(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.getProperties(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), convertTracingToRequestOptionsBase(updatedOptions)) }))];
                     case 2:
                         response = _b.sent();
                         count = response.contentLength - offset;
@@ -36642,7 +38062,7 @@ var BlobClient = /** @class */ (function (_super) {
                                                     conditions: options.conditions,
                                                     maxRetryRequests: options.maxRetryRequestsPerBlock,
                                                     customerProvidedKey: options.customerProvidedKey,
-                                                    tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions })
+                                                    tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), convertTracingToRequestOptionsBase(updatedOptions))
                                                 })];
                                         case 1:
                                             response = _a.sent();
@@ -36691,29 +38111,28 @@ var BlobClient = /** @class */ (function (_super) {
      * Fails if the the given file path already exits.
      * Offset and count are optional, pass 0 and undefined respectively to download the entire blob.
      *
-     * @param {string} filePath
-     * @param {number} [offset] From which position of the block blob to download.
-     * @param {number} [count] How much data to be downloaded. Will download to the end when passing undefined.
-     * @param {BlobDownloadOptions} [options] Options to Blob download options.
-     * @returns {Promise<BlobDownloadResponseParsed>} The response data for blob download operation,
+     * @param filePath -
+     * @param offset - From which position of the block blob to download.
+     * @param count - How much data to be downloaded. Will download to the end when passing undefined.
+     * @param options - Options to Blob download options.
+     * @returns The response data for blob download operation,
      *                                                 but with readableStreamBody set to undefined since its
      *                                                 content is already read and written into a local file
      *                                                 at the specified path.
-     * @memberof BlobClient
      */
     BlobClient.prototype.downloadToFile = function (filePath, offset, count, options) {
         if (offset === void 0) { offset = 0; }
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, response, e_16;
+            var _a, span, updatedOptions, response, e_16;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobClient-downloadToFile", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobClient-downloadToFile", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 5, 6, 7]);
-                        return [4 /*yield*/, this.download(offset, count, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.download(offset, count, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), convertTracingToRequestOptionsBase(updatedOptions)) }))];
                     case 2:
                         response = _b.sent();
                         if (!response.readableStreamBody) return [3 /*break*/, 4];
@@ -36799,43 +38218,30 @@ var BlobClient = /** @class */ (function (_super) {
      * operation to copy from another storage account.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-blob
      *
-     * @param {string} copySource url to the source Azure Blob/File.
-     * @param {BlobStartCopyFromURLOptions} [options] Optional options to the Blob Start Copy From URL operation.
-     * @returns {Promise<BlobStartCopyFromURLResponse>}
-     * @memberof BlobClient
+     * @param copySource - url to the source Azure Blob/File.
+     * @param options - Optional options to the Blob Start Copy From URL operation.
      */
     BlobClient.prototype.startCopyFromURL = function (copySource, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_17;
+            var _b, span, updatedOptions, e_17;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlobClient-startCopyFromURL", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlobClient-startCopyFromURL", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         options.sourceConditions = options.sourceConditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blobContext.startCopyFromURL(copySource, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                metadata: options.metadata,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                sourceModifiedAccessConditions: {
+                        return [4 /*yield*/, this.blobContext.startCopyFromURL(copySource, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, metadata: options.metadata, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), sourceModifiedAccessConditions: {
                                     sourceIfMatch: options.sourceConditions.ifMatch,
                                     sourceIfModifiedSince: options.sourceConditions.ifModifiedSince,
                                     sourceIfNoneMatch: options.sourceConditions.ifNoneMatch,
                                     sourceIfUnmodifiedSince: options.sourceConditions.ifUnmodifiedSince,
                                     sourceIfTags: options.sourceConditions.tagConditions
-                                },
-                                rehydratePriority: options.rehydratePriority,
-                                tier: toAccessTier(options.tier),
-                                blobTagsString: toBlobTagsString(options.tags),
-                                sealBlob: options.sealBlob,
-                                spanOptions: spanOptions
-                            })];
+                                }, rehydratePriority: options.rehydratePriority, tier: toAccessTier(options.tier), blobTagsString: toBlobTagsString(options.tags), sealBlob: options.sealBlob }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_17 = _c.sent();
@@ -36860,9 +38266,8 @@ var BlobClient = /** @class */ (function (_super) {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
      *
-     * @param {BlobGenerateSasUrlOptions} options Optional parameters.
-     * @returns {Promise<string>} The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
-     * @memberof BlobClient
+     * @param options - Optional parameters.
+     * @returns The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
      */
     BlobClient.prototype.generateSasUrl = function (options) {
         var _this = this;
@@ -36878,10 +38283,6 @@ var BlobClient = /** @class */ (function (_super) {
 }(StorageClient));
 /**
  * AppendBlobClient defines a set of operations applicable to append blobs.
- *
- * @export
- * @class AppendBlobClient
- * @extends {BlobClient}
  */
 var AppendBlobClient = /** @class */ (function (_super) {
     tslib.__extends(AppendBlobClient, _super);
@@ -36951,9 +38352,8 @@ var AppendBlobClient = /** @class */ (function (_super) {
      * specified snapshot timestamp.
      * Provide "" will remove the snapshot and return a Client to the base blob.
      *
-     * @param {string} snapshot The snapshot timestamp.
-     * @returns {AppendBlobClient} A new AppendBlobClient object identical to the source but with the specified snapshot timestamp.
-     * @memberof AppendBlobClient
+     * @param snapshot - The snapshot timestamp.
+     * @returns A new AppendBlobClient object identical to the source but with the specified snapshot timestamp.
      */
     AppendBlobClient.prototype.withSnapshot = function (snapshot) {
         return new AppendBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot.length === 0 ? undefined : snapshot), this.pipeline);
@@ -36962,9 +38362,8 @@ var AppendBlobClient = /** @class */ (function (_super) {
      * Creates a 0-length append blob. Call AppendBlock to append data to an append blob.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
      *
-     * @param {AppendBlobCreateOptions} [options] Options to the Append Block Create operation.
-     * @returns {Promise<AppendBlobCreateResponse>}
-     * @memberof AppendBlobClient
+     * @param options - Options to the Append Block Create operation.
+     *
      *
      * Example usage:
      *
@@ -36977,27 +38376,17 @@ var AppendBlobClient = /** @class */ (function (_super) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_18;
+            var _b, span, updatedOptions, e_18;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("AppendBlobClient-create", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("AppendBlobClient-create", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.appendBlobContext.create(0, {
-                                abortSignal: options.abortSignal,
-                                blobHTTPHeaders: options.blobHTTPHeaders,
-                                leaseAccessConditions: options.conditions,
-                                metadata: options.metadata,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                blobTagsString: toBlobTagsString(options.tags),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.appendBlobContext.create(0, tslib.__assign({ abortSignal: options.abortSignal, blobHTTPHeaders: options.blobHTTPHeaders, leaseAccessConditions: options.conditions, metadata: options.metadata, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope, blobTagsString: toBlobTagsString(options.tags) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_18 = _c.sent();
@@ -37019,24 +38408,22 @@ var AppendBlobClient = /** @class */ (function (_super) {
      * If the blob with the same name already exists, the content of the existing blob will remain unchanged.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
      *
-     * @param {AppendBlobCreateIfNotExistsOptions} [options]
-     * @returns {Promise<AppendBlobCreateIfNotExistsResponse>}
-     * @memberof AppendBlobClient
+     * @param options -
      */
     AppendBlobClient.prototype.createIfNotExists = function (options) {
         var _a, _b;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _c, span, spanOptions, conditions, res, e_19;
+            var _c, span, updatedOptions, conditions, res, e_19;
             return tslib.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        _c = createSpan("AppendBlobClient-createIfNotExists", options.tracingOptions), span = _c.span, spanOptions = _c.spanOptions;
+                        _c = createSpan("AppendBlobClient-createIfNotExists", options), span = _c.span, updatedOptions = _c.updatedOptions;
                         conditions = { ifNoneMatch: ETagAny };
                         _d.label = 1;
                     case 1:
                         _d.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.create(tslib.__assign(tslib.__assign({}, options), { conditions: conditions, tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.create(tslib.__assign(tslib.__assign({}, updatedOptions), { conditions: conditions }))];
                     case 2:
                         res = _d.sent();
                         return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: true }, res), { _response: res._response // _response is made non-enumerable
@@ -37066,30 +38453,22 @@ var AppendBlobClient = /** @class */ (function (_super) {
     /**
      * Seals the append blob, making it read only.
      *
-     * @param {AppendBlobSealOptions} [options={}]
-     * @returns {Promise<AppendBlobAppendBlockResponse>}
-     * @memberof AppendBlobClient
+     * @param options -
      */
     AppendBlobClient.prototype.seal = function (options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_20;
+            var _b, span, updatedOptions, e_20;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("AppendBlobClient-seal", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("AppendBlobClient-seal", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.appendBlobContext.seal({
-                                abortSignal: options.abortSignal,
-                                appendPositionAccessConditions: options.conditions,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.appendBlobContext.seal(tslib.__assign({ abortSignal: options.abortSignal, appendPositionAccessConditions: options.conditions, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_20 = _c.sent();
@@ -37110,11 +38489,10 @@ var AppendBlobClient = /** @class */ (function (_super) {
      * Commits a new block of data to the end of the existing append blob.
      * @see https://docs.microsoft.com/rest/api/storageservices/append-block
      *
-     * @param {HttpRequestBody} body Data to be appended.
-     * @param {number} contentLength Length of the body in bytes.
-     * @param {AppendBlobAppendBlockOptions} [options] Options to the Append Block operation.
-     * @returns {Promise<AppendBlobAppendBlockResponse>}
-     * @memberof AppendBlobClient
+     * @param body - Data to be appended.
+     * @param contentLength - Length of the body in bytes.
+     * @param options - Options to the Append Block operation.
+     *
      *
      * Example usage:
      *
@@ -37135,28 +38513,17 @@ var AppendBlobClient = /** @class */ (function (_super) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_21;
+            var _b, span, updatedOptions, e_21;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("AppendBlobClient-appendBlock", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("AppendBlobClient-appendBlock", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.appendBlobContext.appendBlock(body, contentLength, {
-                                abortSignal: options.abortSignal,
-                                appendPositionAccessConditions: options.conditions,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                onUploadProgress: options.onProgress,
-                                transactionalContentMD5: options.transactionalContentMD5,
-                                transactionalContentCrc64: options.transactionalContentCrc64,
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.appendBlobContext.appendBlock(body, contentLength, tslib.__assign({ abortSignal: options.abortSignal, appendPositionAccessConditions: options.conditions, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), onUploadProgress: options.onProgress, transactionalContentMD5: options.transactionalContentMD5, transactionalContentCrc64: options.transactionalContentCrc64, cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_21 = _c.sent();
@@ -37178,50 +38545,36 @@ var AppendBlobClient = /** @class */ (function (_super) {
      * where the contents are read from a source url.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/append-block-from-url
      *
-     * @param {string} sourceURL
+     * @param sourceURL -
      *                 The url to the blob that will be the source of the copy. A source blob in the same storage account can
      *                 be authenticated via Shared Key. However, if the source is a blob in another account, the source blob
      *                 must either be public or must be authenticated via a shared access signature. If the source blob is
      *                 public, no authentication is required to perform the operation.
-     * @param {number} sourceOffset Offset in source to be appended
-     * @param {number} count Number of bytes to be appended as a block
-     * @param {AppendBlobAppendBlockFromURLOptions} [options={}]
-     * @returns {Promise<AppendBlobAppendBlockFromUrlResponse>}
-     * @memberof AppendBlobClient
+     * @param sourceOffset - Offset in source to be appended
+     * @param count - Number of bytes to be appended as a block
+     * @param options -
      */
     AppendBlobClient.prototype.appendBlockFromURL = function (sourceURL, sourceOffset, count, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_22;
+            var _b, span, updatedOptions, e_22;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("AppendBlobClient-appendBlockFromURL", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("AppendBlobClient-appendBlockFromURL", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         options.conditions = options.conditions || {};
                         options.sourceConditions = options.sourceConditions || {};
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.appendBlobContext.appendBlockFromUrl(sourceURL, 0, {
-                                abortSignal: options.abortSignal,
-                                sourceRange: rangeToString({ offset: sourceOffset, count: count }),
-                                sourceContentMD5: options.sourceContentMD5,
-                                sourceContentCrc64: options.sourceContentCrc64,
-                                leaseAccessConditions: options.conditions,
-                                appendPositionAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                sourceModifiedAccessConditions: {
+                        return [4 /*yield*/, this.appendBlobContext.appendBlockFromUrl(sourceURL, 0, tslib.__assign({ abortSignal: options.abortSignal, sourceRange: rangeToString({ offset: sourceOffset, count: count }), sourceContentMD5: options.sourceContentMD5, sourceContentCrc64: options.sourceContentCrc64, leaseAccessConditions: options.conditions, appendPositionAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), sourceModifiedAccessConditions: {
                                     sourceIfMatch: options.sourceConditions.ifMatch,
                                     sourceIfModifiedSince: options.sourceConditions.ifModifiedSince,
                                     sourceIfNoneMatch: options.sourceConditions.ifNoneMatch,
                                     sourceIfUnmodifiedSince: options.sourceConditions.ifUnmodifiedSince
-                                },
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                                }, cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_22 = _c.sent();
@@ -37242,10 +38595,6 @@ var AppendBlobClient = /** @class */ (function (_super) {
 }(BlobClient));
 /**
  * BlockBlobClient defines a set of operations applicable to block blobs.
- *
- * @export
- * @class BlockBlobClient
- * @extends {BlobClient}
  */
 var BlockBlobClient = /** @class */ (function (_super) {
     tslib.__extends(BlockBlobClient, _super);
@@ -37316,9 +38665,8 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * specified snapshot timestamp.
      * Provide "" will remove the snapshot and return a URL to the base blob.
      *
-     * @param {string} snapshot The snapshot timestamp.
-     * @returns {BlockBlobClient} A new BlockBlobClient object identical to the source but with the specified snapshot timestamp.
-     * @memberof BlockBlobClient
+     * @param snapshot - The snapshot timestamp.
+     * @returns A new BlockBlobClient object identical to the source but with the specified snapshot timestamp.
      */
     BlockBlobClient.prototype.withSnapshot = function (snapshot) {
         return new BlockBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot.length === 0 ? undefined : snapshot), this.pipeline);
@@ -37350,35 +38698,27 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * }
      * ```
      *
-     * @param {string} query
-     * @param {BlockBlobQueryOptions} [options={}]
-     * @returns {Promise<BlobDownloadResponseModel>}
-     * @memberof BlockBlobClient
+     * @param query -
+     * @param options -
      */
     BlockBlobClient.prototype.query = function (query, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, response, e_23;
+            var _b, span, updatedOptions, response, e_23;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        _b = createSpan("BlockBlobClient-query", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlockBlobClient-query", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this._blobContext.query({
-                                abortSignal: options.abortSignal,
-                                queryRequest: {
+                        return [4 /*yield*/, this._blobContext.query(tslib.__assign({ abortSignal: options.abortSignal, queryRequest: {
                                     expression: query,
                                     inputSerialization: toQuerySerialization(options.inputTextConfiguration),
                                     outputSerialization: toQuerySerialization(options.outputTextConfiguration)
-                                },
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
+                                }, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2:
                         response = _c.sent();
                         return [2 /*return*/, new BlobQueryResponse(response, {
@@ -37414,13 +38754,12 @@ var BlockBlobClient = /** @class */ (function (_super) {
      *
      * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
      *
-     * @param {HttpRequestBody} body Blob, string, ArrayBuffer, ArrayBufferView or a function
+     * @param body - Blob, string, ArrayBuffer, ArrayBufferView or a function
      *                               which returns a new Readable stream whose offset is from data source beginning.
-     * @param {number} contentLength Length of body in bytes. Use Buffer.byteLength() to calculate body length for a
+     * @param contentLength - Length of body in bytes. Use Buffer.byteLength() to calculate body length for a
      *                               string including non non-Base64/Hex-encoded characters.
-     * @param {BlockBlobUploadOptions} [options] Options to the Block Blob Upload operation.
-     * @returns {Promise<BlockBlobUploadResponse>} Response data for the Block Blob Upload operation.
-     * @memberof BlockBlobClient
+     * @param options - Options to the Block Blob Upload operation.
+     * @returns Response data for the Block Blob Upload operation.
      *
      * Example usage:
      *
@@ -37433,29 +38772,17 @@ var BlockBlobClient = /** @class */ (function (_super) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_24;
+            var _b, span, updatedOptions, e_24;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("BlockBlobClient-upload", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlockBlobClient-upload", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blockBlobContext.upload(body, contentLength, {
-                                abortSignal: options.abortSignal,
-                                blobHTTPHeaders: options.blobHTTPHeaders,
-                                leaseAccessConditions: options.conditions,
-                                metadata: options.metadata,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                onUploadProgress: options.onProgress,
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                tier: toAccessTier(options.tier),
-                                blobTagsString: toBlobTagsString(options.tags),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blockBlobContext.upload(body, contentLength, tslib.__assign({ abortSignal: options.abortSignal, blobHTTPHeaders: options.blobHTTPHeaders, leaseAccessConditions: options.conditions, metadata: options.metadata, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), onUploadProgress: options.onProgress, cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope, tier: toAccessTier(options.tier), blobTagsString: toBlobTagsString(options.tags) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_24 = _c.sent();
@@ -37479,7 +38806,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * the content of the new blob.  To perform partial updates to a block blob’s contents using a
      * source URL, use {@link stageBlockFromURL} and {@link commitBlockList}.
      *
-     * @param {string} sourceURL Specifies the URL of the blob. The value
+     * @param sourceURL - Specifies the URL of the blob. The value
      *                           may be a URL of up to 2 KB in length that specifies a blob.
      *                           The value should be URL-encoded as it would appear
      *                           in a request URI. The source blob must either be public
@@ -37488,31 +38815,29 @@ var BlockBlobClient = /** @class */ (function (_super) {
      *                           to perform the operation. Here are some examples of source object URLs:
      *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob
      *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
-     * @param {BlockBlobSyncUploadFromURLOptions} [options={}] Optional parameters.
-     * @returns Promise<Models.BlockBlobPutBlobFromUrlResponse>
-     * @memberof BlockBlobClient
+     * @param options - Optional parameters.
      */
     BlockBlobClient.prototype.syncUploadFromURL = function (sourceURL, options) {
         var _a, _b, _c, _d, _e;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _f, span, spanOptions, e_25;
+            var _f, span, updatedOptions, e_25;
             return tslib.__generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _f = createSpan("BlockBlobClient-syncUploadFromURL", options.tracingOptions), span = _f.span, spanOptions = _f.spanOptions;
+                        _f = createSpan("BlockBlobClient-syncUploadFromURL", options), span = _f.span, updatedOptions = _f.updatedOptions;
                         _g.label = 1;
                     case 1:
                         _g.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blockBlobContext.putBlobFromUrl(0, sourceURL, tslib.__assign(tslib.__assign({}, options), { leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: options.conditions.tagConditions }), sourceModifiedAccessConditions: {
+                        return [4 /*yield*/, this.blockBlobContext.putBlobFromUrl(0, sourceURL, tslib.__assign(tslib.__assign(tslib.__assign({}, options), { leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: options.conditions.tagConditions }), sourceModifiedAccessConditions: {
                                     sourceIfMatch: (_a = options.sourceConditions) === null || _a === void 0 ? void 0 : _a.ifMatch,
                                     sourceIfModifiedSince: (_b = options.sourceConditions) === null || _b === void 0 ? void 0 : _b.ifModifiedSince,
                                     sourceIfNoneMatch: (_c = options.sourceConditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch,
                                     sourceIfUnmodifiedSince: (_d = options.sourceConditions) === null || _d === void 0 ? void 0 : _d.ifUnmodifiedSince,
                                     sourceIfTags: (_e = options.sourceConditions) === null || _e === void 0 ? void 0 : _e.tagConditions
-                                }, cpkInfo: options.customerProvidedKey, tier: toAccessTier(options.tier), blobTagsString: toBlobTagsString(options.tags), spanOptions: spanOptions }))];
+                                }, cpkInfo: options.customerProvidedKey, tier: toAccessTier(options.tier), blobTagsString: toBlobTagsString(options.tags) }), convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _g.sent()];
                     case 3:
                         e_25 = _g.sent();
@@ -37534,35 +38859,25 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * committed by a call to commitBlockList.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-block
      *
-     * @param {string} blockId A 64-byte value that is base64-encoded
-     * @param {HttpRequestBody} body Data to upload to the staging area.
-     * @param {number} contentLength Number of bytes to upload.
-     * @param {BlockBlobStageBlockOptions} [options] Options to the Block Blob Stage Block operation.
-     * @returns {Promise<BlockBlobStageBlockResponse>} Response data for the Block Blob Stage Block operation.
-     * @memberof BlockBlobClient
+     * @param blockId - A 64-byte value that is base64-encoded
+     * @param body - Data to upload to the staging area.
+     * @param contentLength - Number of bytes to upload.
+     * @param options - Options to the Block Blob Stage Block operation.
+     * @returns Response data for the Block Blob Stage Block operation.
      */
     BlockBlobClient.prototype.stageBlock = function (blockId, body, contentLength, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_26;
+            var _a, span, updatedOptions, e_26;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlockBlobClient-stageBlock", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlockBlobClient-stageBlock", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blockBlobContext.stageBlock(blockId, contentLength, body, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                onUploadProgress: options.onProgress,
-                                transactionalContentMD5: options.transactionalContentMD5,
-                                transactionalContentCrc64: options.transactionalContentCrc64,
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blockBlobContext.stageBlock(blockId, contentLength, body, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, onUploadProgress: options.onProgress, transactionalContentMD5: options.transactionalContentMD5, transactionalContentCrc64: options.transactionalContentCrc64, cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_26 = _b.sent();
@@ -37585,8 +38900,8 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * This API is available starting in version 2018-03-28.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-block-from-url
      *
-     * @param {string} blockId A 64-byte value that is base64-encoded
-     * @param {string} sourceURL Specifies the URL of the blob. The value
+     * @param blockId - A 64-byte value that is base64-encoded
+     * @param sourceURL - Specifies the URL of the blob. The value
      *                           may be a URL of up to 2 KB in length that specifies a blob.
      *                           The value should be URL-encoded as it would appear
      *                           in a request URI. The source blob must either be public
@@ -37595,35 +38910,25 @@ var BlockBlobClient = /** @class */ (function (_super) {
      *                           to perform the operation. Here are some examples of source object URLs:
      *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob
      *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
-     * @param {number} [offset] From which position of the blob to download, >= 0
-     * @param {number} [count] How much data to be downloaded, > 0. Will download to the end when undefined
-     * @param {BlockBlobStageBlockFromURLOptions} [options={}] Options to the Block Blob Stage Block From URL operation.
-     * @returns {Promise<BlockBlobStageBlockFromURLResponse>} Response data for the Block Blob Stage Block From URL operation.
-     * @memberof BlockBlobClient
+     * @param offset - From which position of the blob to download, greater than or equal to 0
+     * @param count - How much data to be downloaded, greater than 0. Will download to the end when undefined
+     * @param options - Options to the Block Blob Stage Block From URL operation.
+     * @returns Response data for the Block Blob Stage Block From URL operation.
      */
     BlockBlobClient.prototype.stageBlockFromURL = function (blockId, sourceURL, offset, count, options) {
         if (offset === void 0) { offset = 0; }
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_27;
+            var _a, span, updatedOptions, e_27;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlockBlobClient-stageBlockFromURL", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlockBlobClient-stageBlockFromURL", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blockBlobContext.stageBlockFromURL(blockId, 0, sourceURL, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                sourceContentMD5: options.sourceContentMD5,
-                                sourceContentCrc64: options.sourceContentCrc64,
-                                sourceRange: offset === 0 && !count ? undefined : rangeToString({ offset: offset, count: count }),
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blockBlobContext.stageBlockFromURL(blockId, 0, sourceURL, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, sourceContentMD5: options.sourceContentMD5, sourceContentCrc64: options.sourceContentCrc64, sourceRange: offset === 0 && !count ? undefined : rangeToString({ offset: offset, count: count }), cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_27 = _b.sent();
@@ -37648,37 +38953,25 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * blocks together. Any blocks not specified in the block list and permanently deleted.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-block-list
      *
-     * @param {string[]} blocks  Array of 64-byte value that is base64-encoded
-     * @param {BlockBlobCommitBlockListOptions} [options] Options to the Block Blob Commit Block List operation.
-     * @returns {Promise<BlockBlobCommitBlockListResponse>} Response data for the Block Blob Commit Block List operation.
-     * @memberof BlockBlobClient
+     * @param blocks -  Array of 64-byte value that is base64-encoded
+     * @param options - Options to the Block Blob Commit Block List operation.
+     * @returns Response data for the Block Blob Commit Block List operation.
      */
     BlockBlobClient.prototype.commitBlockList = function (blocks, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_28;
+            var _b, span, updatedOptions, e_28;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("BlockBlobClient-commitBlockList", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlockBlobClient-commitBlockList", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.blockBlobContext.commitBlockList({ latest: blocks }, {
-                                abortSignal: options.abortSignal,
-                                blobHTTPHeaders: options.blobHTTPHeaders,
-                                leaseAccessConditions: options.conditions,
-                                metadata: options.metadata,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                tier: toAccessTier(options.tier),
-                                blobTagsString: toBlobTagsString(options.tags),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blockBlobContext.commitBlockList({ latest: blocks }, tslib.__assign({ abortSignal: options.abortSignal, blobHTTPHeaders: options.blobHTTPHeaders, leaseAccessConditions: options.conditions, metadata: options.metadata, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope, tier: toAccessTier(options.tier), blobTagsString: toBlobTagsString(options.tags) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_28 = _c.sent();
@@ -37700,30 +38993,24 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * using the specified block list filter.
      * @see https://docs.microsoft.com/rest/api/storageservices/get-block-list
      *
-     * @param {BlockListType} listType Specifies whether to return the list of committed blocks,
+     * @param listType - Specifies whether to return the list of committed blocks,
      *                                        the list of uncommitted blocks, or both lists together.
-     * @param {BlockBlobGetBlockListOptions} [options] Options to the Block Blob Get Block List operation.
-     * @returns {Promise<BlockBlobGetBlockListResponse>} Response data for the Block Blob Get Block List operation.
-     * @memberof BlockBlobClient
+     * @param options - Options to the Block Blob Get Block List operation.
+     * @returns Response data for the Block Blob Get Block List operation.
      */
     BlockBlobClient.prototype.getBlockList = function (listType, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, res, e_29;
+            var _b, span, updatedOptions, res, e_29;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("BlockBlobClient-getBlockList", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("BlockBlobClient-getBlockList", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.blockBlobContext.getBlockList(listType, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.blockBlobContext.getBlockList(listType, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2:
                         res = _c.sent();
                         if (!res.committedBlocks) {
@@ -37757,18 +39044,15 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * Otherwise, this method will call {@link stageBlock} to upload blocks, and finally call {@link commitBlockList}
      * to commit the block list.
      *
-     * @export
-     * @param {Buffer | Blob | ArrayBuffer | ArrayBufferView} data Buffer(Node.js), Blob, ArrayBuffer or ArrayBufferView
-     * @param {BlockBlobParallelUploadOptions} [options]
-     * @returns {Promise<BlobUploadCommonResponse>}
-     * @memberof BlockBlobClient
+     * @param data - Buffer(Node.js), Blob, ArrayBuffer or ArrayBufferView
+     * @param options -
      */
     BlockBlobClient.prototype.uploadData = function (data, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, buffer_1, browserBlob_1;
+            var _a, span, updatedOptions, buffer_1, browserBlob_1;
             return tslib.__generator(this, function (_b) {
-                _a = createSpan("BlockBlobClient-uploadData", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                _a = createSpan("BlockBlobClient-uploadData", options), span = _a.span, updatedOptions = _a.updatedOptions;
                 try {
                     if (true) {
                         if (data instanceof Buffer) {
@@ -37781,7 +39065,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
                             data = data;
                             buffer_1 = Buffer.from(data.buffer, data.byteOffset, data.byteLength);
                         }
-                        return [2 /*return*/, this.uploadSeekableInternal(function (offset, size) { return buffer_1.slice(offset, offset + size); }, buffer_1.byteLength, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [2 /*return*/, this.uploadSeekableInternal(function (offset, size) { return buffer_1.slice(offset, offset + size); }, buffer_1.byteLength, updatedOptions)];
                     }
                     else {}
                 }
@@ -37804,31 +39088,29 @@ var BlockBlobClient = /** @class */ (function (_super) {
      *
      * Uploads a browser Blob/File/ArrayBuffer/ArrayBufferView object to block blob.
      *
-     * When buffer length <= 256MB, this method will use 1 upload call to finish the upload.
+     * When buffer length lesser than or equal to 256MB, this method will use 1 upload call to finish the upload.
      * Otherwise, this method will call {@link stageBlock} to upload blocks, and finally call
      * {@link commitBlockList} to commit the block list.
      *
      * @deprecated Use {@link uploadData} instead.
      *
-     * @export
-     * @param {Blob | ArrayBuffer | ArrayBufferView} browserData Blob, File, ArrayBuffer or ArrayBufferView
-     * @param {BlockBlobParallelUploadOptions} [options] Options to upload browser data.
-     * @returns {Promise<BlobUploadCommonResponse>} Response data for the Blob Upload operation.
-     * @memberof BlockBlobClient
+     * @param browserData - Blob, File, ArrayBuffer or ArrayBufferView
+     * @param options - Options to upload browser data.
+     * @returns Response data for the Blob Upload operation.
      */
     BlockBlobClient.prototype.uploadBrowserData = function (browserData, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, browserBlob_2, e_30;
+            var _a, span, updatedOptions, browserBlob_2, e_30;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlockBlobClient-uploadBrowserData", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlockBlobClient-uploadBrowserData", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
                         browserBlob_2 = new Blob([browserData]);
-                        return [4 /*yield*/, this.uploadSeekableInternal(function (offset, size) { return browserBlob_2.slice(offset, offset + size); }, browserBlob_2.size, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.uploadSeekableInternal(function (offset, size) { return browserBlob_2.slice(offset, offset + size); }, browserBlob_2.size, updatedOptions)];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_30 = _b.sent();
@@ -37855,16 +39137,15 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * Otherwise, this method will call {@link stageBlock} to upload blocks, and finally call {@link commitBlockList}
      * to commit the block list.
      *
-     * @param {(offset: number, size: number) => HttpRequestBody} bodyFactory
-     * @param {number} size size of the data to upload.
-     * @param {BlockBlobParallelUploadOptions} [options] Options to Upload to Block Blob operation.
-     * @returns {Promise<BlobUploadCommonResponse>} Response data for the Blob Upload operation.
-     * @memberof BlockBlobClient
+     * @param bodyFactory -
+     * @param size - size of the data to upload.
+     * @param options - Options to Upload to Block Blob operation.
+     * @returns Response data for the Blob Upload operation.
      */
     BlockBlobClient.prototype.uploadSeekableInternal = function (bodyFactory, size, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, numBlocks_1, blockList_1, blockIDPrefix_1, transferProgress_2, batch, _loop_2, i, e_31;
+            var _a, span, updatedOptions, numBlocks_1, blockList_1, blockIDPrefix_1, transferProgress_2, batch, _loop_2, i, e_31;
             var _this = this;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -37899,12 +39180,12 @@ var BlockBlobClient = /** @class */ (function (_super) {
                         if (!options.conditions) {
                             options.conditions = {};
                         }
-                        _a = createSpan("BlockBlobClient-uploadSeekableInternal", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlockBlobClient-uploadSeekableInternal", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 5, 6, 7]);
                         if (!(size <= options.maxSingleShotSize)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.upload(bodyFactory(0, size), size, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.upload(bodyFactory(0, size), size, updatedOptions)];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         numBlocks_1 = Math.floor((size - 1) / options.blockSize) + 1;
@@ -37931,7 +39212,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
                                                     abortSignal: options.abortSignal,
                                                     conditions: options.conditions,
                                                     encryptionScope: options.encryptionScope,
-                                                    tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions })
+                                                    tracingOptions: updatedOptions.tracingOptions
                                                 })];
                                         case 1:
                                             _a.sent();
@@ -37954,7 +39235,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
                         return [4 /*yield*/, batch.do()];
                     case 4:
                         _b.sent();
-                        return [2 /*return*/, this.commitBlockList(blockList_1, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [2 /*return*/, this.commitBlockList(blockList_1, updatedOptions)];
                     case 5:
                         e_31 = _b.sent();
                         span.setStatus({
@@ -37975,23 +39256,22 @@ var BlockBlobClient = /** @class */ (function (_super) {
      *
      * Uploads a local file in blocks to a block blob.
      *
-     * When file size <= 256MB, this method will use 1 upload call to finish the upload.
+     * When file size lesser than or equal to 256MB, this method will use 1 upload call to finish the upload.
      * Otherwise, this method will call stageBlock to upload blocks, and finally call commitBlockList
      * to commit the block list.
      *
-     * @param {string} filePath Full path of local file
-     * @param {BlockBlobParallelUploadOptions} [options] Options to Upload to Block Blob operation.
-     * @returns {(Promise<BlobUploadCommonResponse>)}  Response data for the Blob Upload operation.
-     * @memberof BlockBlobClient
+     * @param filePath - Full path of local file
+     * @param options - Options to Upload to Block Blob operation.
+     * @returns Response data for the Blob Upload operation.
      */
     BlockBlobClient.prototype.uploadFile = function (filePath, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, size, e_32;
+            var _a, span, updatedOptions, size, e_32;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlockBlobClient-uploadFile", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlockBlobClient-uploadFile", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 4, 5, 6]);
@@ -38006,7 +39286,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
                                         start: offset
                                     });
                                 };
-                            }, size, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                            }, size, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), convertTracingToRequestOptionsBase(updatedOptions)) }))];
                     case 3: return [2 /*return*/, _b.sent()];
                     case 4:
                         e_32 = _b.sent();
@@ -38032,20 +39312,19 @@ var BlockBlobClient = /** @class */ (function (_super) {
      * * Input stream highWaterMark is better to set a same value with bufferSize
      *    parameter, which will avoid Buffer.concat() operations.
      *
-     * @param {Readable} stream Node.js Readable stream
-     * @param {number} bufferSize Size of every buffer allocated, also the block size in the uploaded block blob. Default value is 8MB
-     * @param {number} maxConcurrency  Max concurrency indicates the max number of buffers that can be allocated,
+     * @param stream - Node.js Readable stream
+     * @param bufferSize - Size of every buffer allocated, also the block size in the uploaded block blob. Default value is 8MB
+     * @param maxConcurrency -  Max concurrency indicates the max number of buffers that can be allocated,
      *                                 positive correlation with max uploading concurrency. Default value is 5
-     * @param {BlockBlobUploadStreamOptions} [options] Options to Upload Stream to Block Blob operation.
-     * @returns {Promise<BlobUploadCommonResponse>} Response data for the Blob Upload operation.
-     * @memberof BlockBlobClient
+     * @param options - Options to Upload Stream to Block Blob operation.
+     * @returns Response data for the Blob Upload operation.
      */
     BlockBlobClient.prototype.uploadStream = function (stream, bufferSize, maxConcurrency, options) {
         if (bufferSize === void 0) { bufferSize = DEFAULT_BLOCK_BUFFER_SIZE_BYTES; }
         if (maxConcurrency === void 0) { maxConcurrency = 5; }
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, blockNum_1, blockIDPrefix_2, transferProgress_3, blockList_2, scheduler, e_33;
+            var _a, span, updatedOptions, blockNum_1, blockIDPrefix_2, transferProgress_3, blockList_2, scheduler, e_33;
             var _this = this;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -38056,7 +39335,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
                         if (!options.conditions) {
                             options.conditions = {};
                         }
-                        _a = createSpan("BlockBlobClient-uploadStream", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlockBlobClient-uploadStream", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 4, 5, 6]);
@@ -38075,7 +39354,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
                                         return [4 /*yield*/, this.stageBlock(blockID, body, length, {
                                                 conditions: options.conditions,
                                                 encryptionScope: options.encryptionScope,
-                                                tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions })
+                                                tracingOptions: updatedOptions.tracingOptions
                                             })];
                                     case 1:
                                         _a.sent();
@@ -38096,7 +39375,7 @@ var BlockBlobClient = /** @class */ (function (_super) {
                         return [4 /*yield*/, scheduler.do()];
                     case 2:
                         _b.sent();
-                        return [4 /*yield*/, this.commitBlockList(blockList_2, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.commitBlockList(blockList_2, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), convertTracingToRequestOptionsBase(updatedOptions)) }))];
                     case 3: return [2 /*return*/, _b.sent()];
                     case 4:
                         e_33 = _b.sent();
@@ -38117,10 +39396,6 @@ var BlockBlobClient = /** @class */ (function (_super) {
 }(BlobClient));
 /**
  * PageBlobClient defines a set of operations applicable to page blobs.
- *
- * @export
- * @class PageBlobClient
- * @extends {BlobClient}
  */
 var PageBlobClient = /** @class */ (function (_super) {
     tslib.__extends(PageBlobClient, _super);
@@ -38190,9 +39465,8 @@ var PageBlobClient = /** @class */ (function (_super) {
      * specified snapshot timestamp.
      * Provide "" will remove the snapshot and return a Client to the base blob.
      *
-     * @param {string} snapshot The snapshot timestamp.
-     * @returns {PageBlobClient} A new PageBlobClient object identical to the source but with the specified snapshot timestamp.
-     * @memberof PageBlobClient
+     * @param snapshot - The snapshot timestamp.
+     * @returns A new PageBlobClient object identical to the source but with the specified snapshot timestamp.
      */
     PageBlobClient.prototype.withSnapshot = function (snapshot) {
         return new PageBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot.length === 0 ? undefined : snapshot), this.pipeline);
@@ -38202,38 +39476,25 @@ var PageBlobClient = /** @class */ (function (_super) {
      * data to a page blob.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
      *
-     * @param {number} size size of the page blob.
-     * @param {PageBlobCreateOptions} [options] Options to the Page Blob Create operation.
-     * @returns {Promise<PageBlobCreateResponse>} Response data for the Page Blob Create operation.
-     * @memberof PageBlobClient
+     * @param size - size of the page blob.
+     * @param options - Options to the Page Blob Create operation.
+     * @returns Response data for the Page Blob Create operation.
      */
     PageBlobClient.prototype.create = function (size, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_34;
+            var _b, span, updatedOptions, e_34;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-create", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-create", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.pageBlobContext.create(0, size, {
-                                abortSignal: options.abortSignal,
-                                blobHTTPHeaders: options.blobHTTPHeaders,
-                                blobSequenceNumber: options.blobSequenceNumber,
-                                leaseAccessConditions: options.conditions,
-                                metadata: options.metadata,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                tier: toAccessTier(options.tier),
-                                blobTagsString: toBlobTagsString(options.tags),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.pageBlobContext.create(0, size, tslib.__assign({ abortSignal: options.abortSignal, blobHTTPHeaders: options.blobHTTPHeaders, blobSequenceNumber: options.blobSequenceNumber, leaseAccessConditions: options.conditions, metadata: options.metadata, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope, tier: toAccessTier(options.tier), blobTagsString: toBlobTagsString(options.tags) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_34 = _c.sent();
@@ -38256,25 +39517,23 @@ var PageBlobClient = /** @class */ (function (_super) {
      * of the existing blob will remain unchanged.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
      *
-     * @param {number} size size of the page blob.
-     * @param {PageBlobCreateIfNotExistsOptions} [options]
-     * @returns {Promise<PageBlobCreateIfNotExistsResponse>}
-     * @memberof PageBlobClient
+     * @param size - size of the page blob.
+     * @param options -
      */
     PageBlobClient.prototype.createIfNotExists = function (size, options) {
         var _a, _b;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _c, span, spanOptions, conditions, res, e_35;
+            var _c, span, updatedOptions, conditions, res, e_35;
             return tslib.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        _c = createSpan("PageBlobClient-createIfNotExists", options.tracingOptions), span = _c.span, spanOptions = _c.spanOptions;
+                        _c = createSpan("PageBlobClient-createIfNotExists", options), span = _c.span, updatedOptions = _c.updatedOptions;
                         _d.label = 1;
                     case 1:
                         _d.trys.push([1, 3, 4, 5]);
                         conditions = { ifNoneMatch: ETagAny };
-                        return [4 /*yield*/, this.create(size, tslib.__assign(tslib.__assign({}, options), { conditions: conditions, tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, this.create(size, tslib.__assign(tslib.__assign({}, options), { conditions: conditions, tracingOptions: updatedOptions.tracingOptions }))];
                     case 2:
                         res = _d.sent();
                         return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: true }, res), { _response: res._response // _response is made non-enumerable
@@ -38305,40 +39564,27 @@ var PageBlobClient = /** @class */ (function (_super) {
      * Writes 1 or more pages to the page blob. The start and end offsets must be a multiple of 512.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-page
      *
-     * @param {HttpRequestBody} body Data to upload
-     * @param {number} offset Offset of destination page blob
-     * @param {number} count Content length of the body, also number of bytes to be uploaded
-     * @param {PageBlobUploadPagesOptions} [options] Options to the Page Blob Upload Pages operation.
-     * @returns {Promise<PageBlobsUploadPagesResponse>} Response data for the Page Blob Upload Pages operation.
-     * @memberof PageBlobClient
+     * @param body - Data to upload
+     * @param offset - Offset of destination page blob
+     * @param count - Content length of the body, also number of bytes to be uploaded
+     * @param options - Options to the Page Blob Upload Pages operation.
+     * @returns Response data for the Page Blob Upload Pages operation.
      */
     PageBlobClient.prototype.uploadPages = function (body, offset, count, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_36;
+            var _b, span, updatedOptions, e_36;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-uploadPages", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-uploadPages", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.pageBlobContext.uploadPages(body, count, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                onUploadProgress: options.onProgress,
-                                range: rangeToString({ offset: offset, count: count }),
-                                sequenceNumberAccessConditions: options.conditions,
-                                transactionalContentMD5: options.transactionalContentMD5,
-                                transactionalContentCrc64: options.transactionalContentCrc64,
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.pageBlobContext.uploadPages(body, count, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), onUploadProgress: options.onProgress, range: rangeToString({ offset: offset, count: count }), sequenceNumberAccessConditions: options.conditions, transactionalContentMD5: options.transactionalContentMD5, transactionalContentCrc64: options.transactionalContentCrc64, cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_36 = _c.sent();
@@ -38360,46 +39606,33 @@ var PageBlobClient = /** @class */ (function (_super) {
      * contents are read from a URL.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-page-from-url
      *
-     * @param {string} sourceURL Specify a URL to the copy source, Shared Access Signature(SAS) maybe needed for authentication
-     * @param {number} sourceOffset The source offset to copy from. Pass 0 to copy from the beginning of source page blob
-     * @param {number} destOffset Offset of destination page blob
-     * @param {number} count Number of bytes to be uploaded from source page blob
-     * @param {PageBlobUploadPagesFromURLOptions} [options={}]
-     * @returns {Promise<PageBlobUploadPagesFromURLResponse>}
-     * @memberof PageBlobClient
+     * @param sourceURL - Specify a URL to the copy source, Shared Access Signature(SAS) maybe needed for authentication
+     * @param sourceOffset - The source offset to copy from. Pass 0 to copy from the beginning of source page blob
+     * @param destOffset - Offset of destination page blob
+     * @param count - Number of bytes to be uploaded from source page blob
+     * @param options -
      */
     PageBlobClient.prototype.uploadPagesFromURL = function (sourceURL, sourceOffset, destOffset, count, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_37;
+            var _b, span, updatedOptions, e_37;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
                         options.sourceConditions = options.sourceConditions || {};
-                        _b = createSpan("PageBlobClient-uploadPagesFromURL", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-uploadPagesFromURL", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
-                        return [4 /*yield*/, this.pageBlobContext.uploadPagesFromURL(sourceURL, rangeToString({ offset: sourceOffset, count: count }), 0, rangeToString({ offset: destOffset, count: count }), {
-                                abortSignal: options.abortSignal,
-                                sourceContentMD5: options.sourceContentMD5,
-                                sourceContentCrc64: options.sourceContentCrc64,
-                                leaseAccessConditions: options.conditions,
-                                sequenceNumberAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                sourceModifiedAccessConditions: {
+                        return [4 /*yield*/, this.pageBlobContext.uploadPagesFromURL(sourceURL, rangeToString({ offset: sourceOffset, count: count }), 0, rangeToString({ offset: destOffset, count: count }), tslib.__assign({ abortSignal: options.abortSignal, sourceContentMD5: options.sourceContentMD5, sourceContentCrc64: options.sourceContentCrc64, leaseAccessConditions: options.conditions, sequenceNumberAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), sourceModifiedAccessConditions: {
                                     sourceIfMatch: options.sourceConditions.ifMatch,
                                     sourceIfModifiedSince: options.sourceConditions.ifModifiedSince,
                                     sourceIfNoneMatch: options.sourceConditions.ifNoneMatch,
                                     sourceIfUnmodifiedSince: options.sourceConditions.ifUnmodifiedSince
-                                },
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                                }, cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_37 = _c.sent();
@@ -38420,36 +39653,26 @@ var PageBlobClient = /** @class */ (function (_super) {
      * Frees the specified pages from the page blob.
      * @see https://docs.microsoft.com/rest/api/storageservices/put-page
      *
-     * @param {number} [offset] Starting byte position of the pages to clear.
-     * @param {number} [count] Number of bytes to clear.
-     * @param {PageBlobClearPagesOptions} [options] Options to the Page Blob Clear Pages operation.
-     * @returns {Promise<PageBlobClearPagesResponse>} Response data for the Page Blob Clear Pages operation.
-     * @memberof PageBlobClient
+     * @param offset - Starting byte position of the pages to clear.
+     * @param count - Number of bytes to clear.
+     * @param options - Options to the Page Blob Clear Pages operation.
+     * @returns Response data for the Page Blob Clear Pages operation.
      */
     PageBlobClient.prototype.clearPages = function (offset, count, options) {
         var _a;
         if (offset === void 0) { offset = 0; }
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_38;
+            var _b, span, updatedOptions, e_38;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-clearPages", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-clearPages", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.pageBlobContext.clearPages(0, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                range: rangeToString({ offset: offset, count: count }),
-                                sequenceNumberAccessConditions: options.conditions,
-                                cpkInfo: options.customerProvidedKey,
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.pageBlobContext.clearPages(0, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), range: rangeToString({ offset: offset, count: count }), sequenceNumberAccessConditions: options.conditions, cpkInfo: options.customerProvidedKey, encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_38 = _c.sent();
@@ -38470,34 +39693,27 @@ var PageBlobClient = /** @class */ (function (_super) {
      * Returns the list of valid page ranges for a page blob or snapshot of a page blob.
      * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
      *
-     * @param {number} [offset] Starting byte position of the page ranges.
-     * @param {number} [count] Number of bytes to get.
-     * @param {PageBlobGetPageRangesOptions} [options] Options to the Page Blob Get Ranges operation.
-     * @returns {Promise<PageBlobGetPageRangesResponse>} Response data for the Page Blob Get Ranges operation.
-     * @memberof PageBlobClient
+     * @param offset - Starting byte position of the page ranges.
+     * @param count - Number of bytes to get.
+     * @param options - Options to the Page Blob Get Ranges operation.
+     * @returns Response data for the Page Blob Get Ranges operation.
      */
     PageBlobClient.prototype.getPageRanges = function (offset, count, options) {
         var _a;
         if (offset === void 0) { offset = 0; }
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_39;
+            var _b, span, updatedOptions, e_39;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-getPageRanges", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-getPageRanges", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         return [4 /*yield*/, this.pageBlobContext
-                                .getPageRanges({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                range: rangeToString({ offset: offset, count: count }),
-                                spanOptions: spanOptions
-                            })
+                                .getPageRanges(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), range: rangeToString({ offset: offset, count: count }) }, convertTracingToRequestOptionsBase(updatedOptions)))
                                 .then(rangeResponseFromModel)];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
@@ -38519,35 +39735,27 @@ var PageBlobClient = /** @class */ (function (_super) {
      * Gets the collection of page ranges that differ between a specified snapshot and this page blob.
      * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
      *
-     * @param {number} offset Starting byte position of the page blob
-     * @param {number} count Number of bytes to get ranges diff.
-     * @param {string} prevSnapshot Timestamp of snapshot to retrieve the difference.
-     * @param {PageBlobGetPageRangesDiffOptions} [options] Options to the Page Blob Get Page Ranges Diff operation.
-     * @returns {Promise<PageBlobGetPageRangesDiffResponse>} Response data for the Page Blob Get Page Range Diff operation.
-     * @memberof PageBlobClient
+     * @param offset - Starting byte position of the page blob
+     * @param count - Number of bytes to get ranges diff.
+     * @param prevSnapshot - Timestamp of snapshot to retrieve the difference.
+     * @param options - Options to the Page Blob Get Page Ranges Diff operation.
+     * @returns Response data for the Page Blob Get Page Range Diff operation.
      */
     PageBlobClient.prototype.getPageRangesDiff = function (offset, count, prevSnapshot, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_40;
+            var _b, span, updatedOptions, e_40;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-getPageRangesDiff", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-getPageRangesDiff", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         return [4 /*yield*/, this.pageBlobContext
-                                .getPageRangesDiff({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                prevsnapshot: prevSnapshot,
-                                range: rangeToString({ offset: offset, count: count }),
-                                spanOptions: spanOptions
-                            })
+                                .getPageRangesDiff(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), prevsnapshot: prevSnapshot, range: rangeToString({ offset: offset, count: count }) }, convertTracingToRequestOptionsBase(updatedOptions)))
                                 .then(rangeResponseFromModel)];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
@@ -38569,35 +39777,27 @@ var PageBlobClient = /** @class */ (function (_super) {
      * Gets the collection of page ranges that differ between a specified snapshot and this page blob for managed disks.
      * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
      *
-     * @param {number} offset Starting byte position of the page blob
-     * @param {number} count Number of bytes to get ranges diff.
-     * @param {string} prevSnapshotUrl URL of snapshot to retrieve the difference.
-     * @param {PageBlobGetPageRangesDiffOptions} [options] Options to the Page Blob Get Page Ranges Diff operation.
-     * @returns {Promise<PageBlobGetPageRangesDiffResponse>} Response data for the Page Blob Get Page Range Diff operation.
-     * @memberof PageBlobClient
+     * @param offset - Starting byte position of the page blob
+     * @param count - Number of bytes to get ranges diff.
+     * @param prevSnapshotUrl - URL of snapshot to retrieve the difference.
+     * @param options - Options to the Page Blob Get Page Ranges Diff operation.
+     * @returns Response data for the Page Blob Get Page Range Diff operation.
      */
     PageBlobClient.prototype.getPageRangesDiffForManagedDisks = function (offset, count, prevSnapshotUrl, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_41;
+            var _b, span, updatedOptions, e_41;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-GetPageRangesDiffForManagedDisks", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-GetPageRangesDiffForManagedDisks", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
                         return [4 /*yield*/, this.pageBlobContext
-                                .getPageRangesDiff({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                prevSnapshotUrl: prevSnapshotUrl,
-                                range: rangeToString({ offset: offset, count: count }),
-                                spanOptions: spanOptions
-                            })
+                                .getPageRangesDiff(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), prevSnapshotUrl: prevSnapshotUrl, range: rangeToString({ offset: offset, count: count }) }, convertTracingToRequestOptionsBase(updatedOptions)))
                                 .then(rangeResponseFromModel)];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
@@ -38619,31 +39819,24 @@ var PageBlobClient = /** @class */ (function (_super) {
      * Resizes the page blob to the specified size (which must be a multiple of 512).
      * @see https://docs.microsoft.com/rest/api/storageservices/set-blob-properties
      *
-     * @param {number} size Target size
-     * @param {PageBlobResizeOptions} [options] Options to the Page Blob Resize operation.
-     * @returns {Promise<PageBlobResizeResponse>} Response data for the Page Blob Resize operation.
-     * @memberof PageBlobClient
+     * @param size - Target size
+     * @param options - Options to the Page Blob Resize operation.
+     * @returns Response data for the Page Blob Resize operation.
      */
     PageBlobClient.prototype.resize = function (size, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_42;
+            var _b, span, updatedOptions, e_42;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-resize", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-resize", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.pageBlobContext.resize(size, {
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                encryptionScope: options.encryptionScope,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.pageBlobContext.resize(size, tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), encryptionScope: options.encryptionScope }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_42 = _c.sent();
@@ -38664,32 +39857,25 @@ var PageBlobClient = /** @class */ (function (_super) {
      * Sets a page blob's sequence number.
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-properties
      *
-     * @param {SequenceNumberActionType} sequenceNumberAction Indicates how the service should modify the blob's sequence number.
-     * @param {number} [sequenceNumber] Required if sequenceNumberAction is max or update
-     * @param {PageBlobUpdateSequenceNumberOptions} [options] Options to the Page Blob Update Sequence Number operation.
-     * @returns {Promise<PageBlobUpdateSequenceNumberResponse>} Response data for the Page Blob Update Sequence Number operation.
-     * @memberof PageBlobClient
+     * @param sequenceNumberAction - Indicates how the service should modify the blob's sequence number.
+     * @param sequenceNumber - Required if sequenceNumberAction is max or update
+     * @param options - Options to the Page Blob Update Sequence Number operation.
+     * @returns Response data for the Page Blob Update Sequence Number operation.
      */
     PageBlobClient.prototype.updateSequenceNumber = function (sequenceNumberAction, sequenceNumber, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_43;
+            var _b, span, updatedOptions, e_43;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         options.conditions = options.conditions || {};
-                        _b = createSpan("PageBlobClient-updateSequenceNumber", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-updateSequenceNumber", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.pageBlobContext.updateSequenceNumber(sequenceNumberAction, {
-                                abortSignal: options.abortSignal,
-                                blobSequenceNumber: sequenceNumber,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.pageBlobContext.updateSequenceNumber(sequenceNumberAction, tslib.__assign({ abortSignal: options.abortSignal, blobSequenceNumber: sequenceNumber, leaseAccessConditions: options.conditions, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_43 = _c.sent();
@@ -38714,29 +39900,24 @@ var PageBlobClient = /** @class */ (function (_super) {
      * @see https://docs.microsoft.com/rest/api/storageservices/incremental-copy-blob
      * @see https://docs.microsoft.com/en-us/azure/virtual-machines/windows/incremental-snapshots
      *
-     * @param {string} copySource Specifies the name of the source page blob snapshot. For example,
+     * @param copySource - Specifies the name of the source page blob snapshot. For example,
      *                            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
-     * @param {PageBlobStartCopyIncrementalOptions} [options] Options to the Page Blob Copy Incremental operation.
-     * @returns {Promise<PageBlobCopyIncrementalResponse>} Response data for the Page Blob Copy Incremental operation.
-     * @memberof PageBlobClient
+     * @param options - Options to the Page Blob Copy Incremental operation.
+     * @returns Response data for the Page Blob Copy Incremental operation.
      */
     PageBlobClient.prototype.startCopyIncremental = function (copySource, options) {
         var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _b, span, spanOptions, e_44;
+            var _b, span, updatedOptions, e_44;
             return tslib.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _b = createSpan("PageBlobClient-startCopyIncremental", options.tracingOptions), span = _b.span, spanOptions = _b.spanOptions;
+                        _b = createSpan("PageBlobClient-startCopyIncremental", options), span = _b.span, updatedOptions = _b.updatedOptions;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.pageBlobContext.copyIncremental(copySource, {
-                                abortSignal: options.abortSignal,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.pageBlobContext.copyIncremental(copySource, tslib.__assign({ abortSignal: options.abortSignal, modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }) }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _c.sent()];
                     case 3:
                         e_44 = _c.sent();
@@ -38755,1680 +39936,8 @@ var PageBlobClient = /** @class */ (function (_super) {
     };
     return PageBlobClient;
 }(BlobClient));
-/**
- * A client that manages leases for a {@link ContainerClient} or a {@link BlobClient}.
- *
- * @export
- * @class BlobLeaseClient
- */
-var BlobLeaseClient = /** @class */ (function () {
-    /**
-     * Creates an instance of BlobLeaseClient.
-     * @param {(ContainerClient | BlobClient)} client The client to make the lease operation requests.
-     * @param {string} leaseId Initial proposed lease id.
-     * @memberof BlobLeaseClient
-     */
-    function BlobLeaseClient(client, leaseId) {
-        var clientContext = new StorageClientContext(client.url, client.pipeline.toServiceClientOptions());
-        this._url = client.url;
-        if (client instanceof ContainerClient) {
-            this._isContainer = true;
-            this._containerOrBlobOperation = new Container(clientContext);
-        }
-        else {
-            this._isContainer = false;
-            this._containerOrBlobOperation = new Blob$1(clientContext);
-        }
-        if (!leaseId) {
-            leaseId = coreHttp.generateUuid();
-        }
-        this._leaseId = leaseId;
-    }
-    Object.defineProperty(BlobLeaseClient.prototype, "leaseId", {
-        /**
-         * Gets the lease Id.
-         *
-         * @readonly
-         * @memberof BlobLeaseClient
-         * @type {string}
-         */
-        get: function () {
-            return this._leaseId;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(BlobLeaseClient.prototype, "url", {
-        /**
-         * Gets the url.
-         *
-         * @readonly
-         * @memberof BlobLeaseClient
-         * @type {string}
-         */
-        get: function () {
-            return this._url;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    /**
-     * Establishes and manages a lock on a container for delete operations, or on a blob
-     * for write and delete operations.
-     * The lock duration can be 15 to 60 seconds, or can be infinite.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
-     * and
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
-     *
-     * @param {number} duration Must be between 15 to 60 seconds, or infinite (-1)
-     * @param {LeaseOperationOptions} [options={}] option to configure lease management operations.
-     * @returns {Promise<LeaseOperationResponse>} Response data for acquire lease operation.
-     * @memberof BlobLeaseClient
-     */
-    BlobLeaseClient.prototype.acquireLease = function (duration, options) {
-        var _a, _b, _c, _d, _e, _f;
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _g, span, spanOptions, e_45;
-            return tslib.__generator(this, function (_h) {
-                switch (_h.label) {
-                    case 0:
-                        _g = createSpan("BlobLeaseClient-acquireLease", options.tracingOptions), span = _g.span, spanOptions = _g.spanOptions;
-                        if (this._isContainer &&
-                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
-                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
-                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
-                        }
-                        _h.label = 1;
-                    case 1:
-                        _h.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this._containerOrBlobOperation.acquireLease({
-                                abortSignal: options.abortSignal,
-                                duration: duration,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }),
-                                proposedLeaseId: this._leaseId,
-                                spanOptions: spanOptions
-                            })];
-                    case 2: return [2 /*return*/, _h.sent()];
-                    case 3:
-                        e_45 = _h.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_45.message
-                        });
-                        throw e_45;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * To change the ID of the lease.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
-     * and
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
-     *
-     * @param {string} proposedLeaseId the proposed new lease Id.
-     * @param {LeaseOperationOptions} [options={}] option to configure lease management operations.
-     * @returns {Promise<LeaseOperationResponse>} Response data for change lease operation.
-     * @memberof BlobLeaseClient
-     */
-    BlobLeaseClient.prototype.changeLease = function (proposedLeaseId, options) {
-        var _a, _b, _c, _d, _e, _f;
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _g, span, spanOptions, response, e_46;
-            return tslib.__generator(this, function (_h) {
-                switch (_h.label) {
-                    case 0:
-                        _g = createSpan("BlobLeaseClient-changeLease", options.tracingOptions), span = _g.span, spanOptions = _g.spanOptions;
-                        if (this._isContainer &&
-                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
-                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
-                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
-                        }
-                        _h.label = 1;
-                    case 1:
-                        _h.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this._containerOrBlobOperation.changeLease(this._leaseId, proposedLeaseId, {
-                                abortSignal: options.abortSignal,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
-                    case 2:
-                        response = _h.sent();
-                        this._leaseId = proposedLeaseId;
-                        return [2 /*return*/, response];
-                    case 3:
-                        e_46 = _h.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_46.message
-                        });
-                        throw e_46;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * To free the lease if it is no longer needed so that another client may
-     * immediately acquire a lease against the container or the blob.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
-     * and
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
-     *
-     * @param {LeaseOperationOptions} [options={}] option to configure lease management operations.
-     * @returns {Promise<LeaseOperationResponse>} Response data for release lease operation.
-     * @memberof BlobLeaseClient
-     */
-    BlobLeaseClient.prototype.releaseLease = function (options) {
-        var _a, _b, _c, _d, _e, _f;
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _g, span, spanOptions, e_47;
-            return tslib.__generator(this, function (_h) {
-                switch (_h.label) {
-                    case 0:
-                        _g = createSpan("BlobLeaseClient-releaseLease", options.tracingOptions), span = _g.span, spanOptions = _g.spanOptions;
-                        if (this._isContainer &&
-                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
-                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
-                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
-                        }
-                        _h.label = 1;
-                    case 1:
-                        _h.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this._containerOrBlobOperation.releaseLease(this._leaseId, {
-                                abortSignal: options.abortSignal,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
-                    case 2: return [2 /*return*/, _h.sent()];
-                    case 3:
-                        e_47 = _h.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_47.message
-                        });
-                        throw e_47;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * To renew the lease.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
-     * and
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
-     *
-     * @param {LeaseOperationOptions} [options={}] Optional option to configure lease management operations.
-     * @returns {Promise<LeaseOperationResponse>} Response data for renew lease operation.
-     * @memberof BlobLeaseClient
-     */
-    BlobLeaseClient.prototype.renewLease = function (options) {
-        var _a, _b, _c, _d, _e, _f;
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _g, span, spanOptions, e_48;
-            return tslib.__generator(this, function (_h) {
-                switch (_h.label) {
-                    case 0:
-                        _g = createSpan("BlobLeaseClient-renewLease", options.tracingOptions), span = _g.span, spanOptions = _g.spanOptions;
-                        if (this._isContainer &&
-                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
-                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
-                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
-                        }
-                        _h.label = 1;
-                    case 1:
-                        _h.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this._containerOrBlobOperation.renewLease(this._leaseId, {
-                                abortSignal: options.abortSignal,
-                                modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }),
-                                spanOptions: spanOptions
-                            })];
-                    case 2: return [2 /*return*/, _h.sent()];
-                    case 3:
-                        e_48 = _h.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_48.message
-                        });
-                        throw e_48;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * To end the lease but ensure that another client cannot acquire a new lease
-     * until the current lease period has expired.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
-     * and
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
-     *
-     * @static
-     * @param {number} breakPeriod Break period
-     * @param {LeaseOperationOptions} [options={}] Optional options to configure lease management operations.
-     * @returns {Promise<LeaseOperationResponse>} Response data for break lease operation.
-     * @memberof BlobLeaseClient
-     */
-    BlobLeaseClient.prototype.breakLease = function (breakPeriod, options) {
-        var _a, _b, _c, _d, _e, _f;
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _g, span, spanOptions, operationOptions, e_49;
-            return tslib.__generator(this, function (_h) {
-                switch (_h.label) {
-                    case 0:
-                        _g = createSpan("BlobLeaseClient-breakLease", options.tracingOptions), span = _g.span, spanOptions = _g.spanOptions;
-                        if (this._isContainer &&
-                            ((((_a = options.conditions) === null || _a === void 0 ? void 0 : _a.ifMatch) && ((_b = options.conditions) === null || _b === void 0 ? void 0 : _b.ifMatch) !== ETagNone) ||
-                                (((_c = options.conditions) === null || _c === void 0 ? void 0 : _c.ifNoneMatch) && ((_d = options.conditions) === null || _d === void 0 ? void 0 : _d.ifNoneMatch) !== ETagNone) || ((_e = options.conditions) === null || _e === void 0 ? void 0 : _e.tagConditions))) {
-                            throw new RangeError("The IfMatch, IfNoneMatch and tags access conditions are ignored by the service. Values other than undefined or their default values are not acceptable.");
-                        }
-                        _h.label = 1;
-                    case 1:
-                        _h.trys.push([1, 3, 4, 5]);
-                        operationOptions = {
-                            abortSignal: options.abortSignal,
-                            breakPeriod: breakPeriod,
-                            modifiedAccessConditions: tslib.__assign(tslib.__assign({}, options.conditions), { ifTags: (_f = options.conditions) === null || _f === void 0 ? void 0 : _f.tagConditions }),
-                            spanOptions: spanOptions
-                        };
-                        return [4 /*yield*/, this._containerOrBlobOperation.breakLease(operationOptions)];
-                    case 2: return [2 /*return*/, _h.sent()];
-                    case 3:
-                        e_49 = _h.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_49.message
-                        });
-                        throw e_49;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return BlobLeaseClient;
-}());
-/**
- * A ContainerClient represents a URL to the Azure Storage container allowing you to manipulate its blobs.
- *
- * @export
- * @class ContainerClient
- */
-var ContainerClient = /** @class */ (function (_super) {
-    tslib.__extends(ContainerClient, _super);
-    function ContainerClient(urlOrConnectionString, credentialOrPipelineOrContainerName, options) {
-        var _this = this;
-        var pipeline;
-        var url;
-        options = options || {};
-        if (credentialOrPipelineOrContainerName instanceof Pipeline) {
-            // (url: string, pipeline: Pipeline)
-            url = urlOrConnectionString;
-            pipeline = credentialOrPipelineOrContainerName;
-        }
-        else if ((coreHttp.isNode && credentialOrPipelineOrContainerName instanceof StorageSharedKeyCredential) ||
-            credentialOrPipelineOrContainerName instanceof AnonymousCredential ||
-            coreHttp.isTokenCredential(credentialOrPipelineOrContainerName)) {
-            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
-            url = urlOrConnectionString;
-            pipeline = newPipeline(credentialOrPipelineOrContainerName, options);
-        }
-        else if (!credentialOrPipelineOrContainerName &&
-            typeof credentialOrPipelineOrContainerName !== "string") {
-            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
-            // The second parameter is undefined. Use anonymous credential.
-            url = urlOrConnectionString;
-            pipeline = newPipeline(new AnonymousCredential(), options);
-        }
-        else if (credentialOrPipelineOrContainerName &&
-            typeof credentialOrPipelineOrContainerName === "string") {
-            // (connectionString: string, containerName: string, blobName: string, options?: StoragePipelineOptions)
-            var containerName = credentialOrPipelineOrContainerName;
-            var extractedCreds = extractConnectionStringParts(urlOrConnectionString);
-            if (extractedCreds.kind === "AccountConnString") {
-                {
-                    var sharedKeyCredential = new StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
-                    url = appendToURLPath(extractedCreds.url, encodeURIComponent(containerName));
-                    options.proxyOptions = coreHttp.getDefaultProxySettings(extractedCreds.proxyUri);
-                    pipeline = newPipeline(sharedKeyCredential, options);
-                }
-            }
-            else if (extractedCreds.kind === "SASConnString") {
-                url =
-                    appendToURLPath(extractedCreds.url, encodeURIComponent(containerName)) +
-                        "?" +
-                        extractedCreds.accountSas;
-                pipeline = newPipeline(new AnonymousCredential(), options);
-            }
-            else {
-                throw new Error("Connection string must be either an Account connection string or a SAS connection string");
-            }
-        }
-        else {
-            throw new Error("Expecting non-empty strings for containerName parameter");
-        }
-        _this = _super.call(this, url, pipeline) || this;
-        _this._containerName = _this.getContainerNameFromUrl();
-        _this.containerContext = new Container(_this.storageClientContext);
-        return _this;
-    }
-    Object.defineProperty(ContainerClient.prototype, "containerName", {
-        /**
-         * The name of the container.
-         */
-        get: function () {
-            return this._containerName;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    /**
-     * Creates a new container under the specified account. If the container with
-     * the same name already exists, the operation fails.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-container
-     *
-     * @param {ContainerCreateOptions} [options] Options to Container Create operation.
-     * @returns {Promise<ContainerCreateResponse>}
-     * @memberof ContainerClient
-     *
-     * Example usage:
-     *
-     * ```js
-     * const containerClient = blobServiceClient.getContainerClient("<container name>");
-     * const createContainerResponse = await containerClient.create();
-     * console.log("Container was created successfully", createContainerResponse.requestId);
-     * ```
-     */
-    ContainerClient.prototype.create = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_50;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = createSpan("ContainerClient-create", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.containerContext.create(tslib.__assign(tslib.__assign({}, options), { spanOptions: spanOptions }))];
-                    case 2: 
-                    // Spread operator in destructuring assignments,
-                    // this will filter out unwanted properties from the response object into result object
-                    return [2 /*return*/, _b.sent()];
-                    case 3:
-                        e_50 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_50.message
-                        });
-                        throw e_50;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Creates a new container under the specified account. If the container with
-     * the same name already exists, it is not changed.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-container
-     *
-     * @param {ContainerCreateOptions} [options]
-     * @returns {Promise<ContainerCreateIfNotExistsResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.createIfNotExists = function (options) {
-        var _a, _b;
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _c, span, spanOptions, res, e_51;
-            return tslib.__generator(this, function (_d) {
-                switch (_d.label) {
-                    case 0:
-                        _c = createSpan("ContainerClient-createIfNotExists", options.tracingOptions), span = _c.span, spanOptions = _c.spanOptions;
-                        _d.label = 1;
-                    case 1:
-                        _d.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.create(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
-                    case 2:
-                        res = _d.sent();
-                        return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: true }, res), { _response: res._response // _response is made non-enumerable
-                             })];
-                    case 3:
-                        e_51 = _d.sent();
-                        if (((_a = e_51.details) === null || _a === void 0 ? void 0 : _a.errorCode) === "ContainerAlreadyExists") {
-                            span.setStatus({
-                                code: api.CanonicalCode.ALREADY_EXISTS,
-                                message: "Expected exception when creating a container only if it does not already exist."
-                            });
-                            return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: false }, (_b = e_51.response) === null || _b === void 0 ? void 0 : _b.parsedHeaders), { _response: e_51.response })];
-                        }
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_51.message
-                        });
-                        throw e_51;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Returns true if the Azure container resource represented by this client exists; false otherwise.
-     *
-     * NOTE: use this function with care since an existing container might be deleted by other clients or
-     * applications. Vice versa new containers with the same name might be added by other clients or
-     * applications after this function completes.
-     *
-     * @param {ContainerExistsOptions} [options={}]
-     * @returns {Promise<boolean>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.exists = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_52;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = createSpan("ContainerClient-exists", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.getProperties({
-                                abortSignal: options.abortSignal,
-                                tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions })
-                            })];
-                    case 2:
-                        _b.sent();
-                        return [2 /*return*/, true];
-                    case 3:
-                        e_52 = _b.sent();
-                        if (e_52.statusCode === 404) {
-                            span.setStatus({
-                                code: api.CanonicalCode.NOT_FOUND,
-                                message: "Expected exception when checking container existence"
-                            });
-                            return [2 /*return*/, false];
-                        }
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_52.message
-                        });
-                        throw e_52;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Creates a {@link BlobClient}
-     *
-     * @param {string} blobName A blob name
-     * @returns {BlobClient} A new BlobClient object for the given blob name.
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.getBlobClient = function (blobName) {
-        return new BlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
-    };
-    /**
-     * Creates an {@link AppendBlobClient}
-     *
-     * @param {string} blobName An append blob name
-     * @returns {AppendBlobClient}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.getAppendBlobClient = function (blobName) {
-        return new AppendBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
-    };
-    /**
-     * Creates a {@link BlockBlobClient}
-     *
-     * @param {string} blobName A block blob name
-     * @returns {BlockBlobClient}
-     * @memberof ContainerClient
-     *
-     * Example usage:
-     *
-     * ```js
-     * const content = "Hello world!";
-     *
-     * const blockBlobClient = containerClient.getBlockBlobClient("<blob name>");
-     * const uploadBlobResponse = await blockBlobClient.upload(content, content.length);
-     * ```
-     */
-    ContainerClient.prototype.getBlockBlobClient = function (blobName) {
-        return new BlockBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
-    };
-    /**
-     * Creates a {@link PageBlobClient}
-     *
-     * @param {string} blobName A page blob name
-     * @returns {PageBlobClient}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.getPageBlobClient = function (blobName) {
-        return new PageBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
-    };
-    /**
-     * Returns all user-defined metadata and system properties for the specified
-     * container. The data returned does not include the container's list of blobs.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-container-properties
-     *
-     * WARNING: The `metadata` object returned in the response will have its keys in lowercase, even if
-     * they originally contained uppercase characters. This differs from the metadata keys returned by
-     * the `listContainers` method of {@link BlobServiceClient} using the `includeMetadata` option, which
-     * will retain their original casing.
-     *
-     * @param {ContainerGetPropertiesOptions} [options] Options to Container Get Properties operation.
-     * @returns {Promise<ContainerGetPropertiesResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.getProperties = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_53;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        if (!options.conditions) {
-                            options.conditions = {};
-                        }
-                        _a = createSpan("ContainerClient-getProperties", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.containerContext.getProperties(tslib.__assign(tslib.__assign({ abortSignal: options.abortSignal }, options.conditions), { spanOptions: spanOptions }))];
-                    case 2: return [2 /*return*/, _b.sent()];
-                    case 3:
-                        e_53 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_53.message
-                        });
-                        throw e_53;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Marks the specified container for deletion. The container and any blobs
-     * contained within it are later deleted during garbage collection.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-container
-     *
-     * @param {ContainerDeleteMethodOptions} [options] Options to Container Delete operation.
-     * @returns {Promise<ContainerDeleteResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.delete = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_54;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        if (!options.conditions) {
-                            options.conditions = {};
-                        }
-                        _a = createSpan("ContainerClient-delete", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.containerContext.deleteMethod({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: options.conditions,
-                                spanOptions: spanOptions
-                            })];
-                    case 2: return [2 /*return*/, _b.sent()];
-                    case 3:
-                        e_54 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_54.message
-                        });
-                        throw e_54;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Marks the specified container for deletion if it exists. The container and any blobs
-     * contained within it are later deleted during garbage collection.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-container
-     *
-     * @param {ContainerDeleteMethodOptions} [options] Options to Container Delete operation.
-     * @returns {Promise<ContainerDeleteIfExistsResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.deleteIfExists = function (options) {
-        var _a, _b;
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _c, span, spanOptions, res, e_55;
-            return tslib.__generator(this, function (_d) {
-                switch (_d.label) {
-                    case 0:
-                        _c = createSpan("ContainerClient-deleteIfExists", options.tracingOptions), span = _c.span, spanOptions = _c.spanOptions;
-                        _d.label = 1;
-                    case 1:
-                        _d.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.delete(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
-                    case 2:
-                        res = _d.sent();
-                        return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: true }, res), { _response: res._response // _response is made non-enumerable
-                             })];
-                    case 3:
-                        e_55 = _d.sent();
-                        if (((_a = e_55.details) === null || _a === void 0 ? void 0 : _a.errorCode) === "ContainerNotFound") {
-                            span.setStatus({
-                                code: api.CanonicalCode.NOT_FOUND,
-                                message: "Expected exception when deleting a container only if it exists."
-                            });
-                            return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: false }, (_b = e_55.response) === null || _b === void 0 ? void 0 : _b.parsedHeaders), { _response: e_55.response })];
-                        }
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_55.message
-                        });
-                        throw e_55;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Sets one or more user-defined name-value pairs for the specified container.
-     *
-     * If no option provided, or no metadata defined in the parameter, the container
-     * metadata will be removed.
-     *
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-container-metadata
-     *
-     * @param {Metadata} [metadata] Replace existing metadata with this value.
-     *                            If no value provided the existing metadata will be removed.
-     * @param {ContainerSetMetadataOptions} [options] Options to Container Set Metadata operation.
-     * @returns {Promise<ContainerSetMetadataResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.setMetadata = function (metadata, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_56;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        if (!options.conditions) {
-                            options.conditions = {};
-                        }
-                        if (options.conditions.ifUnmodifiedSince) {
-                            throw new RangeError("the IfUnmodifiedSince must have their default values because they are ignored by the blob service");
-                        }
-                        _a = createSpan("ContainerClient-setMetadata", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.containerContext.setMetadata({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                metadata: metadata,
-                                modifiedAccessConditions: options.conditions,
-                                spanOptions: spanOptions
-                            })];
-                    case 2: return [2 /*return*/, _b.sent()];
-                    case 3:
-                        e_56 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_56.message
-                        });
-                        throw e_56;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Gets the permissions for the specified container. The permissions indicate
-     * whether container data may be accessed publicly.
-     *
-     * WARNING: JavaScript Date will potentially lose precision when parsing startsOn and expiresOn strings.
-     * For example, new Date("2018-12-31T03:44:23.8827891Z").toISOString() will get "2018-12-31T03:44:23.882Z".
-     *
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-container-acl
-     *
-     * @param {ContainerGetAccessPolicyOptions} [options] Options to Container Get Access Policy operation.
-     * @returns {Promise<ContainerGetAccessPolicyResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.getAccessPolicy = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, response, res, _i, response_1, identifier, accessPolicy, e_57;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        if (!options.conditions) {
-                            options.conditions = {};
-                        }
-                        _a = createSpan("ContainerClient-getAccessPolicy", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.containerContext.getAccessPolicy({
-                                abortSignal: options.abortSignal,
-                                leaseAccessConditions: options.conditions,
-                                spanOptions: spanOptions
-                            })];
-                    case 2:
-                        response = _b.sent();
-                        res = {
-                            _response: response._response,
-                            blobPublicAccess: response.blobPublicAccess,
-                            date: response.date,
-                            etag: response.etag,
-                            errorCode: response.errorCode,
-                            lastModified: response.lastModified,
-                            requestId: response.requestId,
-                            clientRequestId: response.clientRequestId,
-                            signedIdentifiers: [],
-                            version: response.version
-                        };
-                        for (_i = 0, response_1 = response; _i < response_1.length; _i++) {
-                            identifier = response_1[_i];
-                            accessPolicy = undefined;
-                            if (identifier.accessPolicy) {
-                                accessPolicy = {
-                                    permissions: identifier.accessPolicy.permissions
-                                };
-                                if (identifier.accessPolicy.expiresOn) {
-                                    accessPolicy.expiresOn = new Date(identifier.accessPolicy.expiresOn);
-                                }
-                                if (identifier.accessPolicy.startsOn) {
-                                    accessPolicy.startsOn = new Date(identifier.accessPolicy.startsOn);
-                                }
-                            }
-                            res.signedIdentifiers.push({
-                                accessPolicy: accessPolicy,
-                                id: identifier.id
-                            });
-                        }
-                        return [2 /*return*/, res];
-                    case 3:
-                        e_57 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_57.message
-                        });
-                        throw e_57;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Sets the permissions for the specified container. The permissions indicate
-     * whether blobs in a container may be accessed publicly.
-     *
-     * When you set permissions for a container, the existing permissions are replaced.
-     * If no access or containerAcl provided, the existing container ACL will be
-     * removed.
-     *
-     * When you establish a stored access policy on a container, it may take up to 30 seconds to take effect.
-     * During this interval, a shared access signature that is associated with the stored access policy will
-     * fail with status code 403 (Forbidden), until the access policy becomes active.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-container-acl
-     *
-     * @param {PublicAccessType} [access] The level of public access to data in the container.
-     * @param {SignedIdentifier[]} [containerAcl] Array of elements each having a unique Id and details of the access policy.
-     * @param {ContainerSetAccessPolicyOptions} [options] Options to Container Set Access Policy operation.
-     * @returns {Promise<ContainerSetAccessPolicyResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.setAccessPolicy = function (access, containerAcl, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, acl, _i, _b, identifier, e_58;
-            return tslib.__generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        options.conditions = options.conditions || {};
-                        _a = createSpan("ContainerClient-setAccessPolicy", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _c.label = 1;
-                    case 1:
-                        _c.trys.push([1, 3, 4, 5]);
-                        acl = [];
-                        for (_i = 0, _b = containerAcl || []; _i < _b.length; _i++) {
-                            identifier = _b[_i];
-                            acl.push({
-                                accessPolicy: {
-                                    expiresOn: identifier.accessPolicy.expiresOn
-                                        ? truncatedISO8061Date(identifier.accessPolicy.expiresOn)
-                                        : "",
-                                    permissions: identifier.accessPolicy.permissions,
-                                    startsOn: identifier.accessPolicy.startsOn
-                                        ? truncatedISO8061Date(identifier.accessPolicy.startsOn)
-                                        : ""
-                                },
-                                id: identifier.id
-                            });
-                        }
-                        return [4 /*yield*/, this.containerContext.setAccessPolicy({
-                                abortSignal: options.abortSignal,
-                                access: access,
-                                containerAcl: acl,
-                                leaseAccessConditions: options.conditions,
-                                modifiedAccessConditions: options.conditions,
-                                spanOptions: spanOptions
-                            })];
-                    case 2: return [2 /*return*/, _c.sent()];
-                    case 3:
-                        e_58 = _c.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_58.message
-                        });
-                        throw e_58;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Get a {@link BlobLeaseClient} that manages leases on the container.
-     *
-     * @param {string} [proposeLeaseId] Initial proposed lease Id.
-     * @returns {BlobLeaseClient} A new BlobLeaseClient object for managing leases on the container.
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.getBlobLeaseClient = function (proposeLeaseId) {
-        return new BlobLeaseClient(this, proposeLeaseId);
-    };
-    /**
-     * Creates a new block blob, or updates the content of an existing block blob.
-     *
-     * Updating an existing block blob overwrites any existing metadata on the blob.
-     * Partial updates are not supported; the content of the existing blob is
-     * overwritten with the new content. To perform a partial update of a block blob's,
-     * use {@link BlockBlobClient.stageBlock} and {@link BlockBlobClient.commitBlockList}.
-     *
-     * This is a non-parallel uploading method, please use {@link BlockBlobClient.uploadFile},
-     * {@link BlockBlobClient.uploadStream} or {@link BlockBlobClient.uploadBrowserData} for better
-     * performance with concurrency uploading.
-     *
-     * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
-     *
-     * @param {string} blobName Name of the block blob to create or update.
-     * @param {HttpRequestBody} body Blob, string, ArrayBuffer, ArrayBufferView or a function
-     *                               which returns a new Readable stream whose offset is from data source beginning.
-     * @param {number} contentLength Length of body in bytes. Use Buffer.byteLength() to calculate body length for a
-     *                               string including non non-Base64/Hex-encoded characters.
-     * @param {BlockBlobUploadOptions} [options] Options to configure the Block Blob Upload operation.
-     * @returns {Promise<{ blockBlobClient: BlockBlobClient; response: BlockBlobUploadResponse }>} Block Blob upload response data and the corresponding BlockBlobClient instance.
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.uploadBlockBlob = function (blobName, body, contentLength, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, blockBlobClient, response, e_59;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = createSpan("ContainerClient-uploadBlockBlob", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        blockBlobClient = this.getBlockBlobClient(blobName);
-                        return [4 /*yield*/, blockBlobClient.upload(body, contentLength, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
-                    case 2:
-                        response = _b.sent();
-                        return [2 /*return*/, {
-                                blockBlobClient: blockBlobClient,
-                                response: response
-                            }];
-                    case 3:
-                        e_59 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_59.message
-                        });
-                        throw e_59;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Marks the specified blob or snapshot for deletion. The blob is later deleted
-     * during garbage collection. Note that in order to delete a blob, you must delete
-     * all of its snapshots. You can delete both at the same time with the Delete
-     * Blob operation.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-blob
-     *
-     * @param {string} blobName
-     * @param {ContainerDeleteBlobOptions} [options] Options to Blob Delete operation.
-     * @returns {Promise<BlobDeleteResponse>} Block blob deletion response data.
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.deleteBlob = function (blobName, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, blobClient, e_60;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = createSpan("ContainerClient-deleteBlob", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        blobClient = this.getBlobClient(blobName);
-                        if (options.versionId) {
-                            blobClient = blobClient.withVersion(options.versionId);
-                        }
-                        return [4 /*yield*/, blobClient.delete(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
-                    case 2: return [2 /*return*/, _b.sent()];
-                    case 3:
-                        e_60 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_60.message
-                        });
-                        throw e_60;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * listBlobFlatSegment returns a single segment of blobs starting from the
-     * specified Marker. Use an empty Marker to start enumeration from the beginning.
-     * After getting a segment, process it, and then call listBlobsFlatSegment again
-     * (passing the the previously-returned Marker) to get the next segment.
-     * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
-     *
-     * @param {string} [marker] A string value that identifies the portion of the list to be returned with the next list operation.
-     * @param {ContainerListBlobsSegmentOptions} [options] Options to Container List Blob Flat Segment operation.
-     * @returns {Promise<ContainerListBlobFlatSegmentResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listBlobFlatSegment = function (marker, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, response, wrappedResponse, e_61;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = createSpan("ContainerClient-listBlobFlatSegment", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.containerContext.listBlobFlatSegment(tslib.__assign(tslib.__assign({ marker: marker }, options), { spanOptions: spanOptions }))];
-                    case 2:
-                        response = _b.sent();
-                        wrappedResponse = tslib.__assign(tslib.__assign({}, response), { _response: response._response, segment: tslib.__assign(tslib.__assign({}, response.segment), { blobItems: response.segment.blobItems.map(function (blobItemInteral) {
-                                    var blobItem = tslib.__assign(tslib.__assign({}, blobItemInteral), { tags: toTags(blobItemInteral.blobTags), objectReplicationSourceProperties: parseObjectReplicationRecord(blobItemInteral.objectReplicationMetadata) });
-                                    return blobItem;
-                                }) }) });
-                        return [2 /*return*/, wrappedResponse];
-                    case 3:
-                        e_61 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_61.message
-                        });
-                        throw e_61;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * listBlobHierarchySegment returns a single segment of blobs starting from
-     * the specified Marker. Use an empty Marker to start enumeration from the
-     * beginning. After getting a segment, process it, and then call listBlobsHierarchicalSegment
-     * again (passing the the previously-returned Marker) to get the next segment.
-     * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
-     *
-     * @param {string} delimiter The character or string used to define the virtual hierarchy
-     * @param {string} [marker] A string value that identifies the portion of the list to be returned with the next list operation.
-     * @param {ContainerListBlobsSegmentOptions} [options] Options to Container List Blob Hierarchy Segment operation.
-     * @returns {Promise<ContainerListBlobHierarchySegmentResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listBlobHierarchySegment = function (delimiter, marker, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, response, wrappedResponse, e_62;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = createSpan("ContainerClient-listBlobHierarchySegment", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.containerContext.listBlobHierarchySegment(delimiter, tslib.__assign(tslib.__assign({ marker: marker }, options), { spanOptions: spanOptions }))];
-                    case 2:
-                        response = _b.sent();
-                        wrappedResponse = tslib.__assign(tslib.__assign({}, response), { _response: response._response, segment: tslib.__assign(tslib.__assign({}, response.segment), { blobItems: response.segment.blobItems.map(function (blobItemInteral) {
-                                    var blobItem = tslib.__assign(tslib.__assign({}, blobItemInteral), { tags: toTags(blobItemInteral.blobTags), objectReplicationSourceProperties: parseObjectReplicationRecord(blobItemInteral.objectReplicationMetadata) });
-                                    return blobItem;
-                                }) }) });
-                        return [2 /*return*/, wrappedResponse];
-                    case 3:
-                        e_62 = _b.sent();
-                        span.setStatus({
-                            code: api.CanonicalCode.UNKNOWN,
-                            message: e_62.message
-                        });
-                        throw e_62;
-                    case 4:
-                        span.end();
-                        return [7 /*endfinally*/];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Returns an AsyncIterableIterator for ContainerListBlobFlatSegmentResponse
-     *
-     * @private
-     * @param {string} [marker] A string value that identifies the portion of
-     *                          the list of blobs to be returned with the next listing operation. The
-     *                          operation returns the ContinuationToken value within the response body if the
-     *                          listing operation did not return all blobs remaining to be listed
-     *                          with the current page. The ContinuationToken value can be used as the value for
-     *                          the marker parameter in a subsequent call to request the next page of list
-     *                          items. The marker value is opaque to the client.
-     * @param {ContainerListBlobsSegmentOptions} [options] Options to list blobs operation.
-     * @returns {AsyncIterableIterator<ContainerListBlobFlatSegmentResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listSegments = function (marker, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__asyncGenerator(this, arguments, function listSegments_1() {
-            var listBlobsFlatSegmentResponse;
-            return tslib.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!(!!marker || marker === undefined)) return [3 /*break*/, 7];
-                        _a.label = 1;
-                    case 1: return [4 /*yield*/, tslib.__await(this.listBlobFlatSegment(marker, options))];
-                    case 2:
-                        listBlobsFlatSegmentResponse = _a.sent();
-                        marker = listBlobsFlatSegmentResponse.continuationToken;
-                        return [4 /*yield*/, tslib.__await(listBlobsFlatSegmentResponse)];
-                    case 3: return [4 /*yield*/, tslib.__await.apply(void 0, [_a.sent()])];
-                    case 4: return [4 /*yield*/, _a.sent()];
-                    case 5:
-                        _a.sent();
-                        _a.label = 6;
-                    case 6:
-                        if (marker) return [3 /*break*/, 1];
-                        _a.label = 7;
-                    case 7: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Returns an AsyncIterableIterator of {@link BlobItem} objects
-     *
-     * @private
-     * @param {ContainerListBlobsSegmentOptions} [options] Options to list blobs operation.
-     * @returns {AsyncIterableIterator<BlobItem>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listItems = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__asyncGenerator(this, arguments, function listItems_1() {
-            var marker, _a, _b, listBlobsFlatSegmentResponse, e_63_1;
-            var e_63, _c;
-            return tslib.__generator(this, function (_d) {
-                switch (_d.label) {
-                    case 0:
-                        _d.trys.push([0, 7, 8, 13]);
-                        _a = tslib.__asyncValues(this.listSegments(marker, options));
-                        _d.label = 1;
-                    case 1: return [4 /*yield*/, tslib.__await(_a.next())];
-                    case 2:
-                        if (!(_b = _d.sent(), !_b.done)) return [3 /*break*/, 6];
-                        listBlobsFlatSegmentResponse = _b.value;
-                        return [5 /*yield**/, tslib.__values(tslib.__asyncDelegator(tslib.__asyncValues(listBlobsFlatSegmentResponse.segment.blobItems)))];
-                    case 3: return [4 /*yield*/, tslib.__await.apply(void 0, [_d.sent()])];
-                    case 4:
-                        _d.sent();
-                        _d.label = 5;
-                    case 5: return [3 /*break*/, 1];
-                    case 6: return [3 /*break*/, 13];
-                    case 7:
-                        e_63_1 = _d.sent();
-                        e_63 = { error: e_63_1 };
-                        return [3 /*break*/, 13];
-                    case 8:
-                        _d.trys.push([8, , 11, 12]);
-                        if (!(_b && !_b.done && (_c = _a.return))) return [3 /*break*/, 10];
-                        return [4 /*yield*/, tslib.__await(_c.call(_a))];
-                    case 9:
-                        _d.sent();
-                        _d.label = 10;
-                    case 10: return [3 /*break*/, 12];
-                    case 11:
-                        if (e_63) throw e_63.error;
-                        return [7 /*endfinally*/];
-                    case 12: return [7 /*endfinally*/];
-                    case 13: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Returns an async iterable iterator to list all the blobs
-     * under the specified account.
-     *
-     * .byPage() returns an async iterable iterator to list the blobs in pages.
-     *
-     * Example using `for await` syntax:
-     *
-     * ```js
-     * // Get the containerClient before you run these snippets,
-     * // Can be obtained from `blobServiceClient.getContainerClient("<your-container-name>");`
-     * let i = 1;
-     * for await (const blob of containerClient.listBlobsFlat()) {
-     *   console.log(`Blob ${i++}: ${blob.name}`);
-     * }
-     * ```
-     *
-     * Example using `iter.next()`:
-     *
-     * ```js
-     * let i = 1;
-     * let iter = containerClient.listBlobsFlat();
-     * let blobItem = await iter.next();
-     * while (!blobItem.done) {
-     *   console.log(`Blob ${i++}: ${blobItem.value.name}`);
-     *   blobItem = await iter.next();
-     * }
-     * ```
-     *
-     * Example using `byPage()`:
-     *
-     * ```js
-     * // passing optional maxPageSize in the page settings
-     * let i = 1;
-     * for await (const response of containerClient.listBlobsFlat().byPage({ maxPageSize: 20 })) {
-     *   for (const blob of response.segment.blobItems) {
-     *     console.log(`Blob ${i++}: ${blob.name}`);
-     *   }
-     * }
-     * ```
-     *
-     * Example using paging with a marker:
-     *
-     * ```js
-     * let i = 1;
-     * let iterator = containerClient.listBlobsFlat().byPage({ maxPageSize: 2 });
-     * let response = (await iterator.next()).value;
-     *
-     * // Prints 2 blob names
-     * for (const blob of response.segment.blobItems) {
-     *   console.log(`Blob ${i++}: ${blob.name}`);
-     * }
-     *
-     * // Gets next marker
-     * let marker = response.continuationToken;
-     *
-     * // Passing next marker as continuationToken
-     *
-     * iterator = containerClient.listBlobsFlat().byPage({ continuationToken: marker, maxPageSize: 10 });
-     * response = (await iterator.next()).value;
-     *
-     * // Prints 10 blob names
-     * for (const blob of response.segment.blobItems) {
-     *   console.log(`Blob ${i++}: ${blob.name}`);
-     * }
-     * ```
-     *
-     * @param {ContainerListBlobsOptions} [options={}] Options to list blobs.
-     * @returns {PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse>} An asyncIterableIterator that supports paging.
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listBlobsFlat = function (options) {
-        var _a;
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        var include = [];
-        if (options.includeCopy) {
-            include.push("copy");
-        }
-        if (options.includeDeleted) {
-            include.push("deleted");
-        }
-        if (options.includeMetadata) {
-            include.push("metadata");
-        }
-        if (options.includeSnapshots) {
-            include.push("snapshots");
-        }
-        if (options.includeVersions) {
-            include.push("versions");
-        }
-        if (options.includeUncommitedBlobs) {
-            include.push("uncommittedblobs");
-        }
-        if (options.includeTags) {
-            include.push("tags");
-        }
-        if (options.prefix === "") {
-            options.prefix = undefined;
-        }
-        var updatedOptions = tslib.__assign(tslib.__assign({}, options), (include.length > 0 ? { include: include } : {}));
-        // AsyncIterableIterator to iterate over blobs
-        var iter = this.listItems(updatedOptions);
-        return _a = {
-                /**
-                 * @member {Promise} [next] The next method, part of the iteration protocol
-                 */
-                next: function () {
-                    return iter.next();
-                }
-            },
-            /**
-             * @member {Symbol} [asyncIterator] The connection to the async iterator, part of the iteration protocol
-             */
-            _a[Symbol.asyncIterator] = function () {
-                return this;
-            },
-            /**
-             * @member {Function} [byPage] Return an AsyncIterableIterator that works a page at a time
-             */
-            _a.byPage = function (settings) {
-                if (settings === void 0) { settings = {}; }
-                return _this.listSegments(settings.continuationToken, tslib.__assign({ maxPageSize: settings.maxPageSize }, updatedOptions));
-            },
-            _a;
-    };
-    /**
-     * Returns an AsyncIterableIterator for ContainerListBlobHierarchySegmentResponse
-     *
-     * @private
-     * @param {string} delimiter The character or string used to define the virtual hierarchy
-     * @param {string} [marker] A string value that identifies the portion of
-     *                          the list of blobs to be returned with the next listing operation. The
-     *                          operation returns the ContinuationToken value within the response body if the
-     *                          listing operation did not return all blobs remaining to be listed
-     *                          with the current page. The ContinuationToken value can be used as the value for
-     *                          the marker parameter in a subsequent call to request the next page of list
-     *                          items. The marker value is opaque to the client.
-     * @param {ContainerListBlobsSegmentOptions} [options] Options to list blobs operation.
-     * @returns {AsyncIterableIterator<ContainerListBlobHierarchySegmentResponse>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listHierarchySegments = function (delimiter, marker, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__asyncGenerator(this, arguments, function listHierarchySegments_1() {
-            var listBlobsHierarchySegmentResponse;
-            return tslib.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!(!!marker || marker === undefined)) return [3 /*break*/, 7];
-                        _a.label = 1;
-                    case 1: return [4 /*yield*/, tslib.__await(this.listBlobHierarchySegment(delimiter, marker, options))];
-                    case 2:
-                        listBlobsHierarchySegmentResponse = _a.sent();
-                        marker = listBlobsHierarchySegmentResponse.continuationToken;
-                        return [4 /*yield*/, tslib.__await(listBlobsHierarchySegmentResponse)];
-                    case 3: return [4 /*yield*/, tslib.__await.apply(void 0, [_a.sent()])];
-                    case 4: return [4 /*yield*/, _a.sent()];
-                    case 5:
-                        _a.sent();
-                        _a.label = 6;
-                    case 6:
-                        if (marker) return [3 /*break*/, 1];
-                        _a.label = 7;
-                    case 7: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Returns an AsyncIterableIterator for {@link BlobPrefix} and {@link BlobItem} objects.
-     *
-     * @private
-     * @param {string} delimiter The character or string used to define the virtual hierarchy
-     * @param {ContainerListBlobsSegmentOptions} [options] Options to list blobs operation.
-     * @returns {AsyncIterableIterator<{ kind: "prefix" } & BlobPrefix | { kind: "blob" } & BlobItem>}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listItemsByHierarchy = function (delimiter, options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__asyncGenerator(this, arguments, function listItemsByHierarchy_1() {
-            var marker, _a, _b, listBlobsHierarchySegmentResponse, segment, _i, _c, prefix, _d, _e, blob, e_64_1;
-            var e_64, _f;
-            return tslib.__generator(this, function (_g) {
-                switch (_g.label) {
-                    case 0:
-                        _g.trys.push([0, 14, 15, 20]);
-                        _a = tslib.__asyncValues(this.listHierarchySegments(delimiter, marker, options));
-                        _g.label = 1;
-                    case 1: return [4 /*yield*/, tslib.__await(_a.next())];
-                    case 2:
-                        if (!(_b = _g.sent(), !_b.done)) return [3 /*break*/, 13];
-                        listBlobsHierarchySegmentResponse = _b.value;
-                        segment = listBlobsHierarchySegmentResponse.segment;
-                        if (!segment.blobPrefixes) return [3 /*break*/, 7];
-                        _i = 0, _c = segment.blobPrefixes;
-                        _g.label = 3;
-                    case 3:
-                        if (!(_i < _c.length)) return [3 /*break*/, 7];
-                        prefix = _c[_i];
-                        return [4 /*yield*/, tslib.__await(tslib.__assign({ kind: "prefix" }, prefix))];
-                    case 4: return [4 /*yield*/, _g.sent()];
-                    case 5:
-                        _g.sent();
-                        _g.label = 6;
-                    case 6:
-                        _i++;
-                        return [3 /*break*/, 3];
-                    case 7:
-                        _d = 0, _e = segment.blobItems;
-                        _g.label = 8;
-                    case 8:
-                        if (!(_d < _e.length)) return [3 /*break*/, 12];
-                        blob = _e[_d];
-                        return [4 /*yield*/, tslib.__await(tslib.__assign({ kind: "blob" }, blob))];
-                    case 9: return [4 /*yield*/, _g.sent()];
-                    case 10:
-                        _g.sent();
-                        _g.label = 11;
-                    case 11:
-                        _d++;
-                        return [3 /*break*/, 8];
-                    case 12: return [3 /*break*/, 1];
-                    case 13: return [3 /*break*/, 20];
-                    case 14:
-                        e_64_1 = _g.sent();
-                        e_64 = { error: e_64_1 };
-                        return [3 /*break*/, 20];
-                    case 15:
-                        _g.trys.push([15, , 18, 19]);
-                        if (!(_b && !_b.done && (_f = _a.return))) return [3 /*break*/, 17];
-                        return [4 /*yield*/, tslib.__await(_f.call(_a))];
-                    case 16:
-                        _g.sent();
-                        _g.label = 17;
-                    case 17: return [3 /*break*/, 19];
-                    case 18:
-                        if (e_64) throw e_64.error;
-                        return [7 /*endfinally*/];
-                    case 19: return [7 /*endfinally*/];
-                    case 20: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Returns an async iterable iterator to list all the blobs by hierarchy.
-     * under the specified account.
-     *
-     * .byPage() returns an async iterable iterator to list the blobs by hierarchy in pages.
-     *
-     * Example using `for await` syntax:
-     *
-     * ```js
-     * for await (const item of containerClient.listBlobsByHierarchy("/")) {
-     *   if (item.kind === "prefix") {
-     *     console.log(`\tBlobPrefix: ${item.name}`);
-     *   } else {
-     *     console.log(`\tBlobItem: name - ${item.name}, last modified - ${item.properties.lastModified}`);
-     *   }
-     * }
-     * ```
-     *
-     * Example using `iter.next()`:
-     *
-     * ```js
-     * let iter = containerClient.listBlobsByHierarchy("/", { prefix: "prefix1/" });
-     * let entity = await iter.next();
-     * while (!entity.done) {
-     *   let item = entity.value;
-     *   if (item.kind === "prefix") {
-     *     console.log(`\tBlobPrefix: ${item.name}`);
-     *   } else {
-     *     console.log(`\tBlobItem: name - ${item.name}, last modified - ${item.properties.lastModified}`);
-     *   }
-     *   entity = await iter.next();
-     * }
-     * ```
-     *
-     * Example using `byPage()`:
-     *
-     * ```js
-     * console.log("Listing blobs by hierarchy by page");
-     * for await (const response of containerClient.listBlobsByHierarchy("/").byPage()) {
-     *   const segment = response.segment;
-     *   if (segment.blobPrefixes) {
-     *     for (const prefix of segment.blobPrefixes) {
-     *       console.log(`\tBlobPrefix: ${prefix.name}`);
-     *     }
-     *   }
-     *   for (const blob of response.segment.blobItems) {
-     *     console.log(`\tBlobItem: name - ${blob.name}, last modified - ${blob.properties.lastModified}`);
-     *   }
-     * }
-     * ```
-     *
-     * Example using paging with a max page size:
-     *
-     * ```js
-     * console.log("Listing blobs by hierarchy by page, specifying a prefix and a max page size");
-     *
-     * let i = 1;
-     * for await (const response of containerClient.listBlobsByHierarchy("/", { prefix: "prefix2/sub1/"}).byPage({ maxPageSize: 2 })) {
-     *   console.log(`Page ${i++}`);
-     *   const segment = response.segment;
-     *
-     *   if (segment.blobPrefixes) {
-     *     for (const prefix of segment.blobPrefixes) {
-     *       console.log(`\tBlobPrefix: ${prefix.name}`);
-     *     }
-     *   }
-     *
-     *   for (const blob of response.segment.blobItems) {
-     *     console.log(`\tBlobItem: name - ${blob.name}, last modified - ${blob.properties.lastModified}`);
-     *   }
-     * }
-     * ```
-     *
-     * @param {string} delimiter The character or string used to define the virtual hierarchy
-     * @param {ContainerListBlobsOptions} [options={}] Options to list blobs operation.
-     * @returns {(PagedAsyncIterableIterator<
-     *   { kind: "prefix" } & BlobPrefix | { kind: "blob" } & BlobItem,
-     *     ContainerListBlobHierarchySegmentResponse>)}
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.listBlobsByHierarchy = function (delimiter, options) {
-        var _a;
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        if (delimiter === "") {
-            throw new RangeError("delimiter should contain one or more characters");
-        }
-        var include = [];
-        if (options.includeCopy) {
-            include.push("copy");
-        }
-        if (options.includeDeleted) {
-            include.push("deleted");
-        }
-        if (options.includeMetadata) {
-            include.push("metadata");
-        }
-        if (options.includeSnapshots) {
-            include.push("snapshots");
-        }
-        if (options.includeVersions) {
-            include.push("versions");
-        }
-        if (options.includeUncommitedBlobs) {
-            include.push("uncommittedblobs");
-        }
-        if (options.includeTags) {
-            include.push("tags");
-        }
-        if (options.prefix === "") {
-            options.prefix = undefined;
-        }
-        var updatedOptions = tslib.__assign(tslib.__assign({}, options), (include.length > 0 ? { include: include } : {}));
-        // AsyncIterableIterator to iterate over blob prefixes and blobs
-        var iter = this.listItemsByHierarchy(delimiter, updatedOptions);
-        return _a = {
-                /**
-                 * @member {Promise} [next] The next method, part of the iteration protocol
-                 */
-                next: function () {
-                    return tslib.__awaiter(this, void 0, void 0, function () {
-                        return tslib.__generator(this, function (_a) {
-                            return [2 /*return*/, iter.next()];
-                        });
-                    });
-                }
-            },
-            /**
-             * @member {Symbol} [asyncIterator] The connection to the async iterator, part of the iteration protocol
-             */
-            _a[Symbol.asyncIterator] = function () {
-                return this;
-            },
-            /**
-             * @member {Function} [byPage] Return an AsyncIterableIterator that works a page at a time
-             */
-            _a.byPage = function (settings) {
-                if (settings === void 0) { settings = {}; }
-                return _this.listHierarchySegments(delimiter, settings.continuationToken, tslib.__assign({ maxPageSize: settings.maxPageSize }, updatedOptions));
-            },
-            _a;
-    };
-    ContainerClient.prototype.getContainerNameFromUrl = function () {
-        var containerName;
-        try {
-            //  URL may look like the following
-            // "https://myaccount.blob.core.windows.net/mycontainer?sasString";
-            // "https://myaccount.blob.core.windows.net/mycontainer";
-            // IPv4/IPv6 address hosts, Endpoints - `http://127.0.0.1:10000/devstoreaccount1/containername`
-            // http://localhost:10001/devstoreaccount1/containername
-            var parsedUrl = coreHttp.URLBuilder.parse(this.url);
-            if (parsedUrl.getHost().split(".")[1] === "blob") {
-                // "https://myaccount.blob.core.windows.net/containername".
-                // "https://customdomain.com/containername".
-                // .getPath() -> /containername
-                containerName = parsedUrl.getPath().split("/")[1];
-            }
-            else if (isIpEndpointStyle(parsedUrl)) {
-                // IPv4/IPv6 address hosts... Example - http://192.0.0.10:10001/devstoreaccount1/containername
-                // Single word domain without a [dot] in the endpoint... Example - http://localhost:10001/devstoreaccount1/containername
-                // .getPath() -> /devstoreaccount1/containername
-                containerName = parsedUrl.getPath().split("/")[2];
-            }
-            else {
-                // "https://customdomain.com/containername".
-                // .getPath() -> /containername
-                containerName = parsedUrl.getPath().split("/")[1];
-            }
-            // decode the encoded containerName - to get all the special characters that might be present in it
-            containerName = decodeURIComponent(containerName);
-            if (!containerName) {
-                throw new Error("Provided containerName is invalid.");
-            }
-            return containerName;
-        }
-        catch (error) {
-            throw new Error("Unable to extract containerName with provided information.");
-        }
-    };
-    /**
-     * Only available for ContainerClient constructed with a shared key credential.
-     *
-     * Generates a Blob Container Service Shared Access Signature (SAS) URI based on the client properties
-     * and parameters passed in. The SAS is signed by the shared key credential of the client.
-     *
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
-     *
-     * @param {ContainerGenerateSasUrlOptions} options Optional parameters.
-     * @returns {Promise<string>} The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
-     * @memberof ContainerClient
-     */
-    ContainerClient.prototype.generateSasUrl = function (options) {
-        var _this = this;
-        return new Promise(function (resolve) {
-            if (!(_this.credential instanceof StorageSharedKeyCredential)) {
-                throw new RangeError("Can only generate the SAS when the client is initialized with a shared key credential");
-            }
-            var sas = generateBlobSASQueryParameters(tslib.__assign({ containerName: _this._containerName }, options), _this.credential).toString();
-            resolve(appendToURLQuery(_this.url, sas));
-        });
-    };
-    return ContainerClient;
-}(StorageClient));
 
+// Copyright (c) Microsoft Corporation.
 function getBodyAsText(batchResponse) {
     return tslib.__awaiter(this, void 0, void 0, function () {
         var buffer, responseLength;
@@ -40450,6 +39959,7 @@ function utf8ByteLength(str) {
     return Buffer.byteLength(str);
 }
 
+// Copyright (c) Microsoft Corporation.
 var HTTP_HEADER_DELIMITER = ": ";
 var SPACE_DELIMITER = " ";
 var NOT_FOUND = -1;
@@ -40591,6 +40101,7 @@ var BatchResponseParser = /** @class */ (function () {
     return BatchResponseParser;
 }());
 
+// Copyright (c) Microsoft Corporation.
 var MutexLockStatus;
 (function (MutexLockStatus) {
     MutexLockStatus[MutexLockStatus["LOCKED"] = 0] = "LOCKED";
@@ -40598,9 +40109,6 @@ var MutexLockStatus;
 })(MutexLockStatus || (MutexLockStatus = {}));
 /**
  * An async mutex lock.
- *
- * @export
- * @class Mutex
  */
 var Mutex = /** @class */ (function () {
     function Mutex() {
@@ -40609,10 +40117,7 @@ var Mutex = /** @class */ (function () {
      * Lock for a specific key. If the lock has been acquired by another customer, then
      * will wait until getting the lock.
      *
-     * @static
-     * @param {string} key lock key
-     * @returns {Promise<void>}
-     * @memberof Mutex
+     * @param key - lock key
      */
     Mutex.lock = function (key) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -40636,10 +40141,7 @@ var Mutex = /** @class */ (function () {
     /**
      * Unlock a key.
      *
-     * @static
-     * @param {string} key
-     * @returns {Promise<void>}
-     * @memberof Mutex
+     * @param key -
      */
     Mutex.unlock = function (key) {
         return tslib.__awaiter(this, void 0, void 0, function () {
@@ -40677,12 +40179,10 @@ var Mutex = /** @class */ (function () {
     return Mutex;
 }());
 
+// Copyright (c) Microsoft Corporation.
 /**
  * A BlobBatch represents an aggregated set of operations on blobs.
  * Currently, only `delete` and `setAccessTier` are supported.
- *
- * @export
- * @class BlobBatch
  */
 var BlobBatch = /** @class */ (function () {
     function BlobBatch() {
@@ -40744,7 +40244,7 @@ var BlobBatch = /** @class */ (function () {
     };
     BlobBatch.prototype.deleteBlob = function (urlOrBlobClient, credentialOrOptions, options) {
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var url, credential, _a, span, spanOptions, e_1;
+            var url, credential, _a, span, updatedOptions, e_1;
             var _this = this;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -40769,7 +40269,7 @@ var BlobBatch = /** @class */ (function () {
                         if (!options) {
                             options = {};
                         }
-                        _a = createSpan("BatchDeleteRequest-addSubRequest", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BatchDeleteRequest-addSubRequest", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
@@ -40780,7 +40280,7 @@ var BlobBatch = /** @class */ (function () {
                             }, function () { return tslib.__awaiter(_this, void 0, void 0, function () {
                                 return tslib.__generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0: return [4 /*yield*/, new BlobClient(url, this.batchRequest.createPipeline(credential)).delete(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                                        case 0: return [4 /*yield*/, new BlobClient(url, this.batchRequest.createPipeline(credential)).delete(updatedOptions)];
                                         case 1:
                                             _a.sent();
                                             return [2 /*return*/];
@@ -40807,7 +40307,7 @@ var BlobBatch = /** @class */ (function () {
     };
     BlobBatch.prototype.setBlobAccessTier = function (urlOrBlobClient, credentialOrTier, tierOrOptions, options) {
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var url, credential, tier, _a, span, spanOptions, e_2;
+            var url, credential, tier, _a, span, updatedOptions, e_2;
             var _this = this;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -40834,7 +40334,7 @@ var BlobBatch = /** @class */ (function () {
                         if (!options) {
                             options = {};
                         }
-                        _a = createSpan("BatchSetTierRequest-addSubRequest", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BatchSetTierRequest-addSubRequest", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
@@ -40845,7 +40345,7 @@ var BlobBatch = /** @class */ (function () {
                             }, function () { return tslib.__awaiter(_this, void 0, void 0, function () {
                                 return tslib.__generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0: return [4 /*yield*/, new BlobClient(url, this.batchRequest.createPipeline(credential)).setAccessTier(tier, tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                                        case 0: return [4 /*yield*/, new BlobClient(url, this.batchRequest.createPipeline(credential)).setAccessTier(tier, updatedOptions)];
                                         case 1:
                                             _a.sent();
                                             return [2 /*return*/];
@@ -40898,7 +40398,7 @@ var InnerBatchRequest = /** @class */ (function () {
      * credential and serialization/deserialization components, with additional policies to
      * filter unnecessary headers, assemble sub requests into request's body
      * and intercept request from going to wire.
-     * @param {StorageSharedKeyCredential | AnonymousCredential | TokenCredential} credential  Such as AnonymousCredential, StorageSharedKeyCredential or any credential from the @azure/identity package to authenticate requests to the service. You can also provide an object that implements the TokenCredential interface. If not specified, AnonymousCredential is used.
+     * @param credential -  Such as AnonymousCredential, StorageSharedKeyCredential or any credential from the `@azure/identity` package to authenticate requests to the service. You can also provide an object that implements the TokenCredential interface. If not specified, AnonymousCredential is used.
      */
     InnerBatchRequest.prototype.createPipeline = function (credential) {
         var isAnonymousCreds = credential instanceof AnonymousCredential;
@@ -41025,7 +40525,7 @@ var BatchHeaderFilterPolicyFactory = /** @class */ (function () {
     return BatchHeaderFilterPolicyFactory;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * A BlobBatchClient allows you to make batched requests to the Azure Storage Blob service.
  *
@@ -41045,7 +40545,14 @@ var BlobBatchClient = /** @class */ (function () {
             pipeline = newPipeline(credentialOrPipeline, options);
         }
         var storageClientContext = new StorageClientContext(url, pipeline.toServiceClientOptions());
-        this._serviceContext = new Service(storageClientContext);
+        var path = getURLPath(url);
+        if (path && path !== "/") {
+            // Container scoped.
+            this.serviceOrContainerContext = new Container(storageClientContext);
+        }
+        else {
+            this.serviceOrContainerContext = new Service(storageClientContext);
+        }
     }
     /**
      * Creates a {@link BlobBatch}.
@@ -41144,27 +40651,25 @@ var BlobBatchClient = /** @class */ (function () {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/blob-batch
      *
-     * @param {BlobBatch} batchRequest A set of Delete or SetTier operations.
-     * @param {BlobBatchSubmitBatchOptionalParams} [options]
-     * @returns {Promise<BlobBatchSubmitBatchResponse>}
-     * @memberof BlobBatchClient
+     * @param batchRequest - A set of Delete or SetTier operations.
+     * @param options -
      */
     BlobBatchClient.prototype.submitBatch = function (batchRequest, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, batchRequestBody, rawBatchResponse, batchResponseParser, responseSummary, res, e_1;
+            var _a, span, updatedOptions, batchRequestBody, rawBatchResponse, batchResponseParser, responseSummary, res, e_1;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         if (!batchRequest || batchRequest.getSubRequests().size == 0) {
                             throw new RangeError("Batch request should contain one or more sub requests.");
                         }
-                        _a = createSpan("BlobBatchClient-submitBatch", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobBatchClient-submitBatch", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 4, 5, 6]);
                         batchRequestBody = batchRequest.getHttpRequestBody();
-                        return [4 /*yield*/, this._serviceContext.submitBatch(batchRequestBody, utf8ByteLength(batchRequestBody), batchRequest.getMultiPartContentType(), tslib.__assign(tslib.__assign({}, options), { spanOptions: spanOptions }))];
+                        return [4 /*yield*/, this.serviceOrContainerContext.submitBatch(batchRequestBody, utf8ByteLength(batchRequestBody), batchRequest.getMultiPartContentType(), tslib.__assign(tslib.__assign({}, options), convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2:
                         rawBatchResponse = _b.sent();
                         batchResponseParser = new BatchResponseParser(rawBatchResponse, batchRequest.getSubRequests());
@@ -41201,8 +40706,1305 @@ var BlobBatchClient = /** @class */ (function () {
     return BlobBatchClient;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+/**
+ * A ContainerClient represents a URL to the Azure Storage container allowing you to manipulate its blobs.
+ */
+var ContainerClient = /** @class */ (function (_super) {
+    tslib.__extends(ContainerClient, _super);
+    function ContainerClient(urlOrConnectionString, credentialOrPipelineOrContainerName, options) {
+        var _this = this;
+        var pipeline;
+        var url;
+        options = options || {};
+        if (credentialOrPipelineOrContainerName instanceof Pipeline) {
+            // (url: string, pipeline: Pipeline)
+            url = urlOrConnectionString;
+            pipeline = credentialOrPipelineOrContainerName;
+        }
+        else if ((coreHttp.isNode && credentialOrPipelineOrContainerName instanceof StorageSharedKeyCredential) ||
+            credentialOrPipelineOrContainerName instanceof AnonymousCredential ||
+            coreHttp.isTokenCredential(credentialOrPipelineOrContainerName)) {
+            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
+            url = urlOrConnectionString;
+            pipeline = newPipeline(credentialOrPipelineOrContainerName, options);
+        }
+        else if (!credentialOrPipelineOrContainerName &&
+            typeof credentialOrPipelineOrContainerName !== "string") {
+            // (url: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: StoragePipelineOptions)
+            // The second parameter is undefined. Use anonymous credential.
+            url = urlOrConnectionString;
+            pipeline = newPipeline(new AnonymousCredential(), options);
+        }
+        else if (credentialOrPipelineOrContainerName &&
+            typeof credentialOrPipelineOrContainerName === "string") {
+            // (connectionString: string, containerName: string, blobName: string, options?: StoragePipelineOptions)
+            var containerName = credentialOrPipelineOrContainerName;
+            var extractedCreds = extractConnectionStringParts(urlOrConnectionString);
+            if (extractedCreds.kind === "AccountConnString") {
+                {
+                    var sharedKeyCredential = new StorageSharedKeyCredential(extractedCreds.accountName, extractedCreds.accountKey);
+                    url = appendToURLPath(extractedCreds.url, encodeURIComponent(containerName));
+                    options.proxyOptions = coreHttp.getDefaultProxySettings(extractedCreds.proxyUri);
+                    pipeline = newPipeline(sharedKeyCredential, options);
+                }
+            }
+            else if (extractedCreds.kind === "SASConnString") {
+                url =
+                    appendToURLPath(extractedCreds.url, encodeURIComponent(containerName)) +
+                        "?" +
+                        extractedCreds.accountSas;
+                pipeline = newPipeline(new AnonymousCredential(), options);
+            }
+            else {
+                throw new Error("Connection string must be either an Account connection string or a SAS connection string");
+            }
+        }
+        else {
+            throw new Error("Expecting non-empty strings for containerName parameter");
+        }
+        _this = _super.call(this, url, pipeline) || this;
+        _this._containerName = _this.getContainerNameFromUrl();
+        _this.containerContext = new Container(_this.storageClientContext);
+        return _this;
+    }
+    Object.defineProperty(ContainerClient.prototype, "containerName", {
+        /**
+         * The name of the container.
+         */
+        get: function () {
+            return this._containerName;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    /**
+     * Creates a new container under the specified account. If the container with
+     * the same name already exists, the operation fails.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-container
+     *
+     * @param options - Options to Container Create operation.
+     *
+     *
+     * Example usage:
+     *
+     * ```js
+     * const containerClient = blobServiceClient.getContainerClient("<container name>");
+     * const createContainerResponse = await containerClient.create();
+     * console.log("Container was created successfully", createContainerResponse.requestId);
+     * ```
+     */
+    ContainerClient.prototype.create = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, e_1;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = createSpan("ContainerClient-create", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.containerContext.create(tslib.__assign(tslib.__assign({}, options), convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: 
+                    // Spread operator in destructuring assignments,
+                    // this will filter out unwanted properties from the response object into result object
+                    return [2 /*return*/, _b.sent()];
+                    case 3:
+                        e_1 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_1.message
+                        });
+                        throw e_1;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Creates a new container under the specified account. If the container with
+     * the same name already exists, it is not changed.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-container
+     *
+     * @param options -
+     */
+    ContainerClient.prototype.createIfNotExists = function (options) {
+        var _a, _b;
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _c, span, updatedOptions, res, e_2;
+            return tslib.__generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _c = createSpan("ContainerClient-createIfNotExists", options), span = _c.span, updatedOptions = _c.updatedOptions;
+                        _d.label = 1;
+                    case 1:
+                        _d.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.create(updatedOptions)];
+                    case 2:
+                        res = _d.sent();
+                        return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: true }, res), { _response: res._response // _response is made non-enumerable
+                             })];
+                    case 3:
+                        e_2 = _d.sent();
+                        if (((_a = e_2.details) === null || _a === void 0 ? void 0 : _a.errorCode) === "ContainerAlreadyExists") {
+                            span.setStatus({
+                                code: api.CanonicalCode.ALREADY_EXISTS,
+                                message: "Expected exception when creating a container only if it does not already exist."
+                            });
+                            return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: false }, (_b = e_2.response) === null || _b === void 0 ? void 0 : _b.parsedHeaders), { _response: e_2.response })];
+                        }
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_2.message
+                        });
+                        throw e_2;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns true if the Azure container resource represented by this client exists; false otherwise.
+     *
+     * NOTE: use this function with care since an existing container might be deleted by other clients or
+     * applications. Vice versa new containers with the same name might be added by other clients or
+     * applications after this function completes.
+     *
+     * @param options -
+     */
+    ContainerClient.prototype.exists = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, e_3;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = createSpan("ContainerClient-exists", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.getProperties({
+                                abortSignal: options.abortSignal,
+                                tracingOptions: updatedOptions.tracingOptions
+                            })];
+                    case 2:
+                        _b.sent();
+                        return [2 /*return*/, true];
+                    case 3:
+                        e_3 = _b.sent();
+                        if (e_3.statusCode === 404) {
+                            span.setStatus({
+                                code: api.CanonicalCode.NOT_FOUND,
+                                message: "Expected exception when checking container existence"
+                            });
+                            return [2 /*return*/, false];
+                        }
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_3.message
+                        });
+                        throw e_3;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Creates a {@link BlobClient}
+     *
+     * @param blobName - A blob name
+     * @returns A new BlobClient object for the given blob name.
+     */
+    ContainerClient.prototype.getBlobClient = function (blobName) {
+        return new BlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
+    };
+    /**
+     * Creates an {@link AppendBlobClient}
+     *
+     * @param blobName - An append blob name
+     */
+    ContainerClient.prototype.getAppendBlobClient = function (blobName) {
+        return new AppendBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
+    };
+    /**
+     * Creates a {@link BlockBlobClient}
+     *
+     * @param blobName - A block blob name
+     *
+     *
+     * Example usage:
+     *
+     * ```js
+     * const content = "Hello world!";
+     *
+     * const blockBlobClient = containerClient.getBlockBlobClient("<blob name>");
+     * const uploadBlobResponse = await blockBlobClient.upload(content, content.length);
+     * ```
+     */
+    ContainerClient.prototype.getBlockBlobClient = function (blobName) {
+        return new BlockBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
+    };
+    /**
+     * Creates a {@link PageBlobClient}
+     *
+     * @param blobName - A page blob name
+     */
+    ContainerClient.prototype.getPageBlobClient = function (blobName) {
+        return new PageBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
+    };
+    /**
+     * Returns all user-defined metadata and system properties for the specified
+     * container. The data returned does not include the container's list of blobs.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-container-properties
+     *
+     * WARNING: The `metadata` object returned in the response will have its keys in lowercase, even if
+     * they originally contained uppercase characters. This differs from the metadata keys returned by
+     * the `listContainers` method of {@link BlobServiceClient} using the `includeMetadata` option, which
+     * will retain their original casing.
+     *
+     * @param options - Options to Container Get Properties operation.
+     */
+    ContainerClient.prototype.getProperties = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, e_4;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!options.conditions) {
+                            options.conditions = {};
+                        }
+                        _a = createSpan("ContainerClient-getProperties", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.containerContext.getProperties(tslib.__assign(tslib.__assign({ abortSignal: options.abortSignal }, options.conditions), convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _b.sent()];
+                    case 3:
+                        e_4 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_4.message
+                        });
+                        throw e_4;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Marks the specified container for deletion. The container and any blobs
+     * contained within it are later deleted during garbage collection.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-container
+     *
+     * @param options - Options to Container Delete operation.
+     */
+    ContainerClient.prototype.delete = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, e_5;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!options.conditions) {
+                            options.conditions = {};
+                        }
+                        _a = createSpan("ContainerClient-delete", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.containerContext.deleteMethod(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: options.conditions }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _b.sent()];
+                    case 3:
+                        e_5 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_5.message
+                        });
+                        throw e_5;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Marks the specified container for deletion if it exists. The container and any blobs
+     * contained within it are later deleted during garbage collection.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-container
+     *
+     * @param options - Options to Container Delete operation.
+     */
+    ContainerClient.prototype.deleteIfExists = function (options) {
+        var _a, _b;
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _c, span, updatedOptions, res, e_6;
+            return tslib.__generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _c = createSpan("ContainerClient-deleteIfExists", options), span = _c.span, updatedOptions = _c.updatedOptions;
+                        _d.label = 1;
+                    case 1:
+                        _d.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.delete(updatedOptions)];
+                    case 2:
+                        res = _d.sent();
+                        return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: true }, res), { _response: res._response // _response is made non-enumerable
+                             })];
+                    case 3:
+                        e_6 = _d.sent();
+                        if (((_a = e_6.details) === null || _a === void 0 ? void 0 : _a.errorCode) === "ContainerNotFound") {
+                            span.setStatus({
+                                code: api.CanonicalCode.NOT_FOUND,
+                                message: "Expected exception when deleting a container only if it exists."
+                            });
+                            return [2 /*return*/, tslib.__assign(tslib.__assign({ succeeded: false }, (_b = e_6.response) === null || _b === void 0 ? void 0 : _b.parsedHeaders), { _response: e_6.response })];
+                        }
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_6.message
+                        });
+                        throw e_6;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Sets one or more user-defined name-value pairs for the specified container.
+     *
+     * If no option provided, or no metadata defined in the parameter, the container
+     * metadata will be removed.
+     *
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-container-metadata
+     *
+     * @param metadata - Replace existing metadata with this value.
+     *                            If no value provided the existing metadata will be removed.
+     * @param options - Options to Container Set Metadata operation.
+     */
+    ContainerClient.prototype.setMetadata = function (metadata, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, e_7;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!options.conditions) {
+                            options.conditions = {};
+                        }
+                        if (options.conditions.ifUnmodifiedSince) {
+                            throw new RangeError("the IfUnmodifiedSince must have their default values because they are ignored by the blob service");
+                        }
+                        _a = createSpan("ContainerClient-setMetadata", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.containerContext.setMetadata(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, metadata: metadata, modifiedAccessConditions: options.conditions }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _b.sent()];
+                    case 3:
+                        e_7 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_7.message
+                        });
+                        throw e_7;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Gets the permissions for the specified container. The permissions indicate
+     * whether container data may be accessed publicly.
+     *
+     * WARNING: JavaScript Date will potentially lose precision when parsing startsOn and expiresOn strings.
+     * For example, new Date("2018-12-31T03:44:23.8827891Z").toISOString() will get "2018-12-31T03:44:23.882Z".
+     *
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-container-acl
+     *
+     * @param options - Options to Container Get Access Policy operation.
+     */
+    ContainerClient.prototype.getAccessPolicy = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, response, res, _i, response_1, identifier, accessPolicy, e_8;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!options.conditions) {
+                            options.conditions = {};
+                        }
+                        _a = createSpan("ContainerClient-getAccessPolicy", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.containerContext.getAccessPolicy(tslib.__assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2:
+                        response = _b.sent();
+                        res = {
+                            _response: response._response,
+                            blobPublicAccess: response.blobPublicAccess,
+                            date: response.date,
+                            etag: response.etag,
+                            errorCode: response.errorCode,
+                            lastModified: response.lastModified,
+                            requestId: response.requestId,
+                            clientRequestId: response.clientRequestId,
+                            signedIdentifiers: [],
+                            version: response.version
+                        };
+                        for (_i = 0, response_1 = response; _i < response_1.length; _i++) {
+                            identifier = response_1[_i];
+                            accessPolicy = undefined;
+                            if (identifier.accessPolicy) {
+                                accessPolicy = {
+                                    permissions: identifier.accessPolicy.permissions
+                                };
+                                if (identifier.accessPolicy.expiresOn) {
+                                    accessPolicy.expiresOn = new Date(identifier.accessPolicy.expiresOn);
+                                }
+                                if (identifier.accessPolicy.startsOn) {
+                                    accessPolicy.startsOn = new Date(identifier.accessPolicy.startsOn);
+                                }
+                            }
+                            res.signedIdentifiers.push({
+                                accessPolicy: accessPolicy,
+                                id: identifier.id
+                            });
+                        }
+                        return [2 /*return*/, res];
+                    case 3:
+                        e_8 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_8.message
+                        });
+                        throw e_8;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Sets the permissions for the specified container. The permissions indicate
+     * whether blobs in a container may be accessed publicly.
+     *
+     * When you set permissions for a container, the existing permissions are replaced.
+     * If no access or containerAcl provided, the existing container ACL will be
+     * removed.
+     *
+     * When you establish a stored access policy on a container, it may take up to 30 seconds to take effect.
+     * During this interval, a shared access signature that is associated with the stored access policy will
+     * fail with status code 403 (Forbidden), until the access policy becomes active.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-container-acl
+     *
+     * @param access - The level of public access to data in the container.
+     * @param containerAcl - Array of elements each having a unique Id and details of the access policy.
+     * @param options - Options to Container Set Access Policy operation.
+     */
+    ContainerClient.prototype.setAccessPolicy = function (access, containerAcl, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, acl, _i, _b, identifier, e_9;
+            return tslib.__generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        options.conditions = options.conditions || {};
+                        _a = createSpan("ContainerClient-setAccessPolicy", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _c.label = 1;
+                    case 1:
+                        _c.trys.push([1, 3, 4, 5]);
+                        acl = [];
+                        for (_i = 0, _b = containerAcl || []; _i < _b.length; _i++) {
+                            identifier = _b[_i];
+                            acl.push({
+                                accessPolicy: {
+                                    expiresOn: identifier.accessPolicy.expiresOn
+                                        ? truncatedISO8061Date(identifier.accessPolicy.expiresOn)
+                                        : "",
+                                    permissions: identifier.accessPolicy.permissions,
+                                    startsOn: identifier.accessPolicy.startsOn
+                                        ? truncatedISO8061Date(identifier.accessPolicy.startsOn)
+                                        : ""
+                                },
+                                id: identifier.id
+                            });
+                        }
+                        return [4 /*yield*/, this.containerContext.setAccessPolicy(tslib.__assign({ abortSignal: options.abortSignal, access: access, containerAcl: acl, leaseAccessConditions: options.conditions, modifiedAccessConditions: options.conditions }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _c.sent()];
+                    case 3:
+                        e_9 = _c.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_9.message
+                        });
+                        throw e_9;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Get a {@link BlobLeaseClient} that manages leases on the container.
+     *
+     * @param proposeLeaseId - Initial proposed lease Id.
+     * @returns A new BlobLeaseClient object for managing leases on the container.
+     */
+    ContainerClient.prototype.getBlobLeaseClient = function (proposeLeaseId) {
+        return new BlobLeaseClient(this, proposeLeaseId);
+    };
+    /**
+     * Creates a new block blob, or updates the content of an existing block blob.
+     *
+     * Updating an existing block blob overwrites any existing metadata on the blob.
+     * Partial updates are not supported; the content of the existing blob is
+     * overwritten with the new content. To perform a partial update of a block blob's,
+     * use {@link BlockBlobClient.stageBlock} and {@link BlockBlobClient.commitBlockList}.
+     *
+     * This is a non-parallel uploading method, please use {@link BlockBlobClient.uploadFile},
+     * {@link BlockBlobClient.uploadStream} or {@link BlockBlobClient.uploadBrowserData} for better
+     * performance with concurrency uploading.
+     *
+     * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
+     *
+     * @param blobName - Name of the block blob to create or update.
+     * @param body - Blob, string, ArrayBuffer, ArrayBufferView or a function
+     *                               which returns a new Readable stream whose offset is from data source beginning.
+     * @param contentLength - Length of body in bytes. Use Buffer.byteLength() to calculate body length for a
+     *                               string including non non-Base64/Hex-encoded characters.
+     * @param options - Options to configure the Block Blob Upload operation.
+     * @returns Block Blob upload response data and the corresponding BlockBlobClient instance.
+     */
+    ContainerClient.prototype.uploadBlockBlob = function (blobName, body, contentLength, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, blockBlobClient, response, e_10;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = createSpan("ContainerClient-uploadBlockBlob", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        blockBlobClient = this.getBlockBlobClient(blobName);
+                        return [4 /*yield*/, blockBlobClient.upload(body, contentLength, updatedOptions)];
+                    case 2:
+                        response = _b.sent();
+                        return [2 /*return*/, {
+                                blockBlobClient: blockBlobClient,
+                                response: response
+                            }];
+                    case 3:
+                        e_10 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_10.message
+                        });
+                        throw e_10;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Marks the specified blob or snapshot for deletion. The blob is later deleted
+     * during garbage collection. Note that in order to delete a blob, you must delete
+     * all of its snapshots. You can delete both at the same time with the Delete
+     * Blob operation.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-blob
+     *
+     * @param blobName -
+     * @param options - Options to Blob Delete operation.
+     * @returns Block blob deletion response data.
+     */
+    ContainerClient.prototype.deleteBlob = function (blobName, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, blobClient, e_11;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = createSpan("ContainerClient-deleteBlob", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        blobClient = this.getBlobClient(blobName);
+                        if (options.versionId) {
+                            blobClient = blobClient.withVersion(options.versionId);
+                        }
+                        return [4 /*yield*/, blobClient.delete(updatedOptions)];
+                    case 2: return [2 /*return*/, _b.sent()];
+                    case 3:
+                        e_11 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_11.message
+                        });
+                        throw e_11;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * listBlobFlatSegment returns a single segment of blobs starting from the
+     * specified Marker. Use an empty Marker to start enumeration from the beginning.
+     * After getting a segment, process it, and then call listBlobsFlatSegment again
+     * (passing the the previously-returned Marker) to get the next segment.
+     * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
+     *
+     * @param marker - A string value that identifies the portion of the list to be returned with the next list operation.
+     * @param options - Options to Container List Blob Flat Segment operation.
+     */
+    ContainerClient.prototype.listBlobFlatSegment = function (marker, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, response, wrappedResponse, e_12;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = createSpan("ContainerClient-listBlobFlatSegment", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.containerContext.listBlobFlatSegment(tslib.__assign(tslib.__assign({ marker: marker }, options), convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2:
+                        response = _b.sent();
+                        wrappedResponse = tslib.__assign(tslib.__assign({}, response), { _response: response._response, segment: tslib.__assign(tslib.__assign({}, response.segment), { blobItems: response.segment.blobItems.map(function (blobItemInteral) {
+                                    var blobItem = tslib.__assign(tslib.__assign({}, blobItemInteral), { tags: toTags(blobItemInteral.blobTags), objectReplicationSourceProperties: parseObjectReplicationRecord(blobItemInteral.objectReplicationMetadata) });
+                                    return blobItem;
+                                }) }) });
+                        return [2 /*return*/, wrappedResponse];
+                    case 3:
+                        e_12 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_12.message
+                        });
+                        throw e_12;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * listBlobHierarchySegment returns a single segment of blobs starting from
+     * the specified Marker. Use an empty Marker to start enumeration from the
+     * beginning. After getting a segment, process it, and then call listBlobsHierarchicalSegment
+     * again (passing the the previously-returned Marker) to get the next segment.
+     * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
+     *
+     * @param delimiter - The character or string used to define the virtual hierarchy
+     * @param marker - A string value that identifies the portion of the list to be returned with the next list operation.
+     * @param options - Options to Container List Blob Hierarchy Segment operation.
+     */
+    ContainerClient.prototype.listBlobHierarchySegment = function (delimiter, marker, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, response, wrappedResponse, e_13;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = createSpan("ContainerClient-listBlobHierarchySegment", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.containerContext.listBlobHierarchySegment(delimiter, tslib.__assign(tslib.__assign({ marker: marker }, options), convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2:
+                        response = _b.sent();
+                        wrappedResponse = tslib.__assign(tslib.__assign({}, response), { _response: response._response, segment: tslib.__assign(tslib.__assign({}, response.segment), { blobItems: response.segment.blobItems.map(function (blobItemInteral) {
+                                    var blobItem = tslib.__assign(tslib.__assign({}, blobItemInteral), { tags: toTags(blobItemInteral.blobTags), objectReplicationSourceProperties: parseObjectReplicationRecord(blobItemInteral.objectReplicationMetadata) });
+                                    return blobItem;
+                                }) }) });
+                        return [2 /*return*/, wrappedResponse];
+                    case 3:
+                        e_13 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_13.message
+                        });
+                        throw e_13;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns an AsyncIterableIterator for ContainerListBlobFlatSegmentResponse
+     *
+     * @param marker - A string value that identifies the portion of
+     *                          the list of blobs to be returned with the next listing operation. The
+     *                          operation returns the ContinuationToken value within the response body if the
+     *                          listing operation did not return all blobs remaining to be listed
+     *                          with the current page. The ContinuationToken value can be used as the value for
+     *                          the marker parameter in a subsequent call to request the next page of list
+     *                          items. The marker value is opaque to the client.
+     * @param options - Options to list blobs operation.
+     */
+    ContainerClient.prototype.listSegments = function (marker, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__asyncGenerator(this, arguments, function listSegments_1() {
+            var listBlobsFlatSegmentResponse;
+            return tslib.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(!!marker || marker === undefined)) return [3 /*break*/, 7];
+                        _a.label = 1;
+                    case 1: return [4 /*yield*/, tslib.__await(this.listBlobFlatSegment(marker, options))];
+                    case 2:
+                        listBlobsFlatSegmentResponse = _a.sent();
+                        marker = listBlobsFlatSegmentResponse.continuationToken;
+                        return [4 /*yield*/, tslib.__await(listBlobsFlatSegmentResponse)];
+                    case 3: return [4 /*yield*/, tslib.__await.apply(void 0, [_a.sent()])];
+                    case 4: return [4 /*yield*/, _a.sent()];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6:
+                        if (marker) return [3 /*break*/, 1];
+                        _a.label = 7;
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns an AsyncIterableIterator of {@link BlobItem} objects
+     *
+     * @param options - Options to list blobs operation.
+     */
+    ContainerClient.prototype.listItems = function (options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__asyncGenerator(this, arguments, function listItems_1() {
+            var marker, _a, _b, listBlobsFlatSegmentResponse, e_14_1;
+            var e_14, _c;
+            return tslib.__generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _d.trys.push([0, 7, 8, 13]);
+                        _a = tslib.__asyncValues(this.listSegments(marker, options));
+                        _d.label = 1;
+                    case 1: return [4 /*yield*/, tslib.__await(_a.next())];
+                    case 2:
+                        if (!(_b = _d.sent(), !_b.done)) return [3 /*break*/, 6];
+                        listBlobsFlatSegmentResponse = _b.value;
+                        return [5 /*yield**/, tslib.__values(tslib.__asyncDelegator(tslib.__asyncValues(listBlobsFlatSegmentResponse.segment.blobItems)))];
+                    case 3: return [4 /*yield*/, tslib.__await.apply(void 0, [_d.sent()])];
+                    case 4:
+                        _d.sent();
+                        _d.label = 5;
+                    case 5: return [3 /*break*/, 1];
+                    case 6: return [3 /*break*/, 13];
+                    case 7:
+                        e_14_1 = _d.sent();
+                        e_14 = { error: e_14_1 };
+                        return [3 /*break*/, 13];
+                    case 8:
+                        _d.trys.push([8, , 11, 12]);
+                        if (!(_b && !_b.done && (_c = _a.return))) return [3 /*break*/, 10];
+                        return [4 /*yield*/, tslib.__await(_c.call(_a))];
+                    case 9:
+                        _d.sent();
+                        _d.label = 10;
+                    case 10: return [3 /*break*/, 12];
+                    case 11:
+                        if (e_14) throw e_14.error;
+                        return [7 /*endfinally*/];
+                    case 12: return [7 /*endfinally*/];
+                    case 13: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns an async iterable iterator to list all the blobs
+     * under the specified account.
+     *
+     * .byPage() returns an async iterable iterator to list the blobs in pages.
+     *
+     * Example using `for await` syntax:
+     *
+     * ```js
+     * // Get the containerClient before you run these snippets,
+     * // Can be obtained from `blobServiceClient.getContainerClient("<your-container-name>");`
+     * let i = 1;
+     * for await (const blob of containerClient.listBlobsFlat()) {
+     *   console.log(`Blob ${i++}: ${blob.name}`);
+     * }
+     * ```
+     *
+     * Example using `iter.next()`:
+     *
+     * ```js
+     * let i = 1;
+     * let iter = containerClient.listBlobsFlat();
+     * let blobItem = await iter.next();
+     * while (!blobItem.done) {
+     *   console.log(`Blob ${i++}: ${blobItem.value.name}`);
+     *   blobItem = await iter.next();
+     * }
+     * ```
+     *
+     * Example using `byPage()`:
+     *
+     * ```js
+     * // passing optional maxPageSize in the page settings
+     * let i = 1;
+     * for await (const response of containerClient.listBlobsFlat().byPage({ maxPageSize: 20 })) {
+     *   for (const blob of response.segment.blobItems) {
+     *     console.log(`Blob ${i++}: ${blob.name}`);
+     *   }
+     * }
+     * ```
+     *
+     * Example using paging with a marker:
+     *
+     * ```js
+     * let i = 1;
+     * let iterator = containerClient.listBlobsFlat().byPage({ maxPageSize: 2 });
+     * let response = (await iterator.next()).value;
+     *
+     * // Prints 2 blob names
+     * for (const blob of response.segment.blobItems) {
+     *   console.log(`Blob ${i++}: ${blob.name}`);
+     * }
+     *
+     * // Gets next marker
+     * let marker = response.continuationToken;
+     *
+     * // Passing next marker as continuationToken
+     *
+     * iterator = containerClient.listBlobsFlat().byPage({ continuationToken: marker, maxPageSize: 10 });
+     * response = (await iterator.next()).value;
+     *
+     * // Prints 10 blob names
+     * for (const blob of response.segment.blobItems) {
+     *   console.log(`Blob ${i++}: ${blob.name}`);
+     * }
+     * ```
+     *
+     * @param options - Options to list blobs.
+     * @returns An asyncIterableIterator that supports paging.
+     */
+    ContainerClient.prototype.listBlobsFlat = function (options) {
+        var _a;
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        var include = [];
+        if (options.includeCopy) {
+            include.push("copy");
+        }
+        if (options.includeDeleted) {
+            include.push("deleted");
+        }
+        if (options.includeMetadata) {
+            include.push("metadata");
+        }
+        if (options.includeSnapshots) {
+            include.push("snapshots");
+        }
+        if (options.includeVersions) {
+            include.push("versions");
+        }
+        if (options.includeUncommitedBlobs) {
+            include.push("uncommittedblobs");
+        }
+        if (options.includeTags) {
+            include.push("tags");
+        }
+        if (options.prefix === "") {
+            options.prefix = undefined;
+        }
+        var updatedOptions = tslib.__assign(tslib.__assign({}, options), (include.length > 0 ? { include: include } : {}));
+        // AsyncIterableIterator to iterate over blobs
+        var iter = this.listItems(updatedOptions);
+        return _a = {
+                /**
+                 * The next method, part of the iteration protocol
+                 */
+                next: function () {
+                    return iter.next();
+                }
+            },
+            /**
+             * The connection to the async iterator, part of the iteration protocol
+             */
+            _a[Symbol.asyncIterator] = function () {
+                return this;
+            },
+            /**
+             * Return an AsyncIterableIterator that works a page at a time
+             */
+            _a.byPage = function (settings) {
+                if (settings === void 0) { settings = {}; }
+                return _this.listSegments(settings.continuationToken, tslib.__assign({ maxPageSize: settings.maxPageSize }, updatedOptions));
+            },
+            _a;
+    };
+    /**
+     * Returns an AsyncIterableIterator for ContainerListBlobHierarchySegmentResponse
+     *
+     * @param delimiter - The character or string used to define the virtual hierarchy
+     * @param marker - A string value that identifies the portion of
+     *                          the list of blobs to be returned with the next listing operation. The
+     *                          operation returns the ContinuationToken value within the response body if the
+     *                          listing operation did not return all blobs remaining to be listed
+     *                          with the current page. The ContinuationToken value can be used as the value for
+     *                          the marker parameter in a subsequent call to request the next page of list
+     *                          items. The marker value is opaque to the client.
+     * @param options - Options to list blobs operation.
+     */
+    ContainerClient.prototype.listHierarchySegments = function (delimiter, marker, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__asyncGenerator(this, arguments, function listHierarchySegments_1() {
+            var listBlobsHierarchySegmentResponse;
+            return tslib.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(!!marker || marker === undefined)) return [3 /*break*/, 7];
+                        _a.label = 1;
+                    case 1: return [4 /*yield*/, tslib.__await(this.listBlobHierarchySegment(delimiter, marker, options))];
+                    case 2:
+                        listBlobsHierarchySegmentResponse = _a.sent();
+                        marker = listBlobsHierarchySegmentResponse.continuationToken;
+                        return [4 /*yield*/, tslib.__await(listBlobsHierarchySegmentResponse)];
+                    case 3: return [4 /*yield*/, tslib.__await.apply(void 0, [_a.sent()])];
+                    case 4: return [4 /*yield*/, _a.sent()];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6:
+                        if (marker) return [3 /*break*/, 1];
+                        _a.label = 7;
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns an AsyncIterableIterator for {@link BlobPrefix} and {@link BlobItem} objects.
+     *
+     * @param delimiter - The character or string used to define the virtual hierarchy
+     * @param options - Options to list blobs operation.
+     */
+    ContainerClient.prototype.listItemsByHierarchy = function (delimiter, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__asyncGenerator(this, arguments, function listItemsByHierarchy_1() {
+            var marker, _a, _b, listBlobsHierarchySegmentResponse, segment, _i, _c, prefix, _d, _e, blob, e_15_1;
+            var e_15, _f;
+            return tslib.__generator(this, function (_g) {
+                switch (_g.label) {
+                    case 0:
+                        _g.trys.push([0, 14, 15, 20]);
+                        _a = tslib.__asyncValues(this.listHierarchySegments(delimiter, marker, options));
+                        _g.label = 1;
+                    case 1: return [4 /*yield*/, tslib.__await(_a.next())];
+                    case 2:
+                        if (!(_b = _g.sent(), !_b.done)) return [3 /*break*/, 13];
+                        listBlobsHierarchySegmentResponse = _b.value;
+                        segment = listBlobsHierarchySegmentResponse.segment;
+                        if (!segment.blobPrefixes) return [3 /*break*/, 7];
+                        _i = 0, _c = segment.blobPrefixes;
+                        _g.label = 3;
+                    case 3:
+                        if (!(_i < _c.length)) return [3 /*break*/, 7];
+                        prefix = _c[_i];
+                        return [4 /*yield*/, tslib.__await(tslib.__assign({ kind: "prefix" }, prefix))];
+                    case 4: return [4 /*yield*/, _g.sent()];
+                    case 5:
+                        _g.sent();
+                        _g.label = 6;
+                    case 6:
+                        _i++;
+                        return [3 /*break*/, 3];
+                    case 7:
+                        _d = 0, _e = segment.blobItems;
+                        _g.label = 8;
+                    case 8:
+                        if (!(_d < _e.length)) return [3 /*break*/, 12];
+                        blob = _e[_d];
+                        return [4 /*yield*/, tslib.__await(tslib.__assign({ kind: "blob" }, blob))];
+                    case 9: return [4 /*yield*/, _g.sent()];
+                    case 10:
+                        _g.sent();
+                        _g.label = 11;
+                    case 11:
+                        _d++;
+                        return [3 /*break*/, 8];
+                    case 12: return [3 /*break*/, 1];
+                    case 13: return [3 /*break*/, 20];
+                    case 14:
+                        e_15_1 = _g.sent();
+                        e_15 = { error: e_15_1 };
+                        return [3 /*break*/, 20];
+                    case 15:
+                        _g.trys.push([15, , 18, 19]);
+                        if (!(_b && !_b.done && (_f = _a.return))) return [3 /*break*/, 17];
+                        return [4 /*yield*/, tslib.__await(_f.call(_a))];
+                    case 16:
+                        _g.sent();
+                        _g.label = 17;
+                    case 17: return [3 /*break*/, 19];
+                    case 18:
+                        if (e_15) throw e_15.error;
+                        return [7 /*endfinally*/];
+                    case 19: return [7 /*endfinally*/];
+                    case 20: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns an async iterable iterator to list all the blobs by hierarchy.
+     * under the specified account.
+     *
+     * .byPage() returns an async iterable iterator to list the blobs by hierarchy in pages.
+     *
+     * Example using `for await` syntax:
+     *
+     * ```js
+     * for await (const item of containerClient.listBlobsByHierarchy("/")) {
+     *   if (item.kind === "prefix") {
+     *     console.log(`\tBlobPrefix: ${item.name}`);
+     *   } else {
+     *     console.log(`\tBlobItem: name - ${item.name}, last modified - ${item.properties.lastModified}`);
+     *   }
+     * }
+     * ```
+     *
+     * Example using `iter.next()`:
+     *
+     * ```js
+     * let iter = containerClient.listBlobsByHierarchy("/", { prefix: "prefix1/" });
+     * let entity = await iter.next();
+     * while (!entity.done) {
+     *   let item = entity.value;
+     *   if (item.kind === "prefix") {
+     *     console.log(`\tBlobPrefix: ${item.name}`);
+     *   } else {
+     *     console.log(`\tBlobItem: name - ${item.name}, last modified - ${item.properties.lastModified}`);
+     *   }
+     *   entity = await iter.next();
+     * }
+     * ```
+     *
+     * Example using `byPage()`:
+     *
+     * ```js
+     * console.log("Listing blobs by hierarchy by page");
+     * for await (const response of containerClient.listBlobsByHierarchy("/").byPage()) {
+     *   const segment = response.segment;
+     *   if (segment.blobPrefixes) {
+     *     for (const prefix of segment.blobPrefixes) {
+     *       console.log(`\tBlobPrefix: ${prefix.name}`);
+     *     }
+     *   }
+     *   for (const blob of response.segment.blobItems) {
+     *     console.log(`\tBlobItem: name - ${blob.name}, last modified - ${blob.properties.lastModified}`);
+     *   }
+     * }
+     * ```
+     *
+     * Example using paging with a max page size:
+     *
+     * ```js
+     * console.log("Listing blobs by hierarchy by page, specifying a prefix and a max page size");
+     *
+     * let i = 1;
+     * for await (const response of containerClient.listBlobsByHierarchy("/", { prefix: "prefix2/sub1/"}).byPage({ maxPageSize: 2 })) {
+     *   console.log(`Page ${i++}`);
+     *   const segment = response.segment;
+     *
+     *   if (segment.blobPrefixes) {
+     *     for (const prefix of segment.blobPrefixes) {
+     *       console.log(`\tBlobPrefix: ${prefix.name}`);
+     *     }
+     *   }
+     *
+     *   for (const blob of response.segment.blobItems) {
+     *     console.log(`\tBlobItem: name - ${blob.name}, last modified - ${blob.properties.lastModified}`);
+     *   }
+     * }
+     * ```
+     *
+     * @param delimiter - The character or string used to define the virtual hierarchy
+     * @param options - Options to list blobs operation.
+     */
+    ContainerClient.prototype.listBlobsByHierarchy = function (delimiter, options) {
+        var _a;
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        if (delimiter === "") {
+            throw new RangeError("delimiter should contain one or more characters");
+        }
+        var include = [];
+        if (options.includeCopy) {
+            include.push("copy");
+        }
+        if (options.includeDeleted) {
+            include.push("deleted");
+        }
+        if (options.includeMetadata) {
+            include.push("metadata");
+        }
+        if (options.includeSnapshots) {
+            include.push("snapshots");
+        }
+        if (options.includeVersions) {
+            include.push("versions");
+        }
+        if (options.includeUncommitedBlobs) {
+            include.push("uncommittedblobs");
+        }
+        if (options.includeTags) {
+            include.push("tags");
+        }
+        if (options.prefix === "") {
+            options.prefix = undefined;
+        }
+        var updatedOptions = tslib.__assign(tslib.__assign({}, options), (include.length > 0 ? { include: include } : {}));
+        // AsyncIterableIterator to iterate over blob prefixes and blobs
+        var iter = this.listItemsByHierarchy(delimiter, updatedOptions);
+        return _a = {
+                /**
+                 * The next method, part of the iteration protocol
+                 */
+                next: function () {
+                    return tslib.__awaiter(this, void 0, void 0, function () {
+                        return tslib.__generator(this, function (_a) {
+                            return [2 /*return*/, iter.next()];
+                        });
+                    });
+                }
+            },
+            /**
+             * The connection to the async iterator, part of the iteration protocol
+             */
+            _a[Symbol.asyncIterator] = function () {
+                return this;
+            },
+            /**
+             * Return an AsyncIterableIterator that works a page at a time
+             */
+            _a.byPage = function (settings) {
+                if (settings === void 0) { settings = {}; }
+                return _this.listHierarchySegments(delimiter, settings.continuationToken, tslib.__assign({ maxPageSize: settings.maxPageSize }, updatedOptions));
+            },
+            _a;
+    };
+    ContainerClient.prototype.getContainerNameFromUrl = function () {
+        var containerName;
+        try {
+            //  URL may look like the following
+            // "https://myaccount.blob.core.windows.net/mycontainer?sasString";
+            // "https://myaccount.blob.core.windows.net/mycontainer";
+            // IPv4/IPv6 address hosts, Endpoints - `http://127.0.0.1:10000/devstoreaccount1/containername`
+            // http://localhost:10001/devstoreaccount1/containername
+            var parsedUrl = coreHttp.URLBuilder.parse(this.url);
+            if (parsedUrl.getHost().split(".")[1] === "blob") {
+                // "https://myaccount.blob.core.windows.net/containername".
+                // "https://customdomain.com/containername".
+                // .getPath() -> /containername
+                containerName = parsedUrl.getPath().split("/")[1];
+            }
+            else if (isIpEndpointStyle(parsedUrl)) {
+                // IPv4/IPv6 address hosts... Example - http://192.0.0.10:10001/devstoreaccount1/containername
+                // Single word domain without a [dot] in the endpoint... Example - http://localhost:10001/devstoreaccount1/containername
+                // .getPath() -> /devstoreaccount1/containername
+                containerName = parsedUrl.getPath().split("/")[2];
+            }
+            else {
+                // "https://customdomain.com/containername".
+                // .getPath() -> /containername
+                containerName = parsedUrl.getPath().split("/")[1];
+            }
+            // decode the encoded containerName - to get all the special characters that might be present in it
+            containerName = decodeURIComponent(containerName);
+            if (!containerName) {
+                throw new Error("Provided containerName is invalid.");
+            }
+            return containerName;
+        }
+        catch (error) {
+            throw new Error("Unable to extract containerName with provided information.");
+        }
+    };
+    /**
+     * Only available for ContainerClient constructed with a shared key credential.
+     *
+     * Generates a Blob Container Service Shared Access Signature (SAS) URI based on the client properties
+     * and parameters passed in. The SAS is signed by the shared key credential of the client.
+     *
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
+     *
+     * @param options - Optional parameters.
+     * @returns The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
+     */
+    ContainerClient.prototype.generateSasUrl = function (options) {
+        var _this = this;
+        return new Promise(function (resolve) {
+            if (!(_this.credential instanceof StorageSharedKeyCredential)) {
+                throw new RangeError("Can only generate the SAS when the client is initialized with a shared key credential");
+            }
+            var sas = generateBlobSASQueryParameters(tslib.__assign({ containerName: _this._containerName }, options), _this.credential).toString();
+            resolve(appendToURLQuery(_this.url, sas));
+        });
+    };
+    /**
+     * Creates a BlobBatchClient object to conduct batch operations.
+     *
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/blob-batch
+     *
+     * @returns A new BlobBatchClient object for this container.
+     */
+    ContainerClient.prototype.getBlobBatchClient = function () {
+        return new BlobBatchClient(this.url, this.pipeline);
+    };
+    return ContainerClient;
+}(StorageClient));
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
@@ -41211,97 +42013,58 @@ var BlobBatchClient = /** @class */ (function () {
  * values are set, this should be serialized with toString and set as the permissions field on an
  * {@link AccountSASSignatureValues} object. It is possible to construct the permissions string without this class, but
  * the order of the permissions is particular and this class guarantees correctness.
- *
- * @export
- * @class AccountSASPermissions
  */
 var AccountSASPermissions = /** @class */ (function () {
     function AccountSASPermissions() {
         /**
          * Permission to read resources and list queues and tables granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.read = false;
         /**
          * Permission to write resources granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.write = false;
         /**
          * Permission to create blobs and files granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.delete = false;
         /**
          * Permission to delete versions granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.deleteVersion = false;
         /**
          * Permission to list blob containers, blobs, shares, directories, and files granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.list = false;
         /**
          * Permission to add messages, table entities, and append to blobs granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.add = false;
         /**
          * Permission to create blobs and files granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.create = false;
         /**
          * Permissions to update messages and table entities granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.update = false;
         /**
          * Permission to get and delete messages granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.process = false;
         /**
          * Specfies Tag access granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.tag = false;
         /**
          * Permission to filter blobs.
-         *
-         * @type {boolean}
-         * @memberof AccountSASPermissions
          */
         this.filter = false;
     }
     /**
      * Parse initializes the AccountSASPermissions fields from a string.
      *
-     * @static
-     * @param {string} permissions
-     * @returns {AccountSASPermissions}
-     * @memberof AccountSASPermissions
+     * @param permissions -
      */
     AccountSASPermissions.parse = function (permissions) {
         var accountSASPermissions = new AccountSASPermissions();
@@ -41351,10 +42114,7 @@ var AccountSASPermissions = /** @class */ (function () {
      * Creates a {@link AccountSASPermissions} from a raw object which contains same keys as it
      * and boolean values for them.
      *
-     * @static
-     * @param {AccountSASPermissionsLike} permissionLike
-     * @returns {AccountSASPermissions}
-     * @memberof AccountSASPermissions
+     * @param permissionLike -
      */
     AccountSASPermissions.from = function (permissionLike) {
         var accountSASPermissions = new AccountSASPermissions();
@@ -41402,8 +42162,6 @@ var AccountSASPermissions = /** @class */ (function () {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-an-account-sas
      *
-     * @returns {string}
-     * @memberof AccountSASPermissions
      */
     AccountSASPermissions.prototype.toString = function () {
         // The order of the characters should be as specified here to ensure correctness:
@@ -41448,8 +42206,8 @@ var AccountSASPermissions = /** @class */ (function () {
     return AccountSASPermissions;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
@@ -41458,31 +42216,19 @@ var AccountSASPermissions = /** @class */ (function () {
  * values are set, this should be serialized with toString and set as the resources field on an
  * {@link AccountSASSignatureValues} object. It is possible to construct the resources string without this class, but
  * the order of the resources is particular and this class guarantees correctness.
- *
- * @export
- * @class AccountSASResourceTypes
  */
 var AccountSASResourceTypes = /** @class */ (function () {
     function AccountSASResourceTypes() {
         /**
          * Permission to access service level APIs granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASResourceTypes
          */
         this.service = false;
         /**
          * Permission to access container level APIs (Blob Containers, Tables, Queues, File Shares) granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASResourceTypes
          */
         this.container = false;
         /**
          * Permission to access object level APIs (Blobs, Table Entities, Queue Messages, Files) granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASResourceTypes
          */
         this.object = false;
     }
@@ -41490,10 +42236,7 @@ var AccountSASResourceTypes = /** @class */ (function () {
      * Creates an {@link AccountSASResourceTypes} from the specified resource types string. This method will throw an
      * Error if it encounters a character that does not correspond to a valid resource type.
      *
-     * @static
-     * @param {string} resourceTypes
-     * @returns {AccountSASResourceTypes}
-     * @memberof AccountSASResourceTypes
+     * @param resourceTypes -
      */
     AccountSASResourceTypes.parse = function (resourceTypes) {
         var accountSASResourceTypes = new AccountSASResourceTypes();
@@ -41520,8 +42263,6 @@ var AccountSASResourceTypes = /** @class */ (function () {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-an-account-sas
      *
-     * @returns {string}
-     * @memberof AccountSASResourceTypes
      */
     AccountSASResourceTypes.prototype.toString = function () {
         var resourceTypes = [];
@@ -41539,8 +42280,8 @@ var AccountSASResourceTypes = /** @class */ (function () {
     return AccountSASResourceTypes;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
@@ -41549,38 +42290,23 @@ var AccountSASResourceTypes = /** @class */ (function () {
  * values are set, this should be serialized with toString and set as the services field on an
  * {@link AccountSASSignatureValues} object. It is possible to construct the services string without this class, but
  * the order of the services is particular and this class guarantees correctness.
- *
- * @export
- * @class AccountSASServices
  */
 var AccountSASServices = /** @class */ (function () {
     function AccountSASServices() {
         /**
          * Permission to access blob resources granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASServices
          */
         this.blob = false;
         /**
          * Permission to access file resources granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASServices
          */
         this.file = false;
         /**
          * Permission to access queue resources granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASServices
          */
         this.queue = false;
         /**
          * Permission to access table resources granted.
-         *
-         * @type {boolean}
-         * @memberof AccountSASServices
          */
         this.table = false;
     }
@@ -41588,10 +42314,7 @@ var AccountSASServices = /** @class */ (function () {
      * Creates an {@link AccountSASServices} from the specified services string. This method will throw an
      * Error if it encounters a character that does not correspond to a valid service.
      *
-     * @static
-     * @param {string} services
-     * @returns {AccountSASServices}
-     * @memberof AccountSASServices
+     * @param services -
      */
     AccountSASServices.parse = function (services) {
         var accountSASServices = new AccountSASServices();
@@ -41619,8 +42342,6 @@ var AccountSASServices = /** @class */ (function () {
     /**
      * Converts the given services to a string.
      *
-     * @returns {string}
-     * @memberof AccountSASServices
      */
     AccountSASServices.prototype.toString = function () {
         var services = [];
@@ -41641,7 +42362,7 @@ var AccountSASServices = /** @class */ (function () {
     return AccountSASServices;
 }());
 
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 /**
  * ONLY AVAILABLE IN NODE.JS RUNTIME.
  *
@@ -41650,10 +42371,8 @@ var AccountSASServices = /** @class */ (function () {
  *
  * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-an-account-sas
  *
- * @param {AccountSASSignatureValues} accountSASSignatureValues
- * @param {StorageSharedKeyCredential} sharedKeyCredential
- * @returns {SASQueryParameters}
- * @memberof AccountSASSignatureValues
+ * @param accountSASSignatureValues -
+ * @param sharedKeyCredential -
  */
 function generateAccountSASQueryParameters(accountSASSignatureValues, sharedKeyCredential) {
     var version = accountSASSignatureValues.version
@@ -41698,9 +42417,6 @@ function generateAccountSASQueryParameters(accountSASSignatureValues, sharedKeyC
 /**
  * A BlobServiceClient represents a Client to the Azure Storage Blob service allowing you
  * to manipulate blob containers.
- *
- * @export
- * @class BlobServiceClient
  */
 var BlobServiceClient = /** @class */ (function (_super) {
     tslib.__extends(BlobServiceClient, _super);
@@ -41727,14 +42443,13 @@ var BlobServiceClient = /** @class */ (function (_super) {
      *
      * Creates an instance of BlobServiceClient from connection string.
      *
-     * @param {string} connectionString Account connection string or a SAS connection string of an Azure storage account.
+     * @param connectionString - Account connection string or a SAS connection string of an Azure storage account.
      *                                  [ Note - Account connection string can only be used in NODE.JS runtime. ]
      *                                  Account connection string example -
      *                                  `DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=accountKey;EndpointSuffix=core.windows.net`
      *                                  SAS connection string example -
      *                                  `BlobEndpoint=https://myaccount.blob.core.windows.net/;QueueEndpoint=https://myaccount.queue.core.windows.net/;FileEndpoint=https://myaccount.file.core.windows.net/;TableEndpoint=https://myaccount.table.core.windows.net/;SharedAccessSignature=sasString`
-     * @param {StoragePipelineOptions} [options] Optional. Options to configure the HTTP pipeline.
-     * @memberof BlobServiceClient
+     * @param options - Optional. Options to configure the HTTP pipeline.
      */
     BlobServiceClient.fromConnectionString = function (connectionString, options) {
         options = options || {};
@@ -41758,9 +42473,8 @@ var BlobServiceClient = /** @class */ (function (_super) {
     /**
      * Creates a {@link ContainerClient} object
      *
-     * @param {string} containerName A container name
-     * @returns {ContainerClient} A new ContainerClient object for the given container name.
-     * @memberof BlobServiceClient
+     * @param containerName - A container name
+     * @returns A new ContainerClient object for the given container name.
      *
      * Example usage:
      *
@@ -41774,24 +42488,23 @@ var BlobServiceClient = /** @class */ (function (_super) {
     /**
      * Create a Blob container.
      *
-     * @param {string} containerName Name of the container to create.
-     * @param {ContainerCreateOptions} [options] Options to configure Container Create operation.
-     * @returns {Promise<{ containerClient: ContainerClient; containerCreateResponse: ContainerCreateResponse }>} Container creation response and the corresponding container client.
-     * @memberof BlobServiceClient
+     * @param containerName - Name of the container to create.
+     * @param options - Options to configure Container Create operation.
+     * @returns Container creation response and the corresponding container client.
      */
     BlobServiceClient.prototype.createContainer = function (containerName, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, containerClient, containerCreateResponse, e_1;
+            var _a, span, updatedOptions, containerClient, containerCreateResponse, e_1;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-createContainer", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-createContainer", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
                         containerClient = this.getContainerClient(containerName);
-                        return [4 /*yield*/, containerClient.create(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, containerClient.create(updatedOptions)];
                     case 2:
                         containerCreateResponse = _b.sent();
                         return [2 /*return*/, {
@@ -41816,24 +42529,23 @@ var BlobServiceClient = /** @class */ (function (_super) {
     /**
      * Deletes a Blob container.
      *
-     * @param {string} containerName Name of the container to delete.
-     * @param {ContainerDeleteMethodOptions} [options] Options to configure Container Delete operation.
-     * @returns {Promise<ContainerDeleteResponse>} Container deletion response.
-     * @memberof BlobServiceClient
+     * @param containerName - Name of the container to delete.
+     * @param options - Options to configure Container Delete operation.
+     * @returns Container deletion response.
      */
     BlobServiceClient.prototype.deleteContainer = function (containerName, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, containerClient, e_2;
+            var _a, span, updatedOptions, containerClient, e_2;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-deleteContainer", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-deleteContainer", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
                         containerClient = this.getContainerClient(containerName);
-                        return [4 /*yield*/, containerClient.delete(tslib.__assign(tslib.__assign({}, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, containerClient.delete(updatedOptions)];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_2 = _b.sent();
@@ -41854,26 +42566,26 @@ var BlobServiceClient = /** @class */ (function (_super) {
      * Restore a previously deleted Blob container.
      * This API is only functional if Container Soft Delete is enabled for the storage account associated with the container.
      *
-     * @param {string} deletedContainerName Name of the previously deleted container.
-     * @param {string} deletedContainerVersion Version of the previously deleted container, used to uniquely identify the deleted container.
-     * @returns {Promise<ContainerUndeleteResponse>} Container deletion response.
-     * @memberof BlobServiceClient
+     * @param deletedContainerName - Name of the previously deleted container.
+     * @param deletedContainerVersion - Version of the previously deleted container, used to uniquely identify the deleted container.
+     * @param options - Options to configure Container Restore operation.
+     * @returns Container deletion response.
      */
     BlobServiceClient.prototype.undeleteContainer = function (deletedContainerName, deletedContainerVersion, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, containerClient, containerContext, containerUndeleteResponse, e_3;
+            var _a, span, updatedOptions, containerClient, containerContext, containerUndeleteResponse, e_3;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-undeleteContainer", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-undeleteContainer", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
                         containerClient = this.getContainerClient(options.destinationContainerName || deletedContainerName);
                         containerContext = new Container(containerClient["storageClientContext"]);
-                        return [4 /*yield*/, containerContext.restore(tslib.__assign(tslib.__assign({ deletedContainerName: deletedContainerName,
-                                deletedContainerVersion: deletedContainerVersion }, options), { tracingOptions: tslib.__assign(tslib.__assign({}, options.tracingOptions), { spanOptions: spanOptions }) }))];
+                        return [4 /*yield*/, containerContext.restore(tslib.__assign({ deletedContainerName: deletedContainerName,
+                                deletedContainerVersion: deletedContainerVersion }, updatedOptions))];
                     case 2:
                         containerUndeleteResponse = _b.sent();
                         return [2 /*return*/, { containerClient: containerClient, containerUndeleteResponse: containerUndeleteResponse }];
@@ -41893,32 +42605,33 @@ var BlobServiceClient = /** @class */ (function (_super) {
         });
     };
     /**
-     * Gets the properties of a storage account’s Blob service, including properties
-     * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-properties
+     * Rename an existing Blob Container.
      *
-     * @param {ServiceGetPropertiesOptions} [options] Options to the Service Get Properties operation.
-     * @returns {Promise<ServiceGetPropertiesResponse>} Response data for the Service Get Properties operation.
-     * @memberof BlobServiceClient
+     * @param sourceContainerName - The name of the source container.
+     * @param destinationContainerName - The new name of the container.
+     * @param options - Options to configure Container Rename operation.
      */
-    BlobServiceClient.prototype.getProperties = function (options) {
+    // @ts-ignore Need to hide this interface for now. Make it public and turn on the live tests for it when the service is ready.
+    BlobServiceClient.prototype.renameContainer = function (sourceContainerName, destinationContainerName, options) {
+        var _a;
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_4;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
+            var _b, span, updatedOptions, containerClient, containerContext, containerRenameResponse, e_4;
+            return tslib.__generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-getProperties", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
-                        _b.label = 1;
+                        _b = createSpan("BlobServiceClient-renameContainer", options), span = _b.span, updatedOptions = _b.updatedOptions;
+                        _c.label = 1;
                     case 1:
-                        _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.serviceContext.getProperties({
-                                abortSignal: options.abortSignal,
-                                spanOptions: spanOptions
-                            })];
-                    case 2: return [2 /*return*/, _b.sent()];
+                        _c.trys.push([1, 3, 4, 5]);
+                        containerClient = this.getContainerClient(destinationContainerName);
+                        containerContext = new Container(containerClient["storageClientContext"]);
+                        return [4 /*yield*/, containerContext.rename(sourceContainerName, tslib.__assign(tslib.__assign({}, updatedOptions), { sourceLeaseId: (_a = options.sourceCondition) === null || _a === void 0 ? void 0 : _a.leaseId }))];
+                    case 2:
+                        containerRenameResponse = _c.sent();
+                        return [2 /*return*/, { containerClient: containerClient, containerRenameResponse: containerRenameResponse }];
                     case 3:
-                        e_4 = _b.sent();
+                        e_4 = _c.sent();
                         span.setStatus({
                             code: api.CanonicalCode.UNKNOWN,
                             message: e_4.message
@@ -41933,30 +42646,25 @@ var BlobServiceClient = /** @class */ (function (_super) {
         });
     };
     /**
-     * Sets properties for a storage account’s Blob service endpoint, including properties
-     * for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete settings.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-service-properties}
+     * Gets the properties of a storage account’s Blob service, including properties
+     * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-properties
      *
-     * @param {BlobServiceProperties} properties
-     * @param {ServiceSetPropertiesOptions} [options] Options to the Service Set Properties operation.
-     * @returns {Promise<ServiceSetPropertiesResponse>} Response data for the Service Set Properties operation.
-     * @memberof BlobServiceClient
+     * @param options - Options to the Service Get Properties operation.
+     * @returns Response data for the Service Get Properties operation.
      */
-    BlobServiceClient.prototype.setProperties = function (properties, options) {
+    BlobServiceClient.prototype.getProperties = function (options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_5;
+            var _a, span, updatedOptions, e_5;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-setProperties", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-getProperties", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.serviceContext.setProperties(properties, {
-                                abortSignal: options.abortSignal,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.serviceContext.getProperties(tslib.__assign({ abortSignal: options.abortSignal }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_5 = _b.sent();
@@ -41974,30 +42682,26 @@ var BlobServiceClient = /** @class */ (function (_super) {
         });
     };
     /**
-     * Retrieves statistics related to replication for the Blob service. It is only
-     * available on the secondary location endpoint when read-access geo-redundant
-     * replication is enabled for the storage account.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-stats}
+     * Sets properties for a storage account’s Blob service endpoint, including properties
+     * for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete settings.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-service-properties
      *
-     * @param {ServiceGetStatisticsOptions} [options] Options to the Service Get Statistics operation.
-     * @returns {Promise<ServiceGetStatisticsResponse>} Response data for the Service Get Statistics operation.
-     * @memberof BlobServiceClient
+     * @param properties -
+     * @param options - Options to the Service Set Properties operation.
+     * @returns Response data for the Service Set Properties operation.
      */
-    BlobServiceClient.prototype.getStatistics = function (options) {
+    BlobServiceClient.prototype.setProperties = function (properties, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_6;
+            var _a, span, updatedOptions, e_6;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-getStatistics", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-setProperties", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.serviceContext.getStatistics({
-                                abortSignal: options.abortSignal,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.serviceContext.setProperties(properties, tslib.__assign({ abortSignal: options.abortSignal }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_6 = _b.sent();
@@ -42015,31 +42719,26 @@ var BlobServiceClient = /** @class */ (function (_super) {
         });
     };
     /**
-     * The Get Account Information operation returns the sku name and account kind
-     * for the specified account.
-     * The Get Account Information operation is available on service versions beginning
-     * with version 2018-03-28.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-account-information
+     * Retrieves statistics related to replication for the Blob service. It is only
+     * available on the secondary location endpoint when read-access geo-redundant
+     * replication is enabled for the storage account.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-stats
      *
-     * @param {ServiceGetAccountInfoOptions} [options] Options to the Service Get Account Info operation.
-     * @returns {Promise<ServiceGetAccountInfoResponse>} Response data for the Service Get Account Info operation.
-     * @memberof BlobServiceClient
+     * @param options - Options to the Service Get Statistics operation.
+     * @returns Response data for the Service Get Statistics operation.
      */
-    BlobServiceClient.prototype.getAccountInfo = function (options) {
+    BlobServiceClient.prototype.getStatistics = function (options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_7;
+            var _a, span, updatedOptions, e_7;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-getAccountInfo", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-getStatistics", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.serviceContext.getAccountInfo({
-                                abortSignal: options.abortSignal,
-                                spanOptions: spanOptions
-                            })];
+                        return [4 /*yield*/, this.serviceContext.getStatistics(tslib.__assign({ abortSignal: options.abortSignal }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_7 = _b.sent();
@@ -42057,32 +42756,27 @@ var BlobServiceClient = /** @class */ (function (_super) {
         });
     };
     /**
-     * Returns a list of the containers under the specified account.
-     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-containers2
+     * The Get Account Information operation returns the sku name and account kind
+     * for the specified account.
+     * The Get Account Information operation is available on service versions beginning
+     * with version 2018-03-28.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-account-information
      *
-     * @param {string} [marker] A string value that identifies the portion of
-     *                        the list of containers to be returned with the next listing operation. The
-     *                        operation returns the continuationToken value within the response body if the
-     *                        listing operation did not return all containers remaining to be listed
-     *                        with the current page. The continuationToken value can be used as the value for
-     *                        the marker parameter in a subsequent call to request the next page of list
-     *                        items. The marker value is opaque to the client.
-     * @param {ServiceListContainersSegmentOptions} [options] Options to the Service List Container Segment operation.
-     * @returns {Promise<ServiceListContainersSegmentResponse>} Response data for the Service List Container Segment operation.
-     * @memberof BlobServiceClient
+     * @param options - Options to the Service Get Account Info operation.
+     * @returns Response data for the Service Get Account Info operation.
      */
-    BlobServiceClient.prototype.listContainersSegment = function (marker, options) {
+    BlobServiceClient.prototype.getAccountInfo = function (options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, e_8;
+            var _a, span, updatedOptions, e_8;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-listContainersSegment", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-getAccountInfo", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.serviceContext.listContainersSegment(tslib.__assign(tslib.__assign({ abortSignal: options.abortSignal, marker: marker }, options), { include: typeof options.include === "string" ? [options.include] : options.include, spanOptions: spanOptions }))];
+                        return [4 /*yield*/, this.serviceContext.getAccountInfo(tslib.__assign({ abortSignal: options.abortSignal }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_8 = _b.sent();
@@ -42100,55 +42794,32 @@ var BlobServiceClient = /** @class */ (function (_super) {
         });
     };
     /**
-     * The Filter Blobs operation enables callers to list blobs across all containers whose tags
-     * match a given search expression. Filter blobs searches across all containers within a
-     * storage account but can be scoped within the expression to a single container.
+     * Returns a list of the containers under the specified account.
+     * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-containers2
      *
-     * @private
-     * @param {string} tagFilterSqlExpression The where parameter enables the caller to query blobs whose tags match a given expression.
-     *                                        The given expression must evaluate to true for a blob to be returned in the results.
-     *                                        The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
-     *                                        however, only a subset of the OData filter syntax is supported in the Blob service.
-     * @param {string} [marker] A string value that identifies the portion of
-     *                          the list of blobs to be returned with the next listing operation. The
-     *                          operation returns the continuationToken value within the response body if the
-     *                          listing operation did not return all blobs remaining to be listed
-     *                          with the current page. The continuationToken value can be used as the value for
-     *                          the marker parameter in a subsequent call to request the next page of list
-     *                          items. The marker value is opaque to the client.
-     * @param {ServiceFindBlobsByTagsSegmentOptions} [options={}] Options to find blobs by tags.
-     * @returns {Promise<ServiceFindBlobsByTagsSegmentResponse>}
-     * @memberof BlobServiceClient
+     * @param marker - A string value that identifies the portion of
+     *                        the list of containers to be returned with the next listing operation. The
+     *                        operation returns the continuationToken value within the response body if the
+     *                        listing operation did not return all containers remaining to be listed
+     *                        with the current page. The continuationToken value can be used as the value for
+     *                        the marker parameter in a subsequent call to request the next page of list
+     *                        items. The marker value is opaque to the client.
+     * @param options - Options to the Service List Container Segment operation.
+     * @returns Response data for the Service List Container Segment operation.
      */
-    BlobServiceClient.prototype.findBlobsByTagsSegment = function (tagFilterSqlExpression, marker, options) {
+    BlobServiceClient.prototype.listContainersSegment = function (marker, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, response, wrappedResponse, e_9;
+            var _a, span, updatedOptions, e_9;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-findBlobsByTagsSegment", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-listContainersSegment", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, this.serviceContext.filterBlobs({
-                                abortSignal: options.abortSignal,
-                                where: tagFilterSqlExpression,
-                                marker: marker,
-                                maxPageSize: options.maxPageSize,
-                                spanOptions: spanOptions
-                            })];
-                    case 2:
-                        response = _b.sent();
-                        wrappedResponse = tslib.__assign(tslib.__assign({}, response), { _response: response._response, blobs: response.blobs.map(function (blob) {
-                                var _a;
-                                var tagValue = "";
-                                if (((_a = blob.tags) === null || _a === void 0 ? void 0 : _a.blobTagSet.length) === 1) {
-                                    tagValue = blob.tags.blobTagSet[0].value;
-                                }
-                                return tslib.__assign(tslib.__assign({}, blob), { tags: toTags(blob.tags), tagValue: tagValue });
-                            }) });
-                        return [2 /*return*/, wrappedResponse];
+                        return [4 /*yield*/, this.serviceContext.listContainersSegment(tslib.__assign(tslib.__assign(tslib.__assign({ abortSignal: options.abortSignal, marker: marker }, options), { include: typeof options.include === "string" ? [options.include] : options.include }), convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2: return [2 /*return*/, _b.sent()];
                     case 3:
                         e_9 = _b.sent();
                         span.setStatus({
@@ -42165,23 +42836,76 @@ var BlobServiceClient = /** @class */ (function (_super) {
         });
     };
     /**
-     * Returns an AsyncIterableIterator for ServiceFindBlobsByTagsSegmentResponse.
+     * The Filter Blobs operation enables callers to list blobs across all containers whose tags
+     * match a given search expression. Filter blobs searches across all containers within a
+     * storage account but can be scoped within the expression to a single container.
      *
-     * @private
-     * @param {string} tagFilterSqlExpression  The where parameter enables the caller to query blobs whose tags match a given expression.
-     *                                         The given expression must evaluate to true for a blob to be returned in the results.
-     *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
-     *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
-     * @param {string} [marker] A string value that identifies the portion of
+     * @param tagFilterSqlExpression - The where parameter enables the caller to query blobs whose tags match a given expression.
+     *                                        The given expression must evaluate to true for a blob to be returned in the results.
+     *                                        The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+     *                                        however, only a subset of the OData filter syntax is supported in the Blob service.
+     * @param marker - A string value that identifies the portion of
      *                          the list of blobs to be returned with the next listing operation. The
      *                          operation returns the continuationToken value within the response body if the
      *                          listing operation did not return all blobs remaining to be listed
      *                          with the current page. The continuationToken value can be used as the value for
      *                          the marker parameter in a subsequent call to request the next page of list
      *                          items. The marker value is opaque to the client.
-     * @param {ServiceFindBlobsByTagsSegmentOptions} [options={}] Options to find blobs by tags.
-     * @returns {AsyncIterableIterator<ServiceFindBlobsByTagsSegmentResponse>}
-     * @memberof BlobServiceClient
+     * @param options - Options to find blobs by tags.
+     */
+    BlobServiceClient.prototype.findBlobsByTagsSegment = function (tagFilterSqlExpression, marker, options) {
+        if (options === void 0) { options = {}; }
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var _a, span, updatedOptions, response, wrappedResponse, e_10;
+            return tslib.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = createSpan("BlobServiceClient-findBlobsByTagsSegment", options), span = _a.span, updatedOptions = _a.updatedOptions;
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, this.serviceContext.filterBlobs(tslib.__assign({ abortSignal: options.abortSignal, where: tagFilterSqlExpression, marker: marker, maxPageSize: options.maxPageSize }, convertTracingToRequestOptionsBase(updatedOptions)))];
+                    case 2:
+                        response = _b.sent();
+                        wrappedResponse = tslib.__assign(tslib.__assign({}, response), { _response: response._response, blobs: response.blobs.map(function (blob) {
+                                var _a;
+                                var tagValue = "";
+                                if (((_a = blob.tags) === null || _a === void 0 ? void 0 : _a.blobTagSet.length) === 1) {
+                                    tagValue = blob.tags.blobTagSet[0].value;
+                                }
+                                return tslib.__assign(tslib.__assign({}, blob), { tags: toTags(blob.tags), tagValue: tagValue });
+                            }) });
+                        return [2 /*return*/, wrappedResponse];
+                    case 3:
+                        e_10 = _b.sent();
+                        span.setStatus({
+                            code: api.CanonicalCode.UNKNOWN,
+                            message: e_10.message
+                        });
+                        throw e_10;
+                    case 4:
+                        span.end();
+                        return [7 /*endfinally*/];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Returns an AsyncIterableIterator for ServiceFindBlobsByTagsSegmentResponse.
+     *
+     * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
+     *                                         The given expression must evaluate to true for a blob to be returned in the results.
+     *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+     *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
+     * @param marker - A string value that identifies the portion of
+     *                          the list of blobs to be returned with the next listing operation. The
+     *                          operation returns the continuationToken value within the response body if the
+     *                          listing operation did not return all blobs remaining to be listed
+     *                          with the current page. The continuationToken value can be used as the value for
+     *                          the marker parameter in a subsequent call to request the next page of list
+     *                          items. The marker value is opaque to the client.
+     * @param options - Options to find blobs by tags.
      */
     BlobServiceClient.prototype.findBlobsByTagsSegments = function (tagFilterSqlExpression, marker, options) {
         if (options === void 0) { options = {}; }
@@ -42213,20 +42937,17 @@ var BlobServiceClient = /** @class */ (function (_super) {
     /**
      * Returns an AsyncIterableIterator for blobs.
      *
-     * @private
-     * @param {string} tagFilterSqlExpression  The where parameter enables the caller to query blobs whose tags match a given expression.
+     * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
      *                                         The given expression must evaluate to true for a blob to be returned in the results.
      *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
      *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
-     * @param {ServiceFindBlobsByTagsSegmentOptions} [options={}] Options to findBlobsByTagsItems.
-     * @returns {AsyncIterableIterator<FilterBlobItem>}
-     * @memberof BlobServiceClient
+     * @param options - Options to findBlobsByTagsItems.
      */
     BlobServiceClient.prototype.findBlobsByTagsItems = function (tagFilterSqlExpression, options) {
         if (options === void 0) { options = {}; }
         return tslib.__asyncGenerator(this, arguments, function findBlobsByTagsItems_1() {
-            var marker, _a, _b, segment, e_10_1;
-            var e_10, _c;
+            var marker, _a, _b, segment, e_11_1;
+            var e_11, _c;
             return tslib.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -42245,8 +42966,8 @@ var BlobServiceClient = /** @class */ (function (_super) {
                     case 5: return [3 /*break*/, 1];
                     case 6: return [3 /*break*/, 13];
                     case 7:
-                        e_10_1 = _d.sent();
-                        e_10 = { error: e_10_1 };
+                        e_11_1 = _d.sent();
+                        e_11 = { error: e_11_1 };
                         return [3 /*break*/, 13];
                     case 8:
                         _d.trys.push([8, , 11, 12]);
@@ -42257,7 +42978,7 @@ var BlobServiceClient = /** @class */ (function (_super) {
                         _d.label = 10;
                     case 10: return [3 /*break*/, 12];
                     case 11:
-                        if (e_10) throw e_10.error;
+                        if (e_11) throw e_11.error;
                         return [7 /*endfinally*/];
                     case 12: return [7 /*endfinally*/];
                     case 13: return [2 /*return*/];
@@ -42338,13 +43059,11 @@ var BlobServiceClient = /** @class */ (function (_super) {
      * }
      * ```
      *
-     * @param {string} tagFilterSqlExpression  The where parameter enables the caller to query blobs whose tags match a given expression.
+     * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
      *                                         The given expression must evaluate to true for a blob to be returned in the results.
      *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
      *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
-     * @param {ServiceFindBlobByTagsOptions} [options={}] Options to find blobs by tags.
-     * @returns {PagedAsyncIterableIterator<FilterBlobItem, ServiceFindBlobsByTagsSegmentResponse>}
-     * @memberof BlobServiceClient
+     * @param options - Options to find blobs by tags.
      */
     BlobServiceClient.prototype.findBlobsByTags = function (tagFilterSqlExpression, options) {
         var _a;
@@ -42355,20 +43074,20 @@ var BlobServiceClient = /** @class */ (function (_super) {
         var iter = this.findBlobsByTagsItems(tagFilterSqlExpression, listSegmentOptions);
         return _a = {
                 /**
-                 * @member {Promise} [next] The next method, part of the iteration protocol
+                 * The next method, part of the iteration protocol
                  */
                 next: function () {
                     return iter.next();
                 }
             },
             /**
-             * @member {Symbol} [asyncIterator] The connection to the async iterator, part of the iteration protocol
+             * The connection to the async iterator, part of the iteration protocol
              */
             _a[Symbol.asyncIterator] = function () {
                 return this;
             },
             /**
-             * @member {Function} [byPage] Return an AsyncIterableIterator that works a page at a time
+             * Return an AsyncIterableIterator that works a page at a time
              */
             _a.byPage = function (settings) {
                 if (settings === void 0) { settings = {}; }
@@ -42379,17 +43098,14 @@ var BlobServiceClient = /** @class */ (function (_super) {
     /**
      * Returns an AsyncIterableIterator for ServiceListContainersSegmentResponses
      *
-     * @private
-     * @param {string} [marker] A string value that identifies the portion of
+     * @param marker - A string value that identifies the portion of
      *                        the list of containers to be returned with the next listing operation. The
      *                        operation returns the continuationToken value within the response body if the
      *                        listing operation did not return all containers remaining to be listed
      *                        with the current page. The continuationToken value can be used as the value for
      *                        the marker parameter in a subsequent call to request the next page of list
      *                        items. The marker value is opaque to the client.
-     * @param {ServiceListContainersSegmentOptions} [options] Options to list containers operation.
-     * @returns {AsyncIterableIterator<ServiceListContainersSegmentResponse>}
-     * @memberof BlobServiceClient
+     * @param options - Options to list containers operation.
      */
     BlobServiceClient.prototype.listSegments = function (marker, options) {
         if (options === void 0) { options = {}; }
@@ -42423,16 +43139,13 @@ var BlobServiceClient = /** @class */ (function (_super) {
     /**
      * Returns an AsyncIterableIterator for Container Items
      *
-     * @private
-     * @param {ServiceListContainersSegmentOptions} [options] Options to list containers operation.
-     * @returns {AsyncIterableIterator<ContainerItem>}
-     * @memberof BlobServiceClient
+     * @param options - Options to list containers operation.
      */
     BlobServiceClient.prototype.listItems = function (options) {
         if (options === void 0) { options = {}; }
         return tslib.__asyncGenerator(this, arguments, function listItems_1() {
-            var marker, _a, _b, segment, e_11_1;
-            var e_11, _c;
+            var marker, _a, _b, segment, e_12_1;
+            var e_12, _c;
             return tslib.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -42451,8 +43164,8 @@ var BlobServiceClient = /** @class */ (function (_super) {
                     case 5: return [3 /*break*/, 1];
                     case 6: return [3 /*break*/, 13];
                     case 7:
-                        e_11_1 = _d.sent();
-                        e_11 = { error: e_11_1 };
+                        e_12_1 = _d.sent();
+                        e_12 = { error: e_12_1 };
                         return [3 /*break*/, 13];
                     case 8:
                         _d.trys.push([8, , 11, 12]);
@@ -42463,7 +43176,7 @@ var BlobServiceClient = /** @class */ (function (_super) {
                         _d.label = 10;
                     case 10: return [3 /*break*/, 12];
                     case 11:
-                        if (e_11) throw e_11.error;
+                        if (e_12) throw e_12.error;
                         return [7 /*endfinally*/];
                     case 12: return [7 /*endfinally*/];
                     case 13: return [2 /*return*/];
@@ -42542,9 +43255,8 @@ var BlobServiceClient = /** @class */ (function (_super) {
      * }
      * ```
      *
-     * @param {ServiceListContainersOptions} [options={}] Options to list containers.
-     * @returns {PagedAsyncIterableIterator<ContainerItem, ServiceListContainersSegmentResponse>} An asyncIterableIterator that supports paging.
-     * @memberof BlobServiceClient
+     * @param options - Options to list containers.
+     * @returns An asyncIterableIterator that supports paging.
      */
     BlobServiceClient.prototype.listContainers = function (options) {
         var _a;
@@ -42565,20 +43277,20 @@ var BlobServiceClient = /** @class */ (function (_super) {
         var iter = this.listItems(listSegmentOptions);
         return _a = {
                 /**
-                 * @member {Promise} [next] The next method, part of the iteration protocol
+                 * The next method, part of the iteration protocol
                  */
                 next: function () {
                     return iter.next();
                 }
             },
             /**
-             * @member {Symbol} [asyncIterator] The connection to the async iterator, part of the iteration protocol
+             * The connection to the async iterator, part of the iteration protocol
              */
             _a[Symbol.asyncIterator] = function () {
                 return this;
             },
             /**
-             * @member {Function} [byPage] Return an AsyncIterableIterator that works a page at a time
+             * Return an AsyncIterableIterator that works a page at a time
              */
             _a.byPage = function (settings) {
                 if (settings === void 0) { settings = {}; }
@@ -42594,29 +43306,24 @@ var BlobServiceClient = /** @class */ (function (_super) {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-user-delegation-key
      *
-     * @param {Date} startsOn      The start time for the user delegation SAS. Must be within 7 days of the current time
-     * @param {Date} expiresOn     The end time for the user delegation SAS. Must be within 7 days of the current time
-     * @returns {Promise<ServiceGetUserDelegationKeyResponse>}
-     * @memberof BlobServiceClient
+     * @param startsOn -      The start time for the user delegation SAS. Must be within 7 days of the current time
+     * @param expiresOn -     The end time for the user delegation SAS. Must be within 7 days of the current time
      */
     BlobServiceClient.prototype.getUserDelegationKey = function (startsOn, expiresOn, options) {
         if (options === void 0) { options = {}; }
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a, span, spanOptions, response, userDelegationKey, res, e_12;
+            var _a, span, updatedOptions, response, userDelegationKey, res, e_13;
             return tslib.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = createSpan("BlobServiceClient-getUserDelegationKey", options.tracingOptions), span = _a.span, spanOptions = _a.spanOptions;
+                        _a = createSpan("BlobServiceClient-getUserDelegationKey", options), span = _a.span, updatedOptions = _a.updatedOptions;
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, 4, 5]);
                         return [4 /*yield*/, this.serviceContext.getUserDelegationKey({
                                 startsOn: truncatedISO8061Date(startsOn, false),
                                 expiresOn: truncatedISO8061Date(expiresOn, false)
-                            }, {
-                                abortSignal: options.abortSignal,
-                                spanOptions: spanOptions
-                            })];
+                            }, tslib.__assign({ abortSignal: options.abortSignal }, convertTracingToRequestOptionsBase(updatedOptions)))];
                     case 2:
                         response = _b.sent();
                         userDelegationKey = {
@@ -42631,12 +43338,12 @@ var BlobServiceClient = /** @class */ (function (_super) {
                         res = tslib.__assign({ _response: response._response, requestId: response.requestId, clientRequestId: response.clientRequestId, version: response.version, date: response.date, errorCode: response.errorCode }, userDelegationKey);
                         return [2 /*return*/, res];
                     case 3:
-                        e_12 = _b.sent();
+                        e_13 = _b.sent();
                         span.setStatus({
                             code: api.CanonicalCode.UNKNOWN,
-                            message: e_12.message
+                            message: e_13.message
                         });
-                        throw e_12;
+                        throw e_13;
                     case 4:
                         span.end();
                         return [7 /*endfinally*/];
@@ -42650,8 +43357,7 @@ var BlobServiceClient = /** @class */ (function (_super) {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/blob-batch
      *
-     * @returns {BlobBatchClient} A new BlobBatchClient object for this service.
-     * @memberof BlobServiceClient
+     * @returns A new BlobBatchClient object for this service.
      */
     BlobServiceClient.prototype.getBlobBatchClient = function () {
         return new BlobBatchClient(this.url, this.pipeline);
@@ -42664,12 +43370,11 @@ var BlobServiceClient = /** @class */ (function (_super) {
      *
      * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-account-sas
      *
-     * @param {Date} expiresOn Optional. The time at which the shared access signature becomes invalid. Default to an hour later if not provided.
-     * @param {AccountSASPermissions} [permissions=AccountSASPermissions.parse("r")] Specifies the list of permissions to be associated with the SAS.
-     * @param {string} [resourceTypes="sco"] Specifies the resource types associated with the shared access signature.
-     * @param {ServiceGenerateAccountSasUrlOptions} [options={}] Optional parameters.
-     * @returns {string} An account SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
-     * @memberof BlobServiceClient
+     * @param expiresOn - Optional. The time at which the shared access signature becomes invalid. Default to an hour later if not provided.
+     * @param permissions - Specifies the list of permissions to be associated with the SAS.
+     * @param resourceTypes - Specifies the resource types associated with the shared access signature.
+     * @param options - Optional parameters.
+     * @returns An account SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
      */
     BlobServiceClient.prototype.generateAccountSasUrl = function (expiresOn, permissions, resourceTypes, options) {
         if (permissions === void 0) { permissions = AccountSASPermissions.parse("r"); }
@@ -42761,7 +43466,58 @@ exports.newPipeline = newPipeline;
 
 
 /***/ }),
-/* 374 */,
+/* 374 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SpanKind = void 0;
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var SpanKind;
+(function (SpanKind) {
+    /** Default value. Indicates that the span is used internally. */
+    SpanKind[SpanKind["INTERNAL"] = 0] = "INTERNAL";
+    /**
+     * Indicates that the span covers server-side handling of an RPC or other
+     * remote request.
+     */
+    SpanKind[SpanKind["SERVER"] = 1] = "SERVER";
+    /**
+     * Indicates that the span covers the client-side wrapper around an RPC or
+     * other remote request.
+     */
+    SpanKind[SpanKind["CLIENT"] = 2] = "CLIENT";
+    /**
+     * Indicates that the span describes producer sending a message to a
+     * broker. Unlike client and server, there is no direct critical path latency
+     * relationship between producer and consumer spans.
+     */
+    SpanKind[SpanKind["PRODUCER"] = 3] = "PRODUCER";
+    /**
+     * Indicates that the span describes consumer receiving a message from a
+     * broker. Unlike client and server, there is no direct critical path latency
+     * relationship between producer and consumer spans.
+     */
+    SpanKind[SpanKind["CONSUMER"] = 4] = "CONSUMER";
+})(SpanKind = exports.SpanKind || (exports.SpanKind = {}));
+//# sourceMappingURL=span_kind.js.map
+
+/***/ }),
 /* 375 */,
 /* 376 */,
 /* 377 */,
@@ -42775,7 +43531,7 @@ exports.newPipeline = newPipeline;
 "use strict";
 
 
-const utils = __webpack_require__(225);
+const utils = __webpack_require__(124);
 
 module.exports = (ast, options = {}) => {
   let stringify = (node, parent = {}) => {
@@ -43314,38 +44070,32 @@ exports.endpoint = endpoint;
 /***/ }),
 /* 386 */,
 /* 387 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
 
-const http2 = __webpack_require__(565);
-const agent = __webpack_require__(17);
-const ClientRequest = __webpack_require__(181);
-const IncomingMessage = __webpack_require__(651);
-const auto = __webpack_require__(988);
-
-const request = (url, options, callback) => {
-	return new ClientRequest(url, options, callback);
-};
-
-const get = (url, options, callback) => {
-	// eslint-disable-next-line unicorn/prevent-abbreviations
-	const req = new ClientRequest(url, options, callback);
-	req.end();
-
-	return req;
-};
-
-module.exports = {
-	...http2,
-	ClientRequest,
-	IncomingMessage,
-	...agent,
-	request,
-	get,
-	auto
-};
-
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.baggageEntryMetadataSymbol = void 0;
+/**
+ * Symbol used to make BaggageEntryMetadata an opaque type
+ */
+exports.baggageEntryMetadataSymbol = Symbol('BaggageEntryMetadata');
+//# sourceMappingURL=symbol.js.map
 
 /***/ }),
 /* 388 */,
@@ -43608,7 +44358,30 @@ module.exports = CacheableRequest;
 
 
 /***/ }),
-/* 391 */,
+/* 391 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=Event.js.map
+
+/***/ }),
 /* 392 */,
 /* 393 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -45513,7 +46286,34 @@ module.exports = __webpack_require__(141);
 module.exports = require("crypto");
 
 /***/ }),
-/* 418 */,
+/* 418 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports._globalThis = void 0;
+/** only globals that common to node and browsers are allowed */
+// eslint-disable-next-line node/no-unsupported-features/es-builtins
+exports._globalThis = typeof globalThis === 'object' ? globalThis : global;
+//# sourceMappingURL=globalThis.js.map
+
+/***/ }),
 /* 419 */,
 /* 420 */,
 /* 421 */,
@@ -46167,6 +46967,8 @@ function getTarPath(args, compressionMethod) {
             case 'darwin': {
                 const gnuTar = yield io.which('gtar', false);
                 if (gnuTar) {
+                    // fix permission denied errors when extracting BSD tar archive with GNU tar - https://github.com/actions/cache/issues/527
+                    args.push('--delay-directory-restore');
                     return gnuTar;
                 }
                 break;
@@ -46293,7 +47095,7 @@ exports.listTar = listTar;
 
 
 const fill = __webpack_require__(730);
-const utils = __webpack_require__(225);
+const utils = __webpack_require__(124);
 
 const compile = (ast, options = {}) => {
   let walk = (node, parent = {}) => {
@@ -46353,7 +47155,30 @@ module.exports = compile;
 /* 436 */,
 /* 437 */,
 /* 438 */,
-/* 439 */,
+/* 439 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=span.js.map
+
+/***/ }),
 /* 440 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -46405,17 +47230,17 @@ __exportStar(__webpack_require__(107), exports);
 __exportStar(__webpack_require__(189), exports);
 __exportStar(__webpack_require__(906), exports);
 __exportStar(__webpack_require__(727), exports);
-__exportStar(__webpack_require__(165), exports);
+__exportStar(__webpack_require__(690), exports);
 __exportStar(__webpack_require__(851), exports);
 __exportStar(__webpack_require__(95), exports);
 __exportStar(__webpack_require__(767), exports);
 __exportStar(__webpack_require__(151), exports);
 __exportStar(__webpack_require__(162), exports);
 __exportStar(__webpack_require__(781), exports);
-__exportStar(__webpack_require__(340), exports);
+__exportStar(__webpack_require__(954), exports);
 __exportStar(__webpack_require__(607), exports);
 __exportStar(__webpack_require__(670), exports);
-__exportStar(__webpack_require__(586), exports);
+__exportStar(__webpack_require__(59), exports);
 __exportStar(__webpack_require__(220), exports);
 __exportStar(__webpack_require__(932), exports);
 __exportStar(__webpack_require__(839), exports);
@@ -46423,7 +47248,7 @@ __exportStar(__webpack_require__(975), exports);
 __exportStar(__webpack_require__(70), exports);
 __exportStar(__webpack_require__(694), exports);
 __exportStar(__webpack_require__(695), exports);
-var context_base_1 = __webpack_require__(459);
+var context_base_1 = __webpack_require__(995);
 Object.defineProperty(exports, "Context", { enumerable: true, get: function () { return context_base_1.Context; } });
 var context_1 = __webpack_require__(492);
 /** Entrypoint for context API */
@@ -46454,7 +47279,7 @@ exports.default = {
 
 const fill = __webpack_require__(730);
 const stringify = __webpack_require__(382);
-const utils = __webpack_require__(225);
+const utils = __webpack_require__(124);
 
 const append = (queue = '', stash = '', enclose = false) => {
   let result = [];
@@ -46569,7 +47394,30 @@ module.exports = expand;
 /* 442 */,
 /* 443 */,
 /* 444 */,
-/* 445 */,
+/* 445 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=link_context.js.map
+
+/***/ }),
 /* 446 */,
 /* 447 */,
 /* 448 */
@@ -46584,7 +47432,7 @@ var universalUserAgent = __webpack_require__(526);
 var beforeAfterHook = __webpack_require__(523);
 var request = __webpack_require__(317);
 var graphql = __webpack_require__(743);
-var authToken = __webpack_require__(813);
+var authToken = __webpack_require__(68);
 
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) return {};
@@ -48629,57 +49477,27 @@ exports.FetchError = FetchError;
 /* 455 */,
 /* 456 */,
 /* 457 */
-/***/ (function(module, exports) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
 
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
-function isTLSSocket(socket) {
-    return socket.encrypted;
-}
-const deferToConnect = (socket, fn) => {
-    let listeners;
-    if (typeof fn === 'function') {
-        const connect = fn;
-        listeners = { connect };
-    }
-    else {
-        listeners = fn;
-    }
-    const hasConnectListener = typeof listeners.connect === 'function';
-    const hasSecureConnectListener = typeof listeners.secureConnect === 'function';
-    const hasCloseListener = typeof listeners.close === 'function';
-    const onConnect = () => {
-        if (hasConnectListener) {
-            listeners.connect();
-        }
-        if (isTLSSocket(socket) && hasSecureConnectListener) {
-            if (socket.authorized) {
-                listeners.secureConnect();
-            }
-            else if (!socket.authorizationError) {
-                socket.once('secureConnect', listeners.secureConnect);
-            }
-        }
-        if (hasCloseListener) {
-            socket.once('close', listeners.close);
-        }
-    };
-    if (socket.writable && !socket.connecting) {
-        onConnect();
-    }
-    else if (socket.connecting) {
-        socket.once('connect', onConnect);
-    }
-    else if (socket.destroyed && hasCloseListener) {
-        listeners.close(socket._hadError);
-    }
-};
-exports.default = deferToConnect;
-// For CommonJS default export support
-module.exports = deferToConnect;
-module.exports.default = deferToConnect;
-
+//# sourceMappingURL=TimedEvent.js.map
 
 /***/ }),
 /* 458 */
@@ -48865,7 +49683,7 @@ module.exports.default = deferToConnect;
 
 /***/ }),
 /* 459 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
 
@@ -48884,21 +49702,8 @@ module.exports.default = deferToConnect;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(__webpack_require__(765), exports);
-__exportStar(__webpack_require__(560), exports);
-__exportStar(__webpack_require__(53), exports);
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=Exception.js.map
 
 /***/ }),
 /* 460 */
@@ -49071,6 +49876,7 @@ exports.getInput = getInput;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
+    process.stdout.write(os.EOL);
     command_1.issueCommand('set-output', { name }, value);
 }
 exports.setOutput = setOutput;
@@ -49378,7 +50184,7 @@ module.exports = object => {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const defer_to_connect_1 = __webpack_require__(457);
+const defer_to_connect_1 = __webpack_require__(974);
 const nodejsMajorVersion = Number(process.versions.node.split('.')[0]);
 const timer = (request) => {
     const timings = {
@@ -49573,7 +50379,7 @@ module.exports.default = timer;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContextAPI = void 0;
-var context_base_1 = __webpack_require__(459);
+var context_base_1 = __webpack_require__(995);
 var global_utils_1 = __webpack_require__(976);
 var NOOP_CONTEXT_MANAGER = new context_base_1.NoopContextManager();
 /**
@@ -49728,7 +50534,7 @@ module.exports = url => {
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(71);
+__webpack_require__(275);
 
 
 /***/ }),
@@ -49744,29 +50550,60 @@ module.exports = {"application/1d-interleaved-parityfec":{"source":"iana"},"appl
 
 "use strict";
 
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-class Deprecation extends Error {
-  constructor(message) {
-    super(message); // Maintains proper stack trace (only available on V8)
-
-    /* istanbul ignore next */
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-
-    this.name = 'Deprecation';
-  }
-
-}
-
-exports.Deprecation = Deprecation;
-
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=Baggage.js.map
 
 /***/ }),
-/* 514 */,
+/* 514 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(__webpack_require__(418), exports);
+//# sourceMappingURL=index.js.map
+
+/***/ }),
 /* 515 */
 /***/ (function(module) {
 
@@ -49809,7 +50646,62 @@ exports.Deprecation = Deprecation;
 /* 517 */,
 /* 518 */,
 /* 519 */,
-/* 520 */,
+/* 520 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProxyTracer = void 0;
+var NoopTracer_1 = __webpack_require__(980);
+/**
+ * Proxy tracer provided by the proxy tracer provider
+ */
+var ProxyTracer = /** @class */ (function () {
+    function ProxyTracer(_provider, name, version) {
+        this._provider = _provider;
+        this.name = name;
+        this.version = version;
+    }
+    ProxyTracer.prototype.startSpan = function (name, options, context) {
+        return this._getTracer().startSpan(name, options, context);
+    };
+    /**
+     * Try to get a tracer from the proxy tracer provider.
+     * If the proxy tracer provider has no delegate, return a noop tracer.
+     */
+    ProxyTracer.prototype._getTracer = function () {
+        if (this._delegate) {
+            return this._delegate;
+        }
+        var tracer = this._provider.getDelegateTracer(this.name, this.version);
+        if (!tracer) {
+            return NoopTracer_1.NOOP_TRACER;
+        }
+        this._delegate = tracer;
+        return this._delegate;
+    };
+    return ProxyTracer;
+}());
+exports.ProxyTracer = ProxyTracer;
+//# sourceMappingURL=ProxyTracer.js.map
+
+/***/ }),
 /* 521 */,
 /* 522 */,
 /* 523 */
@@ -49971,7 +50863,162 @@ exports.getUserAgent = getUserAgent;
 
 
 /***/ }),
-/* 527 */,
+/* 527 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ROOT_CONTEXT = exports.createContextKey = exports.setBaggage = exports.getBaggage = exports.isInstrumentationSuppressed = exports.unsuppressInstrumentation = exports.suppressInstrumentation = exports.getSpanContext = exports.setSpanContext = exports.setSpan = exports.getSpan = void 0;
+var NoopSpan_1 = __webpack_require__(340);
+/**
+ * span key
+ */
+var SPAN_KEY = createContextKey('OpenTelemetry Context Key SPAN');
+/**
+ * Shared key for indicating if instrumentation should be suppressed beyond
+ * this current scope.
+ */
+var SUPPRESS_INSTRUMENTATION_KEY = createContextKey('OpenTelemetry Context Key SUPPRESS_INSTRUMENTATION');
+/**
+ * Baggage key
+ */
+var BAGGAGE_KEY = createContextKey('OpenTelemetry Baggage Key');
+/**
+ * Return the span if one exists
+ *
+ * @param context context to get span from
+ */
+function getSpan(context) {
+    return context.getValue(SPAN_KEY) || undefined;
+}
+exports.getSpan = getSpan;
+/**
+ * Set the span on a context
+ *
+ * @param context context to use as parent
+ * @param span span to set active
+ */
+function setSpan(context, span) {
+    return context.setValue(SPAN_KEY, span);
+}
+exports.setSpan = setSpan;
+/**
+ * Wrap span context in a NoopSpan and set as span in a new
+ * context
+ *
+ * @param context context to set active span on
+ * @param spanContext span context to be wrapped
+ */
+function setSpanContext(context, spanContext) {
+    return setSpan(context, new NoopSpan_1.NoopSpan(spanContext));
+}
+exports.setSpanContext = setSpanContext;
+/**
+ * Get the span context of the span if it exists.
+ *
+ * @param context context to get values from
+ */
+function getSpanContext(context) {
+    var _a;
+    return (_a = getSpan(context)) === null || _a === void 0 ? void 0 : _a.context();
+}
+exports.getSpanContext = getSpanContext;
+/**
+ * Sets value on context to indicate that instrumentation should
+ * be suppressed beyond this current scope.
+ *
+ * @param context context to set the suppress instrumentation value on.
+ */
+function suppressInstrumentation(context) {
+    return context.setValue(SUPPRESS_INSTRUMENTATION_KEY, true);
+}
+exports.suppressInstrumentation = suppressInstrumentation;
+/**
+ * Sets value on context to indicate that instrumentation should
+ * no-longer be suppressed beyond this current scope.
+ *
+ * @param context context to set the suppress instrumentation value on.
+ */
+function unsuppressInstrumentation(context) {
+    return context.setValue(SUPPRESS_INSTRUMENTATION_KEY, false);
+}
+exports.unsuppressInstrumentation = unsuppressInstrumentation;
+/**
+ * Return current suppress instrumentation value for the given context,
+ * if it exists.
+ *
+ * @param context context check for the suppress instrumentation value.
+ */
+function isInstrumentationSuppressed(context) {
+    return Boolean(context.getValue(SUPPRESS_INSTRUMENTATION_KEY));
+}
+exports.isInstrumentationSuppressed = isInstrumentationSuppressed;
+/**
+ * @param {Context} Context that manage all context values
+ * @returns {Baggage} Extracted baggage from the context
+ */
+function getBaggage(context) {
+    return context.getValue(BAGGAGE_KEY) || undefined;
+}
+exports.getBaggage = getBaggage;
+/**
+ * @param {Context} Context that manage all context values
+ * @param {Baggage} baggage that will be set in the actual context
+ */
+function setBaggage(context, baggage) {
+    return context.setValue(BAGGAGE_KEY, baggage);
+}
+exports.setBaggage = setBaggage;
+/** Get a key to uniquely identify a context value */
+function createContextKey(description) {
+    return Symbol.for(description);
+}
+exports.createContextKey = createContextKey;
+var BaseContext = /** @class */ (function () {
+    /**
+     * Construct a new context which inherits values from an optional parent context.
+     *
+     * @param parentContext a context from which to inherit values
+     */
+    function BaseContext(parentContext) {
+        // for minification
+        var self = this;
+        self._currentContext = parentContext ? new Map(parentContext) : new Map();
+        self.getValue = function (key) { return self._currentContext.get(key); };
+        self.setValue = function (key, value) {
+            var context = new BaseContext(self._currentContext);
+            context._currentContext.set(key, value);
+            return context;
+        };
+        self.deleteValue = function (key) {
+            var context = new BaseContext(self._currentContext);
+            context._currentContext.delete(key);
+            return context;
+        };
+    }
+    return BaseContext;
+}());
+/** The root context is used as the default parent context when there is no active context */
+exports.ROOT_CONTEXT = new BaseContext();
+//# sourceMappingURL=context.js.map
+
+/***/ }),
 /* 528 */,
 /* 529 */,
 /* 530 */,
@@ -50452,7 +51499,7 @@ module.exports.assert = exports.assert;
 "use strict";
 
 
-const utils = __webpack_require__(224);
+const utils = __webpack_require__(583);
 const {
   CHAR_ASTERISK,             /* * */
   CHAR_AT,                   /* @ */
@@ -51337,7 +52384,9 @@ class HttpClient {
                 maxSockets: maxSockets,
                 keepAlive: this._keepAlive,
                 proxy: {
-                    proxyAuth: `${proxyUrl.username}:${proxyUrl.password}`,
+                    ...((proxyUrl.username || proxyUrl.password) && {
+                        proxyAuth: `${proxyUrl.username}:${proxyUrl.password}`
+                    }),
                     host: proxyUrl.hostname,
                     port: proxyUrl.port
                 }
@@ -51712,7 +52761,70 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* 552 */,
 /* 553 */,
 /* 554 */,
-/* 555 */,
+/* 555 */
+/***/ (function(__unusedmodule, exports) {
+
+//TODO: handle reviver/dehydrate function like normal
+//and handle indentation, like normal.
+//if anyone needs this... please send pull request.
+
+exports.stringify = function stringify (o) {
+  if('undefined' == typeof o) return o
+
+  if(o && Buffer.isBuffer(o))
+    return JSON.stringify(':base64:' + o.toString('base64'))
+
+  if(o && o.toJSON)
+    o =  o.toJSON()
+
+  if(o && 'object' === typeof o) {
+    var s = ''
+    var array = Array.isArray(o)
+    s = array ? '[' : '{'
+    var first = true
+
+    for(var k in o) {
+      var ignore = 'function' == typeof o[k] || (!array && 'undefined' === typeof o[k])
+      if(Object.hasOwnProperty.call(o, k) && !ignore) {
+        if(!first)
+          s += ','
+        first = false
+        if (array) {
+          if(o[k] == undefined)
+            s += 'null'
+          else
+            s += stringify(o[k])
+        } else if (o[k] !== void(0)) {
+          s += stringify(k) + ':' + stringify(o[k])
+        }
+      }
+    }
+
+    s += array ? ']' : '}'
+
+    return s
+  } else if ('string' === typeof o) {
+    return JSON.stringify(/^:/.test(o) ? ':' + o : o)
+  } else if ('undefined' === typeof o) {
+    return 'null';
+  } else
+    return JSON.stringify(o)
+}
+
+exports.parse = function (s) {
+  return JSON.parse(s, function (key, value) {
+    if('string' === typeof value) {
+      if(/^:base64:/.test(value))
+        return Buffer.from(value.substring(8), 'base64')
+      else
+        return /^:/.test(value) ? value.substring(1) : value 
+    }
+    return value
+  })
+}
+
+
+/***/ }),
 /* 556 */
 /***/ (function(module) {
 
@@ -51861,7 +52973,16 @@ module.exports.CancelError = CancelError;
 
 
 /***/ }),
-/* 558 */,
+/* 558 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(366);
+
+
+/***/ }),
 /* 559 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -52237,7 +53358,30 @@ exports.getPublicSuffix = getPublicSuffix;
 
 
 /***/ }),
-/* 563 */,
+/* 563 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=attributes.js.map
+
+/***/ }),
 /* 564 */,
 /* 565 */
 /***/ (function(module) {
@@ -53035,7 +54179,77 @@ __exportStar(__webpack_require__(36), exports);
 
 
 /***/ }),
-/* 583 */,
+/* 583 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+
+const path = __webpack_require__(622);
+const win32 = process.platform === 'win32';
+const {
+  REGEX_BACKSLASH,
+  REGEX_REMOVE_BACKSLASH,
+  REGEX_SPECIAL_CHARS,
+  REGEX_SPECIAL_CHARS_GLOBAL
+} = __webpack_require__(199);
+
+exports.isObject = val => val !== null && typeof val === 'object' && !Array.isArray(val);
+exports.hasRegexChars = str => REGEX_SPECIAL_CHARS.test(str);
+exports.isRegexChar = str => str.length === 1 && exports.hasRegexChars(str);
+exports.escapeRegex = str => str.replace(REGEX_SPECIAL_CHARS_GLOBAL, '\\$1');
+exports.toPosixSlashes = str => str.replace(REGEX_BACKSLASH, '/');
+
+exports.removeBackslashes = str => {
+  return str.replace(REGEX_REMOVE_BACKSLASH, match => {
+    return match === '\\' ? '' : match;
+  });
+};
+
+exports.supportsLookbehinds = () => {
+  const segs = process.version.slice(1).split('.').map(Number);
+  if (segs.length === 3 && segs[0] >= 9 || (segs[0] === 8 && segs[1] >= 10)) {
+    return true;
+  }
+  return false;
+};
+
+exports.isWindows = options => {
+  if (options && typeof options.windows === 'boolean') {
+    return options.windows;
+  }
+  return win32 === true || path.sep === '\\';
+};
+
+exports.escapeLast = (input, char, lastIdx) => {
+  const idx = input.lastIndexOf(char, lastIdx);
+  if (idx === -1) return input;
+  if (input[idx - 1] === '\\') return exports.escapeLast(input, char, idx - 1);
+  return `${input.slice(0, idx)}\\${input.slice(idx)}`;
+};
+
+exports.removePrefix = (input, state = {}) => {
+  let output = input;
+  if (output.startsWith('./')) {
+    output = output.slice(2);
+    state.prefix = './';
+  }
+  return output;
+};
+
+exports.wrapOutput = (input, state = {}, options = {}) => {
+  const prepend = options.contains ? '' : '^';
+  const append = options.contains ? '' : '$';
+
+  let output = `${prepend}(?:${input})${append}`;
+  if (state.negated === true) {
+    output = `(?:^(?!${output}).*$)`;
+  }
+  return output;
+};
+
+
+/***/ }),
 /* 584 */,
 /* 585 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -53123,7 +54337,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /***/ }),
 /* 586 */
-/***/ (function(__unusedmodule, exports) {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
@@ -53143,7 +54357,56 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-//# sourceMappingURL=span.js.map
+exports.TraceAPI = void 0;
+var ProxyTracerProvider_1 = __webpack_require__(706);
+var spancontext_utils_1 = __webpack_require__(787);
+var global_utils_1 = __webpack_require__(361);
+var API_NAME = 'trace';
+/**
+ * Singleton object which represents the entry point to the OpenTelemetry Tracing API
+ */
+var TraceAPI = /** @class */ (function () {
+    /** Empty private constructor prevents end users from constructing a new instance of the API */
+    function TraceAPI() {
+        this._proxyTracerProvider = new ProxyTracerProvider_1.ProxyTracerProvider();
+        this.isSpanContextValid = spancontext_utils_1.isSpanContextValid;
+    }
+    /** Get the singleton instance of the Trace API */
+    TraceAPI.getInstance = function () {
+        if (!this._instance) {
+            this._instance = new TraceAPI();
+        }
+        return this._instance;
+    };
+    /**
+     * Set the current global tracer. Returns the initialized global tracer provider
+     */
+    TraceAPI.prototype.setGlobalTracerProvider = function (provider) {
+        this._proxyTracerProvider.setDelegate(provider);
+        global_utils_1.registerGlobal(API_NAME, this._proxyTracerProvider);
+        return this._proxyTracerProvider;
+    };
+    /**
+     * Returns the global tracer provider.
+     */
+    TraceAPI.prototype.getTracerProvider = function () {
+        return global_utils_1.getGlobal(API_NAME) || this._proxyTracerProvider;
+    };
+    /**
+     * Returns a tracer from the global tracer provider.
+     */
+    TraceAPI.prototype.getTracer = function (name, version) {
+        return this.getTracerProvider().getTracer(name, version);
+    };
+    /** Remove the global tracer provider */
+    TraceAPI.prototype.disable = function () {
+        global_utils_1.unregisterGlobal(API_NAME);
+        this._proxyTracerProvider = new ProxyTracerProvider_1.ProxyTracerProvider();
+    };
+    return TraceAPI;
+}());
+exports.TraceAPI = TraceAPI;
+//# sourceMappingURL=trace.js.map
 
 /***/ }),
 /* 587 */,
@@ -53645,7 +54908,314 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //# sourceMappingURL=span_context.js.map
 
 /***/ }),
-/* 608 */,
+/* 608 */
+/***/ (function(module) {
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+/* global global, define, System, Reflect, Promise */
+var __extends;
+var __assign;
+var __rest;
+var __decorate;
+var __param;
+var __metadata;
+var __awaiter;
+var __generator;
+var __exportStar;
+var __values;
+var __read;
+var __spread;
+var __spreadArrays;
+var __spreadArray;
+var __await;
+var __asyncGenerator;
+var __asyncDelegator;
+var __asyncValues;
+var __makeTemplateObject;
+var __importStar;
+var __importDefault;
+var __classPrivateFieldGet;
+var __classPrivateFieldSet;
+var __createBinding;
+(function (factory) {
+    var root = typeof global === "object" ? global : typeof self === "object" ? self : typeof this === "object" ? this : {};
+    if (typeof define === "function" && define.amd) {
+        define("tslib", ["exports"], function (exports) { factory(createExporter(root, createExporter(exports))); });
+    }
+    else if ( true && typeof module.exports === "object") {
+        factory(createExporter(root, createExporter(module.exports)));
+    }
+    else {
+        factory(createExporter(root));
+    }
+    function createExporter(exports, previous) {
+        if (exports !== root) {
+            if (typeof Object.create === "function") {
+                Object.defineProperty(exports, "__esModule", { value: true });
+            }
+            else {
+                exports.__esModule = true;
+            }
+        }
+        return function (id, v) { return exports[id] = previous ? previous(id, v) : v; };
+    }
+})
+(function (exporter) {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+
+    __extends = function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+
+    __assign = Object.assign || function (t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+
+    __rest = function (s, e) {
+        var t = {};
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+            t[p] = s[p];
+        if (s != null && typeof Object.getOwnPropertySymbols === "function")
+            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+                if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                    t[p[i]] = s[p[i]];
+            }
+        return t;
+    };
+
+    __decorate = function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+
+    __param = function (paramIndex, decorator) {
+        return function (target, key) { decorator(target, key, paramIndex); }
+    };
+
+    __metadata = function (metadataKey, metadataValue) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
+    };
+
+    __awaiter = function (thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    };
+
+    __generator = function (thisArg, body) {
+        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+            if (f) throw new TypeError("Generator is already executing.");
+            while (_) try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+                if (y = 0, t) op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0: case 1: t = op; break;
+                    case 4: _.label++; return { value: op[1], done: false };
+                    case 5: _.label++; y = op[1]; op = [0]; continue;
+                    case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                        if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                        if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                        if (t[2]) _.ops.pop();
+                        _.trys.pop(); continue;
+                }
+                op = body.call(thisArg, _);
+            } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+            if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+    };
+
+    __exportStar = function(m, o) {
+        for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
+    };
+
+    __createBinding = Object.create ? (function(o, m, k, k2) {
+        if (k2 === undefined) k2 = k;
+        Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    }) : (function(o, m, k, k2) {
+        if (k2 === undefined) k2 = k;
+        o[k2] = m[k];
+    });
+
+    __values = function (o) {
+        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+        if (m) return m.call(o);
+        if (o && typeof o.length === "number") return {
+            next: function () {
+                if (o && i >= o.length) o = void 0;
+                return { value: o && o[i++], done: !o };
+            }
+        };
+        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+    };
+
+    __read = function (o, n) {
+        var m = typeof Symbol === "function" && o[Symbol.iterator];
+        if (!m) return o;
+        var i = m.call(o), r, ar = [], e;
+        try {
+            while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+        }
+        catch (error) { e = { error: error }; }
+        finally {
+            try {
+                if (r && !r.done && (m = i["return"])) m.call(i);
+            }
+            finally { if (e) throw e.error; }
+        }
+        return ar;
+    };
+
+    /** @deprecated */
+    __spread = function () {
+        for (var ar = [], i = 0; i < arguments.length; i++)
+            ar = ar.concat(__read(arguments[i]));
+        return ar;
+    };
+
+    /** @deprecated */
+    __spreadArrays = function () {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
+
+    __spreadArray = function (to, from) {
+        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+            to[j] = from[i];
+        return to;
+    };
+
+    __await = function (v) {
+        return this instanceof __await ? (this.v = v, this) : new __await(v);
+    };
+
+    __asyncGenerator = function (thisArg, _arguments, generator) {
+        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+        var g = generator.apply(thisArg, _arguments || []), i, q = [];
+        return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+        function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+        function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
+        function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
+        function fulfill(value) { resume("next", value); }
+        function reject(value) { resume("throw", value); }
+        function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
+    };
+
+    __asyncDelegator = function (o) {
+        var i, p;
+        return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
+        function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
+    };
+
+    __asyncValues = function (o) {
+        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+        var m = o[Symbol.asyncIterator], i;
+        return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+        function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+    };
+
+    __makeTemplateObject = function (cooked, raw) {
+        if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+        return cooked;
+    };
+
+    var __setModuleDefault = Object.create ? (function(o, v) {
+        Object.defineProperty(o, "default", { enumerable: true, value: v });
+    }) : function(o, v) {
+        o["default"] = v;
+    };
+
+    __importStar = function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+
+    __importDefault = function (mod) {
+        return (mod && mod.__esModule) ? mod : { "default": mod };
+    };
+
+    __classPrivateFieldGet = function (receiver, state, kind, f) {
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+    };
+
+    __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+    };
+
+    exporter("__extends", __extends);
+    exporter("__assign", __assign);
+    exporter("__rest", __rest);
+    exporter("__decorate", __decorate);
+    exporter("__param", __param);
+    exporter("__metadata", __metadata);
+    exporter("__awaiter", __awaiter);
+    exporter("__generator", __generator);
+    exporter("__exportStar", __exportStar);
+    exporter("__createBinding", __createBinding);
+    exporter("__values", __values);
+    exporter("__read", __read);
+    exporter("__spread", __spread);
+    exporter("__spreadArrays", __spreadArrays);
+    exporter("__spreadArray", __spreadArray);
+    exporter("__await", __await);
+    exporter("__asyncGenerator", __asyncGenerator);
+    exporter("__asyncDelegator", __asyncDelegator);
+    exporter("__asyncValues", __asyncValues);
+    exporter("__makeTemplateObject", __makeTemplateObject);
+    exporter("__importStar", __importStar);
+    exporter("__importDefault", __importDefault);
+    exporter("__classPrivateFieldGet", __classPrivateFieldGet);
+    exporter("__classPrivateFieldSet", __classPrivateFieldSet);
+});
+
+
+/***/ }),
 /* 609 */,
 /* 610 */,
 /* 611 */
@@ -53718,7 +55288,30 @@ exports.default = _default;
 
 /***/ }),
 /* 617 */,
-/* 618 */,
+/* 618 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=tracer.js.map
+
+/***/ }),
 /* 619 */,
 /* 620 */,
 /* 621 */
@@ -54453,19 +56046,17 @@ var __createBinding;
         return (mod && mod.__esModule) ? mod : { "default": mod };
     };
 
-    __classPrivateFieldGet = function (receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
+    __classPrivateFieldGet = function (receiver, state, kind, f) {
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
     };
 
-    __classPrivateFieldSet = function (receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
+    __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     };
 
     exporter("__extends", __extends);
@@ -57034,7 +58625,30 @@ exports.default = _default;
 /* 687 */,
 /* 688 */,
 /* 689 */,
-/* 690 */,
+/* 690 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=Plugin.js.map
+
+/***/ }),
 /* 691 */,
 /* 692 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -57329,7 +58943,68 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* 703 */,
 /* 704 */,
 /* 705 */,
-/* 706 */,
+/* 706 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProxyTracerProvider = void 0;
+var ProxyTracer_1 = __webpack_require__(520);
+var NoopTracerProvider_1 = __webpack_require__(331);
+/**
+ * Tracer provider which provides {@link ProxyTracer}s.
+ *
+ * Before a delegate is set, tracers provided are NoOp.
+ *   When a delegate is set, traces are provided from the delegate.
+ *   When a delegate is set after tracers have already been provided,
+ *   all tracers already provided will use the provided delegate implementation.
+ */
+var ProxyTracerProvider = /** @class */ (function () {
+    function ProxyTracerProvider() {
+    }
+    /**
+     * Get a {@link ProxyTracer}
+     */
+    ProxyTracerProvider.prototype.getTracer = function (name, version) {
+        var _a;
+        return ((_a = this.getDelegateTracer(name, version)) !== null && _a !== void 0 ? _a : new ProxyTracer_1.ProxyTracer(this, name, version));
+    };
+    ProxyTracerProvider.prototype.getDelegate = function () {
+        var _a;
+        return (_a = this._delegate) !== null && _a !== void 0 ? _a : NoopTracerProvider_1.NOOP_TRACER_PROVIDER;
+    };
+    /**
+     * Set the delegate tracer provider
+     */
+    ProxyTracerProvider.prototype.setDelegate = function (delegate) {
+        this._delegate = delegate;
+    };
+    ProxyTracerProvider.prototype.getDelegateTracer = function (name, version) {
+        var _a;
+        return (_a = this._delegate) === null || _a === void 0 ? void 0 : _a.getTracer(name, version);
+    };
+    return ProxyTracerProvider;
+}());
+exports.ProxyTracerProvider = ProxyTracerProvider;
+//# sourceMappingURL=ProxyTracerProvider.js.map
+
+/***/ }),
 /* 707 */,
 /* 708 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -57492,316 +59167,73 @@ module.exports = header => {
 
 /***/ }),
 /* 725 */
-/***/ (function(module) {
+/***/ (function(__unusedmodule, exports) {
 
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
+"use strict";
 
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global global, define, System, Reflect, Promise */
-var __extends;
-var __assign;
-var __rest;
-var __decorate;
-var __param;
-var __metadata;
-var __awaiter;
-var __generator;
-var __exportStar;
-var __values;
-var __read;
-var __spread;
-var __spreadArrays;
-var __spreadArray;
-var __await;
-var __asyncGenerator;
-var __asyncDelegator;
-var __asyncValues;
-var __makeTemplateObject;
-var __importStar;
-var __importDefault;
-var __classPrivateFieldGet;
-var __classPrivateFieldSet;
-var __createBinding;
-(function (factory) {
-    var root = typeof global === "object" ? global : typeof self === "object" ? self : typeof this === "object" ? this : {};
-    if (typeof define === "function" && define.amd) {
-        define("tslib", ["exports"], function (exports) { factory(createExporter(root, createExporter(exports))); });
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NOOP_TEXT_MAP_PROPAGATOR = exports.NoopTextMapPropagator = void 0;
+/**
+ * No-op implementations of {@link TextMapPropagator}.
+ */
+var NoopTextMapPropagator = /** @class */ (function () {
+    function NoopTextMapPropagator() {
     }
-    else if ( true && typeof module.exports === "object") {
-        factory(createExporter(root, createExporter(module.exports)));
-    }
-    else {
-        factory(createExporter(root));
-    }
-    function createExporter(exports, previous) {
-        if (exports !== root) {
-            if (typeof Object.create === "function") {
-                Object.defineProperty(exports, "__esModule", { value: true });
-            }
-            else {
-                exports.__esModule = true;
-            }
-        }
-        return function (id, v) { return exports[id] = previous ? previous(id, v) : v; };
-    }
-})
-(function (exporter) {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-
-    __extends = function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    /** Noop inject function does nothing */
+    NoopTextMapPropagator.prototype.inject = function (_context, _carrier) { };
+    /** Noop extract function does nothing and returns the input context */
+    NoopTextMapPropagator.prototype.extract = function (context, _carrier) {
+        return context;
     };
-
-    __assign = Object.assign || function (t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
+    NoopTextMapPropagator.prototype.fields = function () {
+        return [];
     };
-
-    __rest = function (s, e) {
-        var t = {};
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-            t[p] = s[p];
-        if (s != null && typeof Object.getOwnPropertySymbols === "function")
-            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-                if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                    t[p[i]] = s[p[i]];
-            }
-        return t;
-    };
-
-    __decorate = function (decorators, target, key, desc) {
-        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        return c > 3 && r && Object.defineProperty(target, key, r), r;
-    };
-
-    __param = function (paramIndex, decorator) {
-        return function (target, key) { decorator(target, key, paramIndex); }
-    };
-
-    __metadata = function (metadataKey, metadataValue) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-    };
-
-    __awaiter = function (thisArg, _arguments, P, generator) {
-        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-        return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-            step((generator = generator.apply(thisArg, _arguments || [])).next());
-        });
-    };
-
-    __generator = function (thisArg, body) {
-        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-        function verb(n) { return function (v) { return step([n, v]); }; }
-        function step(op) {
-            if (f) throw new TypeError("Generator is already executing.");
-            while (_) try {
-                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-                if (y = 0, t) op = [op[0] & 2, t.value];
-                switch (op[0]) {
-                    case 0: case 1: t = op; break;
-                    case 4: _.label++; return { value: op[1], done: false };
-                    case 5: _.label++; y = op[1]; op = [0]; continue;
-                    case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                    default:
-                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                        if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                        if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                        if (t[2]) _.ops.pop();
-                        _.trys.pop(); continue;
-                }
-                op = body.call(thisArg, _);
-            } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-            if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-        }
-    };
-
-    __exportStar = function(m, o) {
-        for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
-    };
-
-    __createBinding = Object.create ? (function(o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-    }) : (function(o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        o[k2] = m[k];
-    });
-
-    __values = function (o) {
-        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-        if (m) return m.call(o);
-        if (o && typeof o.length === "number") return {
-            next: function () {
-                if (o && i >= o.length) o = void 0;
-                return { value: o && o[i++], done: !o };
-            }
-        };
-        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-    };
-
-    __read = function (o, n) {
-        var m = typeof Symbol === "function" && o[Symbol.iterator];
-        if (!m) return o;
-        var i = m.call(o), r, ar = [], e;
-        try {
-            while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-        }
-        catch (error) { e = { error: error }; }
-        finally {
-            try {
-                if (r && !r.done && (m = i["return"])) m.call(i);
-            }
-            finally { if (e) throw e.error; }
-        }
-        return ar;
-    };
-
-    /** @deprecated */
-    __spread = function () {
-        for (var ar = [], i = 0; i < arguments.length; i++)
-            ar = ar.concat(__read(arguments[i]));
-        return ar;
-    };
-
-    /** @deprecated */
-    __spreadArrays = function () {
-        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-        for (var r = Array(s), k = 0, i = 0; i < il; i++)
-            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-                r[k] = a[j];
-        return r;
-    };
-
-    __spreadArray = function (to, from) {
-        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-            to[j] = from[i];
-        return to;
-    };
-
-    __await = function (v) {
-        return this instanceof __await ? (this.v = v, this) : new __await(v);
-    };
-
-    __asyncGenerator = function (thisArg, _arguments, generator) {
-        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-        var g = generator.apply(thisArg, _arguments || []), i, q = [];
-        return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-        function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-        function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-        function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
-        function fulfill(value) { resume("next", value); }
-        function reject(value) { resume("throw", value); }
-        function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-    };
-
-    __asyncDelegator = function (o) {
-        var i, p;
-        return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-        function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
-    };
-
-    __asyncValues = function (o) {
-        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-        var m = o[Symbol.asyncIterator], i;
-        return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-        function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-    };
-
-    __makeTemplateObject = function (cooked, raw) {
-        if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-        return cooked;
-    };
-
-    var __setModuleDefault = Object.create ? (function(o, v) {
-        Object.defineProperty(o, "default", { enumerable: true, value: v });
-    }) : function(o, v) {
-        o["default"] = v;
-    };
-
-    __importStar = function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-
-    __importDefault = function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
-    };
-
-    __classPrivateFieldGet = function (receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
-    };
-
-    __classPrivateFieldSet = function (receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
-    };
-
-    exporter("__extends", __extends);
-    exporter("__assign", __assign);
-    exporter("__rest", __rest);
-    exporter("__decorate", __decorate);
-    exporter("__param", __param);
-    exporter("__metadata", __metadata);
-    exporter("__awaiter", __awaiter);
-    exporter("__generator", __generator);
-    exporter("__exportStar", __exportStar);
-    exporter("__createBinding", __createBinding);
-    exporter("__values", __values);
-    exporter("__read", __read);
-    exporter("__spread", __spread);
-    exporter("__spreadArrays", __spreadArrays);
-    exporter("__spreadArray", __spreadArray);
-    exporter("__await", __await);
-    exporter("__asyncGenerator", __asyncGenerator);
-    exporter("__asyncDelegator", __asyncDelegator);
-    exporter("__asyncValues", __asyncValues);
-    exporter("__makeTemplateObject", __makeTemplateObject);
-    exporter("__importStar", __importStar);
-    exporter("__importDefault", __importDefault);
-    exporter("__classPrivateFieldGet", __classPrivateFieldGet);
-    exporter("__classPrivateFieldSet", __classPrivateFieldSet);
-});
-
+    return NoopTextMapPropagator;
+}());
+exports.NoopTextMapPropagator = NoopTextMapPropagator;
+exports.NOOP_TEXT_MAP_PROPAGATOR = new NoopTextMapPropagator();
+//# sourceMappingURL=NoopTextMapPropagator.js.map
 
 /***/ }),
-/* 726 */,
+/* 726 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=trace_state.js.map
+
+/***/ }),
 /* 727 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -58377,7 +59809,30 @@ function rng() {
 /***/ }),
 /* 739 */,
 /* 740 */,
-/* 741 */,
+/* 741 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=span_context.js.map
+
+/***/ }),
 /* 742 */,
 /* 743 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -59629,7 +61084,30 @@ exports.NOOP_SPAN = new NoopSpan();
 
 
 /***/ }),
-/* 769 */,
+/* 769 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=Entry.js.map
+
+/***/ }),
 /* 770 */,
 /* 771 */,
 /* 772 */,
@@ -60093,7 +61571,42 @@ exports.default = async (body, headers) => {
 
 
 /***/ }),
-/* 787 */,
+/* 787 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.isSpanContextValid = exports.isValidSpanId = exports.isValidTraceId = exports.INVALID_SPAN_CONTEXT = exports.INVALID_TRACEID = exports.INVALID_SPANID = void 0;
+var trace_flags_1 = __webpack_require__(917);
+var VALID_TRACEID_REGEX = /^([0-9a-f]{32})$/i;
+var VALID_SPANID_REGEX = /^[0-9a-f]{16}$/i;
+exports.INVALID_SPANID = '0000000000000000';
+exports.INVALID_TRACEID = '00000000000000000000000000000000';
+exports.INVALID_SPAN_CONTEXT = {
+    traceId: exports.INVALID_TRACEID,
+    spanId: exports.INVALID_SPANID,
+    traceFlags: trace_flags_1.TraceFlags.NONE,
+};
+function isValidTraceId(traceId) {
+    return VALID_TRACEID_REGEX.test(traceId) && traceId !== exports.INVALID_TRACEID;
+}
+exports.isValidTraceId = isValidTraceId;
+function isValidSpanId(spanId) {
+    return VALID_SPANID_REGEX.test(spanId) && spanId !== exports.INVALID_SPANID;
+}
+exports.isValidSpanId = isValidSpanId;
+/**
+ * Returns true if this {@link SpanContext} is valid.
+ * @return true if this {@link SpanContext} is valid.
+ */
+function isSpanContextValid(spanContext) {
+    return (isValidTraceId(spanContext.traceId) && isValidSpanId(spanContext.spanId));
+}
+exports.isSpanContextValid = isSpanContextValid;
+//# sourceMappingURL=spancontext-utils.js.map
+
+/***/ }),
 /* 788 */,
 /* 789 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -60698,6 +62211,10 @@ FormData.prototype.getHeaders = function(userHeaders) {
   }
 
   return formHeaders;
+};
+
+FormData.prototype.setBoundary = function(boundary) {
+  this._boundary = boundary;
 };
 
 FormData.prototype.getBoundary = function() {
@@ -61348,7 +62865,41 @@ module.exports = require("stream");
 /***/ }),
 /* 802 */,
 /* 803 */,
-/* 804 */,
+/* 804 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const http2 = __webpack_require__(565);
+const agent = __webpack_require__(17);
+const ClientRequest = __webpack_require__(170);
+const IncomingMessage = __webpack_require__(651);
+const auto = __webpack_require__(988);
+
+const request = (url, options, callback) => {
+	return new ClientRequest(url, options, callback);
+};
+
+const get = (url, options, callback) => {
+	// eslint-disable-next-line unicorn/prevent-abbreviations
+	const req = new ClientRequest(url, options, callback);
+	req.end();
+
+	return req;
+};
+
+module.exports = {
+	...http2,
+	ClientRequest,
+	IncomingMessage,
+	...agent,
+	request,
+	get,
+	auto
+};
+
+
+/***/ }),
 /* 805 */,
 /* 806 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -61357,7 +62908,7 @@ module.exports = require("stream");
 
 
 const constants = __webpack_require__(199);
-const utils = __webpack_require__(224);
+const utils = __webpack_require__(583);
 
 /**
  * Constants
@@ -62632,370 +64183,150 @@ exports.default = (request, delays, options) => {
 /***/ }),
 /* 812 */,
 /* 813 */
-/***/ (function(__unusedmodule, exports) {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-async function auth(token) {
-  const tokenType = token.split(/\./).length === 3 ? "app" : /^v\d+\./.test(token) ? "installation" : "oauth";
-  return {
-    type: "token",
-    token: token,
-    tokenType
-  };
-}
-
-/**
- * Prefix token for usage in the Authorization header
+/*
+ * Copyright The OpenTelemetry Authors
  *
- * @param token OAuth token or JSON Web Token
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-function withAuthorizationPrefix(token) {
-  if (token.split(/\./).length === 3) {
-    return `bearer ${token}`;
-  }
-
-  return `token ${token}`;
-}
-
-async function hook(token, request, route, parameters) {
-  const endpoint = request.endpoint.merge(route, parameters);
-  endpoint.headers.authorization = withAuthorizationPrefix(token);
-  return request(endpoint);
-}
-
-const createTokenAuth = function createTokenAuth(token) {
-  if (!token) {
-    throw new Error("[@octokit/auth-token] No token passed to createTokenAuth");
-  }
-
-  if (typeof token !== "string") {
-    throw new Error("[@octokit/auth-token] Token passed to createTokenAuth is not a string");
-  }
-
-  token = token.replace(/^(token|bearer) +/i, "");
-  return Object.assign(auth.bind(null, token), {
-    hook: hook.bind(null, token)
-  });
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
 };
-
-exports.createTokenAuth = createTokenAuth;
-//# sourceMappingURL=index.js.map
-
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NoopContextManager = void 0;
+var context_1 = __webpack_require__(527);
+var NoopContextManager = /** @class */ (function () {
+    function NoopContextManager() {
+    }
+    NoopContextManager.prototype.active = function () {
+        return context_1.ROOT_CONTEXT;
+    };
+    NoopContextManager.prototype.with = function (_context, fn, thisArg) {
+        var args = [];
+        for (var _i = 3; _i < arguments.length; _i++) {
+            args[_i - 3] = arguments[_i];
+        }
+        return fn.call.apply(fn, __spreadArrays([thisArg], args));
+    };
+    NoopContextManager.prototype.bind = function (target, _context) {
+        return target;
+    };
+    NoopContextManager.prototype.enable = function () {
+        return this;
+    };
+    NoopContextManager.prototype.disable = function () {
+        return this;
+    };
+    return NoopContextManager;
+}());
+exports.NoopContextManager = NoopContextManager;
+//# sourceMappingURL=NoopContextManager.js.map
 
 /***/ }),
 /* 814 */,
 /* 815 */
-/***/ (function(module) {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
+"use strict";
 
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global global, define, System, Reflect, Promise */
-var __extends;
-var __assign;
-var __rest;
-var __decorate;
-var __param;
-var __metadata;
-var __awaiter;
-var __generator;
-var __exportStar;
-var __values;
-var __read;
-var __spread;
-var __spreadArrays;
-var __spreadArray;
-var __await;
-var __asyncGenerator;
-var __asyncDelegator;
-var __asyncValues;
-var __makeTemplateObject;
-var __importStar;
-var __importDefault;
-var __classPrivateFieldGet;
-var __classPrivateFieldSet;
-var __createBinding;
-(function (factory) {
-    var root = typeof global === "object" ? global : typeof self === "object" ? self : typeof this === "object" ? this : {};
-    if (typeof define === "function" && define.amd) {
-        define("tslib", ["exports"], function (exports) { factory(createExporter(root, createExporter(exports))); });
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PropagationAPI = void 0;
+var NoopTextMapPropagator_1 = __webpack_require__(725);
+var TextMapPropagator_1 = __webpack_require__(920);
+var global_utils_1 = __webpack_require__(361);
+var API_NAME = 'propagation';
+/**
+ * Singleton object which represents the entry point to the OpenTelemetry Propagation API
+ */
+var PropagationAPI = /** @class */ (function () {
+    /** Empty private constructor prevents end users from constructing a new instance of the API */
+    function PropagationAPI() {
     }
-    else if ( true && typeof module.exports === "object") {
-        factory(createExporter(root, createExporter(module.exports)));
-    }
-    else {
-        factory(createExporter(root));
-    }
-    function createExporter(exports, previous) {
-        if (exports !== root) {
-            if (typeof Object.create === "function") {
-                Object.defineProperty(exports, "__esModule", { value: true });
-            }
-            else {
-                exports.__esModule = true;
-            }
+    /** Get the singleton instance of the Propagator API */
+    PropagationAPI.getInstance = function () {
+        if (!this._instance) {
+            this._instance = new PropagationAPI();
         }
-        return function (id, v) { return exports[id] = previous ? previous(id, v) : v; };
-    }
-})
-(function (exporter) {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-
-    __extends = function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+        return this._instance;
     };
-
-    __assign = Object.assign || function (t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
+    /**
+     * Set the current propagator. Returns the initialized propagator
+     */
+    PropagationAPI.prototype.setGlobalPropagator = function (propagator) {
+        global_utils_1.registerGlobal(API_NAME, propagator);
+        return propagator;
     };
-
-    __rest = function (s, e) {
-        var t = {};
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-            t[p] = s[p];
-        if (s != null && typeof Object.getOwnPropertySymbols === "function")
-            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-                if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                    t[p[i]] = s[p[i]];
-            }
-        return t;
+    /**
+     * Inject context into a carrier to be propagated inter-process
+     *
+     * @param context Context carrying tracing data to inject
+     * @param carrier carrier to inject context into
+     * @param setter Function used to set values on the carrier
+     */
+    PropagationAPI.prototype.inject = function (context, carrier, setter) {
+        if (setter === void 0) { setter = TextMapPropagator_1.defaultTextMapSetter; }
+        return this._getGlobalPropagator().inject(context, carrier, setter);
     };
-
-    __decorate = function (decorators, target, key, desc) {
-        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    /**
+     * Extract context from a carrier
+     *
+     * @param context Context which the newly created context will inherit from
+     * @param carrier Carrier to extract context from
+     * @param getter Function used to extract keys from a carrier
+     */
+    PropagationAPI.prototype.extract = function (context, carrier, getter) {
+        if (getter === void 0) { getter = TextMapPropagator_1.defaultTextMapGetter; }
+        return this._getGlobalPropagator().extract(context, carrier, getter);
     };
-
-    __param = function (paramIndex, decorator) {
-        return function (target, key) { decorator(target, key, paramIndex); }
+    /**
+     * Return a list of all fields which may be used by the propagator.
+     */
+    PropagationAPI.prototype.fields = function () {
+        return this._getGlobalPropagator().fields();
     };
-
-    __metadata = function (metadataKey, metadataValue) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
+    /** Remove the global propagator */
+    PropagationAPI.prototype.disable = function () {
+        global_utils_1.unregisterGlobal(API_NAME);
     };
-
-    __awaiter = function (thisArg, _arguments, P, generator) {
-        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-        return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-            step((generator = generator.apply(thisArg, _arguments || [])).next());
-        });
+    PropagationAPI.prototype._getGlobalPropagator = function () {
+        return global_utils_1.getGlobal(API_NAME) || NoopTextMapPropagator_1.NOOP_TEXT_MAP_PROPAGATOR;
     };
-
-    __generator = function (thisArg, body) {
-        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-        function verb(n) { return function (v) { return step([n, v]); }; }
-        function step(op) {
-            if (f) throw new TypeError("Generator is already executing.");
-            while (_) try {
-                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-                if (y = 0, t) op = [op[0] & 2, t.value];
-                switch (op[0]) {
-                    case 0: case 1: t = op; break;
-                    case 4: _.label++; return { value: op[1], done: false };
-                    case 5: _.label++; y = op[1]; op = [0]; continue;
-                    case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                    default:
-                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                        if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                        if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                        if (t[2]) _.ops.pop();
-                        _.trys.pop(); continue;
-                }
-                op = body.call(thisArg, _);
-            } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-            if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-        }
-    };
-
-    __exportStar = function(m, o) {
-        for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
-    };
-
-    __createBinding = Object.create ? (function(o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-    }) : (function(o, m, k, k2) {
-        if (k2 === undefined) k2 = k;
-        o[k2] = m[k];
-    });
-
-    __values = function (o) {
-        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-        if (m) return m.call(o);
-        if (o && typeof o.length === "number") return {
-            next: function () {
-                if (o && i >= o.length) o = void 0;
-                return { value: o && o[i++], done: !o };
-            }
-        };
-        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-    };
-
-    __read = function (o, n) {
-        var m = typeof Symbol === "function" && o[Symbol.iterator];
-        if (!m) return o;
-        var i = m.call(o), r, ar = [], e;
-        try {
-            while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-        }
-        catch (error) { e = { error: error }; }
-        finally {
-            try {
-                if (r && !r.done && (m = i["return"])) m.call(i);
-            }
-            finally { if (e) throw e.error; }
-        }
-        return ar;
-    };
-
-    /** @deprecated */
-    __spread = function () {
-        for (var ar = [], i = 0; i < arguments.length; i++)
-            ar = ar.concat(__read(arguments[i]));
-        return ar;
-    };
-
-    /** @deprecated */
-    __spreadArrays = function () {
-        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-        for (var r = Array(s), k = 0, i = 0; i < il; i++)
-            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-                r[k] = a[j];
-        return r;
-    };
-
-    __spreadArray = function (to, from) {
-        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-            to[j] = from[i];
-        return to;
-    };
-
-    __await = function (v) {
-        return this instanceof __await ? (this.v = v, this) : new __await(v);
-    };
-
-    __asyncGenerator = function (thisArg, _arguments, generator) {
-        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-        var g = generator.apply(thisArg, _arguments || []), i, q = [];
-        return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-        function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-        function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-        function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
-        function fulfill(value) { resume("next", value); }
-        function reject(value) { resume("throw", value); }
-        function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-    };
-
-    __asyncDelegator = function (o) {
-        var i, p;
-        return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-        function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
-    };
-
-    __asyncValues = function (o) {
-        if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-        var m = o[Symbol.asyncIterator], i;
-        return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-        function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-    };
-
-    __makeTemplateObject = function (cooked, raw) {
-        if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-        return cooked;
-    };
-
-    var __setModuleDefault = Object.create ? (function(o, v) {
-        Object.defineProperty(o, "default", { enumerable: true, value: v });
-    }) : function(o, v) {
-        o["default"] = v;
-    };
-
-    __importStar = function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-
-    __importDefault = function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
-    };
-
-    __classPrivateFieldGet = function (receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
-    };
-
-    __classPrivateFieldSet = function (receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
-    };
-
-    exporter("__extends", __extends);
-    exporter("__assign", __assign);
-    exporter("__rest", __rest);
-    exporter("__decorate", __decorate);
-    exporter("__param", __param);
-    exporter("__metadata", __metadata);
-    exporter("__awaiter", __awaiter);
-    exporter("__generator", __generator);
-    exporter("__exportStar", __exportStar);
-    exporter("__createBinding", __createBinding);
-    exporter("__values", __values);
-    exporter("__read", __read);
-    exporter("__spread", __spread);
-    exporter("__spreadArrays", __spreadArrays);
-    exporter("__spreadArray", __spreadArray);
-    exporter("__await", __await);
-    exporter("__asyncGenerator", __asyncGenerator);
-    exporter("__asyncDelegator", __asyncDelegator);
-    exporter("__asyncValues", __asyncValues);
-    exporter("__makeTemplateObject", __makeTemplateObject);
-    exporter("__importStar", __importStar);
-    exporter("__importDefault", __importDefault);
-    exporter("__classPrivateFieldGet", __classPrivateFieldGet);
-    exporter("__classPrivateFieldSet", __classPrivateFieldSet);
-});
-
+    return PropagationAPI;
+}());
+exports.PropagationAPI = PropagationAPI;
+//# sourceMappingURL=propagation.js.map
 
 /***/ }),
 /* 816 */,
@@ -63128,13 +64459,97 @@ module.exports = v4;
 
 /***/ }),
 /* 827 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
-
-module.exports = __webpack_require__(366);
-
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.diag = exports.propagation = exports.trace = exports.context = exports.isValidSpanId = exports.isValidTraceId = exports.isSpanContextValid = exports.INVALID_SPAN_CONTEXT = exports.INVALID_TRACEID = exports.INVALID_SPANID = void 0;
+__exportStar(__webpack_require__(75), exports);
+__exportStar(__webpack_require__(459), exports);
+__exportStar(__webpack_require__(109), exports);
+__exportStar(__webpack_require__(224), exports);
+__exportStar(__webpack_require__(725), exports);
+__exportStar(__webpack_require__(920), exports);
+__exportStar(__webpack_require__(563), exports);
+__exportStar(__webpack_require__(391), exports);
+__exportStar(__webpack_require__(445), exports);
+__exportStar(__webpack_require__(105), exports);
+__exportStar(__webpack_require__(980), exports);
+__exportStar(__webpack_require__(331), exports);
+__exportStar(__webpack_require__(520), exports);
+__exportStar(__webpack_require__(706), exports);
+__exportStar(__webpack_require__(225), exports);
+__exportStar(__webpack_require__(868), exports);
+__exportStar(__webpack_require__(741), exports);
+__exportStar(__webpack_require__(374), exports);
+__exportStar(__webpack_require__(439), exports);
+__exportStar(__webpack_require__(871), exports);
+__exportStar(__webpack_require__(883), exports);
+__exportStar(__webpack_require__(457), exports);
+__exportStar(__webpack_require__(917), exports);
+__exportStar(__webpack_require__(726), exports);
+__exportStar(__webpack_require__(889), exports);
+__exportStar(__webpack_require__(618), exports);
+var spancontext_utils_1 = __webpack_require__(787);
+Object.defineProperty(exports, "INVALID_SPANID", { enumerable: true, get: function () { return spancontext_utils_1.INVALID_SPANID; } });
+Object.defineProperty(exports, "INVALID_TRACEID", { enumerable: true, get: function () { return spancontext_utils_1.INVALID_TRACEID; } });
+Object.defineProperty(exports, "INVALID_SPAN_CONTEXT", { enumerable: true, get: function () { return spancontext_utils_1.INVALID_SPAN_CONTEXT; } });
+Object.defineProperty(exports, "isSpanContextValid", { enumerable: true, get: function () { return spancontext_utils_1.isSpanContextValid; } });
+Object.defineProperty(exports, "isValidTraceId", { enumerable: true, get: function () { return spancontext_utils_1.isValidTraceId; } });
+Object.defineProperty(exports, "isValidSpanId", { enumerable: true, get: function () { return spancontext_utils_1.isValidSpanId; } });
+__exportStar(__webpack_require__(527), exports);
+__exportStar(__webpack_require__(813), exports);
+__exportStar(__webpack_require__(164), exports);
+var context_1 = __webpack_require__(284);
+/** Entrypoint for context API */
+exports.context = context_1.ContextAPI.getInstance();
+var trace_1 = __webpack_require__(586);
+/** Entrypoint for trace API */
+exports.trace = trace_1.TraceAPI.getInstance();
+var propagation_1 = __webpack_require__(815);
+/** Entrypoint for propagation API */
+exports.propagation = propagation_1.PropagationAPI.getInstance();
+var diag_1 = __webpack_require__(987);
+/**
+ * Entrypoint for Diag API.
+ * Defines Diagnostic handler used for internal diagnostic logging operations.
+ * The default provides a Noop DiagLogger implementation which may be changed via the
+ * diag.setLogger(logger: DiagLogger) function.
+ */
+exports.diag = diag_1.DiagAPI.instance();
+exports.default = {
+    trace: exports.trace,
+    context: exports.context,
+    propagation: exports.propagation,
+    diag: exports.diag,
+};
+//# sourceMappingURL=index.js.map
 
 /***/ }),
 /* 828 */,
@@ -63242,7 +64657,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var deprecation = __webpack_require__(513);
+var deprecation = __webpack_require__(984);
 var once = _interopDefault(__webpack_require__(49));
 
 const logOnce = once(deprecation => console.warn(deprecation));
@@ -63728,19 +65143,17 @@ var __createBinding;
         return (mod && mod.__esModule) ? mod : { "default": mod };
     };
 
-    __classPrivateFieldGet = function (receiver, privateMap) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to get private field on non-instance");
-        }
-        return privateMap.get(receiver);
+    __classPrivateFieldGet = function (receiver, state, kind, f) {
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
     };
 
-    __classPrivateFieldSet = function (receiver, privateMap, value) {
-        if (!privateMap.has(receiver)) {
-            throw new TypeError("attempted to set private field on non-instance");
-        }
-        privateMap.set(receiver, value);
-        return value;
+    __classPrivateFieldSet = function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
     };
 
     exporter("__extends", __extends);
@@ -63802,10 +65215,79 @@ function removeHook(state, name, method) {
 module.exports = require("tty");
 
 /***/ }),
-/* 868 */,
+/* 868 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SamplingDecision = void 0;
+/**
+ * A sampling decision that determines how a {@link Span} will be recorded
+ * and collected.
+ */
+var SamplingDecision;
+(function (SamplingDecision) {
+    /**
+     * `Span.isRecording() === false`, span will not be recorded and all events
+     * and attributes will be dropped.
+     */
+    SamplingDecision[SamplingDecision["NOT_RECORD"] = 0] = "NOT_RECORD";
+    /**
+     * `Span.isRecording() === true`, but `Sampled` flag in {@link TraceFlags}
+     * MUST NOT be set.
+     */
+    SamplingDecision[SamplingDecision["RECORD"] = 1] = "RECORD";
+    /**
+     * `Span.isRecording() === true` AND `Sampled` flag in {@link TraceFlags}
+     * MUST be set.
+     */
+    SamplingDecision[SamplingDecision["RECORD_AND_SAMPLED"] = 2] = "RECORD_AND_SAMPLED";
+})(SamplingDecision = exports.SamplingDecision || (exports.SamplingDecision = {}));
+//# sourceMappingURL=SamplingResult.js.map
+
+/***/ }),
 /* 869 */,
 /* 870 */,
-/* 871 */,
+/* 871 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=SpanOptions.js.map
+
+/***/ }),
 /* 872 */,
 /* 873 */,
 /* 874 */,
@@ -63965,7 +65447,35 @@ module.exports = require("dns");
 
 /***/ }),
 /* 882 */,
-/* 883 */,
+/* 883 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SpanStatusCode = void 0;
+/**
+ * An enumeration of status codes.
+ */
+var SpanStatusCode;
+(function (SpanStatusCode) {
+    /**
+     * The default status.
+     */
+    SpanStatusCode[SpanStatusCode["UNSET"] = 0] = "UNSET";
+    /**
+     * The operation has been validated by an Application developer or
+     * Operator to have completed successfully.
+     */
+    SpanStatusCode[SpanStatusCode["OK"] = 1] = "OK";
+    /**
+     * The operation contains an error.
+     */
+    SpanStatusCode[SpanStatusCode["ERROR"] = 2] = "ERROR";
+})(SpanStatusCode = exports.SpanStatusCode || (exports.SpanStatusCode = {}));
+//# sourceMappingURL=status.js.map
+
+/***/ }),
 /* 884 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -64471,484 +65981,27 @@ module.exports = require("dns");
 /* 887 */,
 /* 888 */,
 /* 889 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
-/*!
- * Copyright (c) Microsoft and contributors. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for
- * license information.
- * 
- * Azure Core LRO SDK for JavaScript - 1.0.3
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var tslib = __webpack_require__(725);
-
-// Copyright (c) Microsoft Corporation.
-/**
- * When a poller is manually stopped through the `stopPolling` method,
- * the poller will be rejected with an instance of the PollerStoppedError.
- */
-var PollerStoppedError = /** @class */ (function (_super) {
-    tslib.__extends(PollerStoppedError, _super);
-    function PollerStoppedError(message) {
-        var _this = _super.call(this, message) || this;
-        _this.name = "PollerStoppedError";
-        Object.setPrototypeOf(_this, PollerStoppedError.prototype);
-        return _this;
-    }
-    return PollerStoppedError;
-}(Error));
-/**
- * When a poller is cancelled through the `cancelOperation` method,
- * the poller will be rejected with an instance of the PollerCancelledError.
- */
-var PollerCancelledError = /** @class */ (function (_super) {
-    tslib.__extends(PollerCancelledError, _super);
-    function PollerCancelledError(message) {
-        var _this = _super.call(this, message) || this;
-        _this.name = "PollerCancelledError";
-        Object.setPrototypeOf(_this, PollerCancelledError.prototype);
-        return _this;
-    }
-    return PollerCancelledError;
-}(Error));
-/**
- * A class that represents the definition of a program that polls through consecutive requests
- * until it reaches a state of completion.
- *
- * A poller can be executed manually, by polling request by request by calling to the `poll()` method repeatedly, until its operation is completed.
- * It also provides a way to wait until the operation completes, by calling `pollUntilDone()` and waiting until the operation finishes.
- * Pollers can also request the cancellation of the ongoing process to whom is providing the underlying long running operation.
- *
- * ```ts
- * const poller = new MyPoller();
- *
- * // Polling just once:
- * await poller.poll();
- *
- * // We can try to cancel the request here, by calling:
- * //
- * //     await poller.cancelOperation();
- * //
- *
- * // Getting the final result:
- * const result = await poller.pollUntilDone();
- * ```
- *
- * The Poller is defined by two types, a type representing the state of the poller, which
- * must include a basic set of properties from `PollOperationState<TResult>`,
- * and a return type defined by `TResult`, which can be anything.
- *
- * The Poller class implements the `PollerLike` interface, which allows poller implementations to avoid having
- * to export the Poller's class directly, and instead only export the already instantiated poller with the PollerLike type.
- *
- * ```ts
- * class Client {
- *   public async makePoller: PollerLike<MyOperationState, MyResult> {
- *     const poller = new MyPoller({});
- *     // It might be preferred to return the poller after the first request is made,
- *     // so that some information can be obtained right away.
- *     await poller.poll();
- *     return poller;
- *   }
- * }
- *
- * const poller: PollerLike<MyOperationState, MyResult> = myClient.makePoller();
- * ```
- *
- * A poller can be created through its constructor, then it can be polled until it's completed.
- * At any point in time, the state of the poller can be obtained without delay through the getOperationState method.
- * At any point in time, the intermediate forms of the result type can be requested without delay.
- * Once the underlying operation is marked as completed, the poller will stop and the final value will be returned.
- *
- * ```ts
- * const poller = myClient.makePoller();
- * const state: MyOperationState = poller.getOperationState();
- *
- * // The intermediate result can be obtained at any time.
- * const result: MyResult | undefined = poller.getResult();
- *
- * // The final result can only be obtained after the poller finishes.
- * const result: MyResult = await poller.pollUntilDone();
- * ```
- *
- */
-// eslint-disable-next-line no-use-before-define
-var Poller = /** @class */ (function () {
-    /**
-     * A poller needs to be initialized by passing in at least the basic properties of the `PollOperation<TState, TResult>`.
-     *
-     * When writing an implementation of a Poller, this implementation needs to deal with the initialization
-     * of any custom state beyond the basic definition of the poller. The basic poller assumes that the poller's
-     * operation has already been defined, at least its basic properties. The code below shows how to approach
-     * the definition of the constructor of a new custom poller.
-     *
-     * ```ts
-     * export class MyPoller extends Poller<MyOperationState, string> {
-     *   constructor({
-     *     // Anything you might need outside of the basics
-     *   }) {
-     *     let state: MyOperationState = {
-     *       privateProperty: private,
-     *       publicProperty: public,
-     *     };
-     *
-     *     const operation = {
-     *       state,
-     *       update,
-     *       cancel,
-     *       toString
-     *     }
-     *
-     *     // Sending the operation to the parent's constructor.
-     *     super(operation);
-     *
-     *     // You can assign more local properties here.
-     *   }
-     * }
-     * ```
-     *
-     * Inside of this constructor, a new promise is created. This will be used to
-     * tell the user when the poller finishes (see `pollUntilDone()`). The promise's
-     * resolve and reject methods are also used internally to control when to resolve
-     * or reject anyone waiting for the poller to finish.
-     *
-     * The constructor of a custom implementation of a poller is where any serialized version of
-     * a previous poller's operation should be deserialized into the operation sent to the
-     * base constructor. For example:
-     *
-     * ```ts
-     * export class MyPoller extends Poller<MyOperationState, string> {
-     *   constructor(
-     *     baseOperation: string | undefined
-     *   ) {
-     *     let state: MyOperationState = {};
-     *     if (baseOperation) {
-     *       state = {
-     *         ...JSON.parse(baseOperation).state,
-     *         ...state
-     *       };
-     *     }
-     *     const operation = {
-     *       state,
-     *       // ...
-     *     }
-     *     super(operation);
-     *   }
-     * }
-     * ```
-     *
-     * @param operation - Must contain the basic properties of `PollOperation<State, TResult>`.
-     */
-    function Poller(operation) {
-        var _this = this;
-        this.stopped = true;
-        this.pollProgressCallbacks = [];
-        this.operation = operation;
-        this.promise = new Promise(function (resolve, reject) {
-            _this.resolve = resolve;
-            _this.reject = reject;
-        });
-        // This prevents the UnhandledPromiseRejectionWarning in node.js from being thrown.
-        // The above warning would get thrown if `poller.poll` is called, it returns an error,
-        // and pullUntilDone did not have a .catch or await try/catch on it's return value.
-        this.promise.catch(function () {
-            /* intentionally blank */
-        });
-    }
-    /**
-     * @internal
-     * @hidden
-     * Starts a loop that will break only if the poller is done
-     * or if the poller is stopped.
-     */
-    Poller.prototype.startPolling = function () {
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            return tslib.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (this.stopped) {
-                            this.stopped = false;
-                        }
-                        _a.label = 1;
-                    case 1:
-                        if (!(!this.isStopped() && !this.isDone())) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this.poll()];
-                    case 2:
-                        _a.sent();
-                        return [4 /*yield*/, this.delay()];
-                    case 3:
-                        _a.sent();
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * @internal
-     * @hidden
-     * pollOnce does one polling, by calling to the update method of the underlying
-     * poll operation to make any relevant change effective.
-     *
-     * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
-     *
-     * @param options - Optional properties passed to the operation's update method.
-     */
-    Poller.prototype.pollOnce = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var state, _a, e_1;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        state = this.operation.state;
-                        _b.label = 1;
-                    case 1:
-                        _b.trys.push([1, 4, , 5]);
-                        if (!!this.isDone()) return [3 /*break*/, 3];
-                        _a = this;
-                        return [4 /*yield*/, this.operation.update({
-                                abortSignal: options.abortSignal,
-                                fireProgress: this.fireProgress.bind(this)
-                            })];
-                    case 2:
-                        _a.operation = _b.sent();
-                        if (this.isDone() && this.resolve) {
-                            // If the poller has finished polling, this means we now have a result.
-                            // However, it can be the case that TResult is instantiated to void, so
-                            // we are not expecting a result anyway. To assert that we might not
-                            // have a result eventually after finishing polling, we cast the result
-                            // to TResult.
-                            this.resolve(state.result);
-                        }
-                        _b.label = 3;
-                    case 3: return [3 /*break*/, 5];
-                    case 4:
-                        e_1 = _b.sent();
-                        state.error = e_1;
-                        if (this.reject) {
-                            this.reject(e_1);
-                        }
-                        throw e_1;
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * @internal
-     * @hidden
-     * fireProgress calls the functions passed in via onProgress the method of the poller.
-     *
-     * It loops over all of the callbacks received from onProgress, and executes them, sending them
-     * the current operation state.
-     *
-     * @param state - The current operation state.
-     */
-    Poller.prototype.fireProgress = function (state) {
-        for (var _i = 0, _a = this.pollProgressCallbacks; _i < _a.length; _i++) {
-            var callback = _a[_i];
-            callback(state);
-        }
-    };
-    /**
-     * @internal
-     * @hidden
-     * Invokes the underlying operation's cancel method, and rejects the
-     * pollUntilDone promise.
-     */
-    Poller.prototype.cancelOnce = function (options) {
-        if (options === void 0) { options = {}; }
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var _a;
-            return tslib.__generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this;
-                        return [4 /*yield*/, this.operation.cancel(options)];
-                    case 1:
-                        _a.operation = _b.sent();
-                        if (this.reject) {
-                            this.reject(new PollerCancelledError("Poller cancelled"));
-                        }
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    /**
-     * Returns a promise that will resolve once a single polling request finishes.
-     * It does this by calling the update method of the Poller's operation.
-     *
-     * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
-     *
-     * @param options - Optional properties passed to the operation's update method.
-     */
-    Poller.prototype.poll = function (options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        if (!this.pollOncePromise) {
-            this.pollOncePromise = this.pollOnce(options);
-            var clearPollOncePromise = function () {
-                _this.pollOncePromise = undefined;
-            };
-            this.pollOncePromise.then(clearPollOncePromise, clearPollOncePromise).catch(this.reject);
-        }
-        return this.pollOncePromise;
-    };
-    /**
-     * Returns a promise that will resolve once the underlying operation is completed.
-     */
-    Poller.prototype.pollUntilDone = function () {
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            return tslib.__generator(this, function (_a) {
-                if (this.stopped) {
-                    this.startPolling().catch(this.reject);
-                }
-                return [2 /*return*/, this.promise];
-            });
-        });
-    };
-    /**
-     * Invokes the provided callback after each polling is completed,
-     * sending the current state of the poller's operation.
-     *
-     * It returns a method that can be used to stop receiving updates on the given callback function.
-     */
-    Poller.prototype.onProgress = function (callback) {
-        var _this = this;
-        this.pollProgressCallbacks.push(callback);
-        return function () {
-            _this.pollProgressCallbacks = _this.pollProgressCallbacks.filter(function (c) { return c !== callback; });
-        };
-    };
-    /**
-     * Returns true if the poller has finished polling.
-     */
-    Poller.prototype.isDone = function () {
-        var state = this.operation.state;
-        return Boolean(state.isCompleted || state.isCancelled || state.error);
-    };
-    /**
-     * Stops the poller from continuing to poll.
-     */
-    Poller.prototype.stopPolling = function () {
-        if (!this.stopped) {
-            this.stopped = true;
-            if (this.reject) {
-                this.reject(new PollerStoppedError("This poller is already stopped"));
-            }
-        }
-    };
-    /**
-     * Returns true if the poller is stopped.
-     */
-    Poller.prototype.isStopped = function () {
-        return this.stopped;
-    };
-    /**
-     * Attempts to cancel the underlying operation.
-     *
-     * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
-     *
-     * If it's called again before it finishes, it will throw an error.
-     *
-     * @param options - Optional properties passed to the operation's update method.
-     */
-    Poller.prototype.cancelOperation = function (options) {
-        if (options === void 0) { options = {}; }
-        if (!this.stopped) {
-            this.stopped = true;
-        }
-        if (!this.cancelPromise) {
-            this.cancelPromise = this.cancelOnce(options);
-        }
-        else if (options.abortSignal) {
-            throw new Error("A cancel request is currently pending");
-        }
-        return this.cancelPromise;
-    };
-    /**
-     * Returns the state of the operation.
-     *
-     * Even though TState will be the same type inside any of the methods of any extension of the Poller class,
-     * implementations of the pollers can customize what's shared with the public by writing their own
-     * version of the `getOperationState` method, and by defining two types, one representing the internal state of the poller
-     * and a public type representing a safe to share subset of the properties of the internal state.
-     * Their definition of getOperationState can then return their public type.
-     *
-     * Example:
-     *
-     * ```ts
-     * // Let's say we have our poller's operation state defined as:
-     * interface MyOperationState extends PollOperationState<ResultType> {
-     *   privateProperty?: string;
-     *   publicProperty?: string;
-     * }
-     *
-     * // To allow us to have a true separation of public and private state, we have to define another interface:
-     * interface PublicState extends PollOperationState<ResultType> {
-     *   publicProperty?: string;
-     * }
-     *
-     * // Then, we define our Poller as follows:
-     * export class MyPoller extends Poller<MyOperationState, ResultType> {
-     *   // ... More content is needed here ...
-     *
-     *   public getOperationState(): PublicState {
-     *     const state: PublicState = this.operation.state;
-     *     return {
-     *       // Properties from PollOperationState<TResult>
-     *       isStarted: state.isStarted,
-     *       isCompleted: state.isCompleted,
-     *       isCancelled: state.isCancelled,
-     *       error: state.error,
-     *       result: state.result,
-     *
-     *       // The only other property needed by PublicState.
-     *       publicProperty: state.publicProperty
-     *     }
-     *   }
-     * }
-     * ```
-     *
-     * You can see this in the tests of this repository, go to the file:
-     * `../test/utils/testPoller.ts`
-     * and look for the getOperationState implementation.
-     */
-    Poller.prototype.getOperationState = function () {
-        return this.operation.state;
-    };
-    /**
-     * Returns the result value of the operation,
-     * regardless of the state of the poller.
-     * It can return undefined or an incomplete form of the final TResult value
-     * depending on the implementation.
-     */
-    Poller.prototype.getResult = function () {
-        var state = this.operation.state;
-        return state.result;
-    };
-    /**
-     * Returns a serialized version of the poller's operation
-     * by invoking the operation's toString method.
-     */
-    Poller.prototype.toString = function () {
-        return this.operation.toString();
-    };
-    return Poller;
-}());
-
-exports.Poller = Poller;
-exports.PollerCancelledError = PollerCancelledError;
-exports.PollerStoppedError = PollerStoppedError;
-//# sourceMappingURL=index.js.map
-
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=tracer_provider.js.map
 
 /***/ }),
 /* 890 */,
@@ -65035,7 +66088,821 @@ function descending(a, b)
 
 /***/ }),
 /* 893 */,
-/* 894 */,
+/* 894 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var api = __webpack_require__(827);
+var tslib = __webpack_require__(865);
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+/**
+ * A no-op implementation of Span that can safely be used without side-effects.
+ */
+var NoOpSpan = /** @class */ (function () {
+    function NoOpSpan() {
+    }
+    /**
+     * Returns the SpanContext associated with this Span.
+     */
+    NoOpSpan.prototype.context = function () {
+        return {
+            spanId: "",
+            traceId: "",
+            traceFlags: 0 /* NONE */
+        };
+    };
+    /**
+     * Marks the end of Span execution.
+     * @param _endTime - The time to use as the Span's end time. Defaults to
+     * the current time.
+     */
+    NoOpSpan.prototype.end = function (_endTime) {
+        /* Noop */
+    };
+    /**
+     * Sets an attribute on the Span
+     * @param _key - The attribute key
+     * @param _value - The attribute value
+     */
+    NoOpSpan.prototype.setAttribute = function (_key, _value) {
+        return this;
+    };
+    /**
+     * Sets attributes on the Span
+     * @param _attributes - The attributes to add
+     */
+    NoOpSpan.prototype.setAttributes = function (_attributes) {
+        return this;
+    };
+    /**
+     * Adds an event to the Span
+     * @param _name - The name of the event
+     * @param _attributes - The associated attributes to add for this event
+     */
+    NoOpSpan.prototype.addEvent = function (_name, _attributes) {
+        return this;
+    };
+    /**
+     * Sets a status on the span. Overrides the default of SpanStatusCode.OK.
+     * @param _status - The status to set.
+     */
+    NoOpSpan.prototype.setStatus = function (_status) {
+        return this;
+    };
+    /**
+     * Updates the name of the Span
+     * @param _name - the new Span name
+     */
+    NoOpSpan.prototype.updateName = function (_name) {
+        return this;
+    };
+    /**
+     * Returns whether this span will be recorded
+     */
+    NoOpSpan.prototype.isRecording = function () {
+        return false;
+    };
+    /**
+     * Sets exception as a span event
+     * @param exception - the exception the only accepted values are string or Error
+     * @param time - the time to set as Span's event time. If not provided,
+     *     use the current time.
+     */
+    NoOpSpan.prototype.recordException = function (_exception, _time) {
+        /* do nothing */
+    };
+    return NoOpSpan;
+}());
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * A no-op implementation of Tracer that can be used when tracing
+ * is disabled.
+ */
+var NoOpTracer = /** @class */ (function () {
+    function NoOpTracer() {
+    }
+    /**
+     * Starts a new Span.
+     * @param _name - The name of the span.
+     * @param _options - The SpanOptions used during Span creation.
+     */
+    NoOpTracer.prototype.startSpan = function (_name, _options) {
+        return new NoOpSpan();
+    };
+    /**
+     * Returns the current Span from the current context, if available.
+     */
+    NoOpTracer.prototype.getCurrentSpan = function () {
+        return new NoOpSpan();
+    };
+    /**
+     * Executes the given function within the context provided by a Span.
+     * @param _span - The span that provides the context.
+     * @param fn - The function to be executed.
+     */
+    NoOpTracer.prototype.withSpan = function (_span, fn) {
+        return fn();
+    };
+    /**
+     * Bind a Span as the target's scope
+     * @param target - An object to bind the scope.
+     * @param _span - A specific Span to use. Otherwise, use the current one.
+     */
+    NoOpTracer.prototype.bind = function (target, _span) {
+        return target;
+    };
+    return NoOpTracer;
+}());
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+function getGlobalObject() {
+    return global;
+}
+
+// Copyright (c) Microsoft Corporation.
+// V1 = OpenTelemetry 0.1
+// V2 = OpenTelemetry 0.2
+// V3 = OpenTelemetry 0.6.1
+// V4 = OpenTelemetry 1.0.0-rc.0
+var GLOBAL_TRACER_VERSION = 4;
+// preview5 shipped with @azure/core-tracing.tracerCache
+// and didn't have smart detection for collisions
+var GLOBAL_TRACER_SYMBOL = Symbol.for("@azure/core-tracing.tracerCache3");
+var cache;
+function loadTracerCache() {
+    var globalObj = getGlobalObject();
+    var existingCache = globalObj[GLOBAL_TRACER_SYMBOL];
+    var setGlobalCache = true;
+    if (existingCache) {
+        if (existingCache.version === GLOBAL_TRACER_VERSION) {
+            cache = existingCache;
+        }
+        else {
+            setGlobalCache = false;
+            if (existingCache.tracer) {
+                throw new Error("Two incompatible versions of @azure/core-tracing have been loaded.\n          This library is " + GLOBAL_TRACER_VERSION + ", existing is " + existingCache.version + ".");
+            }
+        }
+    }
+    if (!cache) {
+        cache = {
+            tracer: undefined,
+            version: GLOBAL_TRACER_VERSION
+        };
+    }
+    if (setGlobalCache) {
+        globalObj[GLOBAL_TRACER_SYMBOL] = cache;
+    }
+}
+function getCache() {
+    if (!cache) {
+        loadTracerCache();
+    }
+    return cache;
+}
+
+// Copyright (c) Microsoft Corporation.
+var defaultTracer;
+function getDefaultTracer() {
+    if (!defaultTracer) {
+        defaultTracer = new NoOpTracer();
+    }
+    return defaultTracer;
+}
+/**
+ * Sets the global tracer, enabling tracing for the Azure SDK.
+ * @param tracer - An OpenTelemetry Tracer instance.
+ */
+function setTracer(tracer) {
+    var cache = getCache();
+    cache.tracer = tracer;
+}
+/**
+ * Retrieves the active tracer, or returns a
+ * no-op implementation if one is not set.
+ */
+function getTracer() {
+    var cache = getCache();
+    if (!cache.tracer) {
+        return getDefaultTracer();
+    }
+    return cache.tracer;
+}
+
+// Copyright (c) Microsoft Corporation.
+(function (SpanKind) {
+    /** Default value. Indicates that the span is used internally. */
+    SpanKind[SpanKind["INTERNAL"] = 0] = "INTERNAL";
+    /**
+     * Indicates that the span covers server-side handling of an RPC or other
+     * remote request.
+     */
+    SpanKind[SpanKind["SERVER"] = 1] = "SERVER";
+    /**
+     * Indicates that the span covers the client-side wrapper around an RPC or
+     * other remote request.
+     */
+    SpanKind[SpanKind["CLIENT"] = 2] = "CLIENT";
+    /**
+     * Indicates that the span describes producer sending a message to a
+     * broker. Unlike client and server, there is no direct critical path latency
+     * relationship between producer and consumer spans.
+     */
+    SpanKind[SpanKind["PRODUCER"] = 3] = "PRODUCER";
+    /**
+     * Indicates that the span describes consumer receiving a message from a
+     * broker. Unlike client and server, there is no direct critical path latency
+     * relationship between producer and consumer spans.
+     */
+    SpanKind[SpanKind["CONSUMER"] = 4] = "CONSUMER";
+})(exports.SpanKind || (exports.SpanKind = {}));
+/**
+ * Return the span if one exists
+ *
+ * @param context - context to get span from
+ */
+function getSpan(context) {
+    return api.getSpan(context);
+}
+/**
+ * Set the span on a context
+ *
+ * @param context - context to use as parent
+ * @param span - span to set active
+ */
+function setSpan(context, span) {
+    return api.setSpan(context, span);
+}
+/**
+ * Wrap span context in a NoopSpan and set as span in a new
+ * context
+ *
+ * @param context - context to set active span on
+ * @param spanContext - span context to be wrapped
+ */
+function setSpanContext(context, spanContext) {
+    return api.setSpanContext(context, spanContext);
+}
+/**
+ * Get the span context of the span if it exists.
+ *
+ * @param context - context to get values from
+ */
+function getSpanContext(context) {
+    return api.getSpanContext(context);
+}
+/** Entrypoint for context API */
+var context = api.context;
+(function (SpanStatusCode) {
+    /**
+     * The default status.
+     */
+    SpanStatusCode[SpanStatusCode["UNSET"] = 0] = "UNSET";
+    /**
+     * The operation has been validated by an Application developer or
+     * Operator to have completed successfully.
+     */
+    SpanStatusCode[SpanStatusCode["OK"] = 1] = "OK";
+    /**
+     * The operation contains an error.
+     */
+    SpanStatusCode[SpanStatusCode["ERROR"] = 2] = "ERROR";
+})(exports.SpanStatusCode || (exports.SpanStatusCode = {}));
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+/**
+ * @internal
+ */
+var OpenCensusTraceStateWrapper = /** @class */ (function () {
+    function OpenCensusTraceStateWrapper(state) {
+        this._state = state;
+    }
+    OpenCensusTraceStateWrapper.prototype.get = function (_key) {
+        throw new Error("Method not implemented.");
+    };
+    OpenCensusTraceStateWrapper.prototype.set = function (_key, _value) {
+        throw new Error("Method not implemented.");
+    };
+    OpenCensusTraceStateWrapper.prototype.unset = function (_key) {
+        throw new Error("Method not implemented");
+    };
+    OpenCensusTraceStateWrapper.prototype.serialize = function () {
+        return this._state || "";
+    };
+    return OpenCensusTraceStateWrapper;
+}());
+
+// Copyright (c) Microsoft Corporation.
+/** An enumeration of canonical status codes. */
+var CanonicalCode;
+(function (CanonicalCode) {
+    /**
+     * Not an error; returned on success
+     */
+    CanonicalCode[CanonicalCode["OK"] = 0] = "OK";
+    /**
+     * Internal errors.  Means some invariants expected by underlying
+     * system has been broken.  If you see one of these errors,
+     * something is very broken.
+     */
+    CanonicalCode[CanonicalCode["INTERNAL"] = 13] = "INTERNAL";
+})(CanonicalCode || (CanonicalCode = {}));
+function isWrappedSpan(span) {
+    return !!span && span.getWrappedSpan !== undefined;
+}
+function isTracer(tracerOrSpan) {
+    return tracerOrSpan.getWrappedTracer !== undefined;
+}
+/**
+ * An implementation of OpenTelemetry Span that wraps an OpenCensus Span.
+ */
+var OpenCensusSpanWrapper = /** @class */ (function () {
+    function OpenCensusSpanWrapper(tracerOrSpan, name, options, context$1) {
+        if (name === void 0) { name = ""; }
+        if (options === void 0) { options = {}; }
+        if (isTracer(tracerOrSpan)) {
+            var span = getSpan(context$1 !== null && context$1 !== void 0 ? context$1 : context.active());
+            var parent = isWrappedSpan(span) ? span.getWrappedSpan() : undefined;
+            this._span = tracerOrSpan.getWrappedTracer().startChildSpan({
+                name: name,
+                childOf: parent
+            });
+            this._span.start();
+            if (options.links) {
+                for (var _i = 0, _a = options.links; _i < _a.length; _i++) {
+                    var link = _a[_i];
+                    // Since there is no way to set the link relationship, leave it as Unspecified.
+                    this._span.addLink(link.context.traceId, link.context.spanId, 0 /* LinkType.UNSPECIFIED */, link.attributes);
+                }
+            }
+        }
+        else {
+            this._span = tracerOrSpan;
+        }
+    }
+    /**
+     * The underlying OpenCensus Span
+     */
+    OpenCensusSpanWrapper.prototype.getWrappedSpan = function () {
+        return this._span;
+    };
+    /**
+     * Marks the end of Span execution.
+     * @param endTime - The time to use as the Span's end time. Defaults to
+     * the current time.
+     */
+    OpenCensusSpanWrapper.prototype.end = function (_endTime) {
+        this._span.end();
+    };
+    /**
+     * Returns the SpanContext associated with this Span.
+     */
+    OpenCensusSpanWrapper.prototype.context = function () {
+        var openCensusSpanContext = this._span.spanContext;
+        return {
+            spanId: openCensusSpanContext.spanId,
+            traceId: openCensusSpanContext.traceId,
+            traceFlags: openCensusSpanContext.options,
+            traceState: new OpenCensusTraceStateWrapper(openCensusSpanContext.traceState)
+        };
+    };
+    /**
+     * Sets an attribute on the Span
+     * @param key - The attribute key
+     * @param value - The attribute value
+     */
+    OpenCensusSpanWrapper.prototype.setAttribute = function (key, value) {
+        this._span.addAttribute(key, value);
+        return this;
+    };
+    /**
+     * Sets attributes on the Span
+     * @param attributes - The attributes to add
+     */
+    OpenCensusSpanWrapper.prototype.setAttributes = function (attributes) {
+        this._span.attributes = attributes;
+        return this;
+    };
+    /**
+     * Adds an event to the Span
+     * @param name - The name of the event
+     * @param attributes - The associated attributes to add for this event
+     */
+    OpenCensusSpanWrapper.prototype.addEvent = function (_name, _attributes) {
+        throw new Error("Method not implemented.");
+    };
+    /**
+     * Sets a status on the span. Overrides the default of SpanStatusCode.OK.
+     * @param status - The status to set.
+     */
+    OpenCensusSpanWrapper.prototype.setStatus = function (status) {
+        switch (status.code) {
+            case exports.SpanStatusCode.ERROR: {
+                this._span.setStatus(CanonicalCode.INTERNAL, status.message);
+                break;
+            }
+            case exports.SpanStatusCode.OK: {
+                this._span.setStatus(CanonicalCode.OK, status.message);
+                break;
+            }
+            case exports.SpanStatusCode.UNSET: {
+                break;
+            }
+        }
+        return this;
+    };
+    /**
+     * Updates the name of the Span
+     * @param name - The new Span name
+     */
+    OpenCensusSpanWrapper.prototype.updateName = function (name) {
+        this._span.name = name;
+        return this;
+    };
+    /**
+     * Returns whether this span will be recorded
+     */
+    OpenCensusSpanWrapper.prototype.isRecording = function () {
+        // NoRecordSpans have an empty traceId
+        return !!this._span.traceId;
+    };
+    /**
+     * Sets exception as a span event
+     * @param exception - the exception the only accepted values are string or Error
+     * @param time - the time to set as Span's event time. If not provided,
+     *     use the current time.
+     */
+    OpenCensusSpanWrapper.prototype.recordException = function (_exception, _time) {
+        throw new Error("Method not implemented");
+    };
+    return OpenCensusSpanWrapper;
+}());
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * An implementation of OpenTelemetry Tracer that wraps an OpenCensus Tracer.
+ */
+var OpenCensusTracerWrapper = /** @class */ (function () {
+    /**
+     * Create a new wrapper around a given OpenCensus Tracer.
+     * @param tracer - The OpenCensus Tracer to wrap.
+     */
+    function OpenCensusTracerWrapper(tracer) {
+        this._tracer = tracer;
+    }
+    /**
+     * The wrapped OpenCensus Tracer
+     */
+    OpenCensusTracerWrapper.prototype.getWrappedTracer = function () {
+        return this._tracer;
+    };
+    /**
+     * Starts a new Span.
+     * @param name - The name of the span.
+     * @param options - The SpanOptions used during Span creation.
+     */
+    OpenCensusTracerWrapper.prototype.startSpan = function (name, options) {
+        return new OpenCensusSpanWrapper(this, name, options);
+    };
+    /**
+     * Returns the current Span from the current context, if available.
+     */
+    OpenCensusTracerWrapper.prototype.getCurrentSpan = function () {
+        return undefined;
+    };
+    /**
+     * Executes the given function within the context provided by a Span.
+     * @param _span - The span that provides the context.
+     * @param _fn - The function to be executed.
+     */
+    OpenCensusTracerWrapper.prototype.withSpan = function (_span, _fn) {
+        throw new Error("Method not implemented.");
+    };
+    /**
+     * Bind a Span as the target's scope
+     * @param target - An object to bind the scope.
+     * @param _span - A specific Span to use. Otherwise, use the current one.
+     */
+    OpenCensusTracerWrapper.prototype.bind = function (_target, _span) {
+        throw new Error("Method not implemented.");
+    };
+    return OpenCensusTracerWrapper;
+}());
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * A mock span useful for testing.
+ */
+var TestSpan = /** @class */ (function (_super) {
+    tslib.__extends(TestSpan, _super);
+    /**
+     * Starts a new Span.
+     * @param parentTracer-  The tracer that created this Span
+     * @param name - The name of the span.
+     * @param context - The SpanContext this span belongs to
+     * @param kind - The SpanKind of this Span
+     * @param parentSpanId - The identifier of the parent Span
+     * @param startTime - The startTime of the event (defaults to now)
+     */
+    function TestSpan(parentTracer, name, context, kind, parentSpanId, startTime) {
+        if (startTime === void 0) { startTime = Date.now(); }
+        var _this = _super.call(this) || this;
+        _this._tracer = parentTracer;
+        _this.name = name;
+        _this.kind = kind;
+        _this.startTime = startTime;
+        _this.parentSpanId = parentSpanId;
+        _this.status = {
+            code: exports.SpanStatusCode.OK
+        };
+        _this.endCalled = false;
+        _this._context = context;
+        _this.attributes = {};
+        return _this;
+    }
+    /**
+     * Returns the Tracer that created this Span
+     */
+    TestSpan.prototype.tracer = function () {
+        return this._tracer;
+    };
+    /**
+     * Returns the SpanContext associated with this Span.
+     */
+    TestSpan.prototype.context = function () {
+        return this._context;
+    };
+    /**
+     * Marks the end of Span execution.
+     * @param _endTime - The time to use as the Span's end time. Defaults to
+     * the current time.
+     */
+    TestSpan.prototype.end = function (_endTime) {
+        this.endCalled = true;
+    };
+    /**
+     * Sets a status on the span. Overrides the default of SpanStatusCode.OK.
+     * @param status - The status to set.
+     */
+    TestSpan.prototype.setStatus = function (status) {
+        this.status = status;
+        return this;
+    };
+    /**
+     * Returns whether this span will be recorded
+     */
+    TestSpan.prototype.isRecording = function () {
+        return true;
+    };
+    /**
+     * Sets an attribute on the Span
+     * @param key - The attribute key
+     * @param value - The attribute value
+     */
+    TestSpan.prototype.setAttribute = function (key, value) {
+        this.attributes[key] = value;
+        return this;
+    };
+    /**
+     * Sets attributes on the Span
+     * @param attributes - The attributes to add
+     */
+    TestSpan.prototype.setAttributes = function (attributes) {
+        for (var _i = 0, _a = Object.keys(attributes); _i < _a.length; _i++) {
+            var key = _a[_i];
+            this.attributes[key] = attributes[key];
+        }
+        return this;
+    };
+    return TestSpan;
+}(NoOpSpan));
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * A mock tracer useful for testing
+ */
+var TestTracer = /** @class */ (function (_super) {
+    tslib.__extends(TestTracer, _super);
+    function TestTracer() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.traceIdCounter = 0;
+        _this.spanIdCounter = 0;
+        _this.rootSpans = [];
+        _this.knownSpans = [];
+        return _this;
+    }
+    TestTracer.prototype.getNextTraceId = function () {
+        this.traceIdCounter++;
+        return String(this.traceIdCounter);
+    };
+    TestTracer.prototype.getNextSpanId = function () {
+        this.spanIdCounter++;
+        return String(this.spanIdCounter);
+    };
+    /**
+     * Returns all Spans that were created without a parent
+     */
+    TestTracer.prototype.getRootSpans = function () {
+        return this.rootSpans;
+    };
+    /**
+     * Returns all Spans this Tracer knows about
+     */
+    TestTracer.prototype.getKnownSpans = function () {
+        return this.knownSpans;
+    };
+    /**
+     * Returns all Spans where end() has not been called
+     */
+    TestTracer.prototype.getActiveSpans = function () {
+        return this.knownSpans.filter(function (span) {
+            return !span.endCalled;
+        });
+    };
+    /**
+     * Return all Spans for a particular trace, grouped by their
+     * parent Span in a tree-like structure
+     * @param traceId - The traceId to return the graph for
+     */
+    TestTracer.prototype.getSpanGraph = function (traceId) {
+        var traceSpans = this.knownSpans.filter(function (span) {
+            return span.context().traceId === traceId;
+        });
+        var roots = [];
+        var nodeMap = new Map();
+        for (var _i = 0, traceSpans_1 = traceSpans; _i < traceSpans_1.length; _i++) {
+            var span = traceSpans_1[_i];
+            var spanId = span.context().spanId;
+            var node = {
+                name: span.name,
+                children: []
+            };
+            nodeMap.set(spanId, node);
+            if (span.parentSpanId) {
+                var parent = nodeMap.get(span.parentSpanId);
+                if (!parent) {
+                    throw new Error("Span with name " + node.name + " has an unknown parentSpan with id " + span.parentSpanId);
+                }
+                parent.children.push(node);
+            }
+            else {
+                roots.push(node);
+            }
+        }
+        return {
+            roots: roots
+        };
+    };
+    /**
+     * Starts a new Span.
+     * @param name - The name of the span.
+     * @param options - The SpanOptions used during Span creation.
+     */
+    TestTracer.prototype.startSpan = function (name, options, context$1) {
+        var parentContext = getSpanContext(context$1 || context.active());
+        var traceId;
+        var isRootSpan = false;
+        if (parentContext && parentContext.traceId) {
+            traceId = parentContext.traceId;
+        }
+        else {
+            traceId = this.getNextTraceId();
+            isRootSpan = true;
+        }
+        var spanContext = {
+            traceId: traceId,
+            spanId: this.getNextSpanId(),
+            traceFlags: 0 /* NONE */
+        };
+        var span = new TestSpan(this, name, spanContext, (options === null || options === void 0 ? void 0 : options.kind) || exports.SpanKind.INTERNAL, parentContext ? parentContext.spanId : undefined, options === null || options === void 0 ? void 0 : options.startTime);
+        this.knownSpans.push(span);
+        if (isRootSpan) {
+            this.rootSpans.push(span);
+        }
+        return span;
+    };
+    return TestTracer;
+}(NoOpTracer));
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * Creates a function that can be used to create spans using the global tracer.
+ *
+ * Usage:
+ *
+ * ```typescript
+ * // once
+ * const createSpan = createSpanFunction({ packagePrefix: "Azure.Data.AppConfiguration", namespace: "Microsoft.AppConfiguration" });
+ *
+ * // in each operation
+ * const span = createSpan("deleteConfigurationSetting", operationOptions);
+ *    // code...
+ * span.end();
+ * ```
+ *
+ * @hidden
+ * @param args - allows configuration of the prefix for each span as well as the az.namespace field.
+ */
+function createSpanFunction(args) {
+    return function (operationName, operationOptions) {
+        var tracer = getTracer();
+        var tracingOptions = (operationOptions === null || operationOptions === void 0 ? void 0 : operationOptions.tracingOptions) || {};
+        var spanOptions = tslib.__assign({ kind: exports.SpanKind.INTERNAL }, tracingOptions.spanOptions);
+        var spanName = args.packagePrefix ? args.packagePrefix + "." + operationName : operationName;
+        var span = tracer.startSpan(spanName, spanOptions, tracingOptions.tracingContext);
+        if (args.namespace) {
+            span.setAttribute("az.namespace", args.namespace);
+        }
+        var newSpanOptions = tracingOptions.spanOptions || {};
+        if (span.isRecording() && args.namespace) {
+            newSpanOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { attributes: tslib.__assign(tslib.__assign({}, spanOptions.attributes), { "az.namespace": args.namespace }) });
+        }
+        var newTracingOptions = tslib.__assign(tslib.__assign({}, tracingOptions), { spanOptions: newSpanOptions, tracingContext: setSpan(tracingOptions.tracingContext || context.active(), span) });
+        var newOperationOptions = tslib.__assign(tslib.__assign({}, operationOptions), { tracingOptions: newTracingOptions });
+        return {
+            span: span,
+            updatedOptions: newOperationOptions
+        };
+    };
+}
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+var VERSION = "00";
+/**
+ * Generates a `SpanContext` given a `traceparent` header value.
+ * @param traceParent - Serialized span context data as a `traceparent` header value.
+ * @returns The `SpanContext` generated from the `traceparent` value.
+ */
+function extractSpanContextFromTraceParentHeader(traceParentHeader) {
+    var parts = traceParentHeader.split("-");
+    if (parts.length !== 4) {
+        return;
+    }
+    var version = parts[0], traceId = parts[1], spanId = parts[2], traceOptions = parts[3];
+    if (version !== VERSION) {
+        return;
+    }
+    var traceFlags = parseInt(traceOptions, 16);
+    var spanContext = {
+        spanId: spanId,
+        traceId: traceId,
+        traceFlags: traceFlags
+    };
+    return spanContext;
+}
+/**
+ * Generates a `traceparent` value given a span context.
+ * @param spanContext - Contains context for a specific span.
+ * @returns The `spanContext` represented as a `traceparent` value.
+ */
+function getTraceParentHeader(spanContext) {
+    var missingFields = [];
+    if (!spanContext.traceId) {
+        missingFields.push("traceId");
+    }
+    if (!spanContext.spanId) {
+        missingFields.push("spanId");
+    }
+    if (missingFields.length) {
+        return;
+    }
+    var flags = spanContext.traceFlags || 0 /* NONE */;
+    var hexFlags = flags.toString(16);
+    var traceFlags = hexFlags.length === 1 ? "0" + hexFlags : hexFlags;
+    // https://www.w3.org/TR/trace-context/#traceparent-header-field-values
+    return VERSION + "-" + spanContext.traceId + "-" + spanContext.spanId + "-" + traceFlags;
+}
+
+exports.NoOpSpan = NoOpSpan;
+exports.NoOpTracer = NoOpTracer;
+exports.OpenCensusSpanWrapper = OpenCensusSpanWrapper;
+exports.OpenCensusTracerWrapper = OpenCensusTracerWrapper;
+exports.TestSpan = TestSpan;
+exports.TestTracer = TestTracer;
+exports.context = context;
+exports.createSpanFunction = createSpanFunction;
+exports.extractSpanContextFromTraceParentHeader = extractSpanContextFromTraceParentHeader;
+exports.getSpan = getSpan;
+exports.getSpanContext = getSpanContext;
+exports.getTraceParentHeader = getTraceParentHeader;
+exports.getTracer = getTracer;
+exports.setSpan = setSpan;
+exports.setSpanContext = setSpanContext;
+exports.setTracer = setTracer;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
 /* 895 */,
 /* 896 */
 /***/ (function(module) {
@@ -65243,7 +67110,56 @@ function state(list, sortMethod)
 
 /***/ }),
 /* 904 */,
-/* 905 */,
+/* 905 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DiagLogLevel = void 0;
+/**
+ * Defines the available internal logging levels for the diagnostic logger, the numeric values
+ * of the levels are defined to match the original values from the initial LogLevel to avoid
+ * compatibility/migration issues for any implementation that assume the numeric ordering.
+ */
+var DiagLogLevel;
+(function (DiagLogLevel) {
+    /** Diagnostic Logging level setting to disable all logging (except and forced logs) */
+    DiagLogLevel[DiagLogLevel["NONE"] = 0] = "NONE";
+    /** Identifies an error scenario */
+    DiagLogLevel[DiagLogLevel["ERROR"] = 30] = "ERROR";
+    /** Identifies a warning scenario */
+    DiagLogLevel[DiagLogLevel["WARN"] = 50] = "WARN";
+    /** General informational log message */
+    DiagLogLevel[DiagLogLevel["INFO"] = 60] = "INFO";
+    /** General debug log message */
+    DiagLogLevel[DiagLogLevel["DEBUG"] = 70] = "DEBUG";
+    /**
+     * Detailed trace level logging should only be used for development, should only be set
+     * in a development environment.
+     */
+    DiagLogLevel[DiagLogLevel["VERBOSE"] = 80] = "VERBOSE";
+    /** Used to set the logging level to include all logging */
+    DiagLogLevel[DiagLogLevel["ALL"] = 9999] = "ALL";
+})(DiagLogLevel = exports.DiagLogLevel || (exports.DiagLogLevel = {}));
+//# sourceMappingURL=types.js.map
+
+/***/ }),
 /* 906 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -65380,7 +67296,38 @@ module.exports = function(num) {
 /***/ }),
 /* 915 */,
 /* 916 */,
-/* 917 */,
+/* 917 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TraceFlags = void 0;
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var TraceFlags;
+(function (TraceFlags) {
+    /** Represents no flag set. */
+    TraceFlags[TraceFlags["NONE"] = 0] = "NONE";
+    /** Bit to represent whether trace is sampled in trace flags. */
+    TraceFlags[TraceFlags["SAMPLED"] = 1] = "SAMPLED";
+})(TraceFlags = exports.TraceFlags || (exports.TraceFlags = {}));
+//# sourceMappingURL=trace_flags.js.map
+
+/***/ }),
 /* 918 */,
 /* 919 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -65424,7 +67371,53 @@ module.exports = function(num) {
 
 
 /***/ }),
-/* 920 */,
+/* 920 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.defaultTextMapSetter = exports.defaultTextMapGetter = void 0;
+exports.defaultTextMapGetter = {
+    get: function (carrier, key) {
+        if (carrier == null) {
+            return undefined;
+        }
+        return carrier[key];
+    },
+    keys: function (carrier) {
+        if (carrier == null) {
+            return [];
+        }
+        return Object.keys(carrier);
+    },
+};
+exports.defaultTextMapSetter = {
+    set: function (carrier, key, value) {
+        if (carrier == null) {
+            return;
+        }
+        carrier[key] = value;
+    },
+};
+//# sourceMappingURL=TextMapPropagator.js.map
+
+/***/ }),
 /* 921 */,
 /* 922 */,
 /* 923 */
@@ -66147,7 +68140,33 @@ var CanonicalCode;
 /* 933 */,
 /* 934 */,
 /* 935 */,
-/* 936 */,
+/* 936 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VERSION = void 0;
+// this is autogenerated file, see scripts/version-update.js
+exports.VERSION = '1.0.0-rc.0';
+//# sourceMappingURL=version.js.map
+
+/***/ }),
 /* 937 */,
 /* 938 */,
 /* 939 */
@@ -66346,7 +68365,53 @@ exports.checkBypass = checkBypass;
 /* 951 */,
 /* 952 */,
 /* 953 */,
-/* 954 */,
+/* 954 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SamplingDecision = void 0;
+/**
+ * A sampling decision that determines how a {@link Span} will be recorded
+ * and collected.
+ */
+var SamplingDecision;
+(function (SamplingDecision) {
+    /**
+     * `Span.isRecording() === false`, span will not be recorded and all events
+     * and attributes will be dropped.
+     */
+    SamplingDecision[SamplingDecision["NOT_RECORD"] = 0] = "NOT_RECORD";
+    /**
+     * `Span.isRecording() === true`, but `Sampled` flag in {@link TraceFlags}
+     * MUST NOT be set.
+     */
+    SamplingDecision[SamplingDecision["RECORD"] = 1] = "RECORD";
+    /**
+     * `Span.isRecording() === true` AND `Sampled` flag in {@link TraceFlags}
+     * MUST be set.
+     */
+    SamplingDecision[SamplingDecision["RECORD_AND_SAMPLED"] = 2] = "RECORD_AND_SAMPLED";
+})(SamplingDecision = exports.SamplingDecision || (exports.SamplingDecision = {}));
+//# sourceMappingURL=SamplingResult.js.map
+
+/***/ }),
 /* 955 */,
 /* 956 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -66688,7 +68753,60 @@ exports.safeTrimTrailingSeparator = safeTrimTrailingSeparator;
 
 /***/ }),
 /* 973 */,
-/* 974 */,
+/* 974 */
+/***/ (function(module, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function isTLSSocket(socket) {
+    return socket.encrypted;
+}
+const deferToConnect = (socket, fn) => {
+    let listeners;
+    if (typeof fn === 'function') {
+        const connect = fn;
+        listeners = { connect };
+    }
+    else {
+        listeners = fn;
+    }
+    const hasConnectListener = typeof listeners.connect === 'function';
+    const hasSecureConnectListener = typeof listeners.secureConnect === 'function';
+    const hasCloseListener = typeof listeners.close === 'function';
+    const onConnect = () => {
+        if (hasConnectListener) {
+            listeners.connect();
+        }
+        if (isTLSSocket(socket) && hasSecureConnectListener) {
+            if (socket.authorized) {
+                listeners.secureConnect();
+            }
+            else if (!socket.authorizationError) {
+                socket.once('secureConnect', listeners.secureConnect);
+            }
+        }
+        if (hasCloseListener) {
+            socket.once('close', listeners.close);
+        }
+    };
+    if (socket.writable && !socket.connecting) {
+        onConnect();
+    }
+    else if (socket.connecting) {
+        socket.once('connect', onConnect);
+    }
+    else if (socket.destroyed && hasCloseListener) {
+        listeners.close(socket._hadError);
+    }
+};
+exports.default = deferToConnect;
+// For CommonJS default export support
+module.exports = deferToConnect;
+module.exports.default = deferToConnect;
+
+
+/***/ }),
 /* 975 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -66934,11 +69052,95 @@ function plural(ms, n, name) {
 /***/ }),
 /* 978 */,
 /* 979 */,
-/* 980 */,
+/* 980 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NOOP_TRACER = exports.NoopTracer = void 0;
+var context_1 = __webpack_require__(527);
+var NoopSpan_1 = __webpack_require__(340);
+var spancontext_utils_1 = __webpack_require__(787);
+/**
+ * No-op implementations of {@link Tracer}.
+ */
+var NoopTracer = /** @class */ (function () {
+    function NoopTracer() {
+    }
+    // startSpan starts a noop span.
+    NoopTracer.prototype.startSpan = function (name, options, context) {
+        var root = Boolean(options === null || options === void 0 ? void 0 : options.root);
+        if (root) {
+            return new NoopSpan_1.NoopSpan();
+        }
+        var parentFromContext = context && context_1.getSpanContext(context);
+        if (isSpanContext(parentFromContext) &&
+            spancontext_utils_1.isSpanContextValid(parentFromContext)) {
+            return new NoopSpan_1.NoopSpan(parentFromContext);
+        }
+        else {
+            return new NoopSpan_1.NoopSpan();
+        }
+    };
+    return NoopTracer;
+}());
+exports.NoopTracer = NoopTracer;
+function isSpanContext(spanContext) {
+    return (typeof spanContext === 'object' &&
+        typeof spanContext['spanId'] === 'string' &&
+        typeof spanContext['traceId'] === 'string' &&
+        typeof spanContext['traceFlags'] === 'number');
+}
+exports.NOOP_TRACER = new NoopTracer();
+//# sourceMappingURL=NoopTracer.js.map
+
+/***/ }),
 /* 981 */,
 /* 982 */,
 /* 983 */,
-/* 984 */,
+/* 984 */
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+class Deprecation extends Error {
+  constructor(message) {
+    super(message); // Maintains proper stack trace (only available on V8)
+
+    /* istanbul ignore next */
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+
+    this.name = 'Deprecation';
+  }
+
+}
+
+exports.Deprecation = Deprecation;
+
+
+/***/ }),
 /* 985 */,
 /* 986 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -66990,7 +69192,92 @@ exports.exec = exec;
 //# sourceMappingURL=exec.js.map
 
 /***/ }),
-/* 987 */,
+/* 987 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DiagAPI = void 0;
+var logLevelLogger_1 = __webpack_require__(71);
+var types_1 = __webpack_require__(905);
+var global_utils_1 = __webpack_require__(361);
+var API_NAME = 'diag';
+/**
+ * Singleton object which represents the entry point to the OpenTelemetry internal
+ * diagnostic API
+ */
+var DiagAPI = /** @class */ (function () {
+    /**
+     * Private internal constructor
+     * @private
+     */
+    function DiagAPI() {
+        function _logProxy(funcName) {
+            return function () {
+                var logger = global_utils_1.getGlobal('diag');
+                // shortcut if logger not set
+                if (!logger)
+                    return;
+                return logger[funcName].apply(logger, 
+                // work around Function.prototype.apply types
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                arguments);
+            };
+        }
+        // Using self local variable for minification purposes as 'this' cannot be minified
+        var self = this;
+        // DiagAPI specific functions
+        self.setLogger = function (logger, logLevel) {
+            var _a;
+            if (logLevel === void 0) { logLevel = types_1.DiagLogLevel.INFO; }
+            if (logger === self) {
+                // There isn't much we can do here.
+                // Logging to the console might break the user application.
+                // Try to log to self. If a logger was previously registered it will receive the log.
+                var err = new Error('Cannot use diag as the logger for itself. Please use a DiagLogger implementation like ConsoleDiagLogger or a custom implementation');
+                self.error((_a = err.stack) !== null && _a !== void 0 ? _a : err.message);
+                return;
+            }
+            global_utils_1.registerGlobal('diag', logLevelLogger_1.createLogLevelDiagLogger(logLevel, logger), true);
+        };
+        self.disable = function () {
+            global_utils_1.unregisterGlobal(API_NAME);
+        };
+        self.verbose = _logProxy('verbose');
+        self.debug = _logProxy('debug');
+        self.info = _logProxy('info');
+        self.warn = _logProxy('warn');
+        self.error = _logProxy('error');
+    }
+    /** Get the singleton instance of the DiagAPI API */
+    DiagAPI.instance = function () {
+        if (!this._instance) {
+            this._instance = new DiagAPI();
+        }
+        return this._instance;
+    };
+    return DiagAPI;
+}());
+exports.DiagAPI = DiagAPI;
+//# sourceMappingURL=diag.js.map
+
+/***/ }),
 /* 988 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -67000,7 +69287,7 @@ const http = __webpack_require__(605);
 const https = __webpack_require__(211);
 const resolveALPN = __webpack_require__(611);
 const QuickLRU = __webpack_require__(290);
-const Http2ClientRequest = __webpack_require__(181);
+const Http2ClientRequest = __webpack_require__(170);
 const calculateServerName = __webpack_require__(138);
 const urlToOptions = __webpack_require__(507);
 
@@ -67216,7 +69503,43 @@ exports.default = (message) => {
 
 
 /***/ }),
-/* 995 */,
+/* 995 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+ * Copyright The OpenTelemetry Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__exportStar(__webpack_require__(765), exports);
+__exportStar(__webpack_require__(560), exports);
+__exportStar(__webpack_require__(53), exports);
+//# sourceMappingURL=index.js.map
+
+/***/ }),
 /* 996 */,
 /* 997 */,
 /* 998 */,
@@ -67246,8 +69569,8 @@ var tunnel = __webpack_require__(413);
 var coreAuth = __webpack_require__(229);
 var xml2js = __webpack_require__(992);
 var os = __webpack_require__(87);
-var coreTracing = __webpack_require__(263);
-var api = __webpack_require__(440);
+var coreTracing = __webpack_require__(894);
+__webpack_require__(275);
 
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
@@ -67421,7 +69744,7 @@ var Constants = {
     /**
      * The core-http version
      */
-    coreHttpVersion: "1.2.3",
+    coreHttpVersion: "1.2.4",
     /**
      * Specifies HTTP.
      */
@@ -68817,6 +71140,9 @@ var WebResource = /** @class */ (function () {
         if (options.spanOptions) {
             this.spanOptions = options.spanOptions;
         }
+        if (options.tracingContext) {
+            this.tracingContext = options.tracingContext;
+        }
         this.abortSignal = options.abortSignal;
         this.onDownloadProgress = options.onDownloadProgress;
         this.onUploadProgress = options.onUploadProgress;
@@ -70028,6 +72354,7 @@ function operationOptionsToRequestOptionsBase(opts) {
     }
     if (tracingOptions) {
         result.spanOptions = tracingOptions.spanOptions;
+        result.tracingContext = tracingOptions.tracingContext;
     }
     return result;
 }
@@ -70195,7 +72522,7 @@ function getPathStringFromParameterPath(parameterPath, mapper) {
 // Copyright (c) Microsoft Corporation.
 /**
  * Gets the list of status codes for streaming responses.
- * @internal @hidden
+ * @internal
  */
 function getStreamResponseStatusCodes(operationSpec) {
     var result = new Set();
@@ -71016,213 +73343,223 @@ function getRegistrationStatus(policy, url, originalRequest) {
 }
 
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// Default options for the cycler if none are provided
+var DEFAULT_CYCLER_OPTIONS = {
+    forcedRefreshWindowInMs: 1000,
+    retryIntervalInMs: 3000,
+    refreshWindowInMs: 1000 * 60 * 2 // Start refreshing 2m before expiry
+};
 /**
- * Defines the default token refresh buffer duration.
+ * Converts an an unreliable access token getter (which may resolve with null)
+ * into an AccessTokenGetter by retrying the unreliable getter in a regular
+ * interval.
+ *
+ * @param getAccessToken - a function that produces a promise of an access
+ * token that may fail by returning null
+ * @param retryIntervalInMs - the time (in milliseconds) to wait between retry
+ * attempts
+ * @param timeoutInMs - the timestamp after which the refresh attempt will fail,
+ * throwing an exception
+ * @returns - a promise that, if it resolves, will resolve with an access token
  */
-var TokenRefreshBufferMs = 2 * 60 * 1000; // 2 Minutes
-/**
- * Provides an {@link AccessTokenCache} implementation which clears
- * the cached {@link AccessToken}'s after the expiresOnTimestamp has
- * passed.
- */
-var ExpiringAccessTokenCache = /** @class */ (function () {
-    /**
-     * Constructs an instance of {@link ExpiringAccessTokenCache} with
-     * an optional expiration buffer time.
-     */
-    function ExpiringAccessTokenCache(tokenRefreshBufferMs) {
-        if (tokenRefreshBufferMs === void 0) { tokenRefreshBufferMs = TokenRefreshBufferMs; }
-        this.cachedToken = undefined;
-        this.tokenRefreshBufferMs = tokenRefreshBufferMs;
-    }
-    ExpiringAccessTokenCache.prototype.setCachedToken = function (accessToken) {
-        this.cachedToken = accessToken;
-    };
-    ExpiringAccessTokenCache.prototype.getCachedToken = function () {
-        if (this.cachedToken &&
-            Date.now() + this.tokenRefreshBufferMs >= this.cachedToken.expiresOnTimestamp) {
-            this.cachedToken = undefined;
-        }
-        return this.cachedToken;
-    };
-    return ExpiringAccessTokenCache;
-}());
-
-// Copyright (c) Microsoft Corporation.
-/**
- * Helps the core-http token authentication policies with requesting a new token if we're not currently waiting for a new token.
- */
-var AccessTokenRefresher = /** @class */ (function () {
-    function AccessTokenRefresher(credential, scopes, requiredMillisecondsBeforeNewRefresh) {
-        if (requiredMillisecondsBeforeNewRefresh === void 0) { requiredMillisecondsBeforeNewRefresh = 30000; }
-        this.credential = credential;
-        this.scopes = scopes;
-        this.requiredMillisecondsBeforeNewRefresh = requiredMillisecondsBeforeNewRefresh;
-        this.lastCalled = 0;
-    }
-    /**
-     * Returns true if the required milliseconds(defaulted to 30000) have been passed signifying
-     * that we are ready for a new refresh.
-     */
-    AccessTokenRefresher.prototype.isReady = function () {
-        // We're only ready for a new refresh if the required milliseconds have passed.
-        return (!this.lastCalled || Date.now() - this.lastCalled > this.requiredMillisecondsBeforeNewRefresh);
-    };
-    /**
-     * Stores the time in which it is called,
-     * then requests a new token,
-     * then sets this.promise to undefined,
-     * then returns the token.
-     */
-    AccessTokenRefresher.prototype.getToken = function (options) {
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var token;
-            return tslib.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        this.lastCalled = Date.now();
-                        return [4 /*yield*/, this.credential.getToken(this.scopes, options)];
-                    case 1:
-                        token = _a.sent();
-                        this.promise = undefined;
-                        return [2 /*return*/, token || undefined];
-                }
+function beginRefresh(getAccessToken, retryIntervalInMs, timeoutInMs) {
+    return tslib.__awaiter(this, void 0, void 0, function () {
+        // This wrapper handles exceptions gracefully as long as we haven't exceeded
+        // the timeout.
+        function tryGetAccessToken() {
+            return tslib.__awaiter(this, void 0, void 0, function () {
+                var _a, finalToken;
+                return tslib.__generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            if (!(Date.now() < timeoutInMs)) return [3 /*break*/, 5];
+                            _b.label = 1;
+                        case 1:
+                            _b.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, getAccessToken()];
+                        case 2: return [2 /*return*/, _b.sent()];
+                        case 3:
+                            _a = _b.sent();
+                            return [2 /*return*/, null];
+                        case 4: return [3 /*break*/, 7];
+                        case 5: return [4 /*yield*/, getAccessToken()];
+                        case 6:
+                            finalToken = _b.sent();
+                            // Timeout is up, so throw if it's still null
+                            if (finalToken === null) {
+                                throw new Error("Failed to refresh access token.");
+                            }
+                            return [2 /*return*/, finalToken];
+                        case 7: return [2 /*return*/];
+                    }
+                });
             });
+        }
+        var token;
+        return tslib.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, tryGetAccessToken()];
+                case 1:
+                    token = _a.sent();
+                    _a.label = 2;
+                case 2:
+                    if (!(token === null)) return [3 /*break*/, 5];
+                    return [4 /*yield*/, delay(retryIntervalInMs)];
+                case 3:
+                    _a.sent();
+                    return [4 /*yield*/, tryGetAccessToken()];
+                case 4:
+                    token = _a.sent();
+                    return [3 /*break*/, 2];
+                case 5: return [2 /*return*/, token];
+            }
         });
+    });
+}
+/**
+ * Creates a token cycler from a credential, scopes, and optional settings.
+ *
+ * A token cycler represents a way to reliably retrieve a valid access token
+ * from a TokenCredential. It will handle initializing the token, refreshing it
+ * when it nears expiration, and synchronizes refresh attempts to avoid
+ * concurrency hazards.
+ *
+ * @param credential - the underlying TokenCredential that provides the access
+ * token
+ * @param scopes - the scopes to request authorization for
+ * @param tokenCyclerOptions - optionally override default settings for the cycler
+ *
+ * @returns - a function that reliably produces a valid access token
+ */
+function createTokenCycler(credential, scopes, tokenCyclerOptions) {
+    var _this = this;
+    var refreshWorker = null;
+    var token = null;
+    var options = tslib.__assign(tslib.__assign({}, DEFAULT_CYCLER_OPTIONS), tokenCyclerOptions);
+    /**
+     * This little holder defines several predicates that we use to construct
+     * the rules of refreshing the token.
+     */
+    var cycler = {
+        /**
+         * Produces true if a refresh job is currently in progress.
+         */
+        get isRefreshing() {
+            return refreshWorker !== null;
+        },
+        /**
+         * Produces true if the cycler SHOULD refresh (we are within the refresh
+         * window and not already refreshing)
+         */
+        get shouldRefresh() {
+            var _a;
+            return (!cycler.isRefreshing &&
+                ((_a = token === null || token === void 0 ? void 0 : token.expiresOnTimestamp) !== null && _a !== void 0 ? _a : 0) - options.refreshWindowInMs < Date.now());
+        },
+        /**
+         * Produces true if the cycler MUST refresh (null or nearly-expired
+         * token).
+         */
+        get mustRefresh() {
+            return (token === null || token.expiresOnTimestamp - options.forcedRefreshWindowInMs < Date.now());
+        }
     };
     /**
-     * Requests a new token if we're not currently waiting for a new token.
-     * Returns null if the required time between each call hasn't been reached.
+     * Starts a refresh job or returns the existing job if one is already
+     * running.
      */
-    AccessTokenRefresher.prototype.refresh = function (options) {
-        if (!this.promise) {
-            this.promise = this.getToken(options);
+    function refresh(getTokenOptions) {
+        var _a;
+        if (!cycler.isRefreshing) {
+            // We bind `scopes` here to avoid passing it around a lot
+            var tryGetAccessToken = function () {
+                return credential.getToken(scopes, getTokenOptions);
+            };
+            // Take advantage of promise chaining to insert an assignment to `token`
+            // before the refresh can be considered done.
+            refreshWorker = beginRefresh(tryGetAccessToken, options.retryIntervalInMs, 
+            // If we don't have a token, then we should timeout immediately
+            (_a = token === null || token === void 0 ? void 0 : token.expiresOnTimestamp) !== null && _a !== void 0 ? _a : Date.now())
+                .then(function (_token) {
+                refreshWorker = null;
+                token = _token;
+                return token;
+            })
+                .catch(function (reason) {
+                // We also should reset the refresher if we enter a failed state.  All
+                // existing awaiters will throw, but subsequent requests will start a
+                // new retry chain.
+                refreshWorker = null;
+                token = null;
+                throw reason;
+            });
         }
-        return this.promise;
-    };
-    return AccessTokenRefresher;
-}());
-
-// Copyright (c) Microsoft Corporation.
+        return refreshWorker;
+    }
+    return function (tokenOptions) { return tslib.__awaiter(_this, void 0, void 0, function () {
+        return tslib.__generator(this, function (_a) {
+            //
+            // Simple rules:
+            // - If we MUST refresh, then return the refresh task, blocking
+            //   the pipeline until a token is available.
+            // - If we SHOULD refresh, then run refresh but don't return it
+            //   (we can still use the cached token).
+            // - Return the token, since it's fine if we didn't return in
+            //   step 1.
+            //
+            if (cycler.mustRefresh)
+                return [2 /*return*/, refresh(tokenOptions)];
+            if (cycler.shouldRefresh) {
+                refresh(tokenOptions);
+            }
+            return [2 /*return*/, token];
+        });
+    }); };
+}
+// #endregion
 /**
- * The automated token refresh will only start to happen at the
- * expiration date minus the value of timeBetweenRefreshAttemptsInMs,
- * which is by default 30 seconds.
- */
-var timeBetweenRefreshAttemptsInMs = 30000;
-/**
- * Creates a new BearerTokenAuthenticationPolicy factory.
+ * Creates a new factory for a RequestPolicy that applies a bearer token to
+ * the requests' `Authorization` headers.
  *
  * @param credential - The TokenCredential implementation that can supply the bearer token.
  * @param scopes - The scopes for which the bearer token applies.
  */
 function bearerTokenAuthenticationPolicy(credential, scopes) {
-    var tokenCache = new ExpiringAccessTokenCache();
-    var tokenRefresher = new AccessTokenRefresher(credential, scopes, timeBetweenRefreshAttemptsInMs);
+    // This simple function encapsulates the entire process of reliably retrieving the token
+    var getToken = createTokenCycler(credential, scopes /* , options */);
+    var BearerTokenAuthenticationPolicy = /** @class */ (function (_super) {
+        tslib.__extends(BearerTokenAuthenticationPolicy, _super);
+        function BearerTokenAuthenticationPolicy(nextPolicy, options) {
+            return _super.call(this, nextPolicy, options) || this;
+        }
+        BearerTokenAuthenticationPolicy.prototype.sendRequest = function (webResource) {
+            return tslib.__awaiter(this, void 0, void 0, function () {
+                var token;
+                return tslib.__generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, getToken({
+                                abortSignal: webResource.abortSignal,
+                                tracingOptions: {
+                                    spanOptions: webResource.spanOptions,
+                                    tracingContext: webResource.tracingContext
+                                }
+                            })];
+                        case 1:
+                            token = (_a.sent()).token;
+                            webResource.headers.set(Constants.HeaderConstants.AUTHORIZATION, "Bearer " + token);
+                            return [2 /*return*/, this._nextPolicy.sendRequest(webResource)];
+                    }
+                });
+            });
+        };
+        return BearerTokenAuthenticationPolicy;
+    }(BaseRequestPolicy));
     return {
         create: function (nextPolicy, options) {
-            return new BearerTokenAuthenticationPolicy(nextPolicy, options, tokenCache, tokenRefresher);
+            return new BearerTokenAuthenticationPolicy(nextPolicy, options);
         }
     };
 }
-/**
- *
- * Provides a RequestPolicy that can request a token from a TokenCredential
- * implementation and then apply it to the Authorization header of a request
- * as a Bearer token.
- *
- */
-var BearerTokenAuthenticationPolicy = /** @class */ (function (_super) {
-    tslib.__extends(BearerTokenAuthenticationPolicy, _super);
-    /**
-     * Creates a new BearerTokenAuthenticationPolicy object.
-     *
-     * @param nextPolicy - The next RequestPolicy in the request pipeline.
-     * @param options - Options for this RequestPolicy.
-     * @param credential - The TokenCredential implementation that can supply the bearer token.
-     * @param scopes - The scopes for which the bearer token applies.
-     * @param tokenCache - The cache for the most recent AccessToken returned from the TokenCredential.
-     */
-    function BearerTokenAuthenticationPolicy(nextPolicy, options, tokenCache, tokenRefresher) {
-        var _this = _super.call(this, nextPolicy, options) || this;
-        _this.tokenCache = tokenCache;
-        _this.tokenRefresher = tokenRefresher;
-        return _this;
-    }
-    /**
-     * Applies the Bearer token to the request through the Authorization header.
-     */
-    BearerTokenAuthenticationPolicy.prototype.sendRequest = function (webResource) {
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var token;
-            return tslib.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!webResource.headers)
-                            webResource.headers = new HttpHeaders();
-                        return [4 /*yield*/, this.getToken({
-                                abortSignal: webResource.abortSignal,
-                                tracingOptions: {
-                                    spanOptions: webResource.spanOptions
-                                }
-                            })];
-                    case 1:
-                        token = _a.sent();
-                        webResource.headers.set(Constants.HeaderConstants.AUTHORIZATION, "Bearer " + token);
-                        return [2 /*return*/, this._nextPolicy.sendRequest(webResource)];
-                }
-            });
-        });
-    };
-    /**
-     * Attempts a token update if any other time related conditionals have been reached based on the tokenRefresher class.
-     */
-    BearerTokenAuthenticationPolicy.prototype.updateTokenIfNeeded = function (options) {
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var accessToken;
-            return tslib.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!this.tokenRefresher.isReady()) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.tokenRefresher.refresh(options)];
-                    case 1:
-                        accessToken = _a.sent();
-                        this.tokenCache.setCachedToken(accessToken);
-                        _a.label = 2;
-                    case 2: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    BearerTokenAuthenticationPolicy.prototype.getToken = function (options) {
-        return tslib.__awaiter(this, void 0, void 0, function () {
-            var accessToken;
-            return tslib.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        accessToken = this.tokenCache.getCachedToken();
-                        if (!(accessToken === undefined)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.tokenRefresher.refresh(options)];
-                    case 1:
-                        // Waiting for the next refresh only if the cache is unable to retrieve the access token,
-                        // which means that it has expired, or it has never been set.
-                        accessToken = _a.sent();
-                        this.tokenCache.setCachedToken(accessToken);
-                        return [3 /*break*/, 3];
-                    case 2:
-                        // If we still have a cached access token,
-                        // And any other time related conditionals have been reached based on the tokenRefresher class,
-                        // then attempt to refresh without waiting.
-                        this.updateTokenIfNeeded(options);
-                        _a.label = 3;
-                    case 3: return [2 /*return*/, accessToken ? accessToken.token : undefined];
-                }
-            });
-        });
-    };
-    return BearerTokenAuthenticationPolicy;
-}(BaseRequestPolicy));
 
 // Copyright (c) Microsoft Corporation.
 function systemErrorRetryPolicy(retryCount, retryInterval, minRetryInterval, maxRetryInterval) {
@@ -71586,6 +73923,10 @@ var KeepAlivePolicy = /** @class */ (function (_super) {
 }(BaseRequestPolicy));
 
 // Copyright (c) Microsoft Corporation.
+var createSpan = coreTracing.createSpanFunction({
+    packagePrefix: "",
+    namespace: ""
+});
 function tracingPolicy(tracingOptions) {
     if (tracingOptions === void 0) { tracingOptions = {}; }
     return {
@@ -71603,17 +73944,20 @@ var TracingPolicy = /** @class */ (function (_super) {
     }
     TracingPolicy.prototype.sendRequest = function (request) {
         return tslib.__awaiter(this, void 0, void 0, function () {
-            var tracer, spanOptions, path, span, spanContext, traceParentHeader, traceState, response, serviceRequestId, err_1;
+            var path, span, spanContext, traceParentHeader, traceState, response, serviceRequestId, err_1;
             return tslib.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!request.spanOptions || !request.spanOptions.parent) {
+                        if (!request.tracingContext) {
                             return [2 /*return*/, this._nextPolicy.sendRequest(request)];
                         }
-                        tracer = coreTracing.getTracer();
-                        spanOptions = tslib.__assign(tslib.__assign({}, request.spanOptions), { kind: api.SpanKind.CLIENT });
                         path = URLBuilder.parse(request.url).getPath() || "/";
-                        span = tracer.startSpan(path, spanOptions);
+                        span = createSpan(path, {
+                            tracingOptions: {
+                                spanOptions: tslib.__assign(tslib.__assign({}, request.spanOptions), { kind: coreTracing.SpanKind.CLIENT }),
+                                tracingContext: request.tracingContext
+                            }
+                        }).span;
                         span.setAttributes({
                             "http.method": request.method,
                             "http.url": request.url,
@@ -71997,6 +74341,9 @@ var ServiceClient = /** @class */ (function () {
                             if (options.spanOptions) {
                                 httpRequest.spanOptions = options.spanOptions;
                             }
+                            if (options.tracingContext) {
+                                httpRequest.tracingContext = options.tracingContext;
+                            }
                             if (options.shouldDeserialize !== undefined && options.shouldDeserialize !== null) {
                                 httpRequest.shouldDeserialize = options.shouldDeserialize;
                             }
@@ -72296,7 +74643,7 @@ function flattenResponse(_response, responseSpec) {
         var modelProperties_1 = (typeName === "Composite" && bodyMapper.type.modelProperties) || {};
         var isPageableResponse = Object.keys(modelProperties_1).some(function (k) { return modelProperties_1[k].serializedName === ""; });
         if (typeName === "Sequence" || isPageableResponse) {
-            var arrayResponse = tslib.__spreadArrays((_response.parsedBody || []));
+            var arrayResponse = tslib.__spreadArray([], (_response.parsedBody || []));
             for (var _i = 0, _a = Object.keys(modelProperties_1); _i < _a.length; _i++) {
                 var key = _a[_i];
                 if (modelProperties_1[key].serializedName) {
@@ -72339,31 +74686,110 @@ function getCredentialScopes(options, baseUri) {
 
 // Copyright (c) Microsoft Corporation.
 /**
- * Creates a function called createSpan to create spans using the global tracer.
+ * This function is only here for compatibility. Use createSpanFunction in core-tracing.
+ *
+ * @deprecated This function is only here for compatibility. Use createSpanFunction in core-tracing.
  * @hidden
+
  * @param spanConfig - The name of the operation being performed.
  * @param tracingOptions - The options for the underlying http request.
  */
-function createSpanFunction(_a) {
-    var packagePrefix = _a.packagePrefix, namespace = _a.namespace;
-    return function (operationName, operationOptions) {
-        var tracer = coreTracing.getTracer();
-        var tracingOptions = operationOptions.tracingOptions || {};
-        var spanOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { kind: api.SpanKind.INTERNAL });
-        var span = tracer.startSpan(packagePrefix + "." + operationName, spanOptions);
-        span.setAttribute("az.namespace", namespace);
-        var newSpanOptions = tracingOptions.spanOptions || {};
-        if (span.isRecording()) {
-            newSpanOptions = tslib.__assign(tslib.__assign({}, tracingOptions.spanOptions), { parent: span.context(), attributes: tslib.__assign(tslib.__assign({}, spanOptions.attributes), { "az.namespace": namespace }) });
-        }
-        var newTracingOptions = tslib.__assign(tslib.__assign({}, tracingOptions), { spanOptions: newSpanOptions });
-        var newOperationOptions = tslib.__assign(tslib.__assign({}, operationOptions), { tracingOptions: newTracingOptions });
-        return {
-            span: span,
-            updatedOptions: newOperationOptions
-        };
-    };
+function createSpanFunction(args) {
+    return coreTracing.createSpanFunction(args);
 }
+
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+/**
+ * Defines the default token refresh buffer duration.
+ */
+var TokenRefreshBufferMs = 2 * 60 * 1000; // 2 Minutes
+/**
+ * Provides an {@link AccessTokenCache} implementation which clears
+ * the cached {@link AccessToken}'s after the expiresOnTimestamp has
+ * passed.
+ *
+ * @deprecated No longer used in the bearer authorization policy.
+ */
+var ExpiringAccessTokenCache = /** @class */ (function () {
+    /**
+     * Constructs an instance of {@link ExpiringAccessTokenCache} with
+     * an optional expiration buffer time.
+     */
+    function ExpiringAccessTokenCache(tokenRefreshBufferMs) {
+        if (tokenRefreshBufferMs === void 0) { tokenRefreshBufferMs = TokenRefreshBufferMs; }
+        this.cachedToken = undefined;
+        this.tokenRefreshBufferMs = tokenRefreshBufferMs;
+    }
+    ExpiringAccessTokenCache.prototype.setCachedToken = function (accessToken) {
+        this.cachedToken = accessToken;
+    };
+    ExpiringAccessTokenCache.prototype.getCachedToken = function () {
+        if (this.cachedToken &&
+            Date.now() + this.tokenRefreshBufferMs >= this.cachedToken.expiresOnTimestamp) {
+            this.cachedToken = undefined;
+        }
+        return this.cachedToken;
+    };
+    return ExpiringAccessTokenCache;
+}());
+
+// Copyright (c) Microsoft Corporation.
+/**
+ * Helps the core-http token authentication policies with requesting a new token if we're not currently waiting for a new token.
+ *
+ * @deprecated No longer used in the bearer authorization policy.
+ */
+var AccessTokenRefresher = /** @class */ (function () {
+    function AccessTokenRefresher(credential, scopes, requiredMillisecondsBeforeNewRefresh) {
+        if (requiredMillisecondsBeforeNewRefresh === void 0) { requiredMillisecondsBeforeNewRefresh = 30000; }
+        this.credential = credential;
+        this.scopes = scopes;
+        this.requiredMillisecondsBeforeNewRefresh = requiredMillisecondsBeforeNewRefresh;
+        this.lastCalled = 0;
+    }
+    /**
+     * Returns true if the required milliseconds(defaulted to 30000) have been passed signifying
+     * that we are ready for a new refresh.
+     */
+    AccessTokenRefresher.prototype.isReady = function () {
+        // We're only ready for a new refresh if the required milliseconds have passed.
+        return (!this.lastCalled || Date.now() - this.lastCalled > this.requiredMillisecondsBeforeNewRefresh);
+    };
+    /**
+     * Stores the time in which it is called,
+     * then requests a new token,
+     * then sets this.promise to undefined,
+     * then returns the token.
+     */
+    AccessTokenRefresher.prototype.getToken = function (options) {
+        return tslib.__awaiter(this, void 0, void 0, function () {
+            var token;
+            return tslib.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        this.lastCalled = Date.now();
+                        return [4 /*yield*/, this.credential.getToken(this.scopes, options)];
+                    case 1:
+                        token = _a.sent();
+                        this.promise = undefined;
+                        return [2 /*return*/, token || undefined];
+                }
+            });
+        });
+    };
+    /**
+     * Requests a new token if we're not currently waiting for a new token.
+     * Returns null if the required time between each call hasn't been reached.
+     */
+    AccessTokenRefresher.prototype.refresh = function (options) {
+        if (!this.promise) {
+            this.promise = this.getToken(options);
+        }
+        return this.promise;
+    };
+    return AccessTokenRefresher;
+}());
 
 // Copyright (c) Microsoft Corporation.
 var HeaderConstants = Constants.HeaderConstants;
