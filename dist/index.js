@@ -2265,209 +2265,65 @@ exports.default = _default;
 
 /***/ }),
 /* 25 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports) {
 
+//TODO: handle reviver/dehydrate function like normal
+//and handle indentation, like normal.
+//if anyone needs this... please send pull request.
 
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- *
- * Expose `debug()` as the module.
- */
+exports.stringify = function stringify (o) {
+  if('undefined' == typeof o) return o
 
-exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
-exports.coerce = coerce;
-exports.disable = disable;
-exports.enable = enable;
-exports.enabled = enabled;
-exports.humanize = __webpack_require__(977);
+  if(o && Buffer.isBuffer(o))
+    return JSON.stringify(':base64:' + o.toString('base64'))
 
-/**
- * The currently active debug mode names, and names to skip.
- */
+  if(o && o.toJSON)
+    o =  o.toJSON()
 
-exports.names = [];
-exports.skips = [];
+  if(o && 'object' === typeof o) {
+    var s = ''
+    var array = Array.isArray(o)
+    s = array ? '[' : '{'
+    var first = true
 
-/**
- * Map of special "%n" handling functions, for the debug "format" argument.
- *
- * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
- */
-
-exports.formatters = {};
-
-/**
- * Previous log timestamp.
- */
-
-var prevTime;
-
-/**
- * Select a color.
- * @param {String} namespace
- * @return {Number}
- * @api private
- */
-
-function selectColor(namespace) {
-  var hash = 0, i;
-
-  for (i in namespace) {
-    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
-    hash |= 0; // Convert to 32bit integer
-  }
-
-  return exports.colors[Math.abs(hash) % exports.colors.length];
-}
-
-/**
- * Create a debugger with the given `namespace`.
- *
- * @param {String} namespace
- * @return {Function}
- * @api public
- */
-
-function createDebug(namespace) {
-
-  function debug() {
-    // disabled?
-    if (!debug.enabled) return;
-
-    var self = debug;
-
-    // set `diff` timestamp
-    var curr = +new Date();
-    var ms = curr - (prevTime || curr);
-    self.diff = ms;
-    self.prev = prevTime;
-    self.curr = curr;
-    prevTime = curr;
-
-    // turn the `arguments` into a proper Array
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-
-    args[0] = exports.coerce(args[0]);
-
-    if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %O
-      args.unshift('%O');
-    }
-
-    // apply any `formatters` transformations
-    var index = 0;
-    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
-      // if we encounter an escaped % then don't increase the array index
-      if (match === '%%') return match;
-      index++;
-      var formatter = exports.formatters[format];
-      if ('function' === typeof formatter) {
-        var val = args[index];
-        match = formatter.call(self, val);
-
-        // now we need to remove `args[index]` since it's inlined in the `format`
-        args.splice(index, 1);
-        index--;
+    for(var k in o) {
+      var ignore = 'function' == typeof o[k] || (!array && 'undefined' === typeof o[k])
+      if(Object.hasOwnProperty.call(o, k) && !ignore) {
+        if(!first)
+          s += ','
+        first = false
+        if (array) {
+          if(o[k] == undefined)
+            s += 'null'
+          else
+            s += stringify(o[k])
+        } else if (o[k] !== void(0)) {
+          s += stringify(k) + ':' + stringify(o[k])
+        }
       }
-      return match;
-    });
-
-    // apply env-specific formatting (colors, etc.)
-    exports.formatArgs.call(self, args);
-
-    var logFn = debug.log || exports.log || console.log.bind(console);
-    logFn.apply(self, args);
-  }
-
-  debug.namespace = namespace;
-  debug.enabled = exports.enabled(namespace);
-  debug.useColors = exports.useColors();
-  debug.color = selectColor(namespace);
-
-  // env-specific initialization logic for debug instances
-  if ('function' === typeof exports.init) {
-    exports.init(debug);
-  }
-
-  return debug;
-}
-
-/**
- * Enables a debug mode by namespaces. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} namespaces
- * @api public
- */
-
-function enable(namespaces) {
-  exports.save(namespaces);
-
-  exports.names = [];
-  exports.skips = [];
-
-  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
-  var len = split.length;
-
-  for (var i = 0; i < len; i++) {
-    if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/\*/g, '.*?');
-    if (namespaces[0] === '-') {
-      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-    } else {
-      exports.names.push(new RegExp('^' + namespaces + '$'));
     }
-  }
+
+    s += array ? ']' : '}'
+
+    return s
+  } else if ('string' === typeof o) {
+    return JSON.stringify(/^:/.test(o) ? ':' + o : o)
+  } else if ('undefined' === typeof o) {
+    return 'null';
+  } else
+    return JSON.stringify(o)
 }
 
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-function disable() {
-  exports.enable('');
-}
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-function enabled(name) {
-  var i, len;
-  for (i = 0, len = exports.skips.length; i < len; i++) {
-    if (exports.skips[i].test(name)) {
-      return false;
+exports.parse = function (s) {
+  return JSON.parse(s, function (key, value) {
+    if('string' === typeof value) {
+      if(/^:base64:/.test(value))
+        return Buffer.from(value.substring(8), 'base64')
+      else
+        return /^:/.test(value) ? value.substring(1) : value 
     }
-  }
-  for (i = 0, len = exports.names.length; i < len; i++) {
-    if (exports.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Coerce `val`.
- *
- * @param {Mixed} val
- * @return {Mixed}
- * @api private
- */
-
-function coerce(val) {
-  if (val instanceof Error) return val.stack || val.message;
-  return val;
+    return value
+  })
 }
 
 
@@ -3683,22 +3539,23 @@ __exportStar(__webpack_require__(577), exports);
  * Module dependencies.
  */
 
-var tty = __webpack_require__(867);
-var util = __webpack_require__(669);
+const tty = __webpack_require__(867);
+const util = __webpack_require__(669);
 
 /**
  * This is the Node.js implementation of `debug()`.
- *
- * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(25);
 exports.init = init;
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
 exports.load = load;
 exports.useColors = useColors;
+exports.destroy = util.deprecate(
+	() => {},
+	'Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.'
+);
 
 /**
  * Colors.
@@ -3706,79 +3563,137 @@ exports.useColors = useColors;
 
 exports.colors = [6, 2, 3, 4, 5, 1];
 
+try {
+	// Optional dependency (as in, doesn't need to be installed, NOT like optionalDependencies in package.json)
+	// eslint-disable-next-line import/no-extraneous-dependencies
+	const supportsColor = __webpack_require__(247);
+
+	if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
+		exports.colors = [
+			20,
+			21,
+			26,
+			27,
+			32,
+			33,
+			38,
+			39,
+			40,
+			41,
+			42,
+			43,
+			44,
+			45,
+			56,
+			57,
+			62,
+			63,
+			68,
+			69,
+			74,
+			75,
+			76,
+			77,
+			78,
+			79,
+			80,
+			81,
+			92,
+			93,
+			98,
+			99,
+			112,
+			113,
+			128,
+			129,
+			134,
+			135,
+			148,
+			149,
+			160,
+			161,
+			162,
+			163,
+			164,
+			165,
+			166,
+			167,
+			168,
+			169,
+			170,
+			171,
+			172,
+			173,
+			178,
+			179,
+			184,
+			185,
+			196,
+			197,
+			198,
+			199,
+			200,
+			201,
+			202,
+			203,
+			204,
+			205,
+			206,
+			207,
+			208,
+			209,
+			214,
+			215,
+			220,
+			221
+		];
+	}
+} catch (error) {
+	// Swallow - we only care if `supports-color` is available; it doesn't have to be.
+}
+
 /**
  * Build up the default `inspectOpts` object from the environment variables.
  *
  *   $ DEBUG_COLORS=no DEBUG_DEPTH=10 DEBUG_SHOW_HIDDEN=enabled node script.js
  */
 
-exports.inspectOpts = Object.keys(process.env).filter(function (key) {
-  return /^debug_/i.test(key);
-}).reduce(function (obj, key) {
-  // camel-case
-  var prop = key
-    .substring(6)
-    .toLowerCase()
-    .replace(/_([a-z])/g, function (_, k) { return k.toUpperCase() });
+exports.inspectOpts = Object.keys(process.env).filter(key => {
+	return /^debug_/i.test(key);
+}).reduce((obj, key) => {
+	// Camel-case
+	const prop = key
+		.substring(6)
+		.toLowerCase()
+		.replace(/_([a-z])/g, (_, k) => {
+			return k.toUpperCase();
+		});
 
-  // coerce string value into JS value
-  var val = process.env[key];
-  if (/^(yes|on|true|enabled)$/i.test(val)) val = true;
-  else if (/^(no|off|false|disabled)$/i.test(val)) val = false;
-  else if (val === 'null') val = null;
-  else val = Number(val);
+	// Coerce string value into JS value
+	let val = process.env[key];
+	if (/^(yes|on|true|enabled)$/i.test(val)) {
+		val = true;
+	} else if (/^(no|off|false|disabled)$/i.test(val)) {
+		val = false;
+	} else if (val === 'null') {
+		val = null;
+	} else {
+		val = Number(val);
+	}
 
-  obj[prop] = val;
-  return obj;
+	obj[prop] = val;
+	return obj;
 }, {});
-
-/**
- * The file descriptor to write the `debug()` calls to.
- * Set the `DEBUG_FD` env variable to override with another value. i.e.:
- *
- *   $ DEBUG_FD=3 node script.js 3>debug.log
- */
-
-var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
-
-if (1 !== fd && 2 !== fd) {
-  util.deprecate(function(){}, 'except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)')()
-}
-
-var stream = 1 === fd ? process.stdout :
-             2 === fd ? process.stderr :
-             createWritableStdioStream(fd);
 
 /**
  * Is stdout a TTY? Colored output is enabled when `true`.
  */
 
 function useColors() {
-  return 'colors' in exports.inspectOpts
-    ? Boolean(exports.inspectOpts.colors)
-    : tty.isatty(fd);
+	return 'colors' in exports.inspectOpts ?
+		Boolean(exports.inspectOpts.colors) :
+		tty.isatty(process.stderr.fd);
 }
-
-/**
- * Map %o to `util.inspect()`, all on a single line.
- */
-
-exports.formatters.o = function(v) {
-  this.inspectOpts.colors = this.useColors;
-  return util.inspect(v, this.inspectOpts)
-    .split('\n').map(function(str) {
-      return str.trim()
-    }).join(' ');
-};
-
-/**
- * Map %o to `util.inspect()`, allowing multiple lines if needed.
- */
-
-exports.formatters.O = function(v) {
-  this.inspectOpts.colors = this.useColors;
-  return util.inspect(v, this.inspectOpts);
-};
 
 /**
  * Adds ANSI color escape codes if enabled.
@@ -3787,27 +3702,33 @@ exports.formatters.O = function(v) {
  */
 
 function formatArgs(args) {
-  var name = this.namespace;
-  var useColors = this.useColors;
+	const {namespace: name, useColors} = this;
 
-  if (useColors) {
-    var c = this.color;
-    var prefix = '  \u001b[3' + c + ';1m' + name + ' ' + '\u001b[0m';
+	if (useColors) {
+		const c = this.color;
+		const colorCode = '\u001B[3' + (c < 8 ? c : '8;5;' + c);
+		const prefix = `  ${colorCode};1m${name} \u001B[0m`;
 
-    args[0] = prefix + args[0].split('\n').join('\n' + prefix);
-    args.push('\u001b[3' + c + 'm+' + exports.humanize(this.diff) + '\u001b[0m');
-  } else {
-    args[0] = new Date().toUTCString()
-      + ' ' + name + ' ' + args[0];
-  }
+		args[0] = prefix + args[0].split('\n').join('\n' + prefix);
+		args.push(colorCode + 'm+' + module.exports.humanize(this.diff) + '\u001B[0m');
+	} else {
+		args[0] = getDate() + name + ' ' + args[0];
+	}
+}
+
+function getDate() {
+	if (exports.inspectOpts.hideDate) {
+		return '';
+	}
+	return new Date().toISOString() + ' ';
 }
 
 /**
- * Invokes `util.format()` with the specified arguments and writes to `stream`.
+ * Invokes `util.format()` with the specified arguments and writes to stderr.
  */
 
-function log() {
-  return stream.write(util.format.apply(util, arguments) + '\n');
+function log(...args) {
+	return process.stderr.write(util.format(...args) + '\n');
 }
 
 /**
@@ -3816,15 +3737,14 @@ function log() {
  * @param {String} namespaces
  * @api private
  */
-
 function save(namespaces) {
-  if (null == namespaces) {
-    // If you set a process.env field to null or undefined, it gets cast to the
-    // string 'null' or 'undefined'. Just delete instead.
-    delete process.env.DEBUG;
-  } else {
-    process.env.DEBUG = namespaces;
-  }
+	if (namespaces) {
+		process.env.DEBUG = namespaces;
+	} else {
+		// If you set a process.env field to null or undefined, it gets cast to the
+		// string 'null' or 'undefined'. Just delete instead.
+		delete process.env.DEBUG;
+	}
 }
 
 /**
@@ -3835,75 +3755,7 @@ function save(namespaces) {
  */
 
 function load() {
-  return process.env.DEBUG;
-}
-
-/**
- * Copied from `node/src/node.js`.
- *
- * XXX: It's lame that node doesn't expose this API out-of-the-box. It also
- * relies on the undocumented `tty_wrap.guessHandleType()` which is also lame.
- */
-
-function createWritableStdioStream (fd) {
-  var stream;
-  var tty_wrap = process.binding('tty_wrap');
-
-  // Note stream._type is used for test-module-load-list.js
-
-  switch (tty_wrap.guessHandleType(fd)) {
-    case 'TTY':
-      stream = new tty.WriteStream(fd);
-      stream._type = 'tty';
-
-      // Hack to have stream not keep the event loop alive.
-      // See https://github.com/joyent/node/issues/1726
-      if (stream._handle && stream._handle.unref) {
-        stream._handle.unref();
-      }
-      break;
-
-    case 'FILE':
-      var fs = __webpack_require__(747);
-      stream = new fs.SyncWriteStream(fd, { autoClose: false });
-      stream._type = 'fs';
-      break;
-
-    case 'PIPE':
-    case 'TCP':
-      var net = __webpack_require__(631);
-      stream = new net.Socket({
-        fd: fd,
-        readable: false,
-        writable: true
-      });
-
-      // FIXME Should probably have an option in net.Socket to create a
-      // stream from an existing fd which is writable only. But for now
-      // we'll just add this hack and set the `readable` member to false.
-      // Test: ./node test/fixtures/echo.js < /etc/passwd
-      stream.readable = false;
-      stream.read = null;
-      stream._type = 'pipe';
-
-      // FIXME Hack to have stream not keep the event loop alive.
-      // See https://github.com/joyent/node/issues/1726
-      if (stream._handle && stream._handle.unref) {
-        stream._handle.unref();
-      }
-      break;
-
-    default:
-      // Probably an error on in uv_guess_handle()
-      throw new Error('Implement me. Unknown stream file type!');
-  }
-
-  // For supporting legacy API we put the FD here.
-  stream.fd = fd;
-
-  stream._isStdio = true;
-
-  return stream;
+	return process.env.DEBUG;
 }
 
 /**
@@ -3913,20 +3765,39 @@ function createWritableStdioStream (fd) {
  * differently for a particular `debug` instance.
  */
 
-function init (debug) {
-  debug.inspectOpts = {};
+function init(debug) {
+	debug.inspectOpts = {};
 
-  var keys = Object.keys(exports.inspectOpts);
-  for (var i = 0; i < keys.length; i++) {
-    debug.inspectOpts[keys[i]] = exports.inspectOpts[keys[i]];
-  }
+	const keys = Object.keys(exports.inspectOpts);
+	for (let i = 0; i < keys.length; i++) {
+		debug.inspectOpts[keys[i]] = exports.inspectOpts[keys[i]];
+	}
 }
 
+module.exports = __webpack_require__(486)(exports);
+
+const {formatters} = module.exports;
+
 /**
- * Enable namespaces listed in `process.env.DEBUG` initially.
+ * Map %o to `util.inspect()`, all on a single line.
  */
 
-exports.enable(load());
+formatters.o = function (v) {
+	this.inspectOpts.colors = this.useColors;
+	return util.inspect(v, this.inspectOpts)
+		.split('\n')
+		.map(str => str.trim())
+		.join(' ');
+};
+
+/**
+ * Map %O to `util.inspect()`, allowing multiple lines if needed.
+ */
+
+formatters.O = function (v) {
+	this.inspectOpts.colors = this.useColors;
+	return util.inspect(v, this.inspectOpts);
+};
 
 
 /***/ }),
@@ -6726,6 +6597,7 @@ const path = __webpack_require__(622)
 const quote = __webpack_require__(531)
 const cliParser = __webpack_require__(880)()
 const findYarnWorkspaceRoot = __webpack_require__(638)
+const debug = __webpack_require__(784)('@cypress/github-action')
 const { ping } = __webpack_require__(946)
 
 /**
@@ -6743,16 +6615,16 @@ const execCommand = (
   console.log('current working directory "%s"', cwd)
 
   const args = cliParser.parse(fullCommand)
-  core.debug(`parsed command: ${args.join(' ')}`)
+  debug(`parsed command: ${args.join(' ')}`)
 
   return io.which(args[0], true).then((toolPath) => {
-    core.debug(`found command "${toolPath}"`)
-    core.debug(`with arguments ${args.slice(1).join(' ')}`)
+    debug(`found command "${toolPath}"`)
+    debug(`with arguments ${args.slice(1).join(' ')}`)
 
     const toolArguments = args.slice(1)
     const argsString = toolArguments.join(' ')
-    core.debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
-    core.debug(`waiting for the command to finish? ${waitToFinish}`)
+    debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
+    debug(`waiting for the command to finish? ${waitToFinish}`)
 
     const promise = exec.exec(
       quote(toolPath),
@@ -6784,7 +6656,7 @@ const startWorkingDirectory = process.cwd()
 const workingDirectory = core.getInput('working-directory')
   ? path.resolve(core.getInput('working-directory'))
   : startWorkingDirectory
-core.debug(`working directory ${workingDirectory}`)
+debug(`working directory ${workingDirectory}`)
 
 /**
  * When running "npm install" or any other Cypress-related commands,
@@ -6808,7 +6680,7 @@ const useYarn = () => fs.existsSync(yarnFilename)
 const lockHash = () => {
   const lockFilename = useYarn() ? yarnFilename : packageLockFilename
   const fileHash = hasha.fromFileSync(lockFilename)
-  core.debug(`Hash from file ${lockFilename} is ${fileHash}`)
+  debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
 }
 
@@ -6845,9 +6717,7 @@ const getNpmCache = () => {
 const CYPRESS_CACHE_FOLDER =
   process.env.CYPRESS_CACHE_FOLDER ||
   path.join(homeDirectory, '.cache', 'Cypress')
-core.debug(
-  `using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`
-)
+debug(`using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`)
 
 const getCypressBinaryCache = () => {
   const o = {
@@ -6863,7 +6733,7 @@ const getCypressBinaryCache = () => {
 }
 
 const restoreCachedNpm = () => {
-  core.debug('trying to restore cached NPM modules')
+  debug('trying to restore cached NPM modules')
   const NPM_CACHE = getNpmCache()
   return restoreCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey, [
     NPM_CACHE.restoreKeys
@@ -6873,7 +6743,7 @@ const restoreCachedNpm = () => {
 }
 
 const saveCachedNpm = () => {
-  core.debug('saving NPM modules')
+  debug('saving NPM modules')
   const NPM_CACHE = getNpmCache()
   return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
     (e) => {
@@ -6883,7 +6753,7 @@ const saveCachedNpm = () => {
 }
 
 const restoreCachedCypressBinary = () => {
-  core.debug('trying to restore cached Cypress binary')
+  debug('trying to restore cached Cypress binary')
   const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return restoreCache(
     [CYPRESS_BINARY_CACHE.inputPath],
@@ -6895,10 +6765,10 @@ const restoreCachedCypressBinary = () => {
 }
 
 const saveCachedCypressBinary = () => {
-  core.debug('saving Cypress binary')
+  debug('saving Cypress binary')
 
   if (isCypressBinarySkipped()) {
-    core.debug('Skipping Cypress cache save, binary is not installed')
+    debug('Skipping Cypress cache save, binary is not installed')
     return Promise.resolve()
   }
 
@@ -6922,14 +6792,14 @@ const install = () => {
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
   const installCommand = core.getInput('install-command')
   if (installCommand) {
-    core.debug(`using custom install command "${installCommand}"`)
+    debug(`using custom install command "${installCommand}"`)
     return execCommand(installCommand, true, 'install command')
   }
 
   if (useYarn()) {
-    core.debug('installing NPM dependencies using Yarn')
+    debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then((yarnPath) => {
-      core.debug(`yarn at "${yarnPath}"`)
+      debug(`yarn at "${yarnPath}"`)
       return exec.exec(
         quote(yarnPath),
         ['--frozen-lockfile'],
@@ -6937,22 +6807,22 @@ const install = () => {
       )
     })
   } else {
-    core.debug('installing NPM dependencies')
+    debug('installing NPM dependencies')
 
     return io.which('npm', true).then((npmPath) => {
-      core.debug(`npm at "${npmPath}"`)
+      debug(`npm at "${npmPath}"`)
       return exec.exec(quote(npmPath), ['ci'], cypressCommandOptions)
     })
   }
 }
 
 const listCypressBinaries = () => {
-  core.debug(
+  debug(
     `Cypress versions in the cache folder ${CYPRESS_CACHE_FOLDER}`
   )
 
   if (isCypressBinarySkipped()) {
-    core.debug('Skipping Cypress cache list, binary is not installed')
+    debug('Skipping Cypress cache list, binary is not installed')
     return Promise.resolve()
   }
 
@@ -6967,11 +6837,11 @@ const listCypressBinaries = () => {
 }
 
 const verifyCypressBinary = () => {
-  core.debug(
+  debug(
     `Verifying Cypress using cache folder ${CYPRESS_CACHE_FOLDER}`
   )
   if (isCypressBinarySkipped()) {
-    core.debug('Skipping Cypress verify, binary is not installed')
+    debug('Skipping Cypress verify, binary is not installed')
     return Promise.resolve()
   }
 
@@ -7014,7 +6884,7 @@ const getSpecsList = () => {
     return
   }
   const specLines = spec.split('\n').join(',')
-  core.debug(`extracted spec lines into: "${specLines}"`)
+  debug(`extracted spec lines into: "${specLines}"`)
   return specLines
 }
 
@@ -7024,7 +6894,7 @@ const buildAppMaybe = () => {
     return
   }
 
-  core.debug(`building application using "${buildApp}"`)
+  debug(`building application using "${buildApp}"`)
 
   return execCommand(buildApp, true, 'build app')
 }
@@ -7040,7 +6910,7 @@ const startServersMaybe = () => {
     startCommand = core.getInput('start')
   }
   if (!startCommand) {
-    core.debug('No start command found')
+    debug('No start command found')
     return Promise.resolve()
   }
 
@@ -7049,7 +6919,7 @@ const startServersMaybe = () => {
     .split(/,|\n/)
     .map((s) => s.trim())
     .filter(Boolean)
-  core.debug(
+  debug(
     `Separated ${
       separateStartCommands.length
     } start commands ${separateStartCommands.join(', ')}`
@@ -7082,13 +6952,13 @@ const waitOnUrl = (waitOn, waitOnTimeout = 60) => {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
-  core.debug(`Waiting for urls ${waitUrls.join(', ')}`)
+  debug(`Waiting for urls ${waitUrls.join(', ')}`)
 
   // run every wait promise after the previous has finished
   // to avoid "noise" of debug messages
   return waitUrls.reduce((prevPromise, url) => {
     return prevPromise.then(() => {
-      core.debug(`Waiting for url ${url}`)
+      debug(`Waiting for url ${url}`)
       return ping(url, waitTimeoutMs)
     })
   }, Promise.resolve())
@@ -7131,7 +7001,7 @@ const getCiBuildId = async () => {
   let buildId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
 
   if (GITHUB_TOKEN) {
-    core.debug(
+    debug(
       `Determining build id by asking GitHub about run ${GITHUB_RUN_ID}`
     )
 
@@ -7150,7 +7020,7 @@ const getCiBuildId = async () => {
 
     if (resp && resp.data && resp.data.head_branch) {
       branch = resp.data.head_branch
-      core.debug(`found the branch name ${branch}`)
+      debug(`found the branch name ${branch}`)
     }
 
     // This will return the complete list of jobs for a run with their steps,
@@ -7175,14 +7045,14 @@ const getCiBuildId = async () => {
       runsList.data.jobs.length
     ) {
       const jobId = runsList.data.jobs[0].id
-      core.debug(`fetched run list with jobId ${jobId}`)
+      debug(`fetched run list with jobId ${jobId}`)
       buildId = `${GITHUB_RUN_ID}-${jobId}`
     } else {
-      core.debug('could not get run list data')
+      debug('could not get run list data')
     }
   }
 
-  core.debug(`determined branch ${branch} and build id ${buildId}`)
+  debug(`determined branch ${branch} and build id ${buildId}`)
   return { branch, buildId }
 }
 
@@ -7190,7 +7060,7 @@ const getCiBuildId = async () => {
  * Forms entire command line like "npx cypress run ..."
  */
 const runTestsUsingCommandLine = async () => {
-  core.debug('Running Cypress tests using CLI command')
+  debug('Running Cypress tests using CLI command')
   const quoteArgument = isWindows() ? quote : I
 
   const commandPrefix = core.getInput('command-prefix')
@@ -7210,7 +7080,7 @@ const runTestsUsingCommandLine = async () => {
   // otherwise they are passed all as a single string
   const parts = commandPrefix.split(' ')
   cmd = cmd.concat(parts)
-  core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
+  debug(`with concatenated command prefix: ${cmd.join(' ')}`)
 
   // push each CLI argument separately
   cmd.push('cypress')
@@ -7295,10 +7165,10 @@ const runTestsUsingCommandLine = async () => {
     windowsVerbatimArguments: false
   }
 
-  core.debug(`in working directory "${cypressCommandOptions.cwd}"`)
+  debug(`in working directory "${cypressCommandOptions.cwd}"`)
 
   const npxPath = await io.which('npx', true)
-  core.debug(`npx path: ${npxPath}`)
+  debug(`npx path: ${npxPath}`)
 
   return exec.exec(quote(npxPath), cmd, opts)
 }
@@ -7330,14 +7200,14 @@ const runTests = async () => {
     return runTestsUsingCommandLine()
   }
 
-  core.debug('Running Cypress tests using NPM module API')
-  core.debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
-  core.debug(`working directory ${workingDirectory}`)
+  debug('Running Cypress tests using NPM module API')
+  debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
+  debug(`working directory ${workingDirectory}`)
   const cypressModulePath =
     require.resolve('cypress', {
       paths: [workingDirectory]
     }) || 'cypress'
-  core.debug(`resolved cypress ${cypressModulePath}`)
+  debug(`resolved cypress ${cypressModulePath}`)
 
   const cypress = require(cypressModulePath)
   const cypressOptions = {
@@ -7355,7 +7225,7 @@ const runTests = async () => {
   }
   if (core.getInput('config')) {
     cypressOptions.config = core.getInput('config')
-    core.debug(`Cypress config "${cypressOptions.config}"`)
+    debug(`Cypress config "${cypressOptions.config}"`)
   }
   const spec = getSpecsList()
   if (spec) {
@@ -7385,7 +7255,7 @@ const runTests = async () => {
     cypressOptions.ciBuildId = core.getInput('ci-build-id') || buildId
   }
 
-  core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
+  debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
     process.chdir(startWorkingDirectory)
@@ -7406,13 +7276,13 @@ const runTests = async () => {
       )
     }
 
-    core.debug(`Cypress tests: ${testResults.totalFailed} failed`)
+    debug(`Cypress tests: ${testResults.totalFailed} failed`)
 
     const dashboardUrl = testResults.runUrl
     if (dashboardUrl) {
-      core.debug(`Dashboard url ${dashboardUrl}`)
+      debug(`Dashboard url ${dashboardUrl}`)
     } else {
-      core.debug('There is no Dashboard url')
+      debug('There is no Dashboard url')
     }
     // we still set the output explicitly
     core.setOutput('dashboardUrl', dashboardUrl)
@@ -7448,20 +7318,18 @@ const installMaybe = () => {
     restoreCachedNpm(),
     restoreCachedCypressBinary()
   ]).then(([npmCacheHit, cypressCacheHit]) => {
-    core.debug(`npm cache hit ${npmCacheHit}`)
-    core.debug(`cypress cache hit ${cypressCacheHit}`)
+    debug(`npm cache hit ${npmCacheHit}`)
+    debug(`cypress cache hit ${cypressCacheHit}`)
 
     return install().then(() => {
-      core.debug('install has finished')
+      debug('install has finished')
       return listCypressBinaries().then(() => {
         if (npmCacheHit && cypressCacheHit) {
-          core.debug(
-            'no need to verify Cypress binary or save caches'
-          )
+          debug('no need to verify Cypress binary or save caches')
           return Promise.resolve(undefined)
         }
 
-        core.debug('verifying Cypress binary')
+        debug('verifying Cypress binary')
         return verifyCypressBinary()
           .then(saveCachedNpm)
           .then(saveCachedCypressBinary)
@@ -7476,7 +7344,7 @@ installMaybe()
   .then(waitOnMaybe)
   .then(runTests)
   .then(() => {
-    core.debug('all done, exiting')
+    debug('all done, exiting')
     // force exit to avoid waiting for child processes,
     // like the server we have started
     // see https://github.com/actions/toolkit/issues/216
@@ -7485,8 +7353,8 @@ installMaybe()
   .catch((error) => {
     // final catch - when anything goes wrong, throw an error
     // and exit the action with non-zero code
-    core.debug(error.message)
-    core.debug(error.stack)
+    debug(error.message)
+    debug(error.stack)
 
     core.setFailed(error.message)
     process.exit(1)
@@ -9621,7 +9489,260 @@ DelayedStream.prototype._checkIfMaxDataSizeExceeded = function() {
 
 
 /***/ }),
-/* 153 */,
+/* 153 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Module dependencies.
+ */
+
+var tty = __webpack_require__(867);
+var util = __webpack_require__(669);
+
+/**
+ * This is the Node.js implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = __webpack_require__(637);
+exports.init = init;
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+
+/**
+ * Colors.
+ */
+
+exports.colors = [6, 2, 3, 4, 5, 1];
+
+/**
+ * Build up the default `inspectOpts` object from the environment variables.
+ *
+ *   $ DEBUG_COLORS=no DEBUG_DEPTH=10 DEBUG_SHOW_HIDDEN=enabled node script.js
+ */
+
+exports.inspectOpts = Object.keys(process.env).filter(function (key) {
+  return /^debug_/i.test(key);
+}).reduce(function (obj, key) {
+  // camel-case
+  var prop = key
+    .substring(6)
+    .toLowerCase()
+    .replace(/_([a-z])/g, function (_, k) { return k.toUpperCase() });
+
+  // coerce string value into JS value
+  var val = process.env[key];
+  if (/^(yes|on|true|enabled)$/i.test(val)) val = true;
+  else if (/^(no|off|false|disabled)$/i.test(val)) val = false;
+  else if (val === 'null') val = null;
+  else val = Number(val);
+
+  obj[prop] = val;
+  return obj;
+}, {});
+
+/**
+ * The file descriptor to write the `debug()` calls to.
+ * Set the `DEBUG_FD` env variable to override with another value. i.e.:
+ *
+ *   $ DEBUG_FD=3 node script.js 3>debug.log
+ */
+
+var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
+
+if (1 !== fd && 2 !== fd) {
+  util.deprecate(function(){}, 'except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)')()
+}
+
+var stream = 1 === fd ? process.stdout :
+             2 === fd ? process.stderr :
+             createWritableStdioStream(fd);
+
+/**
+ * Is stdout a TTY? Colored output is enabled when `true`.
+ */
+
+function useColors() {
+  return 'colors' in exports.inspectOpts
+    ? Boolean(exports.inspectOpts.colors)
+    : tty.isatty(fd);
+}
+
+/**
+ * Map %o to `util.inspect()`, all on a single line.
+ */
+
+exports.formatters.o = function(v) {
+  this.inspectOpts.colors = this.useColors;
+  return util.inspect(v, this.inspectOpts)
+    .split('\n').map(function(str) {
+      return str.trim()
+    }).join(' ');
+};
+
+/**
+ * Map %o to `util.inspect()`, allowing multiple lines if needed.
+ */
+
+exports.formatters.O = function(v) {
+  this.inspectOpts.colors = this.useColors;
+  return util.inspect(v, this.inspectOpts);
+};
+
+/**
+ * Adds ANSI color escape codes if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs(args) {
+  var name = this.namespace;
+  var useColors = this.useColors;
+
+  if (useColors) {
+    var c = this.color;
+    var prefix = '  \u001b[3' + c + ';1m' + name + ' ' + '\u001b[0m';
+
+    args[0] = prefix + args[0].split('\n').join('\n' + prefix);
+    args.push('\u001b[3' + c + 'm+' + exports.humanize(this.diff) + '\u001b[0m');
+  } else {
+    args[0] = new Date().toUTCString()
+      + ' ' + name + ' ' + args[0];
+  }
+}
+
+/**
+ * Invokes `util.format()` with the specified arguments and writes to `stream`.
+ */
+
+function log() {
+  return stream.write(util.format.apply(util, arguments) + '\n');
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  if (null == namespaces) {
+    // If you set a process.env field to null or undefined, it gets cast to the
+    // string 'null' or 'undefined'. Just delete instead.
+    delete process.env.DEBUG;
+  } else {
+    process.env.DEBUG = namespaces;
+  }
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  return process.env.DEBUG;
+}
+
+/**
+ * Copied from `node/src/node.js`.
+ *
+ * XXX: It's lame that node doesn't expose this API out-of-the-box. It also
+ * relies on the undocumented `tty_wrap.guessHandleType()` which is also lame.
+ */
+
+function createWritableStdioStream (fd) {
+  var stream;
+  var tty_wrap = process.binding('tty_wrap');
+
+  // Note stream._type is used for test-module-load-list.js
+
+  switch (tty_wrap.guessHandleType(fd)) {
+    case 'TTY':
+      stream = new tty.WriteStream(fd);
+      stream._type = 'tty';
+
+      // Hack to have stream not keep the event loop alive.
+      // See https://github.com/joyent/node/issues/1726
+      if (stream._handle && stream._handle.unref) {
+        stream._handle.unref();
+      }
+      break;
+
+    case 'FILE':
+      var fs = __webpack_require__(747);
+      stream = new fs.SyncWriteStream(fd, { autoClose: false });
+      stream._type = 'fs';
+      break;
+
+    case 'PIPE':
+    case 'TCP':
+      var net = __webpack_require__(631);
+      stream = new net.Socket({
+        fd: fd,
+        readable: false,
+        writable: true
+      });
+
+      // FIXME Should probably have an option in net.Socket to create a
+      // stream from an existing fd which is writable only. But for now
+      // we'll just add this hack and set the `readable` member to false.
+      // Test: ./node test/fixtures/echo.js < /etc/passwd
+      stream.readable = false;
+      stream.read = null;
+      stream._type = 'pipe';
+
+      // FIXME Hack to have stream not keep the event loop alive.
+      // See https://github.com/joyent/node/issues/1726
+      if (stream._handle && stream._handle.unref) {
+        stream._handle.unref();
+      }
+      break;
+
+    default:
+      // Probably an error on in uv_guess_handle()
+      throw new Error('Implement me. Unknown stream file type!');
+  }
+
+  // For supporting legacy API we put the FD here.
+  stream.fd = fd;
+
+  stream._isStdio = true;
+
+  return stream;
+}
+
+/**
+ * Init logic for `debug` instances.
+ *
+ * Create a new `inspectOpts` object in case `useColors` is set
+ * differently for a particular `debug` instance.
+ */
+
+function init (debug) {
+  debug.inspectOpts = {};
+
+  var keys = Object.keys(exports.inspectOpts);
+  for (var i = 0; i < keys.length; i++) {
+    debug.inspectOpts[keys[i]] = exports.inspectOpts[keys[i]];
+  }
+}
+
+/**
+ * Enable namespaces listed in `process.env.DEBUG` initially.
+ */
+
+exports.enable(load());
+
+
+/***/ }),
 /* 154 */
 /***/ (function(module) {
 
@@ -12948,7 +13069,148 @@ exports.default = _default;
 
 /***/ }),
 /* 246 */,
-/* 247 */,
+/* 247 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const os = __webpack_require__(87);
+const tty = __webpack_require__(867);
+const hasFlag = __webpack_require__(364);
+
+const {env} = process;
+
+let forceColor;
+if (hasFlag('no-color') ||
+	hasFlag('no-colors') ||
+	hasFlag('color=false') ||
+	hasFlag('color=never')) {
+	forceColor = 0;
+} else if (hasFlag('color') ||
+	hasFlag('colors') ||
+	hasFlag('color=true') ||
+	hasFlag('color=always')) {
+	forceColor = 1;
+}
+
+if ('FORCE_COLOR' in env) {
+	if (env.FORCE_COLOR === 'true') {
+		forceColor = 1;
+	} else if (env.FORCE_COLOR === 'false') {
+		forceColor = 0;
+	} else {
+		forceColor = env.FORCE_COLOR.length === 0 ? 1 : Math.min(parseInt(env.FORCE_COLOR, 10), 3);
+	}
+}
+
+function translateLevel(level) {
+	if (level === 0) {
+		return false;
+	}
+
+	return {
+		level,
+		hasBasic: true,
+		has256: level >= 2,
+		has16m: level >= 3
+	};
+}
+
+function supportsColor(haveStream, streamIsTTY) {
+	if (forceColor === 0) {
+		return 0;
+	}
+
+	if (hasFlag('color=16m') ||
+		hasFlag('color=full') ||
+		hasFlag('color=truecolor')) {
+		return 3;
+	}
+
+	if (hasFlag('color=256')) {
+		return 2;
+	}
+
+	if (haveStream && !streamIsTTY && forceColor === undefined) {
+		return 0;
+	}
+
+	const min = forceColor || 0;
+
+	if (env.TERM === 'dumb') {
+		return min;
+	}
+
+	if (process.platform === 'win32') {
+		// Windows 10 build 10586 is the first Windows release that supports 256 colors.
+		// Windows 10 build 14931 is the first release that supports 16m/TrueColor.
+		const osRelease = os.release().split('.');
+		if (
+			Number(osRelease[0]) >= 10 &&
+			Number(osRelease[2]) >= 10586
+		) {
+			return Number(osRelease[2]) >= 14931 ? 3 : 2;
+		}
+
+		return 1;
+	}
+
+	if ('CI' in env) {
+		if (['TRAVIS', 'CIRCLECI', 'APPVEYOR', 'GITLAB_CI', 'GITHUB_ACTIONS', 'BUILDKITE'].some(sign => sign in env) || env.CI_NAME === 'codeship') {
+			return 1;
+		}
+
+		return min;
+	}
+
+	if ('TEAMCITY_VERSION' in env) {
+		return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env.TEAMCITY_VERSION) ? 1 : 0;
+	}
+
+	if (env.COLORTERM === 'truecolor') {
+		return 3;
+	}
+
+	if ('TERM_PROGRAM' in env) {
+		const version = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
+
+		switch (env.TERM_PROGRAM) {
+			case 'iTerm.app':
+				return version >= 3 ? 3 : 2;
+			case 'Apple_Terminal':
+				return 2;
+			// No default
+		}
+	}
+
+	if (/-256(color)?$/i.test(env.TERM)) {
+		return 2;
+	}
+
+	if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env.TERM)) {
+		return 1;
+	}
+
+	if ('COLORTERM' in env) {
+		return 1;
+	}
+
+	return min;
+}
+
+function getSupportLevel(stream) {
+	const level = supportsColor(stream, stream && stream.isTTY);
+	return translateLevel(level);
+}
+
+module.exports = {
+	supportsColor: getSupportLevel,
+	stdout: translateLevel(supportsColor(true, tty.isatty(1))),
+	stderr: translateLevel(supportsColor(true, tty.isatty(2)))
+};
+
+
+/***/ }),
 /* 248 */,
 /* 249 */,
 /* 250 */,
@@ -17258,7 +17520,7 @@ exports.default = _default;
 
 
 const EventEmitter = __webpack_require__(614);
-const JSONB = __webpack_require__(555);
+const JSONB = __webpack_require__(25);
 
 const loadStore = opts => {
 	const adapters = {
@@ -19003,7 +19265,21 @@ function register(state, name, method, options) {
 
 
 /***/ }),
-/* 364 */,
+/* 364 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = (flag, argv = process.argv) => {
+	const prefix = flag.startsWith('-') ? '' : (flag.length === 1 ? '-' : '--');
+	const position = argv.indexOf(prefix + flag);
+	const terminatorPosition = argv.indexOf('--');
+	return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
+};
+
+
+/***/ }),
 /* 365 */,
 /* 366 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -46092,34 +46368,109 @@ exports.PrefixSecurityEnum = PrefixSecurityEnum;
 /* 408 */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* eslint-env browser */
+
 /**
  * This is the web browser implementation of `debug()`.
- *
- * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(25);
-exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
 exports.load = load;
 exports.useColors = useColors;
-exports.storage = 'undefined' != typeof chrome
-               && 'undefined' != typeof chrome.storage
-                  ? chrome.storage.local
-                  : localstorage();
+exports.storage = localstorage();
+exports.destroy = (() => {
+	let warned = false;
+
+	return () => {
+		if (!warned) {
+			warned = true;
+			console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
+		}
+	};
+})();
 
 /**
  * Colors.
  */
 
 exports.colors = [
-  'lightseagreen',
-  'forestgreen',
-  'goldenrod',
-  'dodgerblue',
-  'darkorchid',
-  'crimson'
+	'#0000CC',
+	'#0000FF',
+	'#0033CC',
+	'#0033FF',
+	'#0066CC',
+	'#0066FF',
+	'#0099CC',
+	'#0099FF',
+	'#00CC00',
+	'#00CC33',
+	'#00CC66',
+	'#00CC99',
+	'#00CCCC',
+	'#00CCFF',
+	'#3300CC',
+	'#3300FF',
+	'#3333CC',
+	'#3333FF',
+	'#3366CC',
+	'#3366FF',
+	'#3399CC',
+	'#3399FF',
+	'#33CC00',
+	'#33CC33',
+	'#33CC66',
+	'#33CC99',
+	'#33CCCC',
+	'#33CCFF',
+	'#6600CC',
+	'#6600FF',
+	'#6633CC',
+	'#6633FF',
+	'#66CC00',
+	'#66CC33',
+	'#9900CC',
+	'#9900FF',
+	'#9933CC',
+	'#9933FF',
+	'#99CC00',
+	'#99CC33',
+	'#CC0000',
+	'#CC0033',
+	'#CC0066',
+	'#CC0099',
+	'#CC00CC',
+	'#CC00FF',
+	'#CC3300',
+	'#CC3333',
+	'#CC3366',
+	'#CC3399',
+	'#CC33CC',
+	'#CC33FF',
+	'#CC6600',
+	'#CC6633',
+	'#CC9900',
+	'#CC9933',
+	'#CCCC00',
+	'#CCCC33',
+	'#FF0000',
+	'#FF0033',
+	'#FF0066',
+	'#FF0099',
+	'#FF00CC',
+	'#FF00FF',
+	'#FF3300',
+	'#FF3333',
+	'#FF3366',
+	'#FF3399',
+	'#FF33CC',
+	'#FF33FF',
+	'#FF6600',
+	'#FF6633',
+	'#FF9900',
+	'#FF9933',
+	'#FFCC00',
+	'#FFCC33'
 ];
 
 /**
@@ -46130,38 +46481,31 @@ exports.colors = [
  * TODO: add a `localStorage` variable to explicitly enable/disable colors
  */
 
+// eslint-disable-next-line complexity
 function useColors() {
-  // NB: In an Electron preload script, document will be defined but not fully
-  // initialized. Since we know we're in Chrome, we'll just detect this case
-  // explicitly
-  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
-    return true;
-  }
+	// NB: In an Electron preload script, document will be defined but not fully
+	// initialized. Since we know we're in Chrome, we'll just detect this case
+	// explicitly
+	if (typeof window !== 'undefined' && window.process && (window.process.type === 'renderer' || window.process.__nwjs)) {
+		return true;
+	}
 
-  // is webkit? http://stackoverflow.com/a/16459606/376773
-  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
-    // is firebug? http://stackoverflow.com/a/398120/376773
-    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
-    // is firefox >= v31?
-    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
-    // double check webkit in userAgent just in case we are in a worker
-    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
+	// Internet Explorer and Edge do not support colors.
+	if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
+		return false;
+	}
+
+	// Is webkit? http://stackoverflow.com/a/16459606/376773
+	// document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+	return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
+		// Is firebug? http://stackoverflow.com/a/398120/376773
+		(typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
+		// Is firefox >= v31?
+		// https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+		(typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
+		// Double check webkit in userAgent just in case we are in a worker
+		(typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
 }
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-exports.formatters.j = function(v) {
-  try {
-    return JSON.stringify(v);
-  } catch (err) {
-    return '[UnexpectedJSONParseError]: ' + err.message;
-  }
-};
-
 
 /**
  * Colorize log arguments if enabled.
@@ -46170,52 +46514,49 @@ exports.formatters.j = function(v) {
  */
 
 function formatArgs(args) {
-  var useColors = this.useColors;
+	args[0] = (this.useColors ? '%c' : '') +
+		this.namespace +
+		(this.useColors ? ' %c' : ' ') +
+		args[0] +
+		(this.useColors ? '%c ' : ' ') +
+		'+' + module.exports.humanize(this.diff);
 
-  args[0] = (useColors ? '%c' : '')
-    + this.namespace
-    + (useColors ? ' %c' : ' ')
-    + args[0]
-    + (useColors ? '%c ' : ' ')
-    + '+' + exports.humanize(this.diff);
+	if (!this.useColors) {
+		return;
+	}
 
-  if (!useColors) return;
+	const c = 'color: ' + this.color;
+	args.splice(1, 0, c, 'color: inherit');
 
-  var c = 'color: ' + this.color;
-  args.splice(1, 0, c, 'color: inherit')
+	// The final "%c" is somewhat tricky, because there could be other
+	// arguments passed either before or after the %c, so we need to
+	// figure out the correct index to insert the CSS into
+	let index = 0;
+	let lastC = 0;
+	args[0].replace(/%[a-zA-Z%]/g, match => {
+		if (match === '%%') {
+			return;
+		}
+		index++;
+		if (match === '%c') {
+			// We only are interested in the *last* %c
+			// (the user may have provided their own)
+			lastC = index;
+		}
+	});
 
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-  var index = 0;
-  var lastC = 0;
-  args[0].replace(/%[a-zA-Z%]/g, function(match) {
-    if ('%%' === match) return;
-    index++;
-    if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
-    }
-  });
-
-  args.splice(lastC, 0, c);
+	args.splice(lastC, 0, c);
 }
 
 /**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
+ * Invokes `console.debug()` when available.
+ * No-op when `console.debug` is not a "function".
+ * If `console.debug` is not available, falls back
+ * to `console.log`.
  *
  * @api public
  */
-
-function log() {
-  // this hackery is required for IE8/9, where
-  // the `console.log` function doesn't have 'apply'
-  return 'object' === typeof console
-    && console.log
-    && Function.prototype.apply.call(console.log, console, arguments);
-}
+exports.log = console.debug || console.log || (() => {});
 
 /**
  * Save `namespaces`.
@@ -46223,15 +46564,17 @@ function log() {
  * @param {String} namespaces
  * @api private
  */
-
 function save(namespaces) {
-  try {
-    if (null == namespaces) {
-      exports.storage.removeItem('debug');
-    } else {
-      exports.storage.debug = namespaces;
-    }
-  } catch(e) {}
+	try {
+		if (namespaces) {
+			exports.storage.setItem('debug', namespaces);
+		} else {
+			exports.storage.removeItem('debug');
+		}
+	} catch (error) {
+		// Swallow
+		// XXX (@Qix-) should we be logging these?
+	}
 }
 
 /**
@@ -46240,26 +46583,22 @@ function save(namespaces) {
  * @return {String} returns the previously persisted debug modes
  * @api private
  */
-
 function load() {
-  var r;
-  try {
-    r = exports.storage.debug;
-  } catch(e) {}
+	let r;
+	try {
+		r = exports.storage.getItem('debug');
+	} catch (error) {
+		// Swallow
+		// XXX (@Qix-) should we be logging these?
+	}
 
-  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
-  if (!r && typeof process !== 'undefined' && 'env' in process) {
-    r = process.env.DEBUG;
-  }
+	// If debug isn't set in LS, and we're in Electron, try to load $DEBUG
+	if (!r && typeof process !== 'undefined' && 'env' in process) {
+		r = process.env.DEBUG;
+	}
 
-  return r;
+	return r;
 }
-
-/**
- * Enable namespaces listed in `localStorage.debug` initially.
- */
-
-exports.enable(load());
 
 /**
  * Localstorage attempts to return the localstorage.
@@ -46273,10 +46612,31 @@ exports.enable(load());
  */
 
 function localstorage() {
-  try {
-    return window.localStorage;
-  } catch (e) {}
+	try {
+		// TVMLKit (Apple TV JS Runtime) does not have a window object, just localStorage in the global context
+		// The Browser also has localStorage in the global context.
+		return localStorage;
+	} catch (error) {
+		// Swallow
+		// XXX (@Qix-) should we be logging these?
+	}
 }
+
+module.exports = __webpack_require__(486)(exports);
+
+const {formatters} = module.exports;
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+formatters.j = function (v) {
+	try {
+		return JSON.stringify(v);
+	} catch (error) {
+		return '[UnexpectedJSONParseError]: ' + error.message;
+	}
+};
 
 
 /***/ }),
@@ -50240,8 +50600,289 @@ module.exports = object => {
 /* 482 */,
 /* 483 */,
 /* 484 */,
-/* 485 */,
-/* 486 */,
+/* 485 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+/**
+ * Detect Electron renderer process, which is node, but we should
+ * treat as a browser.
+ */
+
+if (typeof process !== 'undefined' && process.type === 'renderer') {
+  module.exports = __webpack_require__(714);
+} else {
+  module.exports = __webpack_require__(153);
+}
+
+
+/***/ }),
+/* 486 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ */
+
+function setup(env) {
+	createDebug.debug = createDebug;
+	createDebug.default = createDebug;
+	createDebug.coerce = coerce;
+	createDebug.disable = disable;
+	createDebug.enable = enable;
+	createDebug.enabled = enabled;
+	createDebug.humanize = __webpack_require__(977);
+	createDebug.destroy = destroy;
+
+	Object.keys(env).forEach(key => {
+		createDebug[key] = env[key];
+	});
+
+	/**
+	* The currently active debug mode names, and names to skip.
+	*/
+
+	createDebug.names = [];
+	createDebug.skips = [];
+
+	/**
+	* Map of special "%n" handling functions, for the debug "format" argument.
+	*
+	* Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
+	*/
+	createDebug.formatters = {};
+
+	/**
+	* Selects a color for a debug namespace
+	* @param {String} namespace The namespace string for the for the debug instance to be colored
+	* @return {Number|String} An ANSI color code for the given namespace
+	* @api private
+	*/
+	function selectColor(namespace) {
+		let hash = 0;
+
+		for (let i = 0; i < namespace.length; i++) {
+			hash = ((hash << 5) - hash) + namespace.charCodeAt(i);
+			hash |= 0; // Convert to 32bit integer
+		}
+
+		return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
+	}
+	createDebug.selectColor = selectColor;
+
+	/**
+	* Create a debugger with the given `namespace`.
+	*
+	* @param {String} namespace
+	* @return {Function}
+	* @api public
+	*/
+	function createDebug(namespace) {
+		let prevTime;
+		let enableOverride = null;
+
+		function debug(...args) {
+			// Disabled?
+			if (!debug.enabled) {
+				return;
+			}
+
+			const self = debug;
+
+			// Set `diff` timestamp
+			const curr = Number(new Date());
+			const ms = curr - (prevTime || curr);
+			self.diff = ms;
+			self.prev = prevTime;
+			self.curr = curr;
+			prevTime = curr;
+
+			args[0] = createDebug.coerce(args[0]);
+
+			if (typeof args[0] !== 'string') {
+				// Anything else let's inspect with %O
+				args.unshift('%O');
+			}
+
+			// Apply any `formatters` transformations
+			let index = 0;
+			args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
+				// If we encounter an escaped % then don't increase the array index
+				if (match === '%%') {
+					return '%';
+				}
+				index++;
+				const formatter = createDebug.formatters[format];
+				if (typeof formatter === 'function') {
+					const val = args[index];
+					match = formatter.call(self, val);
+
+					// Now we need to remove `args[index]` since it's inlined in the `format`
+					args.splice(index, 1);
+					index--;
+				}
+				return match;
+			});
+
+			// Apply env-specific formatting (colors, etc.)
+			createDebug.formatArgs.call(self, args);
+
+			const logFn = self.log || createDebug.log;
+			logFn.apply(self, args);
+		}
+
+		debug.namespace = namespace;
+		debug.useColors = createDebug.useColors();
+		debug.color = createDebug.selectColor(namespace);
+		debug.extend = extend;
+		debug.destroy = createDebug.destroy; // XXX Temporary. Will be removed in the next major release.
+
+		Object.defineProperty(debug, 'enabled', {
+			enumerable: true,
+			configurable: false,
+			get: () => enableOverride === null ? createDebug.enabled(namespace) : enableOverride,
+			set: v => {
+				enableOverride = v;
+			}
+		});
+
+		// Env-specific initialization logic for debug instances
+		if (typeof createDebug.init === 'function') {
+			createDebug.init(debug);
+		}
+
+		return debug;
+	}
+
+	function extend(namespace, delimiter) {
+		const newDebug = createDebug(this.namespace + (typeof delimiter === 'undefined' ? ':' : delimiter) + namespace);
+		newDebug.log = this.log;
+		return newDebug;
+	}
+
+	/**
+	* Enables a debug mode by namespaces. This can include modes
+	* separated by a colon and wildcards.
+	*
+	* @param {String} namespaces
+	* @api public
+	*/
+	function enable(namespaces) {
+		createDebug.save(namespaces);
+
+		createDebug.names = [];
+		createDebug.skips = [];
+
+		let i;
+		const split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
+		const len = split.length;
+
+		for (i = 0; i < len; i++) {
+			if (!split[i]) {
+				// ignore empty strings
+				continue;
+			}
+
+			namespaces = split[i].replace(/\*/g, '.*?');
+
+			if (namespaces[0] === '-') {
+				createDebug.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+			} else {
+				createDebug.names.push(new RegExp('^' + namespaces + '$'));
+			}
+		}
+	}
+
+	/**
+	* Disable debug output.
+	*
+	* @return {String} namespaces
+	* @api public
+	*/
+	function disable() {
+		const namespaces = [
+			...createDebug.names.map(toNamespace),
+			...createDebug.skips.map(toNamespace).map(namespace => '-' + namespace)
+		].join(',');
+		createDebug.enable('');
+		return namespaces;
+	}
+
+	/**
+	* Returns true if the given mode name is enabled, false otherwise.
+	*
+	* @param {String} name
+	* @return {Boolean}
+	* @api public
+	*/
+	function enabled(name) {
+		if (name[name.length - 1] === '*') {
+			return true;
+		}
+
+		let i;
+		let len;
+
+		for (i = 0, len = createDebug.skips.length; i < len; i++) {
+			if (createDebug.skips[i].test(name)) {
+				return false;
+			}
+		}
+
+		for (i = 0, len = createDebug.names.length; i < len; i++) {
+			if (createDebug.names[i].test(name)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	* Convert regexp to namespace
+	*
+	* @param {RegExp} regxep
+	* @return {String} namespace
+	* @api private
+	*/
+	function toNamespace(regexp) {
+		return regexp.toString()
+			.substring(2, regexp.toString().length - 2)
+			.replace(/\.\*\?$/, '*');
+	}
+
+	/**
+	* Coerce `val`.
+	*
+	* @param {Mixed} val
+	* @return {Mixed}
+	* @api private
+	*/
+	function coerce(val) {
+		if (val instanceof Error) {
+			return val.stack || val.message;
+		}
+		return val;
+	}
+
+	/**
+	* XXX DO NOT USE. This is a temporary stub function.
+	* XXX It WILL be removed in the next major release.
+	*/
+	function destroy() {
+		console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
+	}
+
+	createDebug.enable(createDebug.load());
+
+	return createDebug;
+}
+
+module.exports = setup;
+
+
+/***/ }),
 /* 487 */,
 /* 488 */,
 /* 489 */,
@@ -52828,70 +53469,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* 552 */,
 /* 553 */,
 /* 554 */,
-/* 555 */
-/***/ (function(__unusedmodule, exports) {
-
-//TODO: handle reviver/dehydrate function like normal
-//and handle indentation, like normal.
-//if anyone needs this... please send pull request.
-
-exports.stringify = function stringify (o) {
-  if('undefined' == typeof o) return o
-
-  if(o && Buffer.isBuffer(o))
-    return JSON.stringify(':base64:' + o.toString('base64'))
-
-  if(o && o.toJSON)
-    o =  o.toJSON()
-
-  if(o && 'object' === typeof o) {
-    var s = ''
-    var array = Array.isArray(o)
-    s = array ? '[' : '{'
-    var first = true
-
-    for(var k in o) {
-      var ignore = 'function' == typeof o[k] || (!array && 'undefined' === typeof o[k])
-      if(Object.hasOwnProperty.call(o, k) && !ignore) {
-        if(!first)
-          s += ','
-        first = false
-        if (array) {
-          if(o[k] == undefined)
-            s += 'null'
-          else
-            s += stringify(o[k])
-        } else if (o[k] !== void(0)) {
-          s += stringify(k) + ':' + stringify(o[k])
-        }
-      }
-    }
-
-    s += array ? ']' : '}'
-
-    return s
-  } else if ('string' === typeof o) {
-    return JSON.stringify(/^:/.test(o) ? ':' + o : o)
-  } else if ('undefined' === typeof o) {
-    return 'null';
-  } else
-    return JSON.stringify(o)
-}
-
-exports.parse = function (s) {
-  return JSON.parse(s, function (key, value) {
-    if('string' === typeof value) {
-      if(/^:base64:/.test(value))
-        return Buffer.from(value.substring(8), 'base64')
-      else
-        return /^:/.test(value) ? value.substring(1) : value 
-    }
-    return value
-  })
-}
-
-
-/***/ }),
+/* 555 */,
 /* 556 */
 /***/ (function(module) {
 
@@ -55700,7 +56278,214 @@ module.exports = require("net");
 /* 634 */,
 /* 635 */,
 /* 636 */,
-/* 637 */,
+/* 637 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
+exports.coerce = coerce;
+exports.disable = disable;
+exports.enable = enable;
+exports.enabled = enabled;
+exports.humanize = __webpack_require__(795);
+
+/**
+ * The currently active debug mode names, and names to skip.
+ */
+
+exports.names = [];
+exports.skips = [];
+
+/**
+ * Map of special "%n" handling functions, for the debug "format" argument.
+ *
+ * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
+ */
+
+exports.formatters = {};
+
+/**
+ * Previous log timestamp.
+ */
+
+var prevTime;
+
+/**
+ * Select a color.
+ * @param {String} namespace
+ * @return {Number}
+ * @api private
+ */
+
+function selectColor(namespace) {
+  var hash = 0, i;
+
+  for (i in namespace) {
+    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return exports.colors[Math.abs(hash) % exports.colors.length];
+}
+
+/**
+ * Create a debugger with the given `namespace`.
+ *
+ * @param {String} namespace
+ * @return {Function}
+ * @api public
+ */
+
+function createDebug(namespace) {
+
+  function debug() {
+    // disabled?
+    if (!debug.enabled) return;
+
+    var self = debug;
+
+    // set `diff` timestamp
+    var curr = +new Date();
+    var ms = curr - (prevTime || curr);
+    self.diff = ms;
+    self.prev = prevTime;
+    self.curr = curr;
+    prevTime = curr;
+
+    // turn the `arguments` into a proper Array
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+
+    args[0] = exports.coerce(args[0]);
+
+    if ('string' !== typeof args[0]) {
+      // anything else let's inspect with %O
+      args.unshift('%O');
+    }
+
+    // apply any `formatters` transformations
+    var index = 0;
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
+      // if we encounter an escaped % then don't increase the array index
+      if (match === '%%') return match;
+      index++;
+      var formatter = exports.formatters[format];
+      if ('function' === typeof formatter) {
+        var val = args[index];
+        match = formatter.call(self, val);
+
+        // now we need to remove `args[index]` since it's inlined in the `format`
+        args.splice(index, 1);
+        index--;
+      }
+      return match;
+    });
+
+    // apply env-specific formatting (colors, etc.)
+    exports.formatArgs.call(self, args);
+
+    var logFn = debug.log || exports.log || console.log.bind(console);
+    logFn.apply(self, args);
+  }
+
+  debug.namespace = namespace;
+  debug.enabled = exports.enabled(namespace);
+  debug.useColors = exports.useColors();
+  debug.color = selectColor(namespace);
+
+  // env-specific initialization logic for debug instances
+  if ('function' === typeof exports.init) {
+    exports.init(debug);
+  }
+
+  return debug;
+}
+
+/**
+ * Enables a debug mode by namespaces. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} namespaces
+ * @api public
+ */
+
+function enable(namespaces) {
+  exports.save(namespaces);
+
+  exports.names = [];
+  exports.skips = [];
+
+  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
+  var len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    if (!split[i]) continue; // ignore empty strings
+    namespaces = split[i].replace(/\*/g, '.*?');
+    if (namespaces[0] === '-') {
+      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+    } else {
+      exports.names.push(new RegExp('^' + namespaces + '$'));
+    }
+  }
+}
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+function disable() {
+  exports.enable('');
+}
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+function enabled(name) {
+  var i, len;
+  for (i = 0, len = exports.skips.length; i < len; i++) {
+    if (exports.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (i = 0, len = exports.names.length; i < len; i++) {
+    if (exports.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Coerce `val`.
+ *
+ * @param {Mixed} val
+ * @return {Mixed}
+ * @api private
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+
+/***/ }),
 /* 638 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -59153,7 +59938,197 @@ exports.ProxyTracerProvider = ProxyTracerProvider;
 /* 711 */,
 /* 712 */,
 /* 713 */,
-/* 714 */,
+/* 714 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * This is the web browser implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = __webpack_require__(637);
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+exports.storage = 'undefined' != typeof chrome
+               && 'undefined' != typeof chrome.storage
+                  ? chrome.storage.local
+                  : localstorage();
+
+/**
+ * Colors.
+ */
+
+exports.colors = [
+  'lightseagreen',
+  'forestgreen',
+  'goldenrod',
+  'dodgerblue',
+  'darkorchid',
+  'crimson'
+];
+
+/**
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
+ *
+ * TODO: add a `localStorage` variable to explicitly enable/disable colors
+ */
+
+function useColors() {
+  // NB: In an Electron preload script, document will be defined but not fully
+  // initialized. Since we know we're in Chrome, we'll just detect this case
+  // explicitly
+  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+    return true;
+  }
+
+  // is webkit? http://stackoverflow.com/a/16459606/376773
+  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
+    // is firebug? http://stackoverflow.com/a/398120/376773
+    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
+    // double check webkit in userAgent just in case we are in a worker
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
+}
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+exports.formatters.j = function(v) {
+  try {
+    return JSON.stringify(v);
+  } catch (err) {
+    return '[UnexpectedJSONParseError]: ' + err.message;
+  }
+};
+
+
+/**
+ * Colorize log arguments if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs(args) {
+  var useColors = this.useColors;
+
+  args[0] = (useColors ? '%c' : '')
+    + this.namespace
+    + (useColors ? ' %c' : ' ')
+    + args[0]
+    + (useColors ? '%c ' : ' ')
+    + '+' + exports.humanize(this.diff);
+
+  if (!useColors) return;
+
+  var c = 'color: ' + this.color;
+  args.splice(1, 0, c, 'color: inherit')
+
+  // the final "%c" is somewhat tricky, because there could be other
+  // arguments passed either before or after the %c, so we need to
+  // figure out the correct index to insert the CSS into
+  var index = 0;
+  var lastC = 0;
+  args[0].replace(/%[a-zA-Z%]/g, function(match) {
+    if ('%%' === match) return;
+    index++;
+    if ('%c' === match) {
+      // we only are interested in the *last* %c
+      // (the user may have provided their own)
+      lastC = index;
+    }
+  });
+
+  args.splice(lastC, 0, c);
+}
+
+/**
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
+ *
+ * @api public
+ */
+
+function log() {
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console
+    && console.log
+    && Function.prototype.apply.call(console.log, console, arguments);
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  try {
+    if (null == namespaces) {
+      exports.storage.removeItem('debug');
+    } else {
+      exports.storage.debug = namespaces;
+    }
+  } catch(e) {}
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  var r;
+  try {
+    r = exports.storage.debug;
+  } catch(e) {}
+
+  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
+  if (!r && typeof process !== 'undefined' && 'env' in process) {
+    r = process.env.DEBUG;
+  }
+
+  return r;
+}
+
+/**
+ * Enable namespaces listed in `localStorage.debug` initially.
+ */
+
+exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage() {
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
+
+
+/***/ }),
 /* 715 */,
 /* 716 */,
 /* 717 */,
@@ -61586,14 +62561,14 @@ module.exports = braces;
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 /**
- * Detect Electron renderer process, which is node, but we should
+ * Detect Electron renderer / nwjs process, which is node, but we should
  * treat as a browser.
  */
 
-if (typeof process !== 'undefined' && process.type === 'renderer') {
-  module.exports = __webpack_require__(408);
+if (typeof process === 'undefined' || process.type === 'renderer' || process.browser === true || process.__nwjs) {
+	module.exports = __webpack_require__(408);
 } else {
-  module.exports = __webpack_require__(81);
+	module.exports = __webpack_require__(81);
 }
 
 
@@ -62560,7 +63535,164 @@ FormData.prototype.toString = function () {
 module.exports = require("stream");
 
 /***/ }),
-/* 795 */,
+/* 795 */
+/***/ (function(module) {
+
+/**
+ * Helpers.
+ */
+
+var s = 1000;
+var m = s * 60;
+var h = m * 60;
+var d = h * 24;
+var y = d * 365.25;
+
+/**
+ * Parse or format the given `val`.
+ *
+ * Options:
+ *
+ *  - `long` verbose formatting [false]
+ *
+ * @param {String|Number} val
+ * @param {Object} [options]
+ * @throws {Error} throw an error if val is not a non-empty string or a number
+ * @return {String|Number}
+ * @api public
+ */
+
+module.exports = function(val, options) {
+  options = options || {};
+  var type = typeof val;
+  if (type === 'string' && val.length > 0) {
+    return parse(val);
+  } else if (type === 'number' && isNaN(val) === false) {
+    return options.long ? fmtLong(val) : fmtShort(val);
+  }
+  throw new Error(
+    'val is not a non-empty string or a valid number. val=' +
+      JSON.stringify(val)
+  );
+};
+
+/**
+ * Parse the given `str` and return milliseconds.
+ *
+ * @param {String} str
+ * @return {Number}
+ * @api private
+ */
+
+function parse(str) {
+  str = String(str);
+  if (str.length > 100) {
+    return;
+  }
+  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(
+    str
+  );
+  if (!match) {
+    return;
+  }
+  var n = parseFloat(match[1]);
+  var type = (match[2] || 'ms').toLowerCase();
+  switch (type) {
+    case 'years':
+    case 'year':
+    case 'yrs':
+    case 'yr':
+    case 'y':
+      return n * y;
+    case 'days':
+    case 'day':
+    case 'd':
+      return n * d;
+    case 'hours':
+    case 'hour':
+    case 'hrs':
+    case 'hr':
+    case 'h':
+      return n * h;
+    case 'minutes':
+    case 'minute':
+    case 'mins':
+    case 'min':
+    case 'm':
+      return n * m;
+    case 'seconds':
+    case 'second':
+    case 'secs':
+    case 'sec':
+    case 's':
+      return n * s;
+    case 'milliseconds':
+    case 'millisecond':
+    case 'msecs':
+    case 'msec':
+    case 'ms':
+      return n;
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Short format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function fmtShort(ms) {
+  if (ms >= d) {
+    return Math.round(ms / d) + 'd';
+  }
+  if (ms >= h) {
+    return Math.round(ms / h) + 'h';
+  }
+  if (ms >= m) {
+    return Math.round(ms / m) + 'm';
+  }
+  if (ms >= s) {
+    return Math.round(ms / s) + 's';
+  }
+  return ms + 'ms';
+}
+
+/**
+ * Long format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function fmtLong(ms) {
+  return plural(ms, d, 'day') ||
+    plural(ms, h, 'hour') ||
+    plural(ms, m, 'minute') ||
+    plural(ms, s, 'second') ||
+    ms + ' ms';
+}
+
+/**
+ * Pluralization helper.
+ */
+
+function plural(ms, n, name) {
+  if (ms < n) {
+    return;
+  }
+  if (ms < n * 1.5) {
+    return Math.floor(ms / n) + ' ' + name;
+  }
+  return Math.ceil(ms / n) + ' ' + name + 's';
+}
+
+
+/***/ }),
 /* 796 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -65440,7 +66572,7 @@ exports.TraceAPI = TraceAPI;
 "use strict";
 
 
-var debug = __webpack_require__(784)('argument-vector');
+var debug = __webpack_require__(485)('argument-vector');
 
 function Parser(options) {
   if (!(this instanceof Parser)) return new Parser(options);
@@ -68282,6 +69414,7 @@ function terminator(callback)
 
 const core = __webpack_require__(470)
 const got = __webpack_require__(77)
+const debug = __webpack_require__(784)('@cypress/github-action')
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -68307,9 +69440,9 @@ const ping = (url, timeout) => {
   timeout += individualPingTimeout
   const limit = Math.ceil(timeout / individualPingTimeout)
 
-  core.debug(`total ping timeout ${timeout}`)
-  core.debug(`individual ping timeout ${individualPingTimeout}ms`)
-  core.debug(`retries limit ${limit}`)
+  debug(`total ping timeout ${timeout}`)
+  debug(`individual ping timeout ${individualPingTimeout}ms`)
+  debug(`retries limit ${limit}`)
 
   const start = +new Date()
   return got(url, {
@@ -68322,11 +69455,11 @@ const ping = (url, timeout) => {
       limit,
       calculateDelay({ error, attemptCount }) {
         if (error) {
-          core.debug(`got error ${JSON.stringify(error)}`)
+          debug(`got error ${JSON.stringify(error)}`)
         }
         const now = +new Date()
         const elapsed = now - start
-        core.debug(
+        debug(
           `${elapsed}ms ${error.method} ${error.host} ${error.code} attempt ${attemptCount}`
         )
         if (elapsed > timeout) {
@@ -68354,7 +69487,7 @@ const ping = (url, timeout) => {
   }).then(() => {
     const now = +new Date()
     const elapsed = now - start
-    core.debug(`pinging ${url} has finished ok after ${elapsed}ms`)
+    debug(`pinging ${url} has finished ok after ${elapsed}ms`)
   })
 }
 
@@ -68970,6 +70103,7 @@ var s = 1000;
 var m = s * 60;
 var h = m * 60;
 var d = h * 24;
+var w = d * 7;
 var y = d * 365.25;
 
 /**
@@ -68991,7 +70125,7 @@ module.exports = function(val, options) {
   var type = typeof val;
   if (type === 'string' && val.length > 0) {
     return parse(val);
-  } else if (type === 'number' && isNaN(val) === false) {
+  } else if (type === 'number' && isFinite(val)) {
     return options.long ? fmtLong(val) : fmtShort(val);
   }
   throw new Error(
@@ -69013,7 +70147,7 @@ function parse(str) {
   if (str.length > 100) {
     return;
   }
-  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(
+  var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
     str
   );
   if (!match) {
@@ -69028,6 +70162,10 @@ function parse(str) {
     case 'yr':
     case 'y':
       return n * y;
+    case 'weeks':
+    case 'week':
+    case 'w':
+      return n * w;
     case 'days':
     case 'day':
     case 'd':
@@ -69070,16 +70208,17 @@ function parse(str) {
  */
 
 function fmtShort(ms) {
-  if (ms >= d) {
+  var msAbs = Math.abs(ms);
+  if (msAbs >= d) {
     return Math.round(ms / d) + 'd';
   }
-  if (ms >= h) {
+  if (msAbs >= h) {
     return Math.round(ms / h) + 'h';
   }
-  if (ms >= m) {
+  if (msAbs >= m) {
     return Math.round(ms / m) + 'm';
   }
-  if (ms >= s) {
+  if (msAbs >= s) {
     return Math.round(ms / s) + 's';
   }
   return ms + 'ms';
@@ -69094,25 +70233,29 @@ function fmtShort(ms) {
  */
 
 function fmtLong(ms) {
-  return plural(ms, d, 'day') ||
-    plural(ms, h, 'hour') ||
-    plural(ms, m, 'minute') ||
-    plural(ms, s, 'second') ||
-    ms + ' ms';
+  var msAbs = Math.abs(ms);
+  if (msAbs >= d) {
+    return plural(ms, msAbs, d, 'day');
+  }
+  if (msAbs >= h) {
+    return plural(ms, msAbs, h, 'hour');
+  }
+  if (msAbs >= m) {
+    return plural(ms, msAbs, m, 'minute');
+  }
+  if (msAbs >= s) {
+    return plural(ms, msAbs, s, 'second');
+  }
+  return ms + ' ms';
 }
 
 /**
  * Pluralization helper.
  */
 
-function plural(ms, n, name) {
-  if (ms < n) {
-    return;
-  }
-  if (ms < n * 1.5) {
-    return Math.floor(ms / n) + ' ' + name;
-  }
-  return Math.ceil(ms / n) + ' ' + name + 's';
+function plural(ms, msAbs, n, name) {
+  var isPlural = msAbs >= n * 1.5;
+  return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '');
 }
 
 

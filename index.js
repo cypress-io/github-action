@@ -11,6 +11,7 @@ const path = require('path')
 const quote = require('quote')
 const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
+const debug = require('debug')('@cypress/github-action')
 const { ping } = require('./src/ping')
 
 /**
@@ -28,16 +29,16 @@ const execCommand = (
   console.log('current working directory "%s"', cwd)
 
   const args = cliParser.parse(fullCommand)
-  core.debug(`parsed command: ${args.join(' ')}`)
+  debug(`parsed command: ${args.join(' ')}`)
 
   return io.which(args[0], true).then((toolPath) => {
-    core.debug(`found command "${toolPath}"`)
-    core.debug(`with arguments ${args.slice(1).join(' ')}`)
+    debug(`found command "${toolPath}"`)
+    debug(`with arguments ${args.slice(1).join(' ')}`)
 
     const toolArguments = args.slice(1)
     const argsString = toolArguments.join(' ')
-    core.debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
-    core.debug(`waiting for the command to finish? ${waitToFinish}`)
+    debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
+    debug(`waiting for the command to finish? ${waitToFinish}`)
 
     const promise = exec.exec(
       quote(toolPath),
@@ -69,7 +70,7 @@ const startWorkingDirectory = process.cwd()
 const workingDirectory = core.getInput('working-directory')
   ? path.resolve(core.getInput('working-directory'))
   : startWorkingDirectory
-core.debug(`working directory ${workingDirectory}`)
+debug(`working directory ${workingDirectory}`)
 
 /**
  * When running "npm install" or any other Cypress-related commands,
@@ -93,7 +94,7 @@ const useYarn = () => fs.existsSync(yarnFilename)
 const lockHash = () => {
   const lockFilename = useYarn() ? yarnFilename : packageLockFilename
   const fileHash = hasha.fromFileSync(lockFilename)
-  core.debug(`Hash from file ${lockFilename} is ${fileHash}`)
+  debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
 }
 
@@ -130,9 +131,7 @@ const getNpmCache = () => {
 const CYPRESS_CACHE_FOLDER =
   process.env.CYPRESS_CACHE_FOLDER ||
   path.join(homeDirectory, '.cache', 'Cypress')
-core.debug(
-  `using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`
-)
+debug(`using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`)
 
 const getCypressBinaryCache = () => {
   const o = {
@@ -148,7 +147,7 @@ const getCypressBinaryCache = () => {
 }
 
 const restoreCachedNpm = () => {
-  core.debug('trying to restore cached NPM modules')
+  debug('trying to restore cached NPM modules')
   const NPM_CACHE = getNpmCache()
   return restoreCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey, [
     NPM_CACHE.restoreKeys
@@ -158,7 +157,7 @@ const restoreCachedNpm = () => {
 }
 
 const saveCachedNpm = () => {
-  core.debug('saving NPM modules')
+  debug('saving NPM modules')
   const NPM_CACHE = getNpmCache()
   return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
     (e) => {
@@ -168,7 +167,7 @@ const saveCachedNpm = () => {
 }
 
 const restoreCachedCypressBinary = () => {
-  core.debug('trying to restore cached Cypress binary')
+  debug('trying to restore cached Cypress binary')
   const CYPRESS_BINARY_CACHE = getCypressBinaryCache()
   return restoreCache(
     [CYPRESS_BINARY_CACHE.inputPath],
@@ -180,10 +179,10 @@ const restoreCachedCypressBinary = () => {
 }
 
 const saveCachedCypressBinary = () => {
-  core.debug('saving Cypress binary')
+  debug('saving Cypress binary')
 
   if (isCypressBinarySkipped()) {
-    core.debug('Skipping Cypress cache save, binary is not installed')
+    debug('Skipping Cypress cache save, binary is not installed')
     return Promise.resolve()
   }
 
@@ -207,14 +206,14 @@ const install = () => {
   // npm paths with spaces like "C:\Program Files\nodejs\npm.cmd ci"
   const installCommand = core.getInput('install-command')
   if (installCommand) {
-    core.debug(`using custom install command "${installCommand}"`)
+    debug(`using custom install command "${installCommand}"`)
     return execCommand(installCommand, true, 'install command')
   }
 
   if (useYarn()) {
-    core.debug('installing NPM dependencies using Yarn')
+    debug('installing NPM dependencies using Yarn')
     return io.which('yarn', true).then((yarnPath) => {
-      core.debug(`yarn at "${yarnPath}"`)
+      debug(`yarn at "${yarnPath}"`)
       return exec.exec(
         quote(yarnPath),
         ['--frozen-lockfile'],
@@ -222,22 +221,22 @@ const install = () => {
       )
     })
   } else {
-    core.debug('installing NPM dependencies')
+    debug('installing NPM dependencies')
 
     return io.which('npm', true).then((npmPath) => {
-      core.debug(`npm at "${npmPath}"`)
+      debug(`npm at "${npmPath}"`)
       return exec.exec(quote(npmPath), ['ci'], cypressCommandOptions)
     })
   }
 }
 
 const listCypressBinaries = () => {
-  core.debug(
+  debug(
     `Cypress versions in the cache folder ${CYPRESS_CACHE_FOLDER}`
   )
 
   if (isCypressBinarySkipped()) {
-    core.debug('Skipping Cypress cache list, binary is not installed')
+    debug('Skipping Cypress cache list, binary is not installed')
     return Promise.resolve()
   }
 
@@ -252,11 +251,11 @@ const listCypressBinaries = () => {
 }
 
 const verifyCypressBinary = () => {
-  core.debug(
+  debug(
     `Verifying Cypress using cache folder ${CYPRESS_CACHE_FOLDER}`
   )
   if (isCypressBinarySkipped()) {
-    core.debug('Skipping Cypress verify, binary is not installed')
+    debug('Skipping Cypress verify, binary is not installed')
     return Promise.resolve()
   }
 
@@ -299,7 +298,7 @@ const getSpecsList = () => {
     return
   }
   const specLines = spec.split('\n').join(',')
-  core.debug(`extracted spec lines into: "${specLines}"`)
+  debug(`extracted spec lines into: "${specLines}"`)
   return specLines
 }
 
@@ -309,7 +308,7 @@ const buildAppMaybe = () => {
     return
   }
 
-  core.debug(`building application using "${buildApp}"`)
+  debug(`building application using "${buildApp}"`)
 
   return execCommand(buildApp, true, 'build app')
 }
@@ -325,7 +324,7 @@ const startServersMaybe = () => {
     startCommand = core.getInput('start')
   }
   if (!startCommand) {
-    core.debug('No start command found')
+    debug('No start command found')
     return Promise.resolve()
   }
 
@@ -334,7 +333,7 @@ const startServersMaybe = () => {
     .split(/,|\n/)
     .map((s) => s.trim())
     .filter(Boolean)
-  core.debug(
+  debug(
     `Separated ${
       separateStartCommands.length
     } start commands ${separateStartCommands.join(', ')}`
@@ -367,13 +366,13 @@ const waitOnUrl = (waitOn, waitOnTimeout = 60) => {
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
-  core.debug(`Waiting for urls ${waitUrls.join(', ')}`)
+  debug(`Waiting for urls ${waitUrls.join(', ')}`)
 
   // run every wait promise after the previous has finished
   // to avoid "noise" of debug messages
   return waitUrls.reduce((prevPromise, url) => {
     return prevPromise.then(() => {
-      core.debug(`Waiting for url ${url}`)
+      debug(`Waiting for url ${url}`)
       return ping(url, waitTimeoutMs)
     })
   }, Promise.resolve())
@@ -416,7 +415,7 @@ const getCiBuildId = async () => {
   let buildId = `${GITHUB_WORKFLOW} - ${GITHUB_SHA}`
 
   if (GITHUB_TOKEN) {
-    core.debug(
+    debug(
       `Determining build id by asking GitHub about run ${GITHUB_RUN_ID}`
     )
 
@@ -435,7 +434,7 @@ const getCiBuildId = async () => {
 
     if (resp && resp.data && resp.data.head_branch) {
       branch = resp.data.head_branch
-      core.debug(`found the branch name ${branch}`)
+      debug(`found the branch name ${branch}`)
     }
 
     // This will return the complete list of jobs for a run with their steps,
@@ -460,14 +459,14 @@ const getCiBuildId = async () => {
       runsList.data.jobs.length
     ) {
       const jobId = runsList.data.jobs[0].id
-      core.debug(`fetched run list with jobId ${jobId}`)
+      debug(`fetched run list with jobId ${jobId}`)
       buildId = `${GITHUB_RUN_ID}-${jobId}`
     } else {
-      core.debug('could not get run list data')
+      debug('could not get run list data')
     }
   }
 
-  core.debug(`determined branch ${branch} and build id ${buildId}`)
+  debug(`determined branch ${branch} and build id ${buildId}`)
   return { branch, buildId }
 }
 
@@ -475,7 +474,7 @@ const getCiBuildId = async () => {
  * Forms entire command line like "npx cypress run ..."
  */
 const runTestsUsingCommandLine = async () => {
-  core.debug('Running Cypress tests using CLI command')
+  debug('Running Cypress tests using CLI command')
   const quoteArgument = isWindows() ? quote : I
 
   const commandPrefix = core.getInput('command-prefix')
@@ -495,7 +494,7 @@ const runTestsUsingCommandLine = async () => {
   // otherwise they are passed all as a single string
   const parts = commandPrefix.split(' ')
   cmd = cmd.concat(parts)
-  core.debug(`with concatenated command prefix: ${cmd.join(' ')}`)
+  debug(`with concatenated command prefix: ${cmd.join(' ')}`)
 
   // push each CLI argument separately
   cmd.push('cypress')
@@ -580,10 +579,10 @@ const runTestsUsingCommandLine = async () => {
     windowsVerbatimArguments: false
   }
 
-  core.debug(`in working directory "${cypressCommandOptions.cwd}"`)
+  debug(`in working directory "${cypressCommandOptions.cwd}"`)
 
   const npxPath = await io.which('npx', true)
-  core.debug(`npx path: ${npxPath}`)
+  debug(`npx path: ${npxPath}`)
 
   return exec.exec(quote(npxPath), cmd, opts)
 }
@@ -615,14 +614,14 @@ const runTests = async () => {
     return runTestsUsingCommandLine()
   }
 
-  core.debug('Running Cypress tests using NPM module API')
-  core.debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
-  core.debug(`working directory ${workingDirectory}`)
+  debug('Running Cypress tests using NPM module API')
+  debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
+  debug(`working directory ${workingDirectory}`)
   const cypressModulePath =
     require.resolve('cypress', {
       paths: [workingDirectory]
     }) || 'cypress'
-  core.debug(`resolved cypress ${cypressModulePath}`)
+  debug(`resolved cypress ${cypressModulePath}`)
 
   const cypress = require(cypressModulePath)
   const cypressOptions = {
@@ -640,7 +639,7 @@ const runTests = async () => {
   }
   if (core.getInput('config')) {
     cypressOptions.config = core.getInput('config')
-    core.debug(`Cypress config "${cypressOptions.config}"`)
+    debug(`Cypress config "${cypressOptions.config}"`)
   }
   const spec = getSpecsList()
   if (spec) {
@@ -670,7 +669,7 @@ const runTests = async () => {
     cypressOptions.ciBuildId = core.getInput('ci-build-id') || buildId
   }
 
-  core.debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
+  debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
     process.chdir(startWorkingDirectory)
@@ -691,13 +690,13 @@ const runTests = async () => {
       )
     }
 
-    core.debug(`Cypress tests: ${testResults.totalFailed} failed`)
+    debug(`Cypress tests: ${testResults.totalFailed} failed`)
 
     const dashboardUrl = testResults.runUrl
     if (dashboardUrl) {
-      core.debug(`Dashboard url ${dashboardUrl}`)
+      debug(`Dashboard url ${dashboardUrl}`)
     } else {
-      core.debug('There is no Dashboard url')
+      debug('There is no Dashboard url')
     }
     // we still set the output explicitly
     core.setOutput('dashboardUrl', dashboardUrl)
@@ -733,20 +732,18 @@ const installMaybe = () => {
     restoreCachedNpm(),
     restoreCachedCypressBinary()
   ]).then(([npmCacheHit, cypressCacheHit]) => {
-    core.debug(`npm cache hit ${npmCacheHit}`)
-    core.debug(`cypress cache hit ${cypressCacheHit}`)
+    debug(`npm cache hit ${npmCacheHit}`)
+    debug(`cypress cache hit ${cypressCacheHit}`)
 
     return install().then(() => {
-      core.debug('install has finished')
+      debug('install has finished')
       return listCypressBinaries().then(() => {
         if (npmCacheHit && cypressCacheHit) {
-          core.debug(
-            'no need to verify Cypress binary or save caches'
-          )
+          debug('no need to verify Cypress binary or save caches')
           return Promise.resolve(undefined)
         }
 
-        core.debug('verifying Cypress binary')
+        debug('verifying Cypress binary')
         return verifyCypressBinary()
           .then(saveCachedNpm)
           .then(saveCachedCypressBinary)
@@ -761,7 +758,7 @@ installMaybe()
   .then(waitOnMaybe)
   .then(runTests)
   .then(() => {
-    core.debug('all done, exiting')
+    debug('all done, exiting')
     // force exit to avoid waiting for child processes,
     // like the server we have started
     // see https://github.com/actions/toolkit/issues/216
@@ -770,8 +767,8 @@ installMaybe()
   .catch((error) => {
     // final catch - when anything goes wrong, throw an error
     // and exit the action with non-zero code
-    core.debug(error.message)
-    core.debug(error.stack)
+    debug(error.message)
+    debug(error.stack)
 
     core.setFailed(error.message)
     process.exit(1)
