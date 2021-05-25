@@ -1063,14 +1063,22 @@ This action uses several production dependencies. The minimum Node version requi
 
 ## Debugging
 
-You can see verbose messages from GitHub Actions by setting the following secrets (from [Debugging Actions Guide](https://github.com/actions/toolkit/blob/master/docs/action-debugging.md#step-debug-logs))
+This action uses the [debug](https://github.com/visionmedia/debug#readme) module to output additional verbose logs. You can see these debug messages by setting the following environment variable:
 
 ```
-ACTIONS_RUNNER_DEBUG: true
-ACTIONS_STEP_DEBUG: true
+DEBUG: @cypress/github-action
 ```
 
-The `ACTIONS_RUNNER_DEBUG` will show generic Actions messages, while `ACTIONS_STEP_DEBUG` will enable the `core.debug(...)` messages from this actions.
+You can set the environment variable using GitHub UI interface, or in the workflow file:
+
+```yml
+- name: Cypress tests with debug logs
+  uses: cypress-io/github-action@v2
+  env:
+    DEBUG: '@cypress/github-action'
+```
+
+See the [example-debug.yml](./.github/workflows/example-debug.yml) workflow file.
 
 ### Logs from the test runner
 

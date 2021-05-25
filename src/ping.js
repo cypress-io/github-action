@@ -1,5 +1,6 @@
 const core = require('@actions/core')
 const got = require('got')
+const debug = require('debug')('@cypress/github-action')
 
 /**
  * A small utility for checking when an URL responds, kind of
@@ -25,9 +26,9 @@ const ping = (url, timeout) => {
   timeout += individualPingTimeout
   const limit = Math.ceil(timeout / individualPingTimeout)
 
-  core.debug(`total ping timeout ${timeout}`)
-  core.debug(`individual ping timeout ${individualPingTimeout}ms`)
-  core.debug(`retries limit ${limit}`)
+  debug(`total ping timeout ${timeout}`)
+  debug(`individual ping timeout ${individualPingTimeout}ms`)
+  debug(`retries limit ${limit}`)
 
   const start = +new Date()
   return got(url, {
@@ -40,11 +41,11 @@ const ping = (url, timeout) => {
       limit,
       calculateDelay({ error, attemptCount }) {
         if (error) {
-          core.debug(`got error ${JSON.stringify(error)}`)
+          debug(`got error ${JSON.stringify(error)}`)
         }
         const now = +new Date()
         const elapsed = now - start
-        core.debug(
+        debug(
           `${elapsed}ms ${error.method} ${error.host} ${error.code} attempt ${attemptCount}`
         )
         if (elapsed > timeout) {
@@ -72,7 +73,7 @@ const ping = (url, timeout) => {
   }).then(() => {
     const now = +new Date()
     const elapsed = now - start
-    core.debug(`pinging ${url} has finished ok after ${elapsed}ms`)
+    debug(`pinging ${url} has finished ok after ${elapsed}ms`)
   })
 }
 
