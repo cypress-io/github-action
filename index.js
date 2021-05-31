@@ -92,7 +92,13 @@ const packageLockFilename = path.join(
 const useYarn = () => fs.existsSync(yarnFilename)
 
 const lockHash = () => {
-  const lockFilename = useYarn() ? yarnFilename : packageLockFilename
+  const lockFileConfig = core.getInput('lock-file')
+  let lockFilename
+  if (lockFileConfig) {
+    lockFilename = path.resolve(lockFileConfig)
+  } else {
+    lockFilename = useYarn() ? yarnFilename : packageLockFilename
+  }
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash

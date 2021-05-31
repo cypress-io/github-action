@@ -5,9 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: npm i
-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
       - name: Cypress tests
         uses: ./
         with:
           working-directory: examples/npm-workspaces/workspace-1
+          lock-file: examples/npm-workspaces/package-lock.json
