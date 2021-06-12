@@ -34,7 +34,7 @@
     "@actions/core": "1.4.0",
     "@actions/exec": "1.1.0",
     "@actions/io": "1.1.1",
-    "@octokit/core": "3.4.0",
+    "@octokit/core": "3.5.0",
     "argument-vector": "1.0.2",
     "debug": "4.3.1",
     "execa": "3.4.0",
