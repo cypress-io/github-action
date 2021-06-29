@@ -1154,6 +1154,8 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
+**Note:** every GH workflow step can have `outcome` and `conclusion` properties. See the documentation at [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context) page. In particular, the `output` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use the next steps that follow.
+
 ### Docker image
 
 If your repository does not have `package.json` or `yarn.json` (maybe it contains a static site and does not need any dependencies), you can run Cypress tests using `cypress/included:...` [Cypress Docker images](https://github.com/cypress-io/cypress-docker-images/tree/master/included). In that case you don't even need this GH Action, instead use the Docker container and write `cypress run` command like this example from [cypress-gh-action-included](https://github.com/bahmutov/cypress-gh-action-included)

@@ -28,6 +28,9 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # see "outcome" and "conclusion" of a step doc
+      # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
+      # "output" can be success, failure, cancelled, or skipped
       - name: Print Dashboard URL
         run: |
           echo Cypress finished with: ${{ steps.cypress.outcome }}
