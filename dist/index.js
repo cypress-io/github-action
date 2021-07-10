@@ -6717,15 +6717,27 @@ const yarnFilename = path.join(
   findYarnWorkspaceRoot(workingDirectory) || workingDirectory,
   'yarn.lock'
 )
-const packageLockFilename = path.join(
+const pnpmLockFilename = path.join(workingDirectory, 'pnpm-lock.yaml')
+const npmPackageLockFilename = path.join(
   workingDirectory,
   'package-lock.json'
 )
 
 const useYarn = () => fs.existsSync(yarnFilename)
+const usePnpm = () => fs.existsSync(pnpmLockFilename)
+
+const npxOrPnpx = !usePnpm() ? 'npx' : 'pnpx'
 
 const lockHash = () => {
-  const lockFilename = useYarn() ? yarnFilename : packageLockFilename
+  let lockFilename
+  if (useYarn()) {
+    lockFilename = yarnFilename
+  } else if (usePnpm()) {
+    lockFilename = pnpmLockFilename
+  } else {
+    lockFilename = npmPackageLockFilename
+  }
+
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
@@ -6740,6 +6752,8 @@ const getNpmCache = () => {
   if (!key) {
     if (useYarn()) {
       key = `yarn-${platformAndArch}-${hash}`
+    } else if (usePnpm()) {
+      key = `pnpm-${platformAndArch}-${hash}`
     } else {
       key = `npm-${platformAndArch}-${hash}`
     }
@@ -6749,6 +6763,8 @@ const getNpmCache = () => {
 
   if (useYarn()) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
+  } else if (usePnpm()) {
+    o.inputPath = path.join(homeDirectory, '.pnpm-store')
   } else {
     o.inputPath = NPM_CACHE_FOLDER
   }
@@ -6792,11 +6808,21 @@ const restoreCachedNpm = () => {
 const saveCachedNpm = () => {
   debug('saving NPM modules')
   const NPM_CACHE = getNpmCache()
-  return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
-    (e) => {
-      console.warn('Saving NPM cache error: %s', e.message)
-    }
-  )
+
+  if (usePnpm()) {
+    // don't cache old dependency versions not referenced by package.json
+    // this prevents the cache growing over time
+    io.which('pnpm', true).then(pnpmPath => {
+      core.debug(`pnpm at "${pnpmPath}"`)
+      return exec.exec(
+        quote(pnpmPath),
+        ['store prune'],
+        cypressCommandOptions
+      )
+    })
+  }
+
+  return saveCache(NPM_CACHE.inputPath, NPM_CACHE.primaryKey)
 }
 
 const restoreCachedCypressBinary = () => {
@@ -6853,6 +6879,16 @@ const install = () => {
         cypressCommandOptions
       )
     })
+  } else if (usePnpm()) {
+    core.debug('installing NPM dependencies using PNPM')
+    return io.which('pnpm', true).then(pnpmPath => {
+      core.debug(`pnpm at "${pnpmPath}"`)
+      return exec.exec(
+        quote(pnpmPath),
+        ['install --frozen-lockfile -C'],
+        cypressCommandOptions
+      )
+    })
   } else {
     debug('installing NPM dependencies')
 
@@ -6893,7 +6929,7 @@ const verifyCypressBinary = () => {
   }
 
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  return io.which('npx', true).then((npxPath) => {
+  return io.which(npxOrPnpx, true).then(npxPath => {
     return exec.exec(
       quote(npxPath),
       ['cypress', 'verify'],
@@ -7204,7 +7240,7 @@ const runTestsUsingCommandLine = async () => {
     cmd.push('--quiet')
   }
 
-  console.log('Cypress test command: npx %s', cmd.join(' '))
+  console.log('Cypress test command: %s %s', npxOrPnpx, cmd.join(' '))
 
   // since we have quoted arguments ourselves, do not double quote them
   const opts = {
@@ -7214,8 +7250,8 @@ const runTestsUsingCommandLine = async () => {
 
   debug(`in working directory "${cypressCommandOptions.cwd}"`)
 
-  const npxPath = await io.which('npx', true)
-  debug(`npx path: ${npxPath}`)
+  const npxPath = await io.which(npxOrPnpx, true)
+  core.debug(`npx path: ${npxPath}`)
 
   return exec.exec(quote(npxPath), cmd, opts)
 }

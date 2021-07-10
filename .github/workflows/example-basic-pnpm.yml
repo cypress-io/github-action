@@ -1,0 +1,60 @@
+name: example-pnpm
+on: [push]
+jobs:
+  basic-pnpm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install pnpm
+        uses: pnpm/action-setup@v1.2.0
+        with:
+          version: 5.4.3
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v2
+        uses: ./
+        # the parameters below are only necessary
+        # because we are running these examples in a monorepo
+        with:
+          working-directory: examples/basic-pnpm
+          # just for full picture after installing Cypress
+          # print information about detected browsers, etc
+          # see https://on.cypress.io/command-line#cypress-info
+          build: pnpx cypress info
+
+  basic-pnpm-on-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Install pnpm
+        uses: pnpm/action-setup@v1.2.0
+        with:
+          version: 5.4.3
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic-pnpm
+          build: pnpx cypress info
+
+  basic-pnpm-on-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Install pnpm
+        uses: pnpm/action-setup@v1.2.0
+        with:
+          version: 5.4.3
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic-pnpm
+          build: pnpx cypress info
