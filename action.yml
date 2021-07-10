@@ -80,6 +80,9 @@ inputs:
   quiet:
     description: 'Whether or not to silence any Cypress specific output from stdout'
     required: false
+  lock-file:
+    description: 'Manually specify a path to lock file e.g. if using a monorepo or pnpm'
+    required: false
 outputs:
   dashboardUrl:
     description: 'Cypress Dashboard URL if the run was recorded'
