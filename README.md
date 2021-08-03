@@ -571,6 +571,34 @@ jobs:
           build: npm run build
 ```
 
+### Multiple build commands
+
+You can run multiple build commands. For example, if you build using `npm run build` and generate static files using `npm run generate`, you can put those commands in `build` using comma separation.
+
+```yml
+name: Build
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build, npm run generate
+```
+
+You can place the build commands in separate lines
+
+```yml
+with:
+  build: |
+    npm run build
+    npm run generate
+```
+
 ### Start server
 
 If your tests run against a local server, use `start` parameter, the server will run in the background and will shut down after tests complete

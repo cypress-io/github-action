@@ -308,9 +308,24 @@ const buildAppMaybe = () => {
     return
   }
 
-  debug(`building application using "${buildApp}"`)
+  // allow commands to be separated using commas or newlines
+  const separateBuildCommands = buildApp
+    .split(/,|\n/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  debug(
+    `Separated ${
+      separateBuildCommands.length
+    } build commands ${separateBuildCommands.join(', ')}`
+  )
 
-  return execCommand(buildApp, true, 'build app')
+  return separateBuildCommands.map((buildCommand) => {
+    return execCommand(
+      buildCommand,
+      true,
+      `build app "${buildCommand}`
+    )
+  })
 }
 
 const startServersMaybe = () => {
