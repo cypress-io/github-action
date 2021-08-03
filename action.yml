@@ -59,7 +59,7 @@ inputs:
   working-directory:
     description: 'Working directory containing Cypress folder'
     required: false
-  headless:
+  headed:
     description: 'Whether or not to use headless mode'
     required: false
   spec:
