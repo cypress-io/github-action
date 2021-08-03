@@ -9,7 +9,7 @@
 - Run tests in a given [browser](#browser)
     * using [Firefox](#firefox)
     * using [Edge](#edge)
-    * using [headless mode](#headless)
+    * using [headed mode](#headed)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
 - Run only some [spec files](#specs)
@@ -149,12 +149,12 @@ jobs:
 
 **Note:** Microsoft has not released Edge for Linux yet, thus you need to run these tests on Windows or Mac runners with Edge preinstalled. You can use [`cypress info`](https://on.cypress.io/command-line#cypress-info) command to see the browsers installed on the machine.
 
-### Headless
+### Headed
 
-Run the browser in headless mode
+Run the browser in headed mode - as of Cypress v8.0 the `cypress run` executes tests in `headless` mode by default
 
 ```yml
-name: Chrome headless
+name: Chrome headed
 on: [push]
 jobs:
   cypress-run:
@@ -164,7 +164,7 @@ jobs:
       - uses: cypress-io/github-action@v2
         with:
           browser: chrome
-          headless: true
+          headed: true
 ```
 
 ### Docker image

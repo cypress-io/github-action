@@ -7117,7 +7117,7 @@ const runTestsUsingCommandLine = async () => {
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
-  const headless = getInputBool('headless')
+  const headed = getInputBool('headed')
 
   // TODO using yarn to run cypress when yarn is used for install
   // split potentially long command?
@@ -7132,8 +7132,8 @@ const runTestsUsingCommandLine = async () => {
   // push each CLI argument separately
   cmd.push('cypress')
   cmd.push('run')
-  if (headless) {
-    cmd.push('--headless')
+  if (headed) {
+    cmd.push('--headed')
   }
   if (record) {
     cmd.push('--record')
@@ -7258,7 +7258,7 @@ const runTests = async () => {
 
   const cypress = require(cypressModulePath)
   const cypressOptions = {
-    headless: getInputBool('headless'),
+    headed: getInputBool('headed'),
     record: getInputBool('record'),
     parallel: getInputBool('parallel'),
     quiet: getInputBool('quiet')
@@ -50855,6 +50855,8 @@ function setup(env) {
 	function createDebug(namespace) {
 		let prevTime;
 		let enableOverride = null;
+		let namespacesCache;
+		let enabledCache;
 
 		function debug(...args) {
 			// Disabled?
@@ -50915,7 +50917,17 @@ function setup(env) {
 		Object.defineProperty(debug, 'enabled', {
 			enumerable: true,
 			configurable: false,
-			get: () => enableOverride === null ? createDebug.enabled(namespace) : enableOverride,
+			get: () => {
+				if (enableOverride !== null) {
+					return enableOverride;
+				}
+				if (namespacesCache !== createDebug.namespaces) {
+					namespacesCache = createDebug.namespaces;
+					enabledCache = createDebug.enabled(namespace);
+				}
+
+				return enabledCache;
+			},
 			set: v => {
 				enableOverride = v;
 			}
@@ -50944,6 +50956,7 @@ function setup(env) {
 	*/
 	function enable(namespaces) {
 		createDebug.save(namespaces);
+		createDebug.namespaces = namespaces;
 
 		createDebug.names = [];
 		createDebug.skips = [];
