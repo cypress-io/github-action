@@ -7117,7 +7117,7 @@ const runTestsUsingCommandLine = async () => {
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
-  const headed = getInputBool('headed')
+  const headless = getInputBool('headless')
 
   // TODO using yarn to run cypress when yarn is used for install
   // split potentially long command?
@@ -7132,7 +7132,9 @@ const runTestsUsingCommandLine = async () => {
   // push each CLI argument separately
   cmd.push('cypress')
   cmd.push('run')
-  if (headed) {
+  if (headless) {
+    cmd.push('--headless')
+  } else if (!headless) {
     cmd.push('--headed')
   }
   if (record) {
@@ -7258,7 +7260,7 @@ const runTests = async () => {
 
   const cypress = require(cypressModulePath)
   const cypressOptions = {
-    headed: getInputBool('headed'),
+    headless: getInputBool('headless'),
     record: getInputBool('record'),
     parallel: getInputBool('parallel'),
     quiet: getInputBool('quiet')
