@@ -151,7 +151,7 @@ jobs:
 
 ### Headed
 
-Run the browser in headed mode - as of Cypress v8.0 the `cypress run` executes tests in `headless` mode by default
+Run the browser in headed or headless mode - as of Cypress v8.0 the `cypress run` command executes tests in `headless` mode by default
 
 ```yml
 name: Chrome headed
@@ -164,7 +164,7 @@ jobs:
       - uses: cypress-io/github-action@v4
         with:
           browser: chrome
-          headed: true
+          headless: false
 ```
 
 ### Docker image
