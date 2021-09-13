@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install pnpm
-        uses: pnpm/action-setup@v1.2.0
+        uses: pnpm/action-setup@v2.0.1
         with:
           version: 5.4.3
 
@@ -29,7 +29,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Install pnpm
-        uses: pnpm/action-setup@v1.2.0
+        uses: pnpm/action-setup@v2.0.1
         with:
           version: 5.4.3
 
@@ -46,7 +46,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Install pnpm
-        uses: pnpm/action-setup@v1.2.0
+        uses: pnpm/action-setup@v2.0.1
         with:
           version: 5.4.3
 
