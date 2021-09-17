@@ -59,7 +59,7 @@ jobs:
         with:
           working-directory: examples/chrome
           browser: chrome
-          headless: false
+          headed: true
 
       - uses: actions/upload-artifact@v2
         with:
