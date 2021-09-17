@@ -31,7 +31,7 @@
   "homepage": "https://github.com/cypress-io/github-action#readme",
   "dependencies": {
     "@actions/cache": "1.0.7",
-    "@actions/core": "1.4.0",
+    "@actions/core": "1.5.0",
     "@actions/exec": "1.1.0",
     "@actions/io": "1.1.1",
     "@octokit/core": "3.5.1",
@@ -44,11 +44,11 @@
     "quote": "0.4.0"
   },
   "devDependencies": {
-    "@types/node": "12.20.18",
+    "@types/node": "12.20.24",
     "@zeit/ncc": "0.22.3",
     "husky": "4.3.8",
     "markdown-link-check": "3.8.7",
-    "prettier": "2.3.2",
+    "prettier": "2.4.0",
     "stop-build": "1.1.0"
   },
   "publishConfig": {
