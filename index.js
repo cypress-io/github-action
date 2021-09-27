@@ -21,9 +21,10 @@ const { ping } = require('./src/ping')
 const execCommand = (
   fullCommand,
   waitToFinish = true,
-  label = 'executing'
+  label = 'executing',
+  options = cypressCommandOptions
 ) => {
-  const cwd = cypressCommandOptions.cwd
+  const cwd = options.cwd
 
   console.log('%s command "%s"', label, fullCommand)
   console.log('current working directory "%s"', cwd)
@@ -40,11 +41,7 @@ const execCommand = (
     debug(`running ${quote(toolPath)} ${argsString} in ${cwd}`)
     debug(`waiting for the command to finish? ${waitToFinish}`)
 
-    const promise = exec.exec(
-      quote(toolPath),
-      toolArguments,
-      cypressCommandOptions
-    )
+    const promise = exec.exec(quote(toolPath), toolArguments, options)
     if (waitToFinish) {
       return promise
     }
@@ -64,13 +61,17 @@ const isCypressBinarySkipped = () =>
 const homeDirectory = os.homedir()
 const platformAndArch = `${process.platform}-${process.arch}`
 
-const startWorkingDirectory = process.cwd()
+const currentWorkingDirectory = process.cwd()
 // seems the working directory should be absolute to work correctly
 // https://github.com/cypress-io/github-action/issues/211
 const workingDirectory = core.getInput('working-directory')
   ? path.resolve(core.getInput('working-directory'))
-  : startWorkingDirectory
+  : currentWorkingDirectory
 debug(`working directory ${workingDirectory}`)
+
+const startWorkingDirectory = core.getInput('start-working-directory')
+  ? path.resolve(core.getInput('start-working-directory'))
+  : workingDirectory
 
 /**
  * When running "npm install" or any other Cypress-related commands,
@@ -343,7 +344,12 @@ const startServersMaybe = () => {
     return execCommand(
       startCommand,
       false,
-      `start server "${startCommand}`
+      `start server "${startCommand}`,
+      {
+        cwd: startWorkingDirectory
+          ? startWorkingDirectory
+          : cypressCommandOptions.cwd
+      }
     )
   })
 }
@@ -672,7 +678,7 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
-    process.chdir(startWorkingDirectory)
+    process.chdir(currentWorkingDirectory)
 
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
@@ -709,7 +715,7 @@ const runTests = async () => {
   }
 
   const onTestsError = (e) => {
-    process.chdir(startWorkingDirectory)
+    process.chdir(currentWorkingDirectory)
 
     console.error(e)
     return Promise.reject(e)

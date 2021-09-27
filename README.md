@@ -610,6 +610,29 @@ jobs:
           start-windows: npm run start:windows:server
 ```
 
+**Note:** you might need the server command to be ran from a different directory. You can use `start-working-directory` for this
+```yml
+name: With server
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+          architecture: x64
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          start: ./gradlew run :server:run
+          # The server executable lives in a different directory
+          start-working-directory: '../backend/
+```
+
 [![start example](https://github.com/cypress-io/github-action/workflows/example-start/badge.svg?branch=master)](.github/workflows/example-start.yml)
 
 **Note:** GitHub cleans up the running server processes automatically. This action does not stop them.

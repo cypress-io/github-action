@@ -29,6 +29,9 @@ inputs:
   start-windows:
     description: 'A different start command on Windows'
     required: false
+  start-working-directory:
+    description: 'A different working directory for the local server start command'
+    required: false
   build:
     description: 'Command to run in build step before starting tests'
     required: false
