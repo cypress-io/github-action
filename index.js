@@ -55,6 +55,17 @@ const isWindows = () => os.platform() === 'win32'
 const isUrl = (s) => /^https?:\/\//.test(s)
 
 /**
+ * Quote strings that contain Windows delimiters.
+ * https://github.com/cypress-io/github-action/issues/459
+ */
+const quoteWindowsArgument = (value) => {
+  if (!/[,;=\s]/.test(value)) {
+    return value
+  }
+  return quote(value)
+}
+
+/**
  * Returns true if the Cypress binary installation was skipped
  * via an environment variable https://on.cypress.io/installing
  */
@@ -475,7 +486,7 @@ const getCiBuildId = async () => {
  */
 const runTestsUsingCommandLine = async () => {
   debug('Running Cypress tests using CLI command')
-  const quoteArgument = isWindows() ? quote : I
+  const quoteArgument = isWindows() ? quoteWindowsArgument : I
 
   const commandPrefix = core.getInput('command-prefix')
   if (!commandPrefix) {
