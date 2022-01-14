@@ -354,7 +354,7 @@ const startServersMaybe = () => {
     return execCommand(
       startCommand,
       false,
-      `start server "${startCommand}`
+      `start server`
     )
   })
 }
