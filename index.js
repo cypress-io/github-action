@@ -829,7 +829,7 @@ const installMaybe = () => {
     debug(`npm cache hit ${npmCacheHit}`)
     debug(`cypress cache hit ${cypressCacheHit}`)
 
-    return install().then(() => {
+    return logGroup("Install", () => install().then(() => {
       debug('install has finished')
       return listCypressBinaries().then(() => {
         if (npmCacheHit && cypressCacheHit) {
@@ -842,15 +842,27 @@ const installMaybe = () => {
           .then(saveCachedNpm)
           .then(saveCachedCypressBinary)
       })
-    })
+    }))
   })
 }
 
-installMaybe()
-  .then(buildAppMaybe)
-  .then(startServersMaybe)
-  .then(waitOnMaybe)
-  .then(runTests)
+// Wrap a function such that any output it produces ends up in a folded log
+// section with a title of $name
+// The fn argument doesn't have to return a promise, but if it does, the
+// folding section will end when that promise is settled.
+const logGroup = (name, fn) => {
+  core.startGroup(name);
+  return (resolved) => {
+    return Promise.resolve(fn(resolved))
+      .finally(core.endGroup)
+   }
+}
+
+logGroup("Restore cache and install", installMaybe)
+  .then(logGroup("Build", buildAppMaybe))
+  .then(logGroup("Start Servers", startServersMaybe))
+  .then(logGroup("Wait...", waitOnMaybe))
+  .then(logGroup("Running tests", runTests))
   .then(() => {
     debug('all done, exiting')
     // force exit to avoid waiting for child processes,
