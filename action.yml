@@ -84,7 +84,7 @@ outputs:
   dashboardUrl:
     description: 'Cypress Dashboard URL if the run was recorded'
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
 branding:
   color: 'green'
