@@ -1,5 +1,5 @@
 name: example-chrome
-on: [push]
+on: [push, pull_request]
 jobs:
   tests:
     runs-on: ubuntu-20.04

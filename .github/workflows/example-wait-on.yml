@@ -1,5 +1,5 @@
 name: example-wait-on
-on: [push]
+on: [push, pull_request]
 jobs:
   wait:
     runs-on: ubuntu-20.04

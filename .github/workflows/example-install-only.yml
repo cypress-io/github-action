@@ -1,5 +1,5 @@
 name: example-install-only
-on: [push]
+on: [push, pull_request]
 jobs:
   # do not install every dependency in this example
   # just install Cypress, but make sure to cache it

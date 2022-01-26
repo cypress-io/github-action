@@ -1,5 +1,5 @@
 name: example-env
-on: [push]
+on: [push, pull_request]
 env:
   # pass an environment variable to Cypress
   # a test can get its value like this

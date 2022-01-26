@@ -1,5 +1,5 @@
 name: example-install-command
-on: [push]
+on: [push, pull_request]
 jobs:
   install-command:
     runs-on: ubuntu-20.04

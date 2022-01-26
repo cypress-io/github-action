@@ -1,5 +1,5 @@
 name: example-config
-on: [push]
+on: [push, pull_request]
 jobs:
   start:
     # example where we pass custom base URL

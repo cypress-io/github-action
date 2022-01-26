@@ -1,5 +1,5 @@
 name: example-node-versions
-on: [push]
+on: [push, pull_request]
 jobs:
   cypress-run:
     runs-on: ubuntu-20.04

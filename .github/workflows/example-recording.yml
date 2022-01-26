@@ -1,5 +1,5 @@
 name: example-recording
-on: [push]
+on: [push, pull_request]
 jobs:
   parallel:
     runs-on: ubuntu-20.04

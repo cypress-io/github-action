@@ -1,5 +1,5 @@
 name: example-start
-on: [push]
+on: [push, pull_request]
 jobs:
   start:
     # example with web application build,

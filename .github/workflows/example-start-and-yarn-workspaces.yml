@@ -1,5 +1,5 @@
 name: example-start-and-yarn-workspaces
-on: [push]
+on: [push, pull_request]
 jobs:
   single:
     # the example has Yarn workspace in its "root" folder
