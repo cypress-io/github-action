@@ -1,5 +1,9 @@
 name: example-debug
-on: push
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
 jobs:
   nightly:
     runs-on: ubuntu-20.04

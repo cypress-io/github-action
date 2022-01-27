@@ -1,5 +1,9 @@
 name: example-custom-command
-on: [push, pull_request]
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
 jobs:
   start:
     # example where instead of forming the default "cypress run ..."

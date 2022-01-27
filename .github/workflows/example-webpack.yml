@@ -4,7 +4,6 @@ on:
     branches:    
       - 'master'
   pull_request:
-
 jobs:
   wait:
     runs-on: ubuntu-20.04
