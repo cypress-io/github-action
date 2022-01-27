@@ -1,5 +1,10 @@
 name: example-webpack
-on: [push, pull_request]
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
+
 jobs:
   wait:
     runs-on: ubuntu-20.04
