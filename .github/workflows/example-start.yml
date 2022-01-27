@@ -16,7 +16,7 @@ jobs:
           working-directory: examples/start
           build: npm run build
           start: npm start
-          wait-on: 'http://localhost:5000'
+          wait-on: 'http://localhost:3000'
 
   start-multiple:
     # example with web application build
