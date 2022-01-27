@@ -1,5 +1,9 @@
 name: example-quiet
-on: [push]
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest

@@ -10,7 +10,11 @@
 # based on the recipe written in
 # https://medium.com/attest-r-and-d/adding-a-unique-github-build-identifier-7aa2e83cadca
 name: example-custom-ci-build-id
-on: [push]
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
 jobs:
   # single job that generates and outputs a common id
   prepare:

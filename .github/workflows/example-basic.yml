@@ -1,5 +1,9 @@
 name: example-basic
-on: [push]
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
 jobs:
   # note: Ubuntu 16 probably works, but is deprecated
 

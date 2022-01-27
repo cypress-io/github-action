@@ -1,5 +1,9 @@
 name: example-firefox
-on: push
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
 jobs:
   firefox:
     # should include Firefox browser install

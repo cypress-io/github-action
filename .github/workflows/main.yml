@@ -1,6 +1,9 @@
 name: main
-on: [push]
-
+on:
+  push:
+    branches:    
+      - 'master'
+  pull_request:
 jobs:
   build-and-test-node12:
     runs-on: ubuntu-20.04
