@@ -1,4 +1,6 @@
 name: example-basic
+env:
+  DEBUG: true
 on:
   push:
     branches:

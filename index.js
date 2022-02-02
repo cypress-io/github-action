@@ -613,7 +613,6 @@ const runTestsUsingCommandLine = async () => {
  * @see https://on.cypress.io/module-api
  */
 const runTests = async () => {
-  const commandPrefix = core.getInput('command-prefix')
   const customCommand = core.getInput('command')
   const cypressOptions = {
     headless: getInputBool('headless'),
@@ -643,6 +642,7 @@ const runTests = async () => {
     return execCommand(customCommand, true, 'run tests')
   }
 
+  const commandPrefix = core.getInput('command-prefix') || '--'
   if (commandPrefix) {
     return runTestsUsingCommandLine()
   }
