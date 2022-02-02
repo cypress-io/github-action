@@ -1,6 +1,6 @@
 name: example-basic
 env:
-  DEBUG: * 
+  DEBUG: "*"
 on:
   push:
     branches:
