@@ -488,7 +488,7 @@ const runTestsUsingCommandLine = async () => {
   debug('Running Cypress tests using CLI command')
   const quoteArgument = isWindows() ? quoteWindowsArgument : I
 
-  const commandPrefix = core.getInput('command-prefix')
+  const commandPrefix = core.getInput('command-prefix') || '--'
   if (!commandPrefix) {
     throw new Error('Expected command prefix')
   }
