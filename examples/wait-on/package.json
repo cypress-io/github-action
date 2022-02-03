@@ -18,7 +18,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "6.8.0"
+    "cypress": "9.4.1"
   },
   "dependencies": {
     "arg": "5.0.0",
