@@ -85,6 +85,21 @@ When using `cypress-io/github-action@v3` from your workflow file, you automatica
 
 By using the full version tag, you will avoid accidentally using a newer version of the action.
 
+### Node.js version
+
+Version 3 of the action upgrades the base version of Node.js to `v16`. This is the default engine that will launch the Cypress tests. If you wish to use a different version, first setup the node environment, then explicitly define a test `command`, e.g.
+
+```yml
+- name: Setup Node v18
+  uses: actions/setup-node@v2
+    with:
+      node-version: 18
+- name: Cypress with Node v18
+  uses: cypress-io/github-action@v3
+    with:
+      command: npx cypress run
+```
+
 ### Browser
 
 Specify the browser name or path with `browser` parameter
