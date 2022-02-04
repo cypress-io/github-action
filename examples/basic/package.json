@@ -10,6 +10,6 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "6.8.0"
+    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/circle-10.0-release-5d52758d82c47033803c69c7858fc786a900faaf/cypress.tgz"
   }
 }
