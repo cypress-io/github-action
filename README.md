@@ -7,9 +7,9 @@
 - [Basic](#basic)
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
-    * using [Firefox](#firefox)
-    * using [Edge](#edge)
-    * using [headless mode](#headless)
+  - using [Firefox](#firefox)
+  - using [Edge](#edge)
+  - using [headless mode](#headless)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
 - Run only some [spec files](#specs)
@@ -41,6 +41,7 @@
 - [print Cypress info](#print-cypress-info) like detected browsers
 - [run tests nightly](#nightly-tests) or on any schedule
 - [more examples](#more-examples)
+- [Common Problems](#common-problems)
 
 ### Basic
 
@@ -1078,6 +1079,52 @@ Name | Description
 [cypress-and-jest-typescript-example](https://github.com/cypress-io/cypress-and-jest-typescript-example) | Run E2E and Jest unit tests in parallel
 [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example) | Run E2E and component tests using this action
 <!-- prettier-ignore-end -->
+
+## Common Problems
+
+### EACCES: permission denied, open '/github/home/.cache/.../binary_state.json’
+
+This issue is caused by the user not having the right permissions to the cache directory, and seems to only happen when using a docker container. For example:
+
+```yaml
+name: E2E in custom container
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    container: cypress/browsers:node16.13.0-chrome95-ff94
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+```
+
+In order to fix this, you need to specify a specific user to run the container. For example:
+
+```yaml
+name: E2E in custom container
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    container:
+      image: cypress/browsers:node16.13.0-chrome95-ff94
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+```
+
+`user 1001` is a special user within GitHub Actions which has the necessary permissions to write to `/github/home/...`.
+
+For greater context and information, please see the following links:
+
+- https://github.com/cypress-io/github-action/issues/446#issuecomment-987015822
+- https://dev.to/jj/designing-containers-for-github-actions-5h84
+- https://github.com/cypress-io/github-action/issues/104
 
 ## Notes
 
