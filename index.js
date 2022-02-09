@@ -648,7 +648,8 @@ const runTests = async () => {
     headless: getInputBool('headless'),
     record: getInputBool('record'),
     parallel: getInputBool('parallel'),
-    quiet: getInputBool('quiet')
+    quiet: getInputBool('quiet'),
+    component: getInputBool('component')
   }
 
   if (core.getInput('group')) {
