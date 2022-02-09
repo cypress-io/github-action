@@ -80,6 +80,10 @@ inputs:
   quiet:
     description: 'Whether or not to silence any Cypress specific output from stdout'
     required: false
+  component:
+    description: 'Let's the action know that Cypress is running component tests and not e2e tests'
+    required: false
+    default: false
 outputs:
   dashboardUrl:
     description: 'Cypress Dashboard URL if the run was recorded'
