@@ -613,7 +613,22 @@ const runTestsUsingCommandLine = async () => {
  * @see https://on.cypress.io/module-api
  */
 const runTests = async () => {
+  const commandPrefix = core.getInput('command-prefix')
+  const customCommand = core.getInput('command')
+  const cypressOptions = {
+    headless: getInputBool('headless'),
+    record: getInputBool('record'),
+    parallel: getInputBool('parallel'),
+    quiet: getInputBool('quiet'),
+    component: getInputBool('component')
+  }
+  const cypressModulePath =
+    require.resolve('cypress', { paths: [workingDirectory] }) ||
+    'cypress'
+  const cypress = require(cypressModulePath)
   const runTests = getInputBool('runTests', true)
+  const spec = getSpecsList()
+
   if (!runTests) {
     console.log('Skipping running tests: runTests parameter is false')
     return
@@ -623,13 +638,11 @@ const runTests = async () => {
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   core.exportVariable('TERM', 'xterm')
 
-  const customCommand = core.getInput('command')
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)
     return execCommand(customCommand, true, 'run tests')
   }
 
-  const commandPrefix = core.getInput('command-prefix')
   if (commandPrefix) {
     return runTestsUsingCommandLine()
   }
@@ -637,35 +650,25 @@ const runTests = async () => {
   debug('Running Cypress tests using NPM module API')
   debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
   debug(`working directory ${workingDirectory}`)
-  const cypressModulePath =
-    require.resolve('cypress', {
-      paths: [workingDirectory]
-    }) || 'cypress'
   debug(`resolved cypress ${cypressModulePath}`)
-
-  const cypress = require(cypressModulePath)
-  const cypressOptions = {
-    headless: getInputBool('headless'),
-    record: getInputBool('record'),
-    parallel: getInputBool('parallel'),
-    quiet: getInputBool('quiet'),
-    component: getInputBool('component')
-  }
 
   if (core.getInput('group')) {
     cypressOptions.group = core.getInput('group')
   }
+
   if (core.getInput('tag')) {
     cypressOptions.tag = core.getInput('tag')
   }
+
   if (core.getInput('config')) {
     cypressOptions.config = core.getInput('config')
     debug(`Cypress config "${cypressOptions.config}"`)
   }
-  const spec = getSpecsList()
+
   if (spec) {
     cypressOptions.spec = spec
   }
+
   if (core.getInput('config-file')) {
     cypressOptions.configFile = core.getInput('config-file')
   }
@@ -674,9 +677,11 @@ const runTests = async () => {
   if (core.getInput('project')) {
     cypressOptions.project = core.getInput('project')
   }
+
   if (core.getInput('browser')) {
     cypressOptions.browser = core.getInput('browser')
   }
+
   if (core.getInput('env')) {
     cypressOptions.env = core.getInput('env')
   }
@@ -693,6 +698,7 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
+    const dashboardUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
     if (testResults.failures) {
@@ -713,12 +719,12 @@ const runTests = async () => {
 
     debug(`Cypress tests: ${testResults.totalFailed} failed`)
 
-    const dashboardUrl = testResults.runUrl
     if (dashboardUrl) {
       debug(`Dashboard url ${dashboardUrl}`)
     } else {
       debug('There is no Dashboard url')
     }
+
     // we still set the output explicitly
     core.setOutput('dashboardUrl', dashboardUrl)
 
