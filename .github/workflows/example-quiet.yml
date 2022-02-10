@@ -1,7 +1,7 @@
 name: example-quiet
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -17,3 +17,4 @@ jobs:
         with:
           working-directory: examples/quiet
           quiet: true
+          config-file: cypress.json

@@ -1,7 +1,7 @@
 name: example-edge
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -20,3 +20,4 @@ jobs:
           build: npm run info
           working-directory: examples/chrome
           browser: edge
+          config-file: cypress.json

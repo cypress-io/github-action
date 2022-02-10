@@ -1,7 +1,7 @@
 name: example-debug
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -17,3 +17,4 @@ jobs:
           DEBUG: '@cypress/github-action'
         with:
           working-directory: examples/basic
+          config-file: cypress.json

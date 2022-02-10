@@ -1,7 +1,7 @@
 name: example-node-versions
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -28,3 +28,4 @@ jobs:
       - uses: ./
         with:
           working-directory: examples/node-versions
+          config-file: cypress.json

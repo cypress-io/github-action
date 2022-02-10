@@ -1,7 +1,7 @@
 name: example-install-command
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -17,3 +17,4 @@ jobs:
           working-directory: examples/install-command
           # https://classic.yarnpkg.com/en/docs/cli/install
           install-command: yarn --frozen-lockfile --silent
+          config-file: cypress.json

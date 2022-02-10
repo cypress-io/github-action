@@ -1,7 +1,7 @@
 name: example-install-only
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -34,3 +34,4 @@ jobs:
         with:
           working-directory: examples/install-only
           install: false
+          config-file: cypress.json

@@ -1,7 +1,7 @@
 name: example-start-and-yarn-workspaces
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -21,6 +21,7 @@ jobs:
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
+          config-file: cypress.json
 
   multiple:
     # example with web application build,
@@ -49,3 +50,4 @@ jobs:
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
+          config-file: cypress.json

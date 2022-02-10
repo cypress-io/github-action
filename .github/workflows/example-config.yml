@@ -1,7 +1,7 @@
 name: example-config
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -20,6 +20,7 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
+          config-file: cypress.json
 
   separate-specs:
     # example where we pass specs to run via multiple lines
@@ -36,6 +37,7 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
+          config-file: cypress.json
           spec: |
             cypress/integration/spec-a.js
             cypress/integration/spec-b.js
@@ -55,6 +57,7 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
+          config-file: cypress.json
           spec: |
             cypress/integration/spec-a.js
             cypress/**/*-b.js

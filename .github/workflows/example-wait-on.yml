@@ -1,7 +1,7 @@
 name: example-wait-on
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -19,6 +19,7 @@ jobs:
           working-directory: examples/wait-on
           start: npm start
           wait-on: 'http://localhost:3050'
+          config-file: cypress.json
 
   wait-server-starts-after-100-seconds:
     runs-on: ubuntu-20.04
@@ -33,6 +34,7 @@ jobs:
           start: npm run start-after-100-seconds
           wait-on: 'http://localhost:3050'
           wait-on-timeout: 110
+          config-file: cypress.json
 
   wait2:
     runs-on: ubuntu-20.04
@@ -46,6 +48,7 @@ jobs:
           working-directory: examples/wait-on
           start: npm run start2
           wait-on: 'http://localhost:3050'
+          config-file: cypress.json
 
   wait2-delay-50:
     runs-on: ubuntu-20.04
@@ -59,6 +62,7 @@ jobs:
           working-directory: examples/wait-on
           start: npm run start-after-50-seconds
           wait-on: 'http://localhost:3050'
+          config-file: cypress.json
 
   wait2-delay-120:
     runs-on: ubuntu-20.04
@@ -73,6 +77,7 @@ jobs:
           start: npm run start-after-120-seconds
           wait-on: 'http://localhost:3050'
           wait-on-timeout: 130
+          config-file: cypress.json
 
   wait3:
     runs-on: ubuntu-20.04
@@ -87,6 +92,7 @@ jobs:
           working-directory: examples/wait-on
           start: npm run start3
           wait-on: 'http://localhost:3050'
+          config-file: cypress.json
 
   wait3-for-200-seconds:
     runs-on: ubuntu-20.04
@@ -102,6 +108,7 @@ jobs:
           start: npm run start3-after-200-seconds
           wait-on: 'http://localhost:3050'
           wait-on-timeout: 210
+          config-file: cypress.json
 
   wait4:
     runs-on: ubuntu-20.04
@@ -114,6 +121,7 @@ jobs:
           working-directory: examples/wait-on
           start: npm run start4
           wait-on: 'http://localhost:3050'
+          config-file: cypress.json
 
   wait-multiple:
     runs-on: ubuntu-20.04
@@ -128,6 +136,7 @@ jobs:
           start: npm start -- --port 3050, npm run start2 -- --port 3060, node ./index3 --port 3070
           # wait for all services to respond
           wait-on: 'http://localhost:3050, http://localhost:3060, http://localhost:3070'
+          config-file: cypress.json
 
   wait-on-react-scripts:
     runs-on: ubuntu-20.04
@@ -140,6 +149,7 @@ jobs:
           working-directory: examples/react-scripts
           start: npm start
           wait-on: 'http://localhost:3000'
+          config-file: cypress.json
 
   wait-using-custom-command:
     runs-on: ubuntu-20.04
@@ -153,6 +163,7 @@ jobs:
           start: npm start
           # let's use wait-on NPM package to check the URL
           wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
+          config-file: cypress.json
 
   ping-cli:
     runs-on: ubuntu-20.04
@@ -175,3 +186,4 @@ jobs:
           working-directory: examples/wait-on-vite
           start: npm start
           wait-on: 'http://localhost:3000'
+          config-file: cypress.json

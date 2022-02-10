@@ -1,7 +1,7 @@
 name: example-chrome
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -19,11 +19,13 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
           working-directory: examples/chrome
+          config-file: cypress.json
 
       - name: Electron
         uses: ./
         with:
           working-directory: examples/chrome
+          config-file: cypress.json
 
       # store screenshot captured during the test
       - uses: actions/upload-artifact@v2
@@ -39,6 +41,7 @@ jobs:
         with:
           working-directory: examples/chrome
           browser: chrome
+          config-file: cypress.json
 
       - uses: actions/upload-artifact@v2
         with:
@@ -64,6 +67,7 @@ jobs:
           working-directory: examples/chrome
           browser: chrome
           headless: true
+          config-file: cypress.json
 
       - uses: actions/upload-artifact@v2
         with:
