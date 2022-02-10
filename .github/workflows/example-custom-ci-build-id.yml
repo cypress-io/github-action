@@ -12,7 +12,7 @@
 name: example-custom-ci-build-id
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -88,6 +88,7 @@ jobs:
               --ci-build-id ${{ needs.prepare.outputs.uuid }} \
               --group "2 - all tests"
           working-directory: examples/recording
+          config-file: cypress.json
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
