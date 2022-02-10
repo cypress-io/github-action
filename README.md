@@ -7,9 +7,9 @@
 - [Basic](#basic)
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
-    * using [Firefox](#firefox)
-    * using [Edge](#edge)
-    * using [headless mode](#headless)
+  - using [Firefox](#firefox)
+  - using [Edge](#edge)
+  - using [headless mode](#headless)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
 - Run only some [spec files](#specs)
@@ -535,19 +535,19 @@ The Cypress GH Action does not spawn or create any additional containers - it on
 
 ### Component tests
 
-You can run the [Cypress component tests](https://on.cypress.io/component-testing) after running E2E tests by calling the action again with a custom command:
+You can run [Cypress component tests](https://on.cypress.io/component-testing) after running E2E tests by adding `component: true`:
 
 ```yml
 - name: Run E2E tests 🧪
-  uses: cypress-io/github-action@v2
+  uses: cypress-io/github-action@v3
 
 - name: Run Component tests 🧪
-  uses: cypress-io/github-action@v2
+  uses: cypress-io/github-action@v3
   with:
     # we have already installed everything
     install: false
-    # to run component tests we need to use "cypress run-ct"
-    command: yarn cypress run-ct
+    # to run component tests we need to use "component: true"
+    component: true
 ```
 
 See the example project [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example)
