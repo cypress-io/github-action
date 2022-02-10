@@ -11,7 +11,7 @@ inputs:
     description: 'Set configuration values. Separate multiple values with a comma. The values set here override any values set in your configuration file.'
     required: false
   config-file:
-    description: 'Path to a JS or TS file where configuration values are set.'
+    description: 'Path to the cypress config file where configuration values are set.'
     required: false
     default: cypress.config.js
   env:
