@@ -4,6 +4,7 @@
 
 ## Examples
 
+- [Cypress 10](#cypress-10)
 - [Basic](#basic)
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
@@ -41,6 +42,29 @@
 - [print Cypress info](#print-cypress-info) like detected browsers
 - [run tests nightly](#nightly-tests) or on any schedule
 - [more examples](#more-examples)
+
+### Cypress 10
+
+Cypress 10 no longer uses a `cypress.json` configuration file. Instead, it now uses a `cypress.config.js` file. This GitHub Action's default Cypress configuration file is now `cypress.config.js`.
+
+If you are using an earlier version of Cypress, you will need to added `config-file: cypress.json` like so:
+
+```yml
+name: End-to-end tests
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v3
+        with:
+          config-file: cypress.json
+```
 
 ### Basic
 
