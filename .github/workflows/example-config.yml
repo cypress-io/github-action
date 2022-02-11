@@ -5,6 +5,9 @@ on:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   start:
     # example where we pass custom base URL
     runs-on: ubuntu-20.04
@@ -58,6 +61,62 @@ jobs:
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
           config-file: cypress.json
+          spec: |
+            cypress/integration/spec-a.js
+            cypress/**/*-b.js
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  start-v10:
+    # example where we pass custom base URL
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/config
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3333'
+          config: baseUrl=http://localhost:3333
+
+  separate-specs-v10:
+    # example where we pass specs to run via multiple lines
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/config
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3333'
+          config: baseUrl=http://localhost:3333
+          spec: |
+            cypress/integration/spec-a.js
+            cypress/integration/spec-b.js
+
+  separate-specs-with-wildcard-v10:
+    # example where we pass specs to run via multiple lines and wildcards
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/config
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3333'
+          config: baseUrl=http://localhost:3333
           spec: |
             cypress/integration/spec-a.js
             cypress/**/*-b.js
