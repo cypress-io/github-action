@@ -43,9 +43,11 @@
 - [run tests nightly](#nightly-tests) or on any schedule
 - [more examples](#more-examples)
 
-### Cypress 10
+### Cypress configuration from v9 to v10
 
 Cypress 10 no longer uses a `cypress.json` configuration file. Instead, it now uses a `cypress.config.js` file. This GitHub Action's default Cypress configuration file is now `cypress.config.js`.
+
+#### Cypress 9 and earlier
 
 If you are using an earlier version of Cypress, you will need to added `config-file: cypress.json` like so:
 
