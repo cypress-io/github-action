@@ -87,7 +87,7 @@ jobs:
           working-directory: examples/v10/recording
           record: true
           parallel: true
-          group: Recording example
+          group: Recording example v10
           tag: action
         env:
           # pass the Dashboard record key as an environment variable
@@ -116,7 +116,7 @@ jobs:
           working-directory: examples/v10/recording
           record: true
           # no parallel flag, just the group name
-          group: Recording group
+          group: Recording group v10
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
