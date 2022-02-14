@@ -43,4 +43,4 @@ jobs:
           working-directory: examples/v10/custom-command
 
       - name: Show saved file 🖨
-        run: cat examples/custom-command/results.json
+        run: cat examples/v10/custom-command/results.json

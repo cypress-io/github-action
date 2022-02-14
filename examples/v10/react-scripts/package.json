@@ -1,0 +1,29 @@
+{
+  "name": "example-react-scripts",
+  "version": "1.0.0",
+  "description": "Testing react-scripts application",
+  "scripts": {
+    "test": "cypress run",
+    "start": "BROWSER=none react-scripts start"
+  },
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/circle-10.0-release-faa8fb5302ae8fac4ac53f1dcd214abe35bce3ab/cypress.tgz",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "react-scripts": "3.4.4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
