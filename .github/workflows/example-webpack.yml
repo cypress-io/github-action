@@ -5,6 +5,9 @@ on:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   wait:
     runs-on: ubuntu-20.04
     steps:
@@ -18,3 +21,18 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:8080'
           config-file: cypress.json
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  wait-v10:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/webpack
+          start: npm start
+          wait-on: 'http://localhost:8080'
