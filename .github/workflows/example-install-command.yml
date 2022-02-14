@@ -5,6 +5,9 @@ on:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   install-command:
     runs-on: ubuntu-20.04
     steps:
@@ -18,3 +21,18 @@ jobs:
           # https://classic.yarnpkg.com/en/docs/cli/install
           install-command: yarn --frozen-lockfile --silent
           config-file: cypress.json
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  install-command-v10:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Custom Yarn command
+        uses: ./
+        with:
+          working-directory: examples/v10/install-command
+          # https://classic.yarnpkg.com/en/docs/cli/install
+          install-command: yarn --frozen-lockfile --silent
