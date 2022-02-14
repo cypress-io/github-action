@@ -99,8 +99,8 @@ jobs:
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
           spec: |
-            cypress/e2e/spec-a.js
-            cypress/e2e/spec-b.js
+            cypress/e2e/spec-a.cy.js
+            cypress/e2e/spec-b.cy.js
 
   separate-specs-with-wildcard-v10:
     # example where we pass specs to run via multiple lines and wildcards
@@ -118,5 +118,5 @@ jobs:
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
           spec: |
-            cypress/e2e/spec-a.js
-            cypress/**/*-b.js
+            cypress/e2e/spec-a.cy.js
+            cypress/**/*-b.cy.js
