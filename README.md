@@ -576,7 +576,7 @@ You can run [Cypress component tests](https://on.cypress.io/component-testing) i
     component: true
 ```
 
-See the example project [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example)
+See the example project [component-test](/examples/v10/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
 
 ### Build app
 
