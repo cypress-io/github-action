@@ -561,7 +561,7 @@ The Cypress GH Action does not spawn or create any additional containers - it on
 
 ### Component tests
 
-You can run [Cypress component tests](https://on.cypress.io/component-testing) after running E2E tests by adding `component: true`:
+You can run [Cypress component tests](https://on.cypress.io/component-testing) in a job separate from E2E tests by adding `component: true`:
 
 ```yml
 - name: Run E2E tests 🧪
