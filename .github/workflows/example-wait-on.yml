@@ -149,7 +149,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/react-scripts
+          working-directory: examples/v9/react-scripts
           start: npm start
           wait-on: 'http://localhost:3000'
           config-file: cypress.json
@@ -162,7 +162,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/react-scripts
+          working-directory: examples/v9/react-scripts
           start: npm start
           # let's use wait-on NPM package to check the URL
           wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
