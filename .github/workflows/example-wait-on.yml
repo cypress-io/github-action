@@ -19,7 +19,7 @@ jobs:
         with:
           # wait for the URL to respond
           # using the default parameter
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm start
           wait-on: 'http://localhost:3050'
           config-file: cypress.json
@@ -33,7 +33,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm run start-after-100-seconds
           wait-on: 'http://localhost:3050'
           wait-on-timeout: 110
@@ -48,7 +48,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm run start2
           wait-on: 'http://localhost:3050'
           config-file: cypress.json
@@ -62,7 +62,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm run start-after-50-seconds
           wait-on: 'http://localhost:3050'
           config-file: cypress.json
@@ -76,7 +76,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm run start-after-120-seconds
           wait-on: 'http://localhost:3050'
           wait-on-timeout: 130
@@ -92,7 +92,7 @@ jobs:
         with:
           # in this situation the server does not respond
           # for the first period causing ETIMEDOUT errors
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm run start3
           wait-on: 'http://localhost:3050'
           config-file: cypress.json
@@ -107,7 +107,7 @@ jobs:
         with:
           # in this situation the server does not respond
           # for the first period causing ETIMEDOUT errors
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm run start3-after-200-seconds
           wait-on: 'http://localhost:3050'
           wait-on-timeout: 210
@@ -121,7 +121,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           start: npm run start4
           wait-on: 'http://localhost:3050'
           config-file: cypress.json
@@ -134,7 +134,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/wait-on
+          working-directory: examples/v9/wait-on
           # use different command formats
           start: npm start -- --port 3050, npm run start2 -- --port 3060, node ./index3 --port 3070
           # wait for all services to respond
@@ -186,7 +186,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/wait-on-vite
+          working-directory: examples/v9/wait-on-vite
           start: npm start
           wait-on: 'http://localhost:3000'
           config-file: cypress.json

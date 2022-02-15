@@ -17,7 +17,7 @@ jobs:
       - name: Custom Yarn command
         uses: ./
         with:
-          working-directory: examples/install-command
+          working-directory: examples/v9/install-command
           # https://classic.yarnpkg.com/en/docs/cli/install
           install-command: yarn --frozen-lockfile --silent
           config-file: cypress.json

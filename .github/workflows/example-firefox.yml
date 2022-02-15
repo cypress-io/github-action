@@ -22,7 +22,7 @@ jobs:
         with:
           # let's show browser and system info
           build: npx cypress info
-          working-directory: examples/firefox
+          working-directory: examples/v9/firefox
           browser: firefox
           config-file: cypress.json
 
@@ -33,7 +33,7 @@ jobs:
           path: examples/firefox/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/firefox
+        working-directory: examples/v9/firefox
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

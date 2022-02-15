@@ -25,7 +25,7 @@ jobs:
       - name: Cypress run with env
         uses: ./
         with:
-          working-directory: examples/env
+          working-directory: examples/v9/env
           spec: cypress/integration/without-env-spec.js
           config-file: cypress.json
 
@@ -42,7 +42,7 @@ jobs:
       - name: Cypress run with env
         uses: ./
         with:
-          working-directory: examples/env
+          working-directory: examples/v9/env
           # additional env variables to pass to Cypress specs
           # variables are automatically casted
           # Cypress.env('host') // 'http://api.dev.local'
@@ -66,7 +66,7 @@ jobs:
           CYPRESS_apiPort: 4222
           CYPRESS_host: http://api.dev.local
         with:
-          working-directory: examples/env
+          working-directory: examples/v9/env
           spec: cypress/integration/spec.js
           config-file: cypress.json
 
@@ -86,7 +86,7 @@ jobs:
           CYPRESS_apiPort: 4222
         with:
           env: host=http://api.dev.local
-          working-directory: examples/env
+          working-directory: examples/v9/env
           spec: cypress/integration/spec.js
           config-file: cypress.json
 

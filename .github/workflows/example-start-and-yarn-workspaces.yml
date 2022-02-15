@@ -20,7 +20,7 @@ jobs:
       - name: Tests
         uses: ./
         with:
-          working-directory: examples/start-and-yarn-workspaces/workspace-1
+          working-directory: examples/v9/start-and-yarn-workspaces/workspace-1
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
@@ -40,8 +40,8 @@ jobs:
       fail-fast: false
       matrix:
         cypress:
-          - working_directory: examples/start-and-yarn-workspaces/workspace-1
-          - working_directory: examples/start-and-yarn-workspaces/workspace-2
+          - working_directory: examples/v9/start-and-yarn-workspaces/workspace-1
+          - working_directory: examples/v9/start-and-yarn-workspaces/workspace-2
     steps:
       - name: Checkout
         uses: actions/checkout@v2

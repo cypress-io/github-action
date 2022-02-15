@@ -35,7 +35,7 @@ jobs:
       - name: Cypress tests 🧪
         uses: ./
         with:
-          working-directory: examples/install-only
+          working-directory: examples/v9/install-only
           install: false
           config-file: cypress.json
 

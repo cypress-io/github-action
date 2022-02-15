@@ -21,13 +21,13 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
           config-file: cypress.json
 
       - name: Electron
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
           config-file: cypress.json
 
       # store screenshot captured during the test
@@ -37,12 +37,12 @@ jobs:
           path: examples/chrome/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/v9/chrome
 
       - name: Chrome
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
           browser: chrome
           config-file: cypress.json
 
@@ -57,7 +57,7 @@ jobs:
           path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/v9/chrome
 
       # I wonder if GH Actions VM includes any of the tools that
       # can tell us the resolution of a video file
@@ -67,7 +67,7 @@ jobs:
       - name: Chrome headless
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
           browser: chrome
           headless: true
           config-file: cypress.json
@@ -83,7 +83,7 @@ jobs:
           path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/v9/chrome
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

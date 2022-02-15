@@ -18,7 +18,7 @@ jobs:
       - name: Cypress run
         uses: ./
         with:
-          working-directory: examples/quiet
+          working-directory: examples/v9/quiet
           quiet: true
           config-file: cypress.json
 

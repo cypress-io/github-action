@@ -20,7 +20,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/start
+          working-directory: examples/v9/start
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
@@ -37,7 +37,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/start
+          working-directory: examples/v9/start
           build: npm run build
           # single start command per line
           start: |
@@ -58,7 +58,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/start
+          working-directory: examples/v9/start
           build: npm run build
           # use commas to separate the commands
           start: npm start, npm run start2

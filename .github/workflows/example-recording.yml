@@ -25,7 +25,7 @@ jobs:
         # commit status in the next step, both in case of success and failure
         continue-on-error: true
         with:
-          working-directory: examples/recording
+          working-directory: examples/v9/recording
           record: true
           parallel: true
           group: Recording example
@@ -55,7 +55,7 @@ jobs:
         # uses: cypress-io/github-action@v2
         uses: ./
         with:
-          working-directory: examples/recording
+          working-directory: examples/v9/recording
           record: true
           # no parallel flag, just the group name
           group: Recording group

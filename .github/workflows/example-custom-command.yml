@@ -20,7 +20,7 @@ jobs:
         uses: ./
         with:
           command: npm run custom-test
-          working-directory: examples/custom-command
+          working-directory: examples/v9/custom-command
           config-file: cypress.json
 
       - name: Show saved file 🖨

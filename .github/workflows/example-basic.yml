@@ -20,7 +20,7 @@ jobs:
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           config-file: cypress.json
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
@@ -36,7 +36,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           config-file: cypress.json
           build: npx cypress info
 
@@ -49,7 +49,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           config-file: cypress.json
           build: npx cypress info
 
@@ -62,7 +62,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           config-file: cypress.json
           build: npx cypress info
 
@@ -78,7 +78,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           config-file: cypress.json
           # since we do not install Cypress
           # we should not attempt to run tests
