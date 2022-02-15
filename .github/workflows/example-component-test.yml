@@ -12,5 +12,6 @@ jobs:
         uses: cypress-io/github-action@v3
         with:
           working-directory: examples/v10/component-tests
+          config-file: cypress.config.js
           # to run component tests we need to use "component: true"
           component: true
