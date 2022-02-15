@@ -24,7 +24,7 @@ jobs:
           config-file: cypress.json
 
       - name: Show saved file 🖨
-        run: cat examples/custom-command/results.json
+        run: cat examples/v9/custom-command/results.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
