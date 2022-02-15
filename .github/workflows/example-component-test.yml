@@ -9,9 +9,8 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v3
+        uses: cypress-io/github-action@UDX-109-update-for-v10
         with:
           working-directory: examples/v10/component-tests
-          config-file: cypress.config.js
           # to run component tests we need to use "component: true"
           component: true
