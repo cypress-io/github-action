@@ -1,16 +1,13 @@
-name: Component Tests
-on: [push]
-jobs:
-  cypress-run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
-      - name: Cypress run
-        uses: cypress-io/github-action@UDX-109-update-for-v10
-        with:
-          working-directory: examples/v10/component-tests
-          # to run component tests we need to use "component: true"
-          component: true
+# name: Component Tests
+# on: [push]
+# jobs:
+#   cypress-run:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+#       - name: Cypress run
+#         uses: cypress-io/github-action@4
+#         with:
+#           working-directory: examples/v10/component-tests
+#           component: true
