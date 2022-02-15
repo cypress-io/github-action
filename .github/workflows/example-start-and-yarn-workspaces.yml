@@ -66,7 +66,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Tests
+      - name: Single v10
         uses: ./
         with:
           working-directory: examples/v10/start-and-yarn-workspaces/workspace-1
@@ -94,7 +94,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Cypress tests
+      - name: Cypress tests v10
         uses: ./
         with:
           working-directory: ${{ matrix.cypress.working_directory }}
