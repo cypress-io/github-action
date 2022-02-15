@@ -106,7 +106,7 @@ When using `cypress-io/github-action@v4` from your workflow file, you automatica
 
 ```yml
 - name: Cypress run
-  uses: cypress-io/github-action@v4.2.7
+  uses: cypress-io/github-action@v4.x.x
 ```
 
 By using the full version tag, you will avoid accidentally using a newer version of the action.
