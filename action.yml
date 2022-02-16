@@ -13,7 +13,7 @@ inputs:
   config-file:
     description: 'Path to the cypress config file where configuration values are set.'
     required: false
-    default: cypress.config.js
+    default: ''
   env:
     description: 'Sets Cypress environment variables'
     required: false
