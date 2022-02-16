@@ -12,7 +12,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/circle-10.0-release-faa8fb5302ae8fac4ac53f1dcd214abe35bce3ab/cypress.tgz"
+    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/circle-10.0-release-73e936e28992d5f533a8341a923dd61719bd12d5/cypress.tgz"
   },
   "dependencies": {
     "serve": "11.3.0"
