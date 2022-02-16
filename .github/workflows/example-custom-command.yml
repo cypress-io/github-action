@@ -21,7 +21,6 @@ jobs:
         with:
           command: npm run custom-test
           working-directory: examples/v9/custom-command
-          config-file: cypress.json
 
       - name: Show saved file 🖨
         run: cat examples/v9/custom-command/results.json

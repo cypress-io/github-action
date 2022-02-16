@@ -20,4 +20,3 @@ jobs:
           build: npm run info
           working-directory: examples/v9/chrome
           browser: edge
-          config-file: cypress.json

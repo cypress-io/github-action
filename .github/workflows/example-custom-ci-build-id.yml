@@ -55,7 +55,6 @@ jobs:
           ci-build-id: ${{ needs.prepare.outputs.uuid }}
           spec: 'cypress/integration/spec-a.js'
           working-directory: examples/v9/recording
-          config-file: cypress.json
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
@@ -89,7 +88,6 @@ jobs:
               --ci-build-id ${{ needs.prepare.outputs.uuid }} \
               --group "2 - all tests"
           working-directory: examples/v9/recording
-          config-file: cypress.json
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}

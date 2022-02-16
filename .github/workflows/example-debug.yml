@@ -17,4 +17,3 @@ jobs:
           DEBUG: '@cypress/github-action'
         with:
           working-directory: examples/v9/basic
-          config-file: cypress.json

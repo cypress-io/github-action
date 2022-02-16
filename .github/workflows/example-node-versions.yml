@@ -31,7 +31,6 @@ jobs:
       - uses: ./
         with:
           working-directory: examples/v9/node-versions
-          config-file: cypress.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

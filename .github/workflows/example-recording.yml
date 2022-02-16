@@ -30,7 +30,6 @@ jobs:
           parallel: true
           group: Recording example
           tag: action
-          config-file: cypress.json
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
@@ -59,7 +58,6 @@ jobs:
           record: true
           # no parallel flag, just the group name
           group: Recording group
-          config-file: cypress.json
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}

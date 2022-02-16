@@ -20,7 +20,6 @@ jobs:
         with:
           working-directory: examples/v9/quiet
           quiet: true
-          config-file: cypress.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

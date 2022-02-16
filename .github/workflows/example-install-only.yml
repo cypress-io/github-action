@@ -37,7 +37,6 @@ jobs:
         with:
           working-directory: examples/v9/install-only
           install: false
-          config-file: cypress.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

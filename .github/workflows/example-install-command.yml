@@ -20,7 +20,6 @@ jobs:
           working-directory: examples/v9/install-command
           # https://classic.yarnpkg.com/en/docs/cli/install
           install-command: yarn --frozen-lockfile --silent
-          config-file: cypress.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

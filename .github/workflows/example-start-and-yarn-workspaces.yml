@@ -24,7 +24,6 @@ jobs:
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
-          config-file: cypress.json
 
   multiple:
     # example with web application build,
@@ -53,7 +52,6 @@ jobs:
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
-          config-file: cypress.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

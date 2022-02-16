@@ -21,7 +21,6 @@ jobs:
         # because we are running these examples in a monorepo
         with:
           working-directory: examples/v9/basic
-          config-file: cypress.json
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
@@ -37,7 +36,6 @@ jobs:
         uses: ./
         with:
           working-directory: examples/v9/basic
-          config-file: cypress.json
           build: npx cypress info
 
   basic-on-windows:
@@ -50,7 +48,6 @@ jobs:
         uses: ./
         with:
           working-directory: examples/v9/basic
-          config-file: cypress.json
           build: npx cypress info
 
   basic-on-mac:
@@ -63,7 +60,6 @@ jobs:
         uses: ./
         with:
           working-directory: examples/v9/basic
-          config-file: cypress.json
           build: npx cypress info
 
   # skips the binary installation
@@ -79,7 +75,6 @@ jobs:
         uses: ./
         with:
           working-directory: examples/v9/basic
-          config-file: cypress.json
           # since we do not install Cypress
           # we should not attempt to run tests
           runTests: false

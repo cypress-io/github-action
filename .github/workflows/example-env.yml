@@ -27,7 +27,6 @@ jobs:
         with:
           working-directory: examples/v9/env
           spec: cypress/integration/without-env-spec.js
-          config-file: cypress.json
 
   with-env:
     # in the tests below, in addition to 'environmentName'
@@ -49,7 +48,6 @@ jobs:
           # Cypress.env('apiPort') // 4222
           env: host=http://api.dev.local,apiPort=4222
           spec: cypress/integration/spec.js
-          config-file: cypress.json
 
   with-action-env:
     runs-on: ubuntu-20.04
@@ -68,7 +66,6 @@ jobs:
         with:
           working-directory: examples/v9/env
           spec: cypress/integration/spec.js
-          config-file: cypress.json
 
   combined-env:
     # combination of all 3 ways to pass environment variables
@@ -88,7 +85,6 @@ jobs:
           env: host=http://api.dev.local
           working-directory: examples/v9/env
           spec: cypress/integration/spec.js
-          config-file: cypress.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 

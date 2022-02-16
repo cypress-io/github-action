@@ -24,7 +24,6 @@ jobs:
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
-          config-file: cypress.json
 
   start-multiple:
     # example with web application build
@@ -45,7 +44,6 @@ jobs:
             npm run start2
           wait-on: 'http://localhost:8000'
           config: 'baseUrl=http://localhost:8000'
-          config-file: cypress.json
 
   start-multiple-commas:
     # example with web application build
@@ -64,7 +62,6 @@ jobs:
           start: npm start, npm run start2
           wait-on: 'http://localhost:8000'
           config: 'baseUrl=http://localhost:8000'
-          config-file: cypress.json
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
