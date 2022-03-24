@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/cypress-io/github-action#readme",
   "dependencies": {
-    "@actions/cache": "1.0.9",
+    "@actions/cache": "1.0.11",
     "@actions/core": "1.6.0",
     "@actions/exec": "1.1.0",
     "@actions/io": "1.1.1",
