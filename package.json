@@ -48,7 +48,7 @@
     "@zeit/ncc": "0.22.3",
     "husky": "7.0.4",
     "markdown-link-check": "3.9.3",
-    "prettier": "2.5.1",
+    "prettier": "2.6.2",
     "stop-build": "1.1.0"
   },
   "publishConfig": {
