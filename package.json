@@ -44,7 +44,7 @@
     "quote": "0.4.0"
   },
   "devDependencies": {
-    "@types/node": "16.11.26",
+    "@types/node": "16.11.29",
     "@zeit/ncc": "0.22.3",
     "husky": "7.0.4",
     "markdown-link-check": "3.10.0",
