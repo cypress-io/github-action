@@ -36,7 +36,7 @@
     "@actions/io": "1.1.2",
     "@octokit/core": "3.6.0",
     "argument-vector": "1.0.2",
-    "debug": "4.3.3",
+    "debug": "4.3.4",
     "execa": "6.1.0",
     "find-yarn-workspace-root": "2.0.0",
     "got": "11.8.3",
