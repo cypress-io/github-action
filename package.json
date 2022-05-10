@@ -31,7 +31,7 @@
   "homepage": "https://github.com/cypress-io/github-action#readme",
   "dependencies": {
     "@actions/cache": "1.0.11",
-    "@actions/core": "1.6.0",
+    "@actions/core": "1.8.0",
     "@actions/exec": "1.1.1",
     "@actions/io": "1.1.2",
     "@octokit/core": "3.6.0",
