@@ -11,7 +11,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "9.4.1",
+    "cypress": "9.6.1",
     "lodash": "4.17.15"
   }
 }
