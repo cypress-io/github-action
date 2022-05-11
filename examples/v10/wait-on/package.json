@@ -18,7 +18,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-04e5d70d48a1337b702f53ac9677350167eb7ae6/cypress.tgz"
+    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-ca83b864100d0d244b54166870fdb4ba952b1275/cypress.tgz"
   },
   "dependencies": {
     "arg": "5.0.0",
