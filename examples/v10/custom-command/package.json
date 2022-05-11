@@ -11,7 +11,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/circle-10.0-release-faa8fb5302ae8fac4ac53f1dcd214abe35bce3ab/cypress.tgz",
+    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-eff3fa261f3941afad6fa836847743ee9886a525/cypress.tgz",
     "lodash": "4.17.15"
   }
 }

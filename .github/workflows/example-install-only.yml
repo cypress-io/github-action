@@ -5,7 +5,6 @@ on:
       - 'master'
   pull_request:
 jobs:
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   # do not install every dependency in this example
@@ -38,7 +37,7 @@ jobs:
           working-directory: examples/v9/install-only
           install: false
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   # do not install every dependency in this example
   # just install Cypress, but make sure to cache it
@@ -62,7 +61,7 @@ jobs:
           key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Cypress 📥
-        run: npm i https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/circle-10.0-release-faa8fb5302ae8fac4ac53f1dcd214abe35bce3ab/cypress.tgz
+        run: npm i https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-eff3fa261f3941afad6fa836847743ee9886a525/cypress.tgz
 
       - name: Cypress tests 🧪
         uses: ./
