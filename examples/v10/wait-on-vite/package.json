@@ -12,7 +12,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-eff3fa261f3941afad6fa836847743ee9886a525/cypress.tgz",
+    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-04e5d70d48a1337b702f53ac9677350167eb7ae6/cypress.tgz",
     "vite": "^2.0.0-beta.65"
   }
 }

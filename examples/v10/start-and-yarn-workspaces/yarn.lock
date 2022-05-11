@@ -451,9 +451,9 @@ cross-spawn@^7.0.0:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-"cypress@https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-eff3fa261f3941afad6fa836847743ee9886a525/cypress.tgz":
+"cypress@https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-04e5d70d48a1337b702f53ac9677350167eb7ae6/cypress.tgz":
   version "10.0.0"
-  resolved "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-eff3fa261f3941afad6fa836847743ee9886a525/cypress.tgz#4c87ebe23ec011420af96b4eff6127be0f3ce502"
+  resolved "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-04e5d70d48a1337b702f53ac9677350167eb7ae6/cypress.tgz#4c87ebe23ec011420af96b4eff6127be0f3ce502"
   dependencies:
     "@cypress/request" "^2.88.10"
     "@cypress/xvfb" "^1.2.4"

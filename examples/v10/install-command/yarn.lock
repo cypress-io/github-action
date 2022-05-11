@@ -303,9 +303,9 @@
     "shebang-command" "^2.0.0"
     "which" "^2.0.1"
 
-"cypress@https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-eff3fa261f3941afad6fa836847743ee9886a525/cypress.tgz":
+"cypress@https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-04e5d70d48a1337b702f53ac9677350167eb7ae6/cypress.tgz":
   "integrity" "sha512-eOkfP9ojpjIiQwJ97yV5gr4VpcDBpdTb6KfHkd1OHcvtXq1eIH6B+4DhP6DvukPOimZs/2XFo4CtcelBvVBd0w=="
-  "resolved" "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-eff3fa261f3941afad6fa836847743ee9886a525/cypress.tgz"
+  "resolved" "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-04e5d70d48a1337b702f53ac9677350167eb7ae6/cypress.tgz"
   "version" "10.0.0"
   dependencies:
     "@cypress/request" "^2.88.10"
