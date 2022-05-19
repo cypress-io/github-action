@@ -6698,8 +6698,8 @@ const runTestsUsingCommandLine = async () => {
   }
 
   if (parallel || group) {
-    var buildIdVar = null
-    if (core.getInput('ci-build-id')) {
+    let buildIdVar = null
+    if (!core.getInput('ci-build-id')) {
       const { branch, buildId } = await getCiBuildId()
       if (branch) {
         core.exportVariable('GH_BRANCH', branch)
