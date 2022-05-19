@@ -551,7 +551,7 @@ const runTestsUsingCommandLine = async () => {
   }
 
   if (parallel || group) {
-    var buildIdVar = null
+    let buildIdVar = null
     if (!core.getInput('ci-build-id')) {
       const { branch, buildId } = await getCiBuildId()
       if (branch) {
