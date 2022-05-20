@@ -551,13 +551,17 @@ const runTestsUsingCommandLine = async () => {
   }
 
   if (parallel || group) {
-    const { branch, buildId } = await getCiBuildId()
-    if (branch) {
-      core.exportVariable('GH_BRANCH', branch)
+    let buildIdVar = null
+    if (!core.getInput('ci-build-id')) {
+      const { branch, buildId } = await getCiBuildId()
+      if (branch) {
+        core.exportVariable('GH_BRANCH', branch)
+      }
+      buildIdVar = buildId
     }
 
     cmd.push('--ci-build-id')
-    const ciBuildId = core.getInput('ci-build-id') || buildId
+    const ciBuildId = core.getInput('ci-build-id') || buildIdVar
     cmd.push(quoteArgument(ciBuildId))
   }
 
