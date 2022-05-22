@@ -52,11 +52,11 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
 ```
 
 [![Basic example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
@@ -73,14 +73,14 @@ Our examples specify the tag of the action to use listing only the major version
 
 ```yml
 - name: Cypress run
-  uses: cypress-io/github-action@v2
+  uses: cypress-io/github-action@v3
 ```
 
-When using `cypress-io/github-action@v2` from your workflow file, you automatically will be using the latest [tagged version from this repository](https://github.com/cypress-io/github-action/tags). If you want to precisely control the version of this module, use the full tag version, for example:
+When using `cypress-io/github-action@v3` from your workflow file, you automatically will be using the latest [tagged version from this repository](https://github.com/cypress-io/github-action/tags). If you want to precisely control the version of this module, use the full tag version, for example:
 
 ```yml
 - name: Cypress run
-  uses: cypress-io/github-action@v2.2.7
+  uses: cypress-io/github-action@v3.0.6
 ```
 
 By using the full version tag, you will avoid accidentally using a newer version of the action.
@@ -98,8 +98,8 @@ jobs:
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v3
         with:
           browser: chrome
 ```
@@ -120,8 +120,8 @@ jobs:
       image: cypress/browsers:node12.16.1-chrome80-ff73
       options: --user 1001
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v3
         with:
           browser: firefox
 ```
@@ -139,8 +139,8 @@ jobs:
   tests:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v3
         with:
           browser: edge
 ```
@@ -160,8 +160,8 @@ jobs:
   cypress-run:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v3
         with:
           browser: chrome
           headless: true
@@ -181,8 +181,8 @@ jobs:
     # and Firefox v70 pre-installed
     container: cypress/browsers:node12.13.0-chrome78-ff70
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v3
         with:
           browser: chrome
 ```
@@ -199,10 +199,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run with env
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           env: host=api.dev.local,port=4222
 ```
@@ -217,10 +217,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run with env
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         env:
           CYPRESS_host: api.dev.local
           CYPRESS_port: 4222
@@ -243,10 +243,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           spec: cypress/integration/spec1.js
 ```
@@ -274,9 +274,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           project: ./some/nested/folder
 ```
@@ -294,10 +294,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           record: true
         env:
@@ -326,10 +326,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           record: true
         env:
@@ -353,7 +353,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
@@ -388,10 +388,10 @@ jobs:
       - run: node -v
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           record: true
           tag: node-${{ matrix.node }}
@@ -418,21 +418,21 @@ jobs:
     runs-on: ubuntu-20.04
     name: Artifacts
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v3
       # after the test run completes
       # store videos and any screenshots
       # NOTE: screenshots will be generated only if E2E test failed
       # thus we store screenshots only on failures
       # Alternative: create and commit an empty cypress/screenshots folder
       # to always have something to upload
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos
@@ -452,10 +452,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
 ```
@@ -475,10 +475,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           config-file: tests/cypress-config.json
 ```
@@ -1231,16 +1231,16 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cypress install
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           # just perform install
           runTests: false
       - name: Cypress info
         run: npx cypress info
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           # we have already installed all dependencies above
           install: false
@@ -1262,9 +1262,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cypress nightly tests 🌃
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
 ```
 
 See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
