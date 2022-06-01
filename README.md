@@ -70,7 +70,7 @@ The workflow file [.github/workflows/example-basic.yml](.github/workflows/exampl
 
 **Best practice:**
 
-Our examples specify the tag of the action to use listing only the major version `@v2`
+Our examples specify the tag of the action to use listing only the major version `@v4`
 
 ```yml
 - name: Cypress run
