@@ -1,21 +1,19 @@
 #!/bin/bash
 
-BINARY="https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-ca83b864100d0d244b54166870fdb4ba952b1275/cypress.tgz"
-
-cd ./examples/v10/basic && npm install $BINARY
-cd ../chrome && npm install $BINARY
-cd ../component-tests && npm install $BINARY
-cd ../config && npm install $BINARY
-cd ../custom-command && npm install $BINARY
-cd ../env && npm install $BINARY
-cd ../firefox && npm install $BINARY
-cd ../install-command && npm install $BINARY
-cd ../install-only && npm install $BINARY
-cd ../node-versions && npm install $BINARY
-cd ../quiet && npm install $BINARY
-cd ../react-scripts && npm install $BINARY
-cd ../recording && npm install $BINARY
-cd ../start && npm install $BINARY
-cd ../wait-on && npm install $BINARY
-cd ../wait-on-vite && npm install $BINARY
-cd ../webpack && npm install $BINARY
+cd ./examples/v10/basic && npm install cypress@latest
+cd ../chrome && npm install cypress@latest
+cd ../component-tests && npm install cypress@latest
+cd ../config && npm install cypress@latest
+cd ../custom-command && npm install cypress@latest
+cd ../env && npm install cypress@latest
+cd ../firefox && npm install cypress@latest
+cd ../install-command && npm install cypress@latest
+cd ../install-only && npm install cypress@latest
+cd ../node-versions && npm install cypress@latest
+cd ../quiet && npm install cypress@latest
+cd ../react-scripts && npm install cypress@latest
+cd ../recording && npm install cypress@latest
+cd ../start && npm install cypress@latest
+cd ../wait-on && npm install cypress@latest
+cd ../wait-on-vite && npm install cypress@latest
+cd ../webpack && npm install cypress@latest

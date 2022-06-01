@@ -10,6 +10,6 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-ca83b864100d0d244b54166870fdb4ba952b1275/cypress.tgz"
+    "cypress": "^10.0.0"
   }
 }
