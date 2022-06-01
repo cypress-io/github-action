@@ -26,7 +26,7 @@ jobs:
           browser: firefox
 
       # report screenshot size and store the screenshots as test artifacts
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-firefox
           path: examples/firefox/cypress/screenshots
@@ -54,7 +54,7 @@ jobs:
           browser: firefox
 
       # report screenshot size and store the screenshots as test artifacts
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-firefox
           path: examples/v10/firefox/cypress/screenshots
