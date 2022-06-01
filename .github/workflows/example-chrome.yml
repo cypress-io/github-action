@@ -1,10 +1,13 @@
 name: example-chrome
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   tests:
     runs-on: ubuntu-20.04
     steps:
@@ -18,12 +21,12 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
 
       - name: Electron
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
 
       # store screenshot captured during the test
       - uses: actions/upload-artifact@v2
@@ -32,12 +35,12 @@ jobs:
           path: examples/chrome/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/v9/chrome
 
       - name: Chrome
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
           browser: chrome
 
       - uses: actions/upload-artifact@v2
@@ -51,7 +54,7 @@ jobs:
           path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/v9/chrome
 
       # I wonder if GH Actions VM includes any of the tools that
       # can tell us the resolution of a video file
@@ -61,7 +64,7 @@ jobs:
       - name: Chrome headless
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/v9/chrome
           browser: chrome
           headless: true
 
@@ -76,4 +79,79 @@ jobs:
           path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/v9/chrome
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  tests-v10:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress info
+        uses: ./
+        with:
+          # just for full picture after installing Cypress
+          # print information about detected browsers, etc
+          # see https://on.cypress.io/command-line#cypress-info
+          build: npx cypress info
+          working-directory: examples/v10/chrome
+
+      - name: Electron
+        uses: ./
+        with:
+          working-directory: examples/v10/chrome
+
+      # store screenshot captured during the test
+      - uses: actions/upload-artifact@v2
+        with:
+          name: screenshots-in-electron
+          path: examples/v10/chrome/cypress/screenshots
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/v10/chrome
+
+      - name: Chrome
+        uses: ./
+        with:
+          working-directory: examples/v10/chrome
+          browser: chrome
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: screenshots-in-chrome
+          path: examples/v10/chrome/cypress/screenshots
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: video-in-chrome
+          path: examples/v10/chrome/cypress/videos
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/v10/chrome
+
+      # I wonder if GH Actions VM includes any of the tools that
+      # can tell us the resolution of a video file
+      - run: ffprobe cypress/videos/*.mp4 || true
+      - run: mplayer -really-quiet -ao null -vo null -identify -frames 0 cypress/videos/*.mp4 || true
+
+      - name: Chrome headless
+        uses: ./
+        with:
+          working-directory: examples/v10/chrome
+          browser: chrome
+          headless: true
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: screenshots-in-headless-chrome
+          path: examples/v10/chrome/cypress/screenshots
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: video-in-headless-chrome
+          path: examples/v10/chrome/cypress/videos
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/v10/chrome

@@ -1,7 +1,7 @@
 name: example-debug
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -16,4 +16,4 @@ jobs:
         env:
           DEBUG: '@cypress/github-action'
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic

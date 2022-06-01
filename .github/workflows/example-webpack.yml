@@ -1,10 +1,13 @@
 name: example-webpack
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   wait:
     runs-on: ubuntu-20.04
     steps:
@@ -14,6 +17,21 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/webpack
+          working-directory: examples/v9/webpack
+          start: npm start
+          wait-on: 'http://localhost:8080'
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  wait-v10:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/webpack
           start: npm start
           wait-on: 'http://localhost:8080'

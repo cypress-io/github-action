@@ -1,10 +1,12 @@
 name: example-install-only
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   # do not install every dependency in this example
   # just install Cypress, but make sure to cache it
   install-cypress-only:
@@ -27,10 +29,42 @@ jobs:
           key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Cypress 📥
-        run: npm i cypress
+        run: npm i cypress@9.6.1
 
       - name: Cypress tests 🧪
         uses: ./
         with:
-          working-directory: examples/install-only
+          working-directory: examples/v9/install-only
+          install: false
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  # do not install every dependency in this example
+  # just install Cypress, but make sure to cache it
+  install-cypress-only-v10:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+
+      # cache NPM modules and Cypress binary folder
+      # we can use "package-lock.json" as the key file
+      # to make sure we use the precise Cypress version
+      # (which is important when using ^ version in package.json)
+      # see https://github.com/actions/cache
+      - name: Cache NPM and Cypress 📦
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Cypress 📥
+        run: npm i https://cdn.cypress.io/beta/npm/10.0.0/linux-x64/10.0-release-04e5d70d48a1337b702f53ac9677350167eb7ae6/cypress.tgz
+
+      - name: Cypress tests 🧪
+        uses: ./
+        with:
+          working-directory: examples/v10/install-only
           install: false

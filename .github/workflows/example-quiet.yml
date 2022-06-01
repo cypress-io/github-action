@@ -1,10 +1,13 @@
 name: example-quiet
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   cypress-run:
     runs-on: ubuntu-latest
     steps:
@@ -15,5 +18,20 @@ jobs:
       - name: Cypress run
         uses: ./
         with:
-          working-directory: examples/quiet
+          working-directory: examples/v9/quiet
+          quiet: true
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  cypress-run-v10:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests with `quiet` parameter
+      - name: Cypress run
+        uses: ./
+        with:
+          working-directory: examples/v10/quiet
           quiet: true

@@ -1,0 +1,23 @@
+{
+  "name": "example-config",
+  "version": "1.0.0",
+  "description": "pass baseUrl config value via action",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run",
+    "build": "echo building ... server ... done!",
+    "start": "serve public --listen 3333",
+    "cy:open": "cypress open",
+    "dev": "CYPRESS_baseUrl=http://localhost:3333 start-test 3333 cy:open"
+  },
+  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "^10.0.0",
+    "start-server-and-test": "1.11.5"
+  },
+  "dependencies": {
+    "serve": "11.3.0"
+  }
+}

@@ -1,11 +1,11 @@
 name: example-basic
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
-  # note: Ubuntu 16 probably works, but is deprecated
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   basic-ubuntu-18:
     runs-on: ubuntu-18.04
@@ -20,7 +20,7 @@ jobs:
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
@@ -35,7 +35,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           build: npx cypress info
 
   basic-on-windows:
@@ -47,7 +47,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           build: npx cypress info
 
   basic-on-mac:
@@ -59,7 +59,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
           build: npx cypress info
 
   # skips the binary installation
@@ -74,7 +74,84 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/basic
+          working-directory: examples/v9/basic
+          # since we do not install Cypress
+          # we should not attempt to run tests
+          runTests: false
+        env:
+          # skip the binary install
+          CYPRESS_INSTALL_BINARY: 0
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  basic-ubuntu-18-v10:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v2
+        uses: ./
+        # the parameters below are only necessary
+        # because we are running these examples in a monorepo
+        with:
+          working-directory: examples/v10/basic
+          # just for full picture after installing Cypress
+          # print information about detected browsers, etc
+          # see https://on.cypress.io/command-line#cypress-info
+          build: npx cypress info
+
+  basic-ubuntu-20-v10:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/basic
+          build: npx cypress info
+
+  basic-on-windows-v10:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/basic
+          build: npx cypress info
+
+  basic-on-mac-v10:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/basic
+          build: npx cypress info
+
+  # skips the binary installation
+  # shows that the job should not fail
+  # https://github.com/cypress-io/github-action/issues/327
+  basic-without-binary-install-v10:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/basic
           # since we do not install Cypress
           # we should not attempt to run tests
           runTests: false

@@ -1,16 +1,19 @@
 name: example-node-versions
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   cypress-run:
     runs-on: ubuntu-20.04
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:
-        node: [8.12, 10, 12, 14, 16]
+        node: [12, 14, 16]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -27,4 +30,30 @@ jobs:
 
       - uses: ./
         with:
-          working-directory: examples/node-versions
+          working-directory: examples/v9/node-versions
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  cypress-run-v10:
+    runs-on: ubuntu-20.04
+    # let's make sure Cypress works on several versions of Node
+    strategy:
+      matrix:
+        node: [12, 14, 16]
+    name: E2E on Node v${{ matrix.node }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+      - run: node -v
+      - run: npm -v
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Hmm, should we rebuild the "dist" before using the action?
+
+      - uses: ./
+        with:
+          working-directory: examples/v10/node-versions

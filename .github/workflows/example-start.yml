@@ -1,10 +1,13 @@
 name: example-start
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
   start:
     # example with web application build,
     # server start and waiting for the server
@@ -17,7 +20,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/start
+          working-directory: examples/v9/start
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
@@ -33,7 +36,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/start
+          working-directory: examples/v9/start
           build: npm run build
           # single start command per line
           start: |
@@ -53,7 +56,64 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/start
+          working-directory: examples/v9/start
+          build: npm run build
+          # use commas to separate the commands
+          start: npm start, npm run start2
+          wait-on: 'http://localhost:8000'
+          config: 'baseUrl=http://localhost:8000'
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  start-v10:
+    # example with web application build,
+    # server start and waiting for the server
+    # to respond before running tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/start
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000'
+
+  start-multiple-v10:
+    # example with web application build
+    # and several services to start
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/start
+          build: npm run build
+          # single start command per line
+          start: |
+            npm start
+            npm run start2
+          wait-on: 'http://localhost:8000'
+          config: 'baseUrl=http://localhost:8000'
+
+  start-multiple-commas-v10:
+    # example with web application build
+    # and several services to start
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/v10/start
           build: npm run build
           # use commas to separate the commands
           start: npm start, npm run start2

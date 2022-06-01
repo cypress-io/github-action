@@ -1,0 +1,20 @@
+{
+  "name": "workspace-2",
+  "version": "1.0.0",
+  "description": "e2e tests for a server with build and start steps",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run",
+    "build": "echo building ... server ... done!",
+    "start": "serve public"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "9.6.1"
+  },
+  "dependencies": {
+    "serve": "11.3.0"
+  }
+}

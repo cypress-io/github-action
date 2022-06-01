@@ -1,0 +1,13 @@
+name: Component Tests
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@UDX-109-update-for-v10
+        with:
+          working-directory: examples/v10/component-tests
+          component: true

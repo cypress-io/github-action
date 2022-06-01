@@ -1,0 +1,17 @@
+{
+  "name": "example-chrome",
+  "version": "1.0.0",
+  "description": "running Cypress using Chrome",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run",
+    "info": "cypress info"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "9.6.1",
+    "image-size": "0.8.3"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "example-node-versions",
+  "version": "1.0.0",
+  "description": "Running Cypress on different Node versions",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "^10.0.0"
+  }
+}

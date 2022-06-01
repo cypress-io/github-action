@@ -1,0 +1,27 @@
+{
+  "name": "example-wait-on",
+  "version": "1.0.0",
+  "description": "e2e tests for wait-on feature",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run",
+    "start": "node .",
+    "start-after-100-seconds": "node . --delay 100",
+    "start2": "node ./index2",
+    "start-after-50-seconds": "node ./index2 --delay 50",
+    "start-after-120-seconds": "node ./index2 --delay 120",
+    "start3": "node ./index3",
+    "start3-after-200-seconds": "node ./index3 --delay 200",
+    "start4": "node ./index4"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "^10.0.0"
+  },
+  "dependencies": {
+    "arg": "5.0.0",
+    "debug": "4.2.0"
+  }
+}

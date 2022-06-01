@@ -11,9 +11,9 @@ inputs:
     description: 'Set configuration values. Separate multiple values with a comma. The values set here override any values set in your configuration file.'
     required: false
   config-file:
-    description: 'Path to a JSON file where configuration values are set.'
+    description: 'Path to the cypress config file where configuration values are set.'
     required: false
-    default: cypress.json
+    default: ''
   env:
     description: 'Sets Cypress environment variables'
     required: false
@@ -80,6 +80,10 @@ inputs:
   quiet:
     description: 'Whether or not to silence any Cypress specific output from stdout'
     required: false
+  component:
+    description: "Lets the action know that Cypress is running component tests and not e2e tests"
+    required: false
+    default: false
 outputs:
   dashboardUrl:
     description: 'Cypress Dashboard URL if the run was recorded'
