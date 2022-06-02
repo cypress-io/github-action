@@ -1,6 +1,4 @@
 name: example-basic
-env:
-  DEBUG: "*"
 on:
   push:
     branches:
