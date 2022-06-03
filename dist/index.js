@@ -75312,11 +75312,6 @@ const runTests = async () => {
     const dashboardUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
-    // add summary to step
-    addGithubSummary(testResults).then((summary) => {
-      Promise.resolve(summary)
-    })
-
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
       console.error('More information might be available above')
@@ -75364,7 +75359,7 @@ const runTests = async () => {
     .then(onTestsFinished, onTestsError)
 }
 
-const addGithubSummary = async (testResults) => {
+const generateSummary = async (testResults) => {
   console.log(
     '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
     testResults
@@ -75381,7 +75376,7 @@ const addGithubSummary = async (testResults) => {
       ['bar.js', 'Fail '],
       ['test.js', 'Pass ']
     ])
-    .addLink('View staging deployment!', 'https://github.com')
+    .addLink('View test results', 'https://github.com')
     .write()
 }
 
@@ -75427,6 +75422,7 @@ installMaybe()
   .then(startServersMaybe)
   .then(waitOnMaybe)
   .then(runTests)
+  .then(generateSummary)
   .then(() => {
     debug('all done, exiting')
     // force exit to avoid waiting for child processes,
