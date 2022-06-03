@@ -75385,10 +75385,10 @@ const generateSummary = async (testResults) => {
     const data = [
       spec.baseName,
       status,
-      stats.passes,
-      stats.failures,
-      stats.pending,
-      stats.skipped,
+      stats.passes.toString(),
+      stats.failures.toString(),
+      stats.pending.toString(),
+      stats.skipped.toString(),
       `${stats.duration / 1000}s`
     ]
 
