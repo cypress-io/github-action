@@ -75313,10 +75313,9 @@ const runTests = async () => {
     process.chdir(startWorkingDirectory)
 
     // add summary to step
-    console.log(
-      '🚀 ~ file: index.js ~ line 708 ~ onTestsFinished ~ addGithubSummary(testResults)',
-      Promise.resolve(addGithubSummary(testResults))
-    )
+    addGithubSummary(testResults).then((summary) => {
+      Promise.resolve(summary)
+    })
 
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
