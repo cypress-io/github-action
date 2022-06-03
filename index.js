@@ -698,8 +698,20 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
+    console.log(
+      '🚀 ~ file: index.js ~ line 701 ~ onTestsFinished ~ testResults',
+      testResults
+    )
     const dashboardUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
+
+    const summary = core.summary
+
+    summary.addTable([
+      testResults.message,
+      testResults.failures,
+      testResults.totalFailed
+    ])
 
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
