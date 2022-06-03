@@ -4,7 +4,6 @@
 
 ## Examples
 
-- [Cypress 10](#cypress-10)
 - [Basic](#basic)
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
