@@ -75318,9 +75318,11 @@ const runTests = async () => {
     const summary = core.summary
 
     summary.addTable([
-      testResults.message,
-      testResults.failures,
-      testResults.totalFailed
+      [`Total # of tests: ${testResults.totalTests}`],
+      [`Failing: ${testResults.totalFailed}`],
+      [`Passed: ${testResults.totalPassed}`],
+      [`Pending: ${testResults.totalPending}`],
+      [`Skipped: ${testResults.totalSkipped}`]
     ])
 
     if (testResults.failures) {
