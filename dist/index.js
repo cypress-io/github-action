@@ -75362,27 +75362,35 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
-  console.log(
-    '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
-    testResults
-  )
+  // console.log(
+  //   '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
+  //   testResults
+  // )
   const headers = [
-    { data: 'Spec', header: true },
+    { data: 'Spec :microscope:', header: true },
     { data: 'Result', header: true },
-    { data: 'Passed', header: true },
-    { data: 'Failed', header: true },
-    { data: 'Pending', header: true },
-    { data: 'Skipped', header: true },
-    { data: 'Duration', header: true }
+    { data: 'Passed :white_check_mark:', header: true },
+    { data: 'Failed :x:', header: true },
+    { data: 'Pending :hand:', header: true },
+    { data: 'Skipped :leftwards_arrow_with_hook:', header: true },
+    { data: 'Duration :clock8:', header: true }
   ]
+
+  const generateSummaryRow = (run) => {
+    console.log(
+      '🚀 ~ file: index.js ~ line 770 ~ generateSummaryRow ~ run',
+      run
+    )
+    return []
+  }
 
   await core.summary
     .addHeading('Cypress Results')
     .addTable([
       headers,
-      ['foo.js', 'Pass ', 'Pass ', 'Pass ', 'Pass ', 'Pass ', '36s'],
-      ['bar.js', 'Pass ', 'Pass ', 'Pass ', 'Pass ', 'Pass ', '36s'],
-      ['test.js', 'Pass ', 'Pass ', 'Pass ', 'Pass ', 'Pass ', '36s']
+      testResults.runs.map((run) => {
+        return generateSummaryRow(run)
+      })
     ])
     .addLink('View test results', 'https://github.com')
     .write()
