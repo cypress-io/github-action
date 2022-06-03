@@ -75405,6 +75405,8 @@ const generateSummary = async (testResults) => {
     runs.map((run) => {
       rows.push({ data: generateSummaryRow(run), rowspan: 2 })
     })
+
+    return rows
   }
 
   await core.summary
