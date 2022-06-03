@@ -75309,10 +75309,6 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
-    console.log(
-      '🚀 ~ file: index.js ~ line 701 ~ onTestsFinished ~ testResults',
-      testResults
-    )
     const dashboardUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
@@ -75367,9 +75363,13 @@ const runTests = async () => {
 }
 
 const addGithubSummary = async (testResults) => {
+  console.log(
+    '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
+    testResults
+  )
   await core.summary
-    .addHeading('Test Results')
-    .addCodeBlock(generateTestResults(testResults), 'js')
+    .addHeading('Cypress Results')
+    .addCodeBlock(generateTestResults(), 'js')
     .addTable([
       [
         { data: 'File', header: true },
@@ -75383,7 +75383,7 @@ const addGithubSummary = async (testResults) => {
     .write()
 }
 
-const generateTestResults = (testResults) => {
+const generateTestResults = () => {
   return `| foo | bar |
   | --- | --- |
   | baz | bim |`
