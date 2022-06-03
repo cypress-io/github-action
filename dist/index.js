@@ -75317,13 +75317,15 @@ const runTests = async () => {
 
     const summary = core.summary
 
-    summary.addTable([
+    const cypressSummaryTable = summary.addTable([
       [`Total # of tests: ${testResults.totalTests}`],
       [`Failing: ${testResults.totalFailed}`],
       [`Passed: ${testResults.totalPassed}`],
       [`Pending: ${testResults.totalPending}`],
       [`Skipped: ${testResults.totalSkipped}`]
     ])
+
+    core.exportVariable('GITHUB_STEP_SUMMARY', cypressSummaryTable)
 
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
