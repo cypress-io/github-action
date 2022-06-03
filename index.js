@@ -13,6 +13,7 @@ const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
 const debug = require('debug')('@cypress/github-action')
 const { ping } = require('./src/ping')
+const { async } = require('hasha')
 
 /**
  * Parses input command, finds the tool and
@@ -705,17 +706,8 @@ const runTests = async () => {
     const dashboardUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
-    const summary = core.summary
-
-    const cypressSummaryTable = summary.addTable([
-      [`Total # of tests: ${testResults.totalTests}`],
-      [`Failing: ${testResults.totalFailed}`],
-      [`Passed: ${testResults.totalPassed}`],
-      [`Pending: ${testResults.totalPending}`],
-      [`Skipped: ${testResults.totalSkipped}`]
-    ])
-
-    core.exportVariable('GITHUB_STEP_SUMMARY', cypressSummaryTable)
+    // add summary to step
+    addGithubSummary(testResults)
 
     if (testResults.failures) {
       console.error('Test run failed, code %d', testResults.failures)
@@ -762,6 +754,29 @@ const runTests = async () => {
   return cypress
     .run(cypressOptions)
     .then(onTestsFinished, onTestsError)
+}
+
+const addGithubSummary = async (testResults) => {
+  await core.summary
+    .addHeading('Test Results')
+    .addCodeBlock(generateTestResults(testResults), 'js')
+    .addTable([
+      [
+        { data: 'File', header: true },
+        { data: 'Result', header: true }
+      ],
+      ['foo.js', 'Pass '],
+      ['bar.js', 'Fail '],
+      ['test.js', 'Pass ']
+    ])
+    .addLink('View staging deployment!', 'https://github.com')
+    .write()
+}
+
+const generateTestResults = (testResults) => {
+  return `| foo | bar |
+  | --- | --- |
+  | baz | bim |`
 }
 
 const installMaybe = () => {
