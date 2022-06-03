@@ -75402,7 +75402,7 @@ const generateSummary = async (testResults) => {
       testResults.runs.forEach((run) => {
         console.log(
           '🚀 ~ file: index.js ~ line 795 ~ testResults.runs.forEach ~ run',
-          run
+          generateSummaryRow(run)
         )
 
         return generateSummaryRow(run)
