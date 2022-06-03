@@ -790,6 +790,11 @@ const generateSummary = async (testResults) => {
     .addTable([
       headers,
       testResults.runs.forEach((run) => {
+        console.log(
+          '🚀 ~ file: index.js ~ line 795 ~ testResults.runs.forEach ~ run',
+          run
+        )
+
         return generateSummaryRow(run)
       })
     ])
