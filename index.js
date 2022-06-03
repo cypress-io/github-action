@@ -705,7 +705,7 @@ const runTests = async () => {
     // add summary to step
     console.log(
       '🚀 ~ file: index.js ~ line 708 ~ onTestsFinished ~ addGithubSummary(testResults)',
-      addGithubSummary(testResults)
+      Promise.resolve(addGithubSummary(testResults))
     )
 
     if (testResults.failures) {
