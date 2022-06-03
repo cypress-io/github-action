@@ -75382,8 +75382,7 @@ const generateSummary = async (testResults) => {
       stats.failures === 0
         ? 'Passing :white_check_mark:'
         : 'Failing :red_circle:'
-
-    return [
+    const data = [
       spec.baseName,
       status,
       stats.passes,
@@ -75392,6 +75391,12 @@ const generateSummary = async (testResults) => {
       stats.skipped,
       `${stats.duration / 1000}s`
     ]
+    console.log(
+      '🚀 ~ file: index.js ~ line 776 ~ generateSummaryRow ~ data',
+      data
+    )
+
+    return data
   }
 
   await core.summary
