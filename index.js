@@ -767,11 +767,21 @@ const generateSummary = async (testResults) => {
   ]
 
   const generateSummaryRow = (run) => {
-    console.log(
-      '🚀 ~ file: index.js ~ line 770 ~ generateSummaryRow ~ run',
-      run
-    )
-    return []
+    const { spec, stats } = run
+    const status =
+      stats.failures === 0
+        ? 'Passing :white_check_mark:'
+        : 'Failing :red_circle:'
+
+    return [
+      spec.baseName,
+      status,
+      stats.passes,
+      stats.failures,
+      stats.pending,
+      stats.skipped,
+      `${stats.duration / 1000}s`
+    ]
   }
 
   await core.summary
@@ -782,7 +792,6 @@ const generateSummary = async (testResults) => {
         return generateSummaryRow(run)
       })
     ])
-    .addLink('View test results', 'https://github.com')
     .write()
 }
 
