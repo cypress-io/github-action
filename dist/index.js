@@ -75344,6 +75344,8 @@ const runTests = async () => {
         new Error(`Cypress tests: ${testResults.totalFailed} failed`)
       )
     }
+
+    return testResults
   }
 
   const onTestsError = (e) => {
@@ -75364,26 +75366,26 @@ const generateSummary = async (testResults) => {
     '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
     testResults
   )
+  const headers = [
+    { data: 'Spec', header: true },
+    { data: 'Result', header: true },
+    { data: 'Passed', header: true },
+    { data: 'Failed', header: true },
+    { data: 'Pending', header: true },
+    { data: 'Skipped', header: true },
+    { data: 'Duration', header: true }
+  ]
+
   await core.summary
     .addHeading('Cypress Results')
-    .addCodeBlock(generateTestResults(), 'js')
     .addTable([
-      [
-        { data: 'File', header: true },
-        { data: 'Result', header: true }
-      ],
-      ['foo.js', 'Pass '],
-      ['bar.js', 'Fail '],
-      ['test.js', 'Pass ']
+      headers,
+      ['foo.js', 'Pass ', 'Pass ', 'Pass ', 'Pass ', 'Pass ', '36s'],
+      ['bar.js', 'Pass ', 'Pass ', 'Pass ', 'Pass ', 'Pass ', '36s'],
+      ['test.js', 'Pass ', 'Pass ', 'Pass ', 'Pass ', 'Pass ', '36s']
     ])
     .addLink('View test results', 'https://github.com')
     .write()
-}
-
-const generateTestResults = () => {
-  return `| foo | bar |
-  | --- | --- |
-  | baz | bim |`
 }
 
 const installMaybe = () => {
