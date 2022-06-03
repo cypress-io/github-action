@@ -785,19 +785,15 @@ const generateSummary = async (testResults) => {
     return data
   }
 
+  const summaryRows = []
+
+  testResults.runs.map((run) => {
+    summaryRows.push(generateSummaryRow(run))
+  })
+
   await core.summary
     .addHeading('Cypress Results')
-    .addTable([
-      headers,
-      testResults.runs.forEach((run) => {
-        console.log(
-          '🚀 ~ file: index.js ~ line 795 ~ testResults.runs.forEach ~ run',
-          generateSummaryRow(run)
-        )
-
-        return generateSummaryRow(run)
-      })
-    ])
+    .addTable([headers, ...summaryRows])
     .write()
 }
 
