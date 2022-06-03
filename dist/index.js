@@ -75391,22 +75391,25 @@ const generateSummary = async (testResults) => {
       stats.skipped,
       `${stats.duration / 1000}s`
     ]
-    console.log(
-      '🚀 ~ file: index.js ~ line 776 ~ generateSummaryRow ~ data',
-      data
-    )
 
     return data
   }
 
+  const summaryRows = (runs) => {
+    if (!runs || runs.length === 0) {
+      return []
+    }
+
+    const rows = []
+
+    runs.map((run) => {
+      rows.push({ data: generateSummaryRow(run), rowspan: 2 })
+    })
+  }
+
   await core.summary
     .addHeading('Cypress Results')
-    .addTable([
-      headers,
-      testResults.runs.map((run) => {
-        return generateSummaryRow(run)
-      })
-    ])
+    .addTable([headers, summaryRows(testResults.runs)])
     .write()
 }
 
