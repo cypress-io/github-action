@@ -75405,6 +75405,10 @@ const generateSummary = async (testResults) => {
     runs.map((run) => {
       rows.push({ data: generateSummaryRow(run), rowspan: 2 })
     })
+    console.log(
+      '🚀 ~ file: index.js ~ line 801 ~ summaryRows ~ rows',
+      rows
+    )
 
     return rows
   }
