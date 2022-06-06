@@ -768,12 +768,17 @@ const generateSummary = async (testResults) => {
   ]
 
   const generateSummaryRow = (run) => {
+    console.log(
+      '🚀 ~ file: index.js ~ line 771 ~ generateSummaryRow ~ run',
+      run
+    )
     const { spec, stats } = run
     const status =
       stats.failures === 0
         ? 'Passing :white_check_mark:'
         : 'Failing :red_circle:'
-    const data = [
+
+    return [
       spec.baseName,
       status,
       stats.passes.toString(),
@@ -782,8 +787,6 @@ const generateSummary = async (testResults) => {
       stats.skipped.toString(),
       `${stats.duration / 1000}s`
     ]
-
-    return data
   }
 
   const summaryRows = []
@@ -836,7 +839,6 @@ installMaybe()
   .then(startServersMaybe)
   .then(waitOnMaybe)
   .then(runTests)
-  .then(generateSummary)
   .then(() => {
     debug('all done, exiting')
     // force exit to avoid waiting for child processes,
