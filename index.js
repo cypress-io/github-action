@@ -762,19 +762,23 @@ const generateSummary = async (testResults) => {
 
   const generateSummaryRow = (run) => {
     const { spec, stats } = run
+    console.log(
+      '🚀 ~ file: index.js ~ line 765 ~ generateSummaryRow ~ run',
+      run
+    )
     const status =
       stats.failures === 0
         ? 'Passing :white_check_mark:'
         : 'Failing :red_circle:'
 
     return [
-      spec.baseName,
-      status,
-      stats.passes.toString(),
-      stats.failures.toString(),
-      stats.pending.toString(),
-      stats.skipped.toString(),
-      `${stats.duration / 1000}s`
+      spec.baseName || '',
+      status || '',
+      stats.passes.toString() || '',
+      stats.failures.toString() || '',
+      stats.pending.toString() || '',
+      stats.skipped.toString() || '',
+      `${stats.duration / 1000}s` || ''
     ]
   }
 
