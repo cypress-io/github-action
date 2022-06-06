@@ -75362,10 +75362,10 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
-  // console.log(
-  //   '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
-  //   testResults
-  // )
+  console.log(
+    '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
+    testResults
+  )
   const headers = [
     { data: 'Spec :microscope:', header: true },
     { data: 'Result', header: true },
