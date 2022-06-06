@@ -75358,7 +75358,7 @@ const runTests = async () => {
   process.chdir(workingDirectory)
   return cypress
     .run(cypressOptions)
-    .run(generateSummary)
+    .then(generateSummary)
     .then(onTestsFinished, onTestsError)
 }
 
