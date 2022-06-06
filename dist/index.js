@@ -75343,8 +75343,6 @@ const runTests = async () => {
         new Error(`Cypress tests: ${testResults.totalFailed} failed`)
       )
     }
-
-    return testResults
   }
 
   const onTestsError = (e) => {
