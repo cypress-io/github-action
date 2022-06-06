@@ -750,6 +750,10 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
+  console.log(
+    '🚀 ~ file: index.js ~ line 753 ~ generateSummary ~ testResults',
+    testResults
+  )
   const headers = [
     { data: 'Spec :microscope:', header: true },
     { data: 'Result', header: true },
@@ -762,17 +766,13 @@ const generateSummary = async (testResults) => {
 
   const generateSummaryRow = (run) => {
     const { spec, stats } = run
-    console.log(
-      '🚀 ~ file: index.js ~ line 765 ~ generateSummaryRow ~ run',
-      run
-    )
     const status =
       stats.failures === 0
         ? 'Passing :white_check_mark:'
         : 'Failing :red_circle:'
 
     return [
-      spec.baseName || '',
+      spec.baseName || spec.name || '',
       status || '',
       stats.passes.toString() || '',
       stats.failures.toString() || '',
