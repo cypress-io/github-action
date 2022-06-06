@@ -700,10 +700,6 @@ const runTests = async () => {
 
   const onTestsFinished = (testResults) => {
     const dashboardUrl = testResults.runUrl
-    console.log(
-      '🚀 ~ file: index.js ~ line 703 ~ onTestsFinished ~ testResults',
-      testResults
-    )
     process.chdir(startWorkingDirectory)
 
     if (testResults.failures) {
@@ -717,7 +713,9 @@ const runTests = async () => {
         console.error(testResults.message)
       }
 
-      return Promise.reject(generateSummary(testResults))
+      return Promise.reject(
+        new Error(testResults.message || 'Error running Cypress')
+      )
     }
 
     debug(`Cypress tests: ${testResults.totalFailed} failed`)
@@ -732,7 +730,9 @@ const runTests = async () => {
     core.setOutput('dashboardUrl', dashboardUrl)
 
     if (testResults.totalFailed) {
-      return Promise.reject(generateSummary(testResults))
+      return Promise.reject(
+        new Error(`Cypress tests: ${testResults.totalFailed} failed`)
+      )
     }
 
     return testResults
@@ -748,6 +748,7 @@ const runTests = async () => {
   process.chdir(workingDirectory)
   return cypress
     .run(cypressOptions)
+    .run(generateSummary)
     .then(onTestsFinished, onTestsError)
 }
 
@@ -795,6 +796,8 @@ const generateSummary = async (testResults) => {
     .addHeading('Cypress Results')
     .addTable([headers, ...summaryRows])
     .write()
+
+  return testResults
 }
 
 const installMaybe = () => {
