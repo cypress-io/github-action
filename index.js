@@ -13,7 +13,6 @@ const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
 const debug = require('debug')('@cypress/github-action')
 const { ping } = require('./src/ping')
-const { async } = require('hasha')
 
 /**
  * Parses input command, finds the tool and
@@ -753,10 +752,6 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
-  console.log(
-    '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
-    testResults
-  )
   const headers = [
     { data: 'Spec :microscope:', header: true },
     { data: 'Result', header: true },
@@ -768,10 +763,6 @@ const generateSummary = async (testResults) => {
   ]
 
   const generateSummaryRow = (run) => {
-    console.log(
-      '🚀 ~ file: index.js ~ line 771 ~ generateSummaryRow ~ run',
-      run
-    )
     const { spec, stats } = run
     const status =
       stats.failures === 0

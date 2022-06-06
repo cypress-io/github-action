@@ -74623,7 +74623,6 @@ const cliParser = __nccwpck_require__(8604)()
 const findYarnWorkspaceRoot = __nccwpck_require__(6748)
 const debug = __nccwpck_require__(8237)('@cypress/github-action')
 const { ping } = __nccwpck_require__(9390)
-const { async } = __nccwpck_require__(4933)
 
 /**
  * Parses input command, finds the tool and
@@ -75363,10 +75362,6 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
-  console.log(
-    '🚀 ~ file: index.js ~ line 760 ~ addGithubSummary ~ testResults',
-    testResults
-  )
   const headers = [
     { data: 'Spec :microscope:', header: true },
     { data: 'Result', header: true },
@@ -75378,10 +75373,6 @@ const generateSummary = async (testResults) => {
   ]
 
   const generateSummaryRow = (run) => {
-    console.log(
-      '🚀 ~ file: index.js ~ line 771 ~ generateSummaryRow ~ run',
-      run
-    )
     const { spec, stats } = run
     const status =
       stats.failures === 0
