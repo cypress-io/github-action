@@ -75380,10 +75380,10 @@ const generateSummary = async (testResults) => {
 
   const summaryRows = [
     status,
-    testResults.totalPassed,
-    testResults.totalFailed,
-    testResults.totalPending,
-    testResults.totalSkipped,
+    `${testResults.totalPassed}`,
+    `${testResults.totalFailed}`,
+    `${testResults.totalPending}`,
+    `${testResults.totalSkipped}`,
     `${testResults.totalDuration / 1000}s` || ''
   ]
 
