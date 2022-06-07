@@ -750,10 +750,6 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
-  console.log(
-    '🚀 ~ file: index.js ~ line 753 ~ generateSummary ~ testResults',
-    testResults
-  )
   const headers = [
     { data: 'Spec :microscope:', header: true },
     { data: 'Result', header: true },
@@ -789,7 +785,7 @@ const generateSummary = async (testResults) => {
   })
 
   await core.summary
-    .addHeading('Cypress Results')
+    .addHeading('Cypress Results', 2)
     .addTable([headers, ...summaryRows])
     .addLink(
       testResults.runUrl ? 'View More Info' : '',
