@@ -75402,8 +75402,8 @@ const generateSummary = async (testResults) => {
     .addHeading('Cypress Results')
     .addTable([headers, ...summaryRows])
     .addLink(
-      testResults.testUrl ? 'View More Info' : '',
-      testResults.testUrl || ''
+      testResults.runUrl ? 'View More Info' : '',
+      testResults.runUrl || ''
     )
     .write()
 
