@@ -75373,13 +75373,18 @@ const generateSummary = async (testResults) => {
     { data: 'Duration :clock8:', header: true }
   ]
 
+  const status =
+    testResults.totalFailed === 0
+      ? 'Passing :white_check_mark:'
+      : 'Failing :red_circle:'
+
   const summaryRows = [
-    [],
-    testResults.totalPasses,
-    testResults.totalFailures,
+    status,
+    testResults.totalPassed,
+    testResults.totalFailed,
     testResults.totalPending,
     testResults.totalSkipped,
-    []
+    `${testResults.totalDuration / 1000}s` || ''
   ]
 
   // const generateSummaryRow = (run) => {
@@ -75408,7 +75413,7 @@ const generateSummary = async (testResults) => {
 
   await core.summary
     .addHeading('Cypress Results', 2)
-    .addTable([headers, ...summaryRows])
+    .addTable([headers, summaryRows])
     .addLink(
       testResults.runUrl ? 'View Run in Dashboard' : '',
       testResults.runUrl || ''
