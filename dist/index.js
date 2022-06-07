@@ -75401,13 +75401,11 @@ const generateSummary = async (testResults) => {
   await core.summary
     .addHeading('Cypress Results')
     .addTable([headers, ...summaryRows])
+    .addLink(
+      testResults.testUrl ? 'View More Info' : '',
+      testResults.testUrl || ''
+    )
     .write()
-
-  if (testResults.testUrl) {
-    await core.summary
-      .addLink('View More Info', testResults.testUrl)
-      .write()
-  }
 
   return testResults
 }
