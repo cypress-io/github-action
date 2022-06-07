@@ -750,8 +750,11 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
+  console.log(
+    '🚀 ~ file: index.js ~ line 753 ~ generateSummary ~ testResults',
+    testResults
+  )
   const headers = [
-    { data: 'Spec :microscope:', header: true },
     { data: 'Result', header: true },
     { data: 'Passed :white_check_mark:', header: true },
     { data: 'Failed :x:', header: true },
@@ -760,29 +763,38 @@ const generateSummary = async (testResults) => {
     { data: 'Duration :clock8:', header: true }
   ]
 
-  const generateSummaryRow = (run) => {
-    const { spec, stats } = run
-    const status =
-      stats.failures === 0
-        ? 'Passing :white_check_mark:'
-        : 'Failing :red_circle:'
+  const summaryRows = [
+    [],
+    testResults.totalPasses,
+    testResults.totalFailures,
+    testResults.totalPending,
+    testResults.totalSkipped,
+    []
+  ]
 
-    return [
-      spec.baseName || spec.name || '',
-      status || '',
-      stats.passes.toString() || '',
-      stats.failures.toString() || '',
-      stats.pending.toString() || '',
-      stats.skipped.toString() || '',
-      `${stats.duration / 1000}s` || ''
-    ]
-  }
+  // const generateSummaryRow = (run) => {
+  //   const { spec, stats } = run
+  //   const status =
+  //     stats.failures === 0
+  //       ? 'Passing :white_check_mark:'
+  //       : 'Failing :red_circle:'
 
-  const summaryRows = []
+  //   return [
+  //     spec.baseName || spec.name || '',
+  //     status || '',
+  //     stats.passes.toString() || '',
+  //     stats.failures.toString() || '',
+  //     stats.pending.toString() || '',
+  //     stats.skipped.toString() || '',
+  //     `${stats.duration / 1000}s` || ''
+  //   ]
+  // }
 
-  testResults.runs.map((run) => {
-    summaryRows.push(generateSummaryRow(run))
-  })
+  // const summaryRows = []
+
+  // testResults.runs.map((run) => {
+  //   summaryRows.push(generateSummaryRow(run))
+  // })
 
   await core.summary
     .addHeading('Cypress Results', 2)
