@@ -75387,30 +75387,6 @@ const generateSummary = async (testResults) => {
     `${testResults.totalDuration / 1000}s` || ''
   ]
 
-  // const generateSummaryRow = (run) => {
-  //   const { spec, stats } = run
-  //   const status =
-  //     stats.failures === 0
-  //       ? 'Passing :white_check_mark:'
-  //       : 'Failing :red_circle:'
-
-  //   return [
-  //     spec.baseName || spec.name || '',
-  //     status || '',
-  //     stats.passes.toString() || '',
-  //     stats.failures.toString() || '',
-  //     stats.pending.toString() || '',
-  //     stats.skipped.toString() || '',
-  //     `${stats.duration / 1000}s` || ''
-  //   ]
-  // }
-
-  // const summaryRows = []
-
-  // testResults.runs.map((run) => {
-  //   summaryRows.push(generateSummaryRow(run))
-  // })
-
   await core.summary
     .addHeading('Cypress Results', 2)
     .addTable([headers, summaryRows])
