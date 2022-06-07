@@ -75403,6 +75403,12 @@ const generateSummary = async (testResults) => {
     .addTable([headers, ...summaryRows])
     .write()
 
+  if (testResults.testUrl) {
+    await core.summary
+      .addLink('View More Info', testResults.testUrl)
+      .write()
+  }
+
   return testResults
 }
 
