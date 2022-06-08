@@ -61,21 +61,21 @@ jobs:
       - run: ffprobe cypress/videos/*.mp4 || true
       - run: mplayer -really-quiet -ao null -vo null -identify -frames 0 cypress/videos/*.mp4 || true
 
-      - name: Chrome headless
+      - name: Chrome headed
         uses: ./
         with:
           working-directory: examples/v9/chrome
           browser: chrome
-          headless: true
+          headed: true
 
       - uses: actions/upload-artifact@v2
         with:
-          name: screenshots-in-headless-chrome
+          name: screenshots-in-headed-chrome
           path: examples/chrome/cypress/screenshots
 
       - uses: actions/upload-artifact@v2
         with:
-          name: video-in-headless-chrome
+          name: video-in-headed-chrome
           path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
