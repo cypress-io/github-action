@@ -75360,10 +75360,6 @@ const runTests = async () => {
 }
 
 const generateSummary = async (testResults) => {
-  console.log(
-    '🚀 ~ file: index.js ~ line 753 ~ generateSummary ~ testResults',
-    testResults
-  )
   const headers = [
     { data: 'Result', header: true },
     { data: 'Passed :white_check_mark:', header: true },
