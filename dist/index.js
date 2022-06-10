@@ -75355,7 +75355,44 @@ const runTests = async () => {
   process.chdir(workingDirectory)
   return cypress
     .run(cypressOptions)
+    .then(generateSummary)
     .then(onTestsFinished, onTestsError)
+}
+
+const generateSummary = async (testResults) => {
+  const headers = [
+    { data: 'Result', header: true },
+    { data: 'Passed :white_check_mark:', header: true },
+    { data: 'Failed :x:', header: true },
+    { data: 'Pending :hand:', header: true },
+    { data: 'Skipped :leftwards_arrow_with_hook:', header: true },
+    { data: 'Duration :clock8:', header: true }
+  ]
+
+  const status =
+    testResults.totalFailed === 0
+      ? 'Passing :white_check_mark:'
+      : 'Failing :red_circle:'
+
+  const summaryRows = [
+    status,
+    `${testResults.totalPassed}`,
+    `${testResults.totalFailed}`,
+    `${testResults.totalPending}`,
+    `${testResults.totalSkipped}`,
+    `${testResults.totalDuration / 1000}s` || ''
+  ]
+
+  await core.summary
+    .addHeading('Cypress Results', 2)
+    .addTable([headers, summaryRows])
+    .addLink(
+      testResults.runUrl ? 'View Run in Dashboard' : '',
+      testResults.runUrl || ''
+    )
+    .write()
+
+  return testResults
 }
 
 const installMaybe = () => {
