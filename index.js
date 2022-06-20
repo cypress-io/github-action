@@ -102,10 +102,18 @@ const packageLockFilename = path.join(
 
 const useYarn = () => fs.existsSync(yarnFilename)
 
+const gegUserSpecifiedHashFile = () => {
+  const userSpecifiedHashFile = core.getInput('lock-hash');
+  if (userSpecifiedHashFile) {
+    return path.join(workingDirectory, userSpecifiedHashFile);
+  }
+  return useYarn() ? yarnFilename : packageLockFilename;
+}
+
 const lockHash = () => {
-  const lockFilename = useYarn() ? yarnFilename : packageLockFilename
-  const fileHash = hasha.fromFileSync(lockFilename)
-  debug(`Hash from file ${lockFilename} is ${fileHash}`)
+  const hashFile = gegUserSpecifiedHashFile();
+  const fileHash = hasha.fromFileSync(hashFile);
+  debug(`Hash from file ${hashFile} is ${fileHash}`)
   return fileHash
 }
 
@@ -635,7 +643,11 @@ const runTests = async () => {
   }
 
   // export common environment variables that help run Cypress
-  core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  if(getInputBool('install', true)) {
+    // only when cypress is installed by action self, we can export the Cache Folder,
+    // otherwise use the default one in Cypress
+    core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
+  }
   core.exportVariable('TERM', 'xterm')
 
   if (customCommand) {

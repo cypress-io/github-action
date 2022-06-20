@@ -38,6 +38,9 @@ inputs:
   install-command:
     description: 'Custom install command to use'
     required: false
+  hash-file:
+    description: 'Path to the file for cypress cache key generation'
+    required: false
   runTests:
     description: 'Whether or not to run tests'
     required: false
