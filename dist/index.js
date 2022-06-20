@@ -74623,6 +74623,7 @@ const cliParser = __nccwpck_require__(8604)()
 const findYarnWorkspaceRoot = __nccwpck_require__(6748)
 const debug = __nccwpck_require__(8237)('@cypress/github-action')
 const { ping } = __nccwpck_require__(9390)
+const { SUMMARY_ENV_VAR } = __nccwpck_require__(1327)
 
 /**
  * Parses input command, finds the tool and
@@ -75359,7 +75360,16 @@ const runTests = async () => {
     .then(onTestsFinished, onTestsError)
 }
 
+// Summary is not available for GitHub Enterprise at the moment
+const isSummaryEnabled = () => {
+  return process.env[SUMMARY_ENV_VAR] !== undefined
+}
+
 const generateSummary = async (testResults) => {
+  if (!isSummaryEnabled()) {
+    return testResults
+  }
+
   const headers = [
     { data: 'Result', header: true },
     { data: 'Passed :white_check_mark:', header: true },
