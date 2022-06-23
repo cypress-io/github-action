@@ -81,15 +81,15 @@ inputs:
     description: 'Whether or not to silence any Cypress specific output from stdout'
     required: false
   component:
-    description: "Lets the action know that Cypress is running component tests and not e2e tests"
+    description: 'Lets the action know that Cypress is running component tests and not e2e tests'
     required: false
     default: false
 outputs:
   dashboardUrl:
     description: 'Cypress Dashboard URL if the run was recorded'
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: 'tini'
+  main: 'node dist/index.js'
 branding:
   color: 'green'
   icon: 'check-square'
