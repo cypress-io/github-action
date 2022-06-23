@@ -91,7 +91,7 @@ runs:
   using: 'docker'
   image: 'docker://cypress/base:16.14.2-slim'
   entrypoint: 'bash'
-  args: ['node', 'dist/index.js']
+  args: ['-l', '-c', 'node', 'dist/index.js']
 branding:
   color: 'green'
   icon: 'check-square'
