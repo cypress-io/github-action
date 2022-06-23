@@ -90,7 +90,8 @@ outputs:
 runs:
   using: 'docker'
   image: 'docker://cypress/base:16.14.2-slim'
-  main: 'tini node dist/index.js'
+  entrypoint: 'tini'
+  args: ['node', 'dist/index.js']
 branding:
   color: 'green'
   icon: 'check-square'
