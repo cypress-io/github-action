@@ -13,6 +13,7 @@ const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
 const debug = require('debug')('@cypress/github-action')
 const { ping } = require('./src/ping')
+const { SUMMARY_ENV_VAR } = require('@actions/core/lib/summary')
 
 /**
  * Parses input command, finds the tool and
@@ -749,7 +750,16 @@ const runTests = async () => {
     .then(onTestsFinished, onTestsError)
 }
 
+// Summary is not available for GitHub Enterprise at the moment
+const isSummaryEnabled = () => {
+  return process.env[SUMMARY_ENV_VAR] !== undefined
+}
+
 const generateSummary = async (testResults) => {
+  if (!isSummaryEnabled()) {
+    return testResults
+  }
+
   const headers = [
     { data: 'Result', header: true },
     { data: 'Passed :white_check_mark:', header: true },
