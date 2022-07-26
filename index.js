@@ -96,10 +96,7 @@ const yarnFilename = path.join(
   findYarnWorkspaceRoot(workingDirectory) || workingDirectory,
   'yarn.lock'
 )
-const pnpmLockFilename = path.join(
-  workingDirectory,
-  'pnpm-lock.yaml'
-)
+const pnpmLockFilename = path.join(workingDirectory, 'pnpm-lock.yaml')
 const packageLockFilename = path.join(
   workingDirectory,
   'package-lock.json'
@@ -107,10 +104,14 @@ const packageLockFilename = path.join(
 
 const useYarn = () => fs.existsSync(yarnFilename)
 
-const usePnpm = () => fs.existsSync(pnpmLockFilename);
+const usePnpm = () => fs.existsSync(pnpmLockFilename)
 
 const lockHash = () => {
-  const lockFilename = useYarn() ? yarnFilename : (usePnpm() ? pnpmLockFilename : packageLockFilename)
+  const lockFilename = useYarn()
+    ? yarnFilename
+    : usePnpm()
+    ? pnpmLockFilename
+    : packageLockFilename
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
@@ -125,7 +126,7 @@ const getNpmCache = () => {
   if (!key) {
     if (useYarn()) {
       key = `yarn-${platformAndArch}-${hash}`
-    } if (usePnpm()) {
+    } else if (usePnpm()) {
       key = `pnpm-${platformAndArch}-${hash}`
     } else {
       key = `npm-${platformAndArch}-${hash}`
@@ -247,9 +248,9 @@ const install = () => {
     return io.which('pnpm', true).then((pnpmPath) => {
       debug(`pnpm at "${pnpmPath}"`)
       return exec.exec(
-          quote(pnpmPath),
-          ['install', '--frozen-lockfile'],
-          cypressCommandOptions
+        quote(pnpmPath),
+        ['install', '--frozen-lockfile'],
+        cypressCommandOptions
       )
     })
   } else {
