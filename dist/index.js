@@ -74706,6 +74706,7 @@ const yarnFilename = path.join(
   findYarnWorkspaceRoot(workingDirectory) || workingDirectory,
   'yarn.lock'
 )
+const pnpmLockFilename = path.join(workingDirectory, 'pnpm-lock.yaml')
 const packageLockFilename = path.join(
   workingDirectory,
   'package-lock.json'
@@ -74713,8 +74714,14 @@ const packageLockFilename = path.join(
 
 const useYarn = () => fs.existsSync(yarnFilename)
 
+const usePnpm = () => fs.existsSync(pnpmLockFilename)
+
 const lockHash = () => {
-  const lockFilename = useYarn() ? yarnFilename : packageLockFilename
+  const lockFilename = useYarn()
+    ? yarnFilename
+    : usePnpm()
+    ? pnpmLockFilename
+    : packageLockFilename
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
@@ -74729,6 +74736,8 @@ const getNpmCache = () => {
   if (!key) {
     if (useYarn()) {
       key = `yarn-${platformAndArch}-${hash}`
+    } else if (usePnpm()) {
+      key = `pnpm-${platformAndArch}-${hash}`
     } else {
       key = `npm-${platformAndArch}-${hash}`
     }
@@ -74738,6 +74747,8 @@ const getNpmCache = () => {
 
   if (useYarn()) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
+  } else if (usePnpm()) {
+    o.inputPath = NPM_CACHE_FOLDER
   } else {
     o.inputPath = NPM_CACHE_FOLDER
   }
@@ -74842,9 +74853,18 @@ const install = () => {
         cypressCommandOptions
       )
     })
+  } else if (usePnpm()) {
+    debug('installing NPM dependencies using pnpm')
+    return io.which('pnpm', true).then((pnpmPath) => {
+      debug(`pnpm at "${pnpmPath}"`)
+      return exec.exec(
+        quote(pnpmPath),
+        ['install', '--frozen-lockfile'],
+        cypressCommandOptions
+      )
+    })
   } else {
     debug('installing NPM dependencies')
-
     return io.which('npm', true).then((npmPath) => {
       debug(`npm at "${npmPath}"`)
       return exec.exec(quote(npmPath), ['ci'], cypressCommandOptions)
