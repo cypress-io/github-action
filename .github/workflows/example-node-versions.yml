@@ -24,7 +24,7 @@ jobs:
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Hmm, should we rebuild the "dist" before using the action?
 
@@ -50,7 +50,7 @@ jobs:
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Hmm, should we rebuild the "dist" before using the action?
 
