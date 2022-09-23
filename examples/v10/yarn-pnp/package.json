@@ -1,0 +1,16 @@
+{
+  "name": "yarn-pnp",
+  "packageManager": "yarn@3.2.3",
+  "version": "1.0.0",
+  "description": "basic example how to run Cypress tests with yarn pnp",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "cypress": "^10.0.0"
+  }
+}
