@@ -8,8 +8,14 @@ const debug = require('debug')('@cypress/github-action')
  * is implemented using https://github.com/sindresorhus/got
  */
 const ping = (url, timeout) => {
-  if (!timeout) {
-    throw new Error('Expected timeout in ms')
+  if (timeout === undefined) {
+    throw new Error('Timeout must be defined');
+  }
+  if (typeof timeout !== 'number') {
+    throw new Error('Timeout must be a number of milliseconds')
+  }
+  if (timeout < 0) {
+    throw new Error('Timeout must be greater than 0')
   }
 
   // make copy of the error codes that "got" retries on
