@@ -117,7 +117,7 @@ jobs:
   firefox:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node12.16.1-chrome80-ff73
+      image: cypress/browsers:node16.17.1-chrome105-ff104-edge
       options: --user 1001
     steps:
       - uses: actions/checkout@v2
@@ -179,7 +179,7 @@ jobs:
     runs-on: ubuntu-20.04
     # Cypress Docker image with Chrome v78
     # and Firefox v70 pre-installed
-    container: cypress/browsers:node12.13.0-chrome78-ff70
+    container: cypress/browsers:node16.17.1-chrome105-ff104-edge
     steps:
       - uses: actions/checkout@v2
       - uses: cypress-io/github-action@v4
