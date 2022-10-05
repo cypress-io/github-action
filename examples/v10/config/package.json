@@ -18,6 +18,6 @@
     "start-server-and-test": "1.11.5"
   },
   "dependencies": {
-    "serve": "11.3.0"
+    "serve": "12.0.0"
   }
 }
