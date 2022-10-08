@@ -239,7 +239,7 @@ const install = () => {
       debug(`yarn at "${yarnPath}"`)
       return exec.exec(
         quote(yarnPath),
-        ['--frozen-lockfile'],
+        ['--immutable'],
         cypressCommandOptions
       )
     })
