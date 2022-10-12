@@ -156,5 +156,5 @@ jobs:
           # we should not attempt to run tests
           runTests: false
         env:
-          # skip the binary install here is some new text
+          # skip the binary install EDIT: here is some new text
           CYPRESS_INSTALL_BINARY: 0
