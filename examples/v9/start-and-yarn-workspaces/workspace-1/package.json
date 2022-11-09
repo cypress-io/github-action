@@ -15,6 +15,6 @@
     "cypress": "9.6.1"
   },
   "dependencies": {
-    "serve": "11.3.0"
+    "serve": "14.1.0"
   }
 }
