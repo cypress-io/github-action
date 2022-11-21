@@ -13,18 +13,18 @@ jobs:
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:
-        node: [12, 14, 16]
-    name: E2E on Node v${{ matrix.node }}
+        node: [14, 16, 18]
+    name: Cypress v9 E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Hmm, should we rebuild the "dist" before using the action?
 
@@ -39,18 +39,18 @@ jobs:
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:
-        node: [12, 14, 16]
-    name: E2E on Node v${{ matrix.node }}
+        node: [14, 16, 18]
+    name: Cypress v10 E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Hmm, should we rebuild the "dist" before using the action?
 
