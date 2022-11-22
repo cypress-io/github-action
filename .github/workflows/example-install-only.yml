@@ -21,7 +21,7 @@ jobs:
       # (which is important when using ^ version in package.json)
       # see https://github.com/actions/cache
       - name: Cache NPM and Cypress 📦
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/Cypress
@@ -53,7 +53,7 @@ jobs:
       # (which is important when using ^ version in package.json)
       # see https://github.com/actions/cache
       - name: Cache NPM and Cypress 📦
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/Cypress
