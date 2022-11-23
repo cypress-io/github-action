@@ -25,7 +25,7 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          command: yarn dlx cypress run
+          command: yarn dlx cypress@9 run
 
   yarn-pnp-ubuntu-20:
     runs-on: ubuntu-20.04
@@ -38,7 +38,7 @@ jobs:
         with:
           working-directory: examples/v9/yarn-pnp
           build: npx cypress info
-          command: yarn dlx cypress run
+          command: yarn dlx cypress@9 run
 
   yarn-pnp-on-windows:
     runs-on: windows-latest
@@ -51,7 +51,7 @@ jobs:
         with:
           working-directory: examples/v9/yarn-pnp
           build: npx cypress info
-          command: yarn dlx cypress run
+          command: yarn dlx cypress@9 run
 
   yarn-pnp-on-mac:
     runs-on: macos-latest
@@ -64,7 +64,7 @@ jobs:
         with:
           working-directory: examples/v9/yarn-pnp
           build: npx cypress info
-          command: yarn dlx cypress run
+          command: yarn dlx cypress@9 run
 
   # skips the binary installation
   # shows that the job should not fail
