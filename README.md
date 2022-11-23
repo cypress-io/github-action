@@ -745,17 +745,6 @@ jobs:
 
 See live example [angular-pizza-creator](https://github.com/cypress-io/angular-pizza-creator).
 
-This is also useful for [yarn pnp](https://yarnpkg.com/features/pnp) users, where we need to specify that the tests should be run with yarn so the imports are correctly resolved.
-
-```yml
-- name: Cypress run
-  uses: cypress-io/github-action@v4
-  with:
-    command-prefix: yarn
-```
-
-See [.github/workflows/example-yarn-pnp.yml](.github/workflows/example-yarn-pnp.yml) file.
-
 ### Custom test command
 
 You can overwrite the Cypress run command with your own
@@ -772,6 +761,18 @@ steps:
 ```
 
 See [.github/workflows/example-custom-command.yml](.github/workflows/example-custom-command.yml) file.
+
+This is also useful for [yarn pnp](https://yarnpkg.com/features/pnp) users, where we need to specify that the tests should be run with yarn dlx instead of npx so the imports are correctly resolved and the action can find the correct cypress command.
+
+```yml
+- name: Cypress run
+  uses: cypress-io/github-action@v4
+  with:
+    command: yarn dlx cypress run
+```
+
+See [.github/workflows/example-yarn-pnp.yml](.github/workflows/example-yarn-pnp.yml) file.
+
 
 ### Custom build id
 

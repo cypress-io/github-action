@@ -25,7 +25,7 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   yarn-pnp-ubuntu-20:
     runs-on: ubuntu-20.04
@@ -38,7 +38,7 @@ jobs:
         with:
           working-directory: examples/v9/yarn-pnp
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   yarn-pnp-on-windows:
     runs-on: windows-latest
@@ -51,7 +51,7 @@ jobs:
         with:
           working-directory: examples/v9/yarn-pnp
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   yarn-pnp-on-mac:
     runs-on: macos-latest
@@ -64,7 +64,7 @@ jobs:
         with:
           working-directory: examples/v9/yarn-pnp
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   # skips the binary installation
   # shows that the job should not fail
@@ -106,7 +106,7 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   yarn-pnp-ubuntu-20-v10:
     runs-on: ubuntu-20.04
@@ -119,7 +119,7 @@ jobs:
         with:
           working-directory: examples/v10/yarn-pnp
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   yarn-pnp-on-windows-v10:
     runs-on: windows-latest
@@ -132,7 +132,7 @@ jobs:
         with:
           working-directory: examples/v10/yarn-pnp
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   yarn-pnp-on-mac-v10:
     runs-on: macos-latest
@@ -145,7 +145,7 @@ jobs:
         with:
           working-directory: examples/v10/yarn-pnp
           build: npx cypress info
-          command-prefix: yarn
+          command: yarn dlx cypress run
 
   # skips the binary installation
   # shows that the job should not fail
