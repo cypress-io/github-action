@@ -14,7 +14,7 @@
 - Specify [environment variables](#env)
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
-- [Record results](#record-test-results-on-cypress-dashboard) on Cypress Dashboard
+- [Record results](#record-test-results-on-cypress-dashboard) on Cypress Cloud
 - Tag [recordings](#tag-recordings)
 - [Quiet output](#quiet-flag)
 - Store [test artifacts](#artifacts) on GitHub
@@ -29,7 +29,7 @@
 - use [custom install command](#custom-install-command)
 - use [command prefix](#command-prefix)
 - use [own custom test command](#custom-test-command)
-- pass [custom build id](#custom-build-id) when recording to Dashboard
+- pass [custom build id](#custom-build-id) when recording to Cypress Cloud
 - generate a [robust custom build id](#robust-custom-build-id) to allow re-running the workflow
 - use different [working-directory](#working-directory)
 - use [custom cache key](#custom-cache-key)
@@ -283,7 +283,7 @@ jobs:
 
 For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-project-lt-project-path-gt).
 
-### Record test results on Cypress Dashboard
+### Record test results on Cypress Cloud
 
 ```yml
 name: Cypress tests
@@ -301,7 +301,7 @@ jobs:
         with:
           record: true
         env:
-          # pass the Dashboard record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -313,7 +313,7 @@ jobs:
 
 **Tip 2:** we recommend passing the `GITHUB_TOKEN` secret (created by the GH Action automatically) as an environment variable. This will allow correctly identifying every build and avoid confusion when re-running a build.
 
-**Tip 3:** if running on `pull_request` event, the commit message is "merge SHA into SHA", which is not what you want probably. You can overwrite the commit message sent to the Dashboard by setting an environment variable. See [issue 124](https://github.com/cypress-io/github-action/issues/124#issuecomment-653180260) for details.
+**Tip 3:** if running on `pull_request` event, the commit message is "merge SHA into SHA", which is not what you want probably. You can overwrite the commit message sent to Cypress Cloud by setting an environment variable. See [issue 124](https://github.com/cypress-io/github-action/issues/124#issuecomment-653180260) for details.
 
 **Tip 4:** to record the project needs `projectId`. Typically this value is saved in the `cypress.json` file. If you want to avoid this, pass the project id using an environment variable:
 
@@ -333,7 +333,7 @@ jobs:
         with:
           record: true
         env:
-          # pass the Dashboard record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -408,7 +408,7 @@ You can pass multiple tags using commas like `tag: node-10,nightly,staging`.
 
 ### Artifacts
 
-If you don't record the test run on Cypress Dashboard, you can still store generated videos and screenshots as CI artifacts. See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) and the workflow example below
+If you don't record the test run on Cypress Cloud, you can still store generated videos and screenshots as CI artifacts. See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) and the workflow example below
 
 ```yml
 name: Artifacts
@@ -485,7 +485,7 @@ jobs:
 
 ### Parallel
 
-**Note:** Cypress parallelization requires [Cypress Dashboard](https://on.cypress.io/dashboard-introduction) account.
+**Note:** Cypress parallelization requires [Cypress Cloud](https://on.cypress.io/dashboard-introduction) account.
 
 You can spin multiple containers running in parallel using `strategy: matrix` argument. Just add more dummy items to the `containers: [1, 2, ...]` array to spin more free or paid containers. Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization)
 
@@ -501,7 +501,7 @@ jobs:
     strategy:
       # when one test fails, DO NOT cancel the other
       # containers, because this will kill Cypress processes
-      # leaving the Dashboard hanging ...
+      # leaving Cypress Cloud hanging ...
       # https://github.com/cypress-io/github-action/issues/48
       fail-fast: false
       matrix:
@@ -520,7 +520,7 @@ jobs:
           parallel: true
           group: 'Actions example'
         env:
-          # pass the Dashboard record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
@@ -529,9 +529,9 @@ jobs:
 
 ![Parallel run](images/parallel.png)
 
-**Warning ⚠️:** Cypress actions use `GITHUB_TOKEN` to get the correct branch and the number of jobs run, making it possible to re-run without the need of pushing an empty commit. If you don't want to use the `GITHUB_TOKEN` you can still run your tests without problem with the only note that Cypress Dashboard API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name. If you attempt to re-run GitHub checks, the Dashboard thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
+**Warning ⚠️:** Cypress actions use `GITHUB_TOKEN` to get the correct branch and the number of jobs run, making it possible to re-run without the need of pushing an empty commit. If you don't want to use the `GITHUB_TOKEN` you can still run your tests without problem with the only note that Cypress Cloud's API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name. If you attempt to re-run GitHub checks, Cypress Cloud thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
 
-The Cypress GH Action does not spawn or create any additional containers - it only links the multiple containers spawned using the matrix strategy into a single logical Dashboard run and into splitting the specs amongst the machines. See the [Cypress parallelization](https://on.cypress.io/parallelization) guide for the explanation.
+The Cypress GH Action does not spawn or create any additional containers - it only links the multiple containers spawned using the matrix strategy into a single logical Cypress Cloud run and into splitting the specs amongst the machines. See the [Cypress parallelization](https://on.cypress.io/parallelization) guide for the explanation.
 
 ### Component tests
 
@@ -785,7 +785,7 @@ jobs:
           group: 'Actions example'
           ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
         env:
-          # pass the Dashboard record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -794,7 +794,7 @@ jobs:
 
 ### Robust custom build id
 
-If you re-run the GitHub workflow, if you use the same custom build id during recording, the Dashboard will cancel the run with "Build already finished" error. To avoid this, you need to generate a _new_ custom build id on every workflow re-run. A good solution showing in the [example-custom-ci-build-id.yml](./.github/workflows/example-custom-ci-build-id.yml) file is to run a common job first that just generates a new random ID. This ID can be used by the testing jobs to tie the build together. If the user re-runs the workflow a new unique build id is generated, allowing recording the new Dashboard run.
+If you re-run the GitHub workflow, if you use the same custom build id during recording, Cypress Cloud will cancel the run with "Build already finished" error. To avoid this, you need to generate a _new_ custom build id on every workflow re-run. A good solution showing in the [example-custom-ci-build-id.yml](./.github/workflows/example-custom-ci-build-id.yml) file is to run a common job first that just generates a new random ID. This ID can be used by the testing jobs to tie the build together. If the user re-runs the workflow a new unique build id is generated, allowing recording the new Cypress Cloud run.
 
 ```yml
 jobs:
@@ -819,7 +819,7 @@ jobs:
           parallel: true
           ci-build-id: ${{ needs.prepare.outputs.uuid }}
         env:
-          # pass the Dashboard record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 ```
 
@@ -1064,7 +1064,7 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 <!-- prettier-ignore-start -->
 Name | Description
 --- | ---
-[cypress-gh-action-small-example](https://github.com/bahmutov/cypress-gh-action-small-example) | Runs tests and records them on Cypress Dashboard
+[cypress-gh-action-small-example](https://github.com/bahmutov/cypress-gh-action-small-example) | Runs tests and records them on Cypress Cloud
 [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | uses Yarn, and runs in parallel on several versions of Node, different browsers, and more.
 [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder
 [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies
@@ -1157,7 +1157,7 @@ If you add `workflow_dispatch` event to your workflow, you will be able to start
 
 ### Outputs
 
-This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress Dashboard](https://on.cypress.io/dashboard-introduction), see [action.yml](action.yml). To use this output:
+This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/dashboard-introduction), see [action.yml](action.yml). To use this output:
 
 ```yml
 - name: Cypress tests
@@ -1172,7 +1172,7 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
     record: true
   env:
     CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
-- name: Print Dashboard URL
+- name: Print Cypress Cloud URL
   run: |
     echo Cypress finished with: ${{ steps.cypress.outcome }}
     echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
