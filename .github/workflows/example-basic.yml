@@ -7,15 +7,15 @@ on:
 jobs:
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  basic-ubuntu-18:
-    runs-on: ubuntu-18.04
+  basic-ubuntu-20:
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
@@ -26,8 +26,8 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-ubuntu-20:
-    runs-on: ubuntu-20.04
+  basic-ubuntu-22:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -84,15 +84,15 @@ jobs:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  basic-ubuntu-18-v10:
-    runs-on: ubuntu-18.04
+  basic-ubuntu-20-v10:
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
@@ -103,8 +103,8 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-ubuntu-20-v10:
-    runs-on: ubuntu-20.04
+  basic-ubuntu-22-v10:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
