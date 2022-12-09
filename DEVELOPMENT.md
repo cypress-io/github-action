@@ -20,9 +20,9 @@ name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # use specific commit pushed to GitHub
       - uses: cypress-io/github-action@2a1baeb
 ```
@@ -34,22 +34,22 @@ You can use [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-a
 **For pull request reviewers:**
 
 1. When merging a pull request, squash all commits into one.
-1. Make sure the commit subject and body follow [semantic commit convention](https://semantic-release.gitbook.io/semantic-release/#commit-message-format). I prefer simplicity:
+1. Make sure the commit subject and body follow [semantic commit convention](https://semantic-release.gitbook.io/semantic-release/#commit-message-format). For instance, keeping it simple:
 
 ```text
 feat: added new parameter
 fix: fixed a bug
 ```
 
-If you need to bump major version, mark it as breaking change in the body of the commit's message like:
+If you need to bump the major version, mark it as breaking change in the body of the commit's message like:
 
 ```text
 fix: upgrade dependency X
 
-BREAKING CHANGE: requires Node 8 to run
+BREAKING CHANGE: requires minimum Node.js 14 to run
 ```
 
-3. New versions of this action will be released automatically by the CI, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `/v1` branch. Thus every user that use `- uses: cypress-io/github-action@v2` will be using the new version automatically.
+3. New versions of this action will be released automatically by the CI, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `/v5` branch. Thus specifying `- uses: cypress-io/github-action@v5` selects the new version automatically.
 
 ## Updating the latest version in GitHub Marketplace
 
