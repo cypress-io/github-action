@@ -13,7 +13,7 @@
     "test": "echo \"There are no tests :(\"",
     "build": "ncc build -o dist index.js",
     "format": "prettier --write index.js",
-    "check:markdown": "find *.md -exec npx markdown-link-check {} \\;",
+    "check:markdown": "find *.md -print0 | xargs -0 -n1 markdown-link-check -c md-linkcheck.json",
     "install-v10-deps": "./scripts/npm-install-v10-examples.sh"
   },
   "repository": {
