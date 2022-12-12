@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # cache NPM modules and Cypress binary folder
       # we can use "package-lock.json" as the key file
@@ -21,7 +21,7 @@ jobs:
       # (which is important when using ^ version in package.json)
       # see https://github.com/actions/cache
       - name: Cache NPM and Cypress 📦
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/Cypress
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # cache NPM modules and Cypress binary folder
       # we can use "package-lock.json" as the key file
@@ -53,7 +53,7 @@ jobs:
       # (which is important when using ^ version in package.json)
       # see https://github.com/actions/cache
       - name: Cache NPM and Cypress 📦
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cache/Cypress
