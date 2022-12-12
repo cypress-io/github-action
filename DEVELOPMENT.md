@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # use specific commit pushed to GitHub
-      - uses: cypress-io/github-action@2a1baeb
+      - uses: cypress-io/github-action@<full commit SHA>
 ```
 
 You can use [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) or [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) as test projects.
