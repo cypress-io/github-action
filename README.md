@@ -1,6 +1,6 @@
 # cypress-io/github-action [![renovate-app badge][renovate-badge]][renovate-app] [![Action status](https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions)
 
-> [GitHub Action](https://help.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end tests. Includes NPM installation, custom caching and lots of configuration options.
+> [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end tests. Includes NPM installation, custom caching and lots of configuration options.
 
 ## Examples
 
@@ -14,7 +14,7 @@
 - Specify [environment variables](#env)
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
-- [Record results](#record-test-results-on-cypress-dashboard) on Cypress Cloud
+- [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
 - Tag [recordings](#tag-recordings)
 - [Quiet output](#quiet-flag)
 - Store [test artifacts](#artifacts) on GitHub
@@ -550,7 +550,7 @@ You can run [Cypress component tests](https://on.cypress.io/component-testing) i
     component: true
 ```
 
-See the example project [component-test](/examples/v10/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
+See the example project [component-test](examples/v10/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
 
 ### Build app
 
@@ -790,7 +790,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-**Tip:** see GitHub Actions [environment variables](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/using-environment-variables) and [expression syntax](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/contexts-and-expression-syntax-for-github-actions).
+**Tip:** see [Learn GitHub Actions](https://docs.github.com/en/actions/learn-github-actions), with sections on Expressions, Contexts and Environment variables.
 
 ### Robust custom build id
 
@@ -900,7 +900,7 @@ See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action
 
 ### Yarn workspaces
 
-This action should discover Yarn workspace correctly. For example, see folder [examples/start-and-yarn-workspaces](examples/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
+This action should discover Yarn workspace correctly. For example, see folder [examples/v10/start-and-yarn-workspaces](examples/v10/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
 
 ```yaml
 name: example-start-and-yarn-workspaces
@@ -915,7 +915,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v4
         with:
-          working-directory: examples/start-and-yarn-workspaces/workspace-1
+          working-directory: examples/v10/start-and-yarn-workspaces/workspace-1
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
@@ -1146,7 +1146,7 @@ Read [DEVELOPMENT.md](DEVELOPMENT.md)
 
 - Read our blog post [Drastically Simplify Testing on CI with Cypress GitHub Action](https://www.cypress.io/blog/2019/11/20/drastically-simplify-your-testing-with-cypress-github-action/)
 - Read [Test the Preview Vercel Deploys](https://glebbahmutov.com/blog/develop-preview-test/) blog post
-- [Building actions](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/building-actions) docs
+- [Creating actions](https://docs.github.com/en/actions/creating-actions) docs
 - practice using the Cypress GitHub Action by following the [Cypress on CI Workshop](https://github.com/cypress-io/cypress-workshop-ci)
 
 ## Extras
