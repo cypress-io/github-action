@@ -48,7 +48,7 @@
     "@types/node": "18.11.9",
     "@vercel/ncc": "0.34.0",
     "husky": "7.0.4",
-    "markdown-link-check": "3.10.2",
+    "markdown-link-check": "3.10.3",
     "prettier": "2.6.2",
     "stop-build": "1.1.0"
   },
