@@ -4,6 +4,13 @@ on:
     branches:
       - 'master'
   pull_request:
+
+env:
+  # Disable update-check called by serve through start or start2 script
+  # works around issue when more than one instance of serve is started
+  # See PR https://github.com/vercel/serve/pull/457
+  NO_UPDATE_CHECK: 1
+
 jobs:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
