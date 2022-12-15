@@ -8,7 +8,7 @@ jobs:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  firefox:
+  firefox-v9:
     # should include Firefox browser install
     # https://github.com/actions/virtual-environments
     #
