@@ -11,6 +11,10 @@ jobs:
   firefox:
     # should include Firefox browser install
     # https://github.com/actions/virtual-environments
+    #
+    # skip Firefox test on Cypress v9 due to Cypress issue
+    # https://github.com/cypress-io/cypress/issues/23215
+    if: false 
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
