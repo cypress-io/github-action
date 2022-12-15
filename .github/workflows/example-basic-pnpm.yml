@@ -20,7 +20,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
@@ -122,7 +122,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo

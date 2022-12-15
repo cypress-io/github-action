@@ -16,7 +16,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # let's give this action an ID so we can refer
         # to its output values later
@@ -51,7 +51,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         with:
           working-directory: examples/v9/recording
@@ -73,7 +73,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # let's give this action an ID so we can refer
         # to its output values later
@@ -108,7 +108,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         with:
           working-directory: examples/v10/recording
