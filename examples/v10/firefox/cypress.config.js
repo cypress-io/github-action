@@ -7,5 +7,6 @@ module.exports = defineConfig({
       return require('./cypress/plugins/index.js')(on, config)
     },
     supportFile: false,
+    video: false
   },
 })
