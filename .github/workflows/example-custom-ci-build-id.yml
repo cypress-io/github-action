@@ -1,14 +1,18 @@
 # Typically you would let this action
-# determine the unique build it to tie multiple parallel
-# test jobs together into a single logical Dashboard run.
+# determine a unique build id to tie multiple parallel
+# test jobs together into a single logical Cypress Cloud run.
 # But sometimes you need to execute Cypress using
 # your own custom command and pass your --ci-build-id
 # In that case it is important to make sure this build id
 # is generated _again_ on workflow re-run. This example
-# shows how to do create a unique ID then pass it to
+# shows how to create a unique ID then pass it to
 # multiple testing jobs running in parallel
 # based on the recipe written in
 # https://medium.com/attest-r-and-d/adding-a-unique-github-build-identifier-7aa2e83cadca
+# The use of set-output is however deprecated by GitHub since the above blog was written 
+# in 2019 so this is replaced by GitHub Environment files, see
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
+#
 name: example-custom-ci-build-id
 on:
   push:
@@ -27,13 +31,13 @@ jobs:
         # take the current commit + timestamp together
         # the typical value would be something like
         # "sha-5d3fe...35d3-time-1620841214"
-        run: echo "::set-output name=value::sha-$GITHUB_SHA-time-$(date +"%s")"
+        run: echo "value=sha-$GITHUB_SHA-time-$(date +"%s")" >> $GITHUB_OUTPUT
 
       - name: Print unique ID 🖨`
         run: echo "generated id ${{ steps.uuid.outputs.value }}"
 
-  # let's run small subset of the tests
-  # and record it to the dashboard
+  # let's run a small subset of the tests
+  # and record it to the Cypress Cloud
   smoke-tests:
     needs: ['prepare']
     runs-on: ubuntu-20.04
@@ -56,7 +60,7 @@ jobs:
           spec: 'cypress/integration/spec-a.js'
           working-directory: examples/v9/recording
         env:
-          # pass the Dashboard record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 
   # if smoke tests pass, run all tests, splitting them in parallel
@@ -89,5 +93,5 @@ jobs:
               --group "2 - all tests"
           working-directory: examples/v9/recording
         env:
-          # pass the Dashboard record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
