@@ -45,7 +45,7 @@
     "quote": "0.4.0"
   },
   "devDependencies": {
-    "@types/node": "18.11.9",
+    "@types/node": "18.11.17",
     "@vercel/ncc": "0.34.0",
     "husky": "7.0.4",
     "markdown-link-check": "3.10.3",
