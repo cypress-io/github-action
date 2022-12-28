@@ -827,18 +827,52 @@ See the [example-custom-ci-build-id.yml](./.github/workflows/example-custom-ci-b
 
 ### Working directory
 
-In a monorepo, the end-to-end test might be placed in a different sub-folder from the application itself, like this
+In a monorepo, the end-to-end or component test might be placed in a different sub-folder from the application itself.
+
+Using a [Cypress legacy configuration](https://docs.cypress.io/guides/references/legacy-configuration) (Version 9 or earlier) the structure could look like this:
 
 ```text
 repo/
   app/
-  e2e/
-    cypress
+  app-test/
+    cypress/
+      fixtures/
+      integration/
+      plugins/
+      support/
     cypress.json
   package.json
 ```
 
-You can specify the `e2e` working directory when running Cypress tests using `working-directory` parameter
+For End-to-End testing using a [Cypress configuration](https://docs.cypress.io/guides/references/configuration) for Version 10 and later, the structure could look like this :
+
+```text
+repo/
+  app/
+  app-test/
+    cypress/
+      e2e/
+      fixtures/
+      support/
+    cypress.config.js
+  package.json
+```
+
+Similarly for Component Testing with a [Cypress configuration](https://docs.cypress.io/guides/references/configuration) for Version 10 and later, the structure could look like this:
+
+```text
+repo/
+  app/
+  app-test/
+    cypress/
+      component/
+      fixtures/
+      support/
+    cypress.config.js
+  package.json
+```
+
+You can specify the `app-test` working directory when running Cypress tests using the `working-directory` parameter
 
 ```yml
 on: [push]
@@ -850,10 +884,10 @@ jobs:
       - uses: cypress-io/github-action@v5
         with:
           start: npm start
-          working-directory: e2e
+          working-directory: app-test
 ```
 
-See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) for a running example
+See [example-basic.yml](.github/workflows/example-basic.yml) for an End-to-End test example and [example-component-test.yml](.github/workflows/example-component-test.yml) for a Component test example, using the parameter `working-directory`.
 
 ### Subfolders
 
