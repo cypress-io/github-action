@@ -1,4 +1,4 @@
-# cypress-io/github-action [![renovate-app badge][renovate-badge]][renovate-app] [![Action status](https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions)
+# cypress-io/github-action [![renovate-app badge][renovate-badge]][renovate-bot] [![Action status](https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions)
 
 > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end tests. Includes NPM installation, custom caching and lots of configuration options.
 
@@ -1282,4 +1282,4 @@ This is noted as a breaking change ... but you should not see any changes. We ha
 [MIT License](./LICENSE.md)
 
 [renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
-[renovate-app]: https://renovateapp.com/
+[renovate-bot]: https://github.com/renovatebot
