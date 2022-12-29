@@ -378,7 +378,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [10, 12]
+        node: [14, 16, 18]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -936,7 +936,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [10, 12]
+        node: [14, 16, 18]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -970,7 +970,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [10, 12]
+        node: [14, 16, 18]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v3
