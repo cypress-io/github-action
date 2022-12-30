@@ -7,7 +7,6 @@ cd ../config && npm install cypress@latest
 cd ../custom-command && npm install cypress@latest
 cd ../env && npm install cypress@latest
 cd ../firefox && npm install cypress@latest
-cd ../install-command && npm install cypress@latest
 cd ../install-only && npm install cypress@latest
 cd ../node-versions && npm install cypress@latest
 cd ../quiet && npm install cypress@latest
