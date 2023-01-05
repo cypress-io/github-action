@@ -6,7 +6,7 @@
   "scripts": {
     "test": "cypress run",
     "build": "echo building ... server ... done!",
-    "start": "serve public"
+    "start": "serve -p 5000 public"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,6 @@
     "cypress": "10.0.0"
   },
   "dependencies": {
-    "serve": "11.3.0"
+    "serve": "^14.1.2"
   }
 }
