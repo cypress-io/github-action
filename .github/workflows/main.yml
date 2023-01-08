@@ -1,7 +1,7 @@
 name: main
 on:
   push:
-    branches:    
+    branches:
       - 'master'
   pull_request:
 jobs:
@@ -37,7 +37,7 @@ jobs:
       - uses: bahmutov/npm-install@v1
       # https://github.com/cycjimmy/semantic-release-action
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
+        uses: cycjimmy/semantic-release-action@v3
         id: semantic
         with:
           branch: master
