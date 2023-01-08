@@ -147,8 +147,6 @@ jobs:
 
 [![Edge example](https://github.com/cypress-io/github-action/workflows/example-edge/badge.svg?branch=master)](.github/workflows/example-edge.yml)
 
-**Note:** Microsoft has not released Edge for Linux yet, thus you need to run these tests on Windows or Mac runners with Edge preinstalled. You can use [`cypress info`](https://on.cypress.io/command-line#cypress-info) command to see the browsers installed on the machine.
-
 ### Headed
 
 Run the browser in headed mode - as of Cypress v8.0 the `cypress run` command executes tests in `headless` mode by default
