@@ -74,9 +74,10 @@ exports.isFeatureAvailable = isFeatureAvailable;
  * @param primaryKey an explicit key for restoring the cache
  * @param restoreKeys an optional ordered list of keys to use for restoring the cache if no cache hit occurred for key
  * @param downloadOptions cache download options
+ * @param enableCrossOsArchive an optional boolean enabled to restore on windows any cache created on any platform
  * @returns string returns the key for the cache hit, otherwise returns undefined
  */
-function restoreCache(paths, primaryKey, restoreKeys, options) {
+function restoreCache(paths, primaryKey, restoreKeys, options, enableCrossOsArchive = false) {
     return __awaiter(this, void 0, void 0, function* () {
         checkPaths(paths);
         restoreKeys = restoreKeys || [];
@@ -94,7 +95,8 @@ function restoreCache(paths, primaryKey, restoreKeys, options) {
         try {
             // path are needed to compute version
             const cacheEntry = yield cacheHttpClient.getCacheEntry(keys, paths, {
-                compressionMethod
+                compressionMethod,
+                enableCrossOsArchive
             });
             if (!(cacheEntry === null || cacheEntry === void 0 ? void 0 : cacheEntry.archiveLocation)) {
                 // Cache not found
@@ -141,10 +143,11 @@ exports.restoreCache = restoreCache;
  *
  * @param paths a list of file paths to be cached
  * @param key an explicit key for restoring the cache
+ * @param enableCrossOsArchive an optional boolean enabled to save cache on windows which could be restored on any platform
  * @param options cache upload options
  * @returns number returns cacheId if the cache was saved successfully and throws an error if save fails
  */
-function saveCache(paths, key, options) {
+function saveCache(paths, key, options, enableCrossOsArchive = false) {
     var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
         checkPaths(paths);
@@ -175,6 +178,7 @@ function saveCache(paths, key, options) {
             core.debug('Reserving Cache');
             const reserveCacheResponse = yield cacheHttpClient.reserveCache(key, paths, {
                 compressionMethod,
+                enableCrossOsArchive,
                 cacheSize: archiveFileSize
             });
             if ((_a = reserveCacheResponse === null || reserveCacheResponse === void 0 ? void 0 : reserveCacheResponse.result) === null || _a === void 0 ? void 0 : _a.cacheId) {
@@ -247,7 +251,6 @@ const crypto = __importStar(__nccwpck_require__(6113));
 const fs = __importStar(__nccwpck_require__(7147));
 const url_1 = __nccwpck_require__(7310);
 const utils = __importStar(__nccwpck_require__(1518));
-const constants_1 = __nccwpck_require__(8840);
 const downloadUtils_1 = __nccwpck_require__(5500);
 const options_1 = __nccwpck_require__(6215);
 const requestUtils_1 = __nccwpck_require__(3981);
@@ -277,10 +280,17 @@ function createHttpClient() {
     const bearerCredentialHandler = new auth_1.BearerCredentialHandler(token);
     return new http_client_1.HttpClient('actions/cache', [bearerCredentialHandler], getRequestOptions());
 }
-function getCacheVersion(paths, compressionMethod) {
-    const components = paths.concat(!compressionMethod || compressionMethod === constants_1.CompressionMethod.Gzip
-        ? []
-        : [compressionMethod]);
+function getCacheVersion(paths, compressionMethod, enableCrossOsArchive = false) {
+    const components = paths;
+    // Add compression method to cache version to restore
+    // compressed cache as per compression method
+    if (compressionMethod) {
+        components.push(compressionMethod);
+    }
+    // Only check for windows platforms if enableCrossOsArchive is false
+    if (process.platform === 'win32' && !enableCrossOsArchive) {
+        components.push('windows-only');
+    }
     // Add salt to cache version to support breaking changes in cache entry
     components.push(versionSalt);
     return crypto
@@ -292,10 +302,15 @@ exports.getCacheVersion = getCacheVersion;
 function getCacheEntry(keys, paths, options) {
     return __awaiter(this, void 0, void 0, function* () {
         const httpClient = createHttpClient();
-        const version = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod);
+        const version = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod, options === null || options === void 0 ? void 0 : options.enableCrossOsArchive);
         const resource = `cache?keys=${encodeURIComponent(keys.join(','))}&version=${version}`;
         const response = yield requestUtils_1.retryTypedResponse('getCacheEntry', () => __awaiter(this, void 0, void 0, function* () { return httpClient.getJson(getCacheApiUrl(resource)); }));
+        // Cache not found
         if (response.statusCode === 204) {
+            // List cache for primary key only if cache miss occurs
+            if (core.isDebug()) {
+                yield printCachesListForDiagnostics(keys[0], httpClient, version);
+            }
             return null;
         }
         if (!requestUtils_1.isSuccessStatusCode(response.statusCode)) {
@@ -304,6 +319,7 @@ function getCacheEntry(keys, paths, options) {
         const cacheResult = response.result;
         const cacheDownloadUrl = cacheResult === null || cacheResult === void 0 ? void 0 : cacheResult.archiveLocation;
         if (!cacheDownloadUrl) {
+            // Cache achiveLocation not found. This should never happen, and hence bail out.
             throw new Error('Cache not found.');
         }
         core.setSecret(cacheDownloadUrl);
@@ -313,6 +329,22 @@ function getCacheEntry(keys, paths, options) {
     });
 }
 exports.getCacheEntry = getCacheEntry;
+function printCachesListForDiagnostics(key, httpClient, version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const resource = `caches?key=${encodeURIComponent(key)}`;
+        const response = yield requestUtils_1.retryTypedResponse('listCache', () => __awaiter(this, void 0, void 0, function* () { return httpClient.getJson(getCacheApiUrl(resource)); }));
+        if (response.statusCode === 200) {
+            const cacheListResult = response.result;
+            const totalCount = cacheListResult === null || cacheListResult === void 0 ? void 0 : cacheListResult.totalCount;
+            if (totalCount && totalCount > 0) {
+                core.debug(`No matching cache found for cache key '${key}', version '${version} and scope ${process.env['GITHUB_REF']}. There exist one or more cache(s) with similar key but they have different version or scope. See more info on cache matching here: https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#matching-a-cache-key \nOther caches with similar key:`);
+                for (const cacheEntry of (cacheListResult === null || cacheListResult === void 0 ? void 0 : cacheListResult.artifactCaches) || []) {
+                    core.debug(`Cache Key: ${cacheEntry === null || cacheEntry === void 0 ? void 0 : cacheEntry.cacheKey}, Cache Version: ${cacheEntry === null || cacheEntry === void 0 ? void 0 : cacheEntry.cacheVersion}, Cache Scope: ${cacheEntry === null || cacheEntry === void 0 ? void 0 : cacheEntry.scope}, Cache Created: ${cacheEntry === null || cacheEntry === void 0 ? void 0 : cacheEntry.creationTime}`);
+                }
+            }
+        }
+    });
+}
 function downloadCache(archiveLocation, archivePath, options) {
     return __awaiter(this, void 0, void 0, function* () {
         const archiveUrl = new url_1.URL(archiveLocation);
@@ -333,7 +365,7 @@ exports.downloadCache = downloadCache;
 function reserveCache(key, paths, options) {
     return __awaiter(this, void 0, void 0, function* () {
         const httpClient = createHttpClient();
-        const version = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod);
+        const version = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod, options === null || options === void 0 ? void 0 : options.enableCrossOsArchive);
         const reserveCacheRequest = {
             key,
             version,
@@ -576,10 +608,6 @@ function getVersion(app) {
 // Use zstandard if possible to maximize cache performance
 function getCompressionMethod() {
     return __awaiter(this, void 0, void 0, function* () {
-        if (process.platform === 'win32' && !(yield isGnuTarInstalled())) {
-            // Disable zstd due to bug https://github.com/actions/cache/issues/301
-            return constants_1.CompressionMethod.Gzip;
-        }
         const versionOutput = yield getVersion('zstd');
         const version = semver.clean(versionOutput);
         if (!versionOutput.toLowerCase().includes('zstd command line interface')) {
@@ -603,13 +631,16 @@ function getCacheFileName(compressionMethod) {
         : constants_1.CacheFilename.Zstd;
 }
 exports.getCacheFileName = getCacheFileName;
-function isGnuTarInstalled() {
+function getGnuTarPathOnWindows() {
     return __awaiter(this, void 0, void 0, function* () {
+        if (fs.existsSync(constants_1.GnuTarPathOnWindows)) {
+            return constants_1.GnuTarPathOnWindows;
+        }
         const versionOutput = yield getVersion('tar');
-        return versionOutput.toLowerCase().includes('gnu tar');
+        return versionOutput.toLowerCase().includes('gnu tar') ? io.which('tar') : '';
     });
 }
-exports.isGnuTarInstalled = isGnuTarInstalled;
+exports.getGnuTarPathOnWindows = getGnuTarPathOnWindows;
 function assertDefined(name, value) {
     if (value === undefined) {
         throw Error(`Expected ${name} but value was undefiend`);
@@ -645,6 +676,11 @@ var CompressionMethod;
     CompressionMethod["ZstdWithoutLong"] = "zstd-without-long";
     CompressionMethod["Zstd"] = "zstd";
 })(CompressionMethod = exports.CompressionMethod || (exports.CompressionMethod = {}));
+var ArchiveToolType;
+(function (ArchiveToolType) {
+    ArchiveToolType["GNU"] = "gnu";
+    ArchiveToolType["BSD"] = "bsd";
+})(ArchiveToolType = exports.ArchiveToolType || (exports.ArchiveToolType = {}));
 // The default number of retry attempts.
 exports.DefaultRetryAttempts = 2;
 // The default delay in milliseconds between retry attempts.
@@ -653,6 +689,12 @@ exports.DefaultRetryDelay = 5000;
 // over the socket during this period, the socket is destroyed and the download
 // is aborted.
 exports.SocketTimeout = 5000;
+// The default path of GNUtar on hosted Windows runners
+exports.GnuTarPathOnWindows = `${process.env['PROGRAMFILES']}\\Git\\usr\\bin\\tar.exe`;
+// The default path of BSDtar on hosted Windows runners
+exports.SystemTarPathOnWindows = `${process.env['SYSTEMDRIVE']}\\Windows\\System32\\tar.exe`;
+exports.TarFilename = 'cache.tar';
+exports.ManifestFilename = 'manifest.txt';
 //# sourceMappingURL=constants.js.map
 
 /***/ }),
@@ -1065,27 +1107,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const exec_1 = __nccwpck_require__(1514);
+const core_1 = __nccwpck_require__(2186);
 const io = __importStar(__nccwpck_require__(7436));
 const fs_1 = __nccwpck_require__(7147);
 const path = __importStar(__nccwpck_require__(1017));
 const utils = __importStar(__nccwpck_require__(1518));
 const constants_1 = __nccwpck_require__(8840);
 const IS_WINDOWS = process.platform === 'win32';
-function getTarPath(args, compressionMethod) {
+core_1.exportVariable('MSYS', 'winsymlinks:nativestrict');
+// Returns tar path and type: BSD or GNU
+function getTarPath() {
     return __awaiter(this, void 0, void 0, function* () {
         switch (process.platform) {
             case 'win32': {
-                const systemTar = `${process.env['windir']}\\System32\\tar.exe`;
-                if (compressionMethod !== constants_1.CompressionMethod.Gzip) {
-                    // We only use zstandard compression on windows when gnu tar is installed due to
-                    // a bug with compressing large files with bsdtar + zstd
-                    args.push('--force-local');
+                const gnuTar = yield utils.getGnuTarPathOnWindows();
+                const systemTar = constants_1.SystemTarPathOnWindows;
+                if (gnuTar) {
+                    // Use GNUtar as default on windows
+                    return { path: gnuTar, type: constants_1.ArchiveToolType.GNU };
                 }
                 else if (fs_1.existsSync(systemTar)) {
-                    return systemTar;
-                }
-                else if (yield utils.isGnuTarInstalled()) {
-                    args.push('--force-local');
+                    return { path: systemTar, type: constants_1.ArchiveToolType.BSD };
                 }
                 break;
             }
@@ -1093,25 +1135,92 @@ function getTarPath(args, compressionMethod) {
                 const gnuTar = yield io.which('gtar', false);
                 if (gnuTar) {
                     // fix permission denied errors when extracting BSD tar archive with GNU tar - https://github.com/actions/cache/issues/527
-                    args.push('--delay-directory-restore');
-                    return gnuTar;
+                    return { path: gnuTar, type: constants_1.ArchiveToolType.GNU };
                 }
-                break;
+                else {
+                    return {
+                        path: yield io.which('tar', true),
+                        type: constants_1.ArchiveToolType.BSD
+                    };
+                }
             }
             default:
                 break;
         }
-        return yield io.which('tar', true);
+        // Default assumption is GNU tar is present in path
+        return {
+            path: yield io.which('tar', true),
+            type: constants_1.ArchiveToolType.GNU
+        };
     });
 }
-function execTar(args, compressionMethod, cwd) {
+// Return arguments for tar as per tarPath, compressionMethod, method type and os
+function getTarArgs(tarPath, compressionMethod, type, archivePath = '') {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield exec_1.exec(`"${yield getTarPath(args, compressionMethod)}"`, args, { cwd });
+        const args = [`"${tarPath.path}"`];
+        const cacheFileName = utils.getCacheFileName(compressionMethod);
+        const tarFile = 'cache.tar';
+        const workingDirectory = getWorkingDirectory();
+        // Speficic args for BSD tar on windows for workaround
+        const BSD_TAR_ZSTD = tarPath.type === constants_1.ArchiveToolType.BSD &&
+            compressionMethod !== constants_1.CompressionMethod.Gzip &&
+            IS_WINDOWS;
+        // Method specific args
+        switch (type) {
+            case 'create':
+                args.push('--posix', '-cf', BSD_TAR_ZSTD
+                    ? tarFile
+                    : cacheFileName.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '--exclude', BSD_TAR_ZSTD
+                    ? tarFile
+                    : cacheFileName.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '-P', '-C', workingDirectory.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '--files-from', constants_1.ManifestFilename);
+                break;
+            case 'extract':
+                args.push('-xf', BSD_TAR_ZSTD
+                    ? tarFile
+                    : archivePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '-P', '-C', workingDirectory.replace(new RegExp(`\\${path.sep}`, 'g'), '/'));
+                break;
+            case 'list':
+                args.push('-tf', BSD_TAR_ZSTD
+                    ? tarFile
+                    : archivePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/'), '-P');
+                break;
         }
-        catch (error) {
-            throw new Error(`Tar failed with error: ${error === null || error === void 0 ? void 0 : error.message}`);
+        // Platform specific args
+        if (tarPath.type === constants_1.ArchiveToolType.GNU) {
+            switch (process.platform) {
+                case 'win32':
+                    args.push('--force-local');
+                    break;
+                case 'darwin':
+                    args.push('--delay-directory-restore');
+                    break;
+            }
         }
+        return args;
+    });
+}
+// Returns commands to run tar and compression program
+function getCommands(compressionMethod, type, archivePath = '') {
+    return __awaiter(this, void 0, void 0, function* () {
+        let args;
+        const tarPath = yield getTarPath();
+        const tarArgs = yield getTarArgs(tarPath, compressionMethod, type, archivePath);
+        const compressionArgs = type !== 'create'
+            ? yield getDecompressionProgram(tarPath, compressionMethod, archivePath)
+            : yield getCompressionProgram(tarPath, compressionMethod);
+        const BSD_TAR_ZSTD = tarPath.type === constants_1.ArchiveToolType.BSD &&
+            compressionMethod !== constants_1.CompressionMethod.Gzip &&
+            IS_WINDOWS;
+        if (BSD_TAR_ZSTD && type !== 'create') {
+            args = [[...compressionArgs].join(' '), [...tarArgs].join(' ')];
+        }
+        else {
+            args = [[...tarArgs].join(' '), [...compressionArgs].join(' ')];
+        }
+        if (BSD_TAR_ZSTD) {
+            return args;
+        }
+        return [args.join(' ')];
     });
 }
 function getWorkingDirectory() {
@@ -1119,91 +1228,116 @@ function getWorkingDirectory() {
     return (_a = process.env['GITHUB_WORKSPACE']) !== null && _a !== void 0 ? _a : process.cwd();
 }
 // Common function for extractTar and listTar to get the compression method
-function getCompressionProgram(compressionMethod) {
-    // -d: Decompress.
-    // unzstd is equivalent to 'zstd -d'
-    // --long=#: Enables long distance matching with # bits. Maximum is 30 (1GB) on 32-bit OS and 31 (2GB) on 64-bit.
-    // Using 30 here because we also support 32-bit self-hosted runners.
-    switch (compressionMethod) {
-        case constants_1.CompressionMethod.Zstd:
-            return [
-                '--use-compress-program',
-                IS_WINDOWS ? 'zstd -d --long=30' : 'unzstd --long=30'
-            ];
-        case constants_1.CompressionMethod.ZstdWithoutLong:
-            return ['--use-compress-program', IS_WINDOWS ? 'zstd -d' : 'unzstd'];
-        default:
-            return ['-z'];
-    }
+function getDecompressionProgram(tarPath, compressionMethod, archivePath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // -d: Decompress.
+        // unzstd is equivalent to 'zstd -d'
+        // --long=#: Enables long distance matching with # bits. Maximum is 30 (1GB) on 32-bit OS and 31 (2GB) on 64-bit.
+        // Using 30 here because we also support 32-bit self-hosted runners.
+        const BSD_TAR_ZSTD = tarPath.type === constants_1.ArchiveToolType.BSD &&
+            compressionMethod !== constants_1.CompressionMethod.Gzip &&
+            IS_WINDOWS;
+        switch (compressionMethod) {
+            case constants_1.CompressionMethod.Zstd:
+                return BSD_TAR_ZSTD
+                    ? [
+                        'zstd -d --long=30 --force -o',
+                        constants_1.TarFilename,
+                        archivePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/')
+                    ]
+                    : [
+                        '--use-compress-program',
+                        IS_WINDOWS ? '"zstd -d --long=30"' : 'unzstd --long=30'
+                    ];
+            case constants_1.CompressionMethod.ZstdWithoutLong:
+                return BSD_TAR_ZSTD
+                    ? [
+                        'zstd -d --force -o',
+                        constants_1.TarFilename,
+                        archivePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/')
+                    ]
+                    : ['--use-compress-program', IS_WINDOWS ? '"zstd -d"' : 'unzstd'];
+            default:
+                return ['-z'];
+        }
+    });
 }
+// Used for creating the archive
+// -T#: Compress using # working thread. If # is 0, attempt to detect and use the number of physical CPU cores.
+// zstdmt is equivalent to 'zstd -T0'
+// --long=#: Enables long distance matching with # bits. Maximum is 30 (1GB) on 32-bit OS and 31 (2GB) on 64-bit.
+// Using 30 here because we also support 32-bit self-hosted runners.
+// Long range mode is added to zstd in v1.3.2 release, so we will not use --long in older version of zstd.
+function getCompressionProgram(tarPath, compressionMethod) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const cacheFileName = utils.getCacheFileName(compressionMethod);
+        const BSD_TAR_ZSTD = tarPath.type === constants_1.ArchiveToolType.BSD &&
+            compressionMethod !== constants_1.CompressionMethod.Gzip &&
+            IS_WINDOWS;
+        switch (compressionMethod) {
+            case constants_1.CompressionMethod.Zstd:
+                return BSD_TAR_ZSTD
+                    ? [
+                        'zstd -T0 --long=30 --force -o',
+                        cacheFileName.replace(new RegExp(`\\${path.sep}`, 'g'), '/'),
+                        constants_1.TarFilename
+                    ]
+                    : [
+                        '--use-compress-program',
+                        IS_WINDOWS ? '"zstd -T0 --long=30"' : 'zstdmt --long=30'
+                    ];
+            case constants_1.CompressionMethod.ZstdWithoutLong:
+                return BSD_TAR_ZSTD
+                    ? [
+                        'zstd -T0 --force -o',
+                        cacheFileName.replace(new RegExp(`\\${path.sep}`, 'g'), '/'),
+                        constants_1.TarFilename
+                    ]
+                    : ['--use-compress-program', IS_WINDOWS ? '"zstd -T0"' : 'zstdmt'];
+            default:
+                return ['-z'];
+        }
+    });
+}
+// Executes all commands as separate processes
+function execCommands(commands, cwd) {
+    return __awaiter(this, void 0, void 0, function* () {
+        for (const command of commands) {
+            try {
+                yield exec_1.exec(command, undefined, { cwd });
+            }
+            catch (error) {
+                throw new Error(`${command.split(' ')[0]} failed with error: ${error === null || error === void 0 ? void 0 : error.message}`);
+            }
+        }
+    });
+}
+// List the contents of a tar
 function listTar(archivePath, compressionMethod) {
     return __awaiter(this, void 0, void 0, function* () {
-        const args = [
-            ...getCompressionProgram(compressionMethod),
-            '-tf',
-            archivePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/'),
-            '-P'
-        ];
-        yield execTar(args, compressionMethod);
+        const commands = yield getCommands(compressionMethod, 'list', archivePath);
+        yield execCommands(commands);
     });
 }
 exports.listTar = listTar;
+// Extract a tar
 function extractTar(archivePath, compressionMethod) {
     return __awaiter(this, void 0, void 0, function* () {
         // Create directory to extract tar into
         const workingDirectory = getWorkingDirectory();
         yield io.mkdirP(workingDirectory);
-        const args = [
-            ...getCompressionProgram(compressionMethod),
-            '-xf',
-            archivePath.replace(new RegExp(`\\${path.sep}`, 'g'), '/'),
-            '-P',
-            '-C',
-            workingDirectory.replace(new RegExp(`\\${path.sep}`, 'g'), '/')
-        ];
-        yield execTar(args, compressionMethod);
+        const commands = yield getCommands(compressionMethod, 'extract', archivePath);
+        yield execCommands(commands);
     });
 }
 exports.extractTar = extractTar;
+// Create a tar
 function createTar(archiveFolder, sourceDirectories, compressionMethod) {
     return __awaiter(this, void 0, void 0, function* () {
         // Write source directories to manifest.txt to avoid command length limits
-        const manifestFilename = 'manifest.txt';
-        const cacheFileName = utils.getCacheFileName(compressionMethod);
-        fs_1.writeFileSync(path.join(archiveFolder, manifestFilename), sourceDirectories.join('\n'));
-        const workingDirectory = getWorkingDirectory();
-        // -T#: Compress using # working thread. If # is 0, attempt to detect and use the number of physical CPU cores.
-        // zstdmt is equivalent to 'zstd -T0'
-        // --long=#: Enables long distance matching with # bits. Maximum is 30 (1GB) on 32-bit OS and 31 (2GB) on 64-bit.
-        // Using 30 here because we also support 32-bit self-hosted runners.
-        // Long range mode is added to zstd in v1.3.2 release, so we will not use --long in older version of zstd.
-        function getCompressionProgram() {
-            switch (compressionMethod) {
-                case constants_1.CompressionMethod.Zstd:
-                    return [
-                        '--use-compress-program',
-                        IS_WINDOWS ? 'zstd -T0 --long=30' : 'zstdmt --long=30'
-                    ];
-                case constants_1.CompressionMethod.ZstdWithoutLong:
-                    return ['--use-compress-program', IS_WINDOWS ? 'zstd -T0' : 'zstdmt'];
-                default:
-                    return ['-z'];
-            }
-        }
-        const args = [
-            '--posix',
-            ...getCompressionProgram(),
-            '-cf',
-            cacheFileName.replace(new RegExp(`\\${path.sep}`, 'g'), '/'),
-            '--exclude',
-            cacheFileName.replace(new RegExp(`\\${path.sep}`, 'g'), '/'),
-            '-P',
-            '-C',
-            workingDirectory.replace(new RegExp(`\\${path.sep}`, 'g'), '/'),
-            '--files-from',
-            manifestFilename
-        ];
-        yield execTar(args, compressionMethod, archiveFolder);
+        fs_1.writeFileSync(path.join(archiveFolder, constants_1.ManifestFilename), sourceDirectories.join('\n'));
+        const commands = yield getCommands(compressionMethod, 'create');
+        yield execCommands(commands, archiveFolder);
     });
 }
 exports.createTar = createTar;
@@ -43042,45 +43176,8 @@ var request = __nccwpck_require__(6234);
 var graphql = __nccwpck_require__(8467);
 var authToken = __nccwpck_require__(334);
 
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
+const VERSION = "4.1.0";
 
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-const VERSION = "3.6.0";
-
-const _excluded = ["authStrategy"];
 class Octokit {
   constructor(options = {}) {
     const hook = new beforeAfterHook.Collection();
@@ -43140,10 +43237,9 @@ class Octokit {
       }
     } else {
       const {
-        authStrategy
-      } = options,
-            otherOptions = _objectWithoutProperties(options, _excluded);
-
+        authStrategy,
+        ...otherOptions
+      } = options;
       const auth = authStrategy(Object.assign({
         request: this.request,
         log: this.log,
@@ -43540,8 +43636,6 @@ function parse(options) {
     } else {
       if (Object.keys(remainingParameters).length) {
         body = remainingParameters;
-      } else {
-        headers["content-length"] = 0;
       }
     }
   } // default content-type for JSON if body is set
@@ -43584,7 +43678,7 @@ function withDefaults(oldDefaults, newDefaults) {
   });
 }
 
-const VERSION = "6.0.12";
+const VERSION = "7.0.3";
 
 const userAgent = `octokit-endpoint.js/${VERSION} ${universalUserAgent.getUserAgent()}`; // DEFAULTS has all properties set that EndpointOptions has, except url.
 // So we use RequestParameters and add method as additional required property.
@@ -43621,30 +43715,27 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 var request = __nccwpck_require__(6234);
 var universalUserAgent = __nccwpck_require__(5030);
 
-const VERSION = "4.8.0";
+const VERSION = "5.0.4";
 
 function _buildMessageForResponseErrors(data) {
   return `Request failed due to following response errors:\n` + data.errors.map(e => ` - ${e.message}`).join("\n");
 }
-
 class GraphqlResponseError extends Error {
   constructor(request, headers, response) {
     super(_buildMessageForResponseErrors(response));
     this.request = request;
     this.headers = headers;
     this.response = response;
-    this.name = "GraphqlResponseError"; // Expose the errors and response data in their shorthand properties.
-
+    this.name = "GraphqlResponseError";
+    // Expose the errors and response data in their shorthand properties.
     this.errors = response.errors;
-    this.data = response.data; // Maintains proper stack trace (only available on V8)
-
+    this.data = response.data;
+    // Maintains proper stack trace (only available on V8)
     /* istanbul ignore next */
-
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, this.constructor);
     }
   }
-
 }
 
 const NON_VARIABLE_OPTIONS = ["method", "baseUrl", "url", "headers", "request", "query", "mediaType"];
@@ -43655,13 +43746,11 @@ function graphql(request, query, options) {
     if (typeof query === "string" && "query" in options) {
       return Promise.reject(new Error(`[@octokit/graphql] "query" cannot be used as variable name`));
     }
-
     for (const key in options) {
       if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key)) continue;
       return Promise.reject(new Error(`[@octokit/graphql] "${key}" cannot be used as variable name`));
     }
   }
-
   const parsedOptions = typeof query === "string" ? Object.assign({
     query
   }, options) : query;
@@ -43670,47 +43759,38 @@ function graphql(request, query, options) {
       result[key] = parsedOptions[key];
       return result;
     }
-
     if (!result.variables) {
       result.variables = {};
     }
-
     result.variables[key] = parsedOptions[key];
     return result;
-  }, {}); // workaround for GitHub Enterprise baseUrl set with /api/v3 suffix
+  }, {});
+  // workaround for GitHub Enterprise baseUrl set with /api/v3 suffix
   // https://github.com/octokit/auth-app.js/issues/111#issuecomment-657610451
-
   const baseUrl = parsedOptions.baseUrl || request.endpoint.DEFAULTS.baseUrl;
-
   if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
     requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
   }
-
   return request(requestOptions).then(response => {
     if (response.data.errors) {
       const headers = {};
-
       for (const key of Object.keys(response.headers)) {
         headers[key] = response.headers[key];
       }
-
       throw new GraphqlResponseError(requestOptions, headers, response.data);
     }
-
     return response.data.data;
   });
 }
 
-function withDefaults(request$1, newDefaults) {
-  const newRequest = request$1.defaults(newDefaults);
-
+function withDefaults(request, newDefaults) {
+  const newRequest = request.defaults(newDefaults);
   const newApi = (query, options) => {
     return graphql(newRequest, query, options);
   };
-
   return Object.assign(newApi, {
     defaults: withDefaults.bind(null, newRequest),
-    endpoint: request.request.endpoint
+    endpoint: newRequest.endpoint
   });
 }
 
@@ -43834,7 +43914,7 @@ var isPlainObject = __nccwpck_require__(3287);
 var nodeFetch = _interopDefault(__nccwpck_require__(467));
 var requestError = __nccwpck_require__(537);
 
-const VERSION = "5.6.3";
+const VERSION = "6.2.2";
 
 function getBufferResponse(response) {
   return response.arrayBuffer();
@@ -43850,7 +43930,9 @@ function fetchWrapper(requestOptions) {
   let headers = {};
   let status;
   let url;
-  const fetch = requestOptions.request && requestOptions.request.fetch || nodeFetch;
+  const fetch = requestOptions.request && requestOptions.request.fetch || globalThis.fetch ||
+  /* istanbul ignore next */
+  nodeFetch;
   return fetch(requestOptions.url, Object.assign({
     method: requestOptions.method,
     body: requestOptions.body,
@@ -43928,7 +44010,7 @@ function fetchWrapper(requestOptions) {
       data
     };
   }).catch(error => {
-    if (error instanceof requestError.RequestError) throw error;
+    if (error instanceof requestError.RequestError) throw error;else if (error.name === "AbortError") throw error;
     throw new requestError.RequestError(error.message, 500, {
       request: requestOptions
     });
