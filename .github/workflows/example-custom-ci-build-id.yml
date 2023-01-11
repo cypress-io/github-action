@@ -9,7 +9,7 @@
 # multiple testing jobs running in parallel
 # based on the recipe written in
 # https://medium.com/attest-r-and-d/adding-a-unique-github-build-identifier-7aa2e83cadca
-# The use of set-output is however deprecated by GitHub since the above blog was written 
+# The use of set-output is however deprecated by GitHub since the above blog was written
 # in 2019 so this is replaced by GitHub Environment files, see
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
 #
@@ -22,7 +22,7 @@ on:
 jobs:
   # single job that generates and outputs a common id
   prepare:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       uuid: ${{ steps.uuid.outputs.value }}
     steps:
@@ -40,7 +40,7 @@ jobs:
   # and record it to the Cypress Cloud
   smoke-tests:
     needs: ['prepare']
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v3
@@ -69,7 +69,7 @@ jobs:
   # under different groups
   all-tests:
     needs: ['prepare', 'smoke-tests']
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:

@@ -6,7 +6,7 @@ on:
   pull_request:
 jobs:
   build-and-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         node: [14, 16, 18]
@@ -26,7 +26,7 @@ jobs:
 
 
   release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: release
     needs: [build-and-test]
     # only release from the master branch
