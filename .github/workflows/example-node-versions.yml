@@ -9,7 +9,7 @@ jobs:
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:
@@ -35,7 +35,7 @@ jobs:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   cypress-run-v10:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     # let's make sure Cypress works on several versions of Node
     strategy:
       matrix:

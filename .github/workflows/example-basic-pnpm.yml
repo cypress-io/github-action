@@ -86,7 +86,7 @@ jobs:
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
   basic-pnpm-without-binary-install:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -188,7 +188,7 @@ jobs:
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
   basic-pnpm-without-binary-install-v10:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
