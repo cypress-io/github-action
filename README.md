@@ -251,7 +251,7 @@ jobs:
           spec: cypress/integration/spec1.js
 ```
 
-You can pass multiple multiple specs and wild card patterns using multi-line parameter, see [example-config.yml](./.github/workflows/example-config.yml):
+You can pass multiple specs and wild card patterns using multi-line parameter, see [example-config.yml](./.github/workflows/example-config.yml):
 
 ```yml
 spec: |
