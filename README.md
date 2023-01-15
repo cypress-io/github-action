@@ -548,7 +548,7 @@ You can run [Cypress component tests](https://on.cypress.io/component-testing) i
     component: true
 ```
 
-See the example project [component-test](examples/v10/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
+See the example project [component-test](examples/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
 
 ### Build app
 
@@ -932,7 +932,7 @@ See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action
 
 ### Yarn workspaces
 
-This action should discover Yarn workspace correctly. For example, see folder [examples/v10/start-and-yarn-workspaces](examples/v10/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
+This action should discover the Yarn workspaces correctly. For example, see folder [examples/start-and-yarn-workspaces](examples/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
 
 ```yaml
 name: example-start-and-yarn-workspaces
@@ -947,7 +947,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
         with:
-          working-directory: examples/v10/start-and-yarn-workspaces/workspace-1
+          working-directory: examples/start-and-yarn-workspaces/workspace-1
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'

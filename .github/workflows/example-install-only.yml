@@ -5,11 +5,11 @@ on:
       - 'master'
   pull_request:
 jobs:
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
   # do not install every dependency in this example
   # just install Cypress, but make sure to cache it
-  install-cypress-only:
+  install-cypress-only-v9:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
@@ -41,7 +41,7 @@ jobs:
 
   # do not install every dependency in this example
   # just install Cypress, but make sure to cache it
-  install-cypress-only-v10:
+  install-cypress-only:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
@@ -66,5 +66,5 @@ jobs:
       - name: Cypress tests 🧪
         uses: ./
         with:
-          working-directory: examples/v10/install-only
+          working-directory: examples/install-only
           install: false

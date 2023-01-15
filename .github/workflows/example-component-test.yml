@@ -9,5 +9,5 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          working-directory: examples/v10/component-tests
+          working-directory: examples/component-tests
           component: true

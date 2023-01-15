@@ -13,9 +13,9 @@ env:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  start:
+  start-v9:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
@@ -32,7 +32,7 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3000'
 
-  start-multiple:
+  start-multiple-v9:
     # example with web application build
     # and several services to start
     runs-on: ubuntu-22.04
@@ -52,7 +52,7 @@ jobs:
           wait-on: 'http://localhost:8000'
           config: 'baseUrl=http://localhost:8000'
 
-  start-multiple-commas:
+  start-multiple-commas-v9:
     # example with web application build
     # and several services to start
     runs-on: ubuntu-22.04
@@ -72,7 +72,7 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  start-v10:
+  start:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
@@ -84,12 +84,12 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/start
+          working-directory: examples/start
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
 
-  start-multiple-v10:
+  start-multiple:
     # example with web application build
     # and several services to start
     runs-on: ubuntu-22.04
@@ -100,7 +100,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/start
+          working-directory: examples/start
           build: npm run build
           # single start command per line
           start: |
@@ -109,7 +109,7 @@ jobs:
           wait-on: 'http://localhost:8000'
           config: 'baseUrl=http://localhost:8000'
 
-  start-multiple-commas-v10:
+  start-multiple-commas:
     # example with web application build
     # and several services to start
     runs-on: ubuntu-22.04
@@ -120,7 +120,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/start
+          working-directory: examples/start
           build: npm run build
           # use commas to separate the commands
           start: npm start, npm run start2

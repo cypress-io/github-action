@@ -6,7 +6,7 @@ on:
   pull_request:
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
   firefox-v9:
     # should include Firefox browser install
@@ -40,7 +40,7 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  firefox-v10:
+  firefox:
     # should include Firefox browser install
     # https://github.com/actions/virtual-environments
     runs-on: ubuntu-22.04
@@ -54,14 +54,14 @@ jobs:
         with:
           # let's show browser and system info
           build: npx cypress info
-          working-directory: examples/v10/firefox
+          working-directory: examples/firefox
           browser: firefox
 
       # report screenshot size and store the screenshots as test artifacts
       - uses: actions/upload-artifact@v3
         with:
-          name: screenshots-in-firefox-v10
-          path: examples/v10/firefox/cypress/screenshots
+          name: screenshots-in-firefox
+          path: examples/firefox/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v10/firefox
+        working-directory: examples/firefox

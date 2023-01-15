@@ -18,5 +18,5 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npm run info
-          working-directory: examples/v9/chrome
+          working-directory: examples/chrome
           browser: edge

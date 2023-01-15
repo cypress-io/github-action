@@ -6,9 +6,9 @@ on:
   pull_request:
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  cypress-run:
+  cypress-run-v9:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -23,7 +23,7 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  cypress-run-v10:
+  cypress-run:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -33,5 +33,5 @@ jobs:
       - name: Cypress run
         uses: ./
         with:
-          working-directory: examples/v10/quiet
+          working-directory: examples/quiet
           quiet: true
