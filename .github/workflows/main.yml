@@ -22,8 +22,6 @@ jobs:
       - run: npm run format
       - run: npm run build
       - run: npm test
-      - run: npm run check:markdown
-
 
   release:
     runs-on: ubuntu-22.04
@@ -56,3 +54,12 @@ jobs:
         run: 'git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v${{steps.semantic.outputs.new_release_major_version}}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  check-markdown-links:
+    runs-on: ubuntu-22.04
+    name: Check links in Markdown files
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: bahmutov/npm-install@v1
+      - run: npm run check:markdown
