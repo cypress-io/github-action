@@ -6,7 +6,7 @@ on:
   pull_request:
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
   install-command-v9:
     runs-on: ubuntu-22.04
@@ -23,7 +23,7 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  install-command-v10:
+  install-command:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -32,6 +32,6 @@ jobs:
       - name: Custom Yarn command
         uses: ./
         with:
-          working-directory: examples/v10/install-command
+          working-directory: examples/install-command
           # https://classic.yarnpkg.com/en/docs/cli/install
           install-command: yarn --frozen-lockfile --silent

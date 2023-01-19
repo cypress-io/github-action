@@ -13,4 +13,4 @@ jobs:
       - name: Cypress nightly tests 🌃
         uses: ./
         with:
-          working-directory: examples/v9/basic
+          working-directory: examples/basic

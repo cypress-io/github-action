@@ -6,7 +6,7 @@ on:
   pull_request:
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
   tests-v9:
     runs-on: ubuntu-22.04
@@ -83,7 +83,7 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  tests-v10:
+  tests:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -96,40 +96,40 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          working-directory: examples/v10/chrome
+          working-directory: examples/chrome
 
       - name: Electron
         uses: ./
         with:
-          working-directory: examples/v10/chrome
+          working-directory: examples/chrome
 
       # store screenshot captured during the test
       - uses: actions/upload-artifact@v3
         with:
-          name: screenshots-in-electron-v10
-          path: examples/v10/chrome/cypress/screenshots
+          name: screenshots-in-electron
+          path: examples/chrome/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v10/chrome
+        working-directory: examples/chrome
 
       - name: Chrome
         uses: ./
         with:
-          working-directory: examples/v10/chrome
+          working-directory: examples/chrome
           browser: chrome
 
       - uses: actions/upload-artifact@v3
         with:
-          name: screenshots-in-chrome-v10
-          path: examples/v10/chrome/cypress/screenshots
+          name: screenshots-in-chrome
+          path: examples/chrome/cypress/screenshots
 
       - uses: actions/upload-artifact@v3
         with:
-          name: video-in-chrome-v10
-          path: examples/v10/chrome/cypress/videos
+          name: video-in-chrome
+          path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v10/chrome
+        working-directory: examples/chrome
 
       # I wonder if GH Actions VM includes any of the tools that
       # can tell us the resolution of a video file
@@ -139,19 +139,19 @@ jobs:
       - name: Chrome headless
         uses: ./
         with:
-          working-directory: examples/v10/chrome
+          working-directory: examples/chrome
           browser: chrome
           headed: false
 
       - uses: actions/upload-artifact@v3
         with:
-          name: screenshots-in-headless-chrome-v10
-          path: examples/v10/chrome/cypress/screenshots
+          name: screenshots-in-headless-chrome
+          path: examples/chrome/cypress/screenshots
 
       - uses: actions/upload-artifact@v3
         with:
-          name: video-in-headless-chrome-v10
-          path: examples/v10/chrome/cypress/videos
+          name: video-in-headless-chrome
+          path: examples/chrome/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v10/chrome
+        working-directory: examples/chrome

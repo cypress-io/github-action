@@ -57,8 +57,8 @@ jobs:
           parallel: true
           group: '1 - smoke tests'
           ci-build-id: ${{ needs.prepare.outputs.uuid }}
-          spec: 'cypress/integration/spec-a.js'
-          working-directory: examples/v9/recording
+          spec: 'cypress/e2e/spec-a.cy.js'
+          working-directory: examples/recording
         env:
           # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
@@ -91,7 +91,7 @@ jobs:
             npx cypress run --record --parallel \
               --ci-build-id ${{ needs.prepare.outputs.uuid }} \
               --group "2 - all tests"
-          working-directory: examples/v9/recording
+          working-directory: examples/recording
         env:
           # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}

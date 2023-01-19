@@ -6,9 +6,9 @@ on:
   pull_request:
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  single:
+  single-v9:
     # the example has Yarn workspace in its "root" folder
     # examples/start-and-yarn-workspaces
     # and tests in a subfolder like "workspace-1"
@@ -25,7 +25,7 @@ jobs:
           start: yarn start
           wait-on: 'http://localhost:5000'
 
-  multiple:
+  multiple-v9:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
@@ -55,7 +55,7 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  single-v10:
+  single:
     # the example has Yarn workspace in its "root" folder
     # examples/start-and-yarn-workspaces
     # and tests in a subfolder like "workspace-1"
@@ -64,15 +64,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Single v10
+      - name: Single
         uses: ./
         with:
-          working-directory: examples/v10/start-and-yarn-workspaces/workspace-1
+          working-directory: examples/start-and-yarn-workspaces/workspace-1
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
 
-  multiple-v10:
+  multiple:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
@@ -86,13 +86,13 @@ jobs:
       fail-fast: false
       matrix:
         cypress:
-          - working_directory: examples/v10/start-and-yarn-workspaces/workspace-1
-          - working_directory: examples/v10/start-and-yarn-workspaces/workspace-2
+          - working_directory: examples/start-and-yarn-workspaces/workspace-1
+          - working_directory: examples/start-and-yarn-workspaces/workspace-2
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cypress tests v10
+      - name: Cypress tests
         uses: ./
         with:
           working-directory: ${{ matrix.cypress.working_directory }}

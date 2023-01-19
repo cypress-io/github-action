@@ -5,9 +5,9 @@ on:
       - 'master'
   pull_request:
 jobs:
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  basic-ubuntu-20:
+  basic-ubuntu-20-v9:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -26,7 +26,7 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-ubuntu-22:
+  basic-ubuntu-22-v9:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -38,7 +38,7 @@ jobs:
           working-directory: examples/v9/basic
           build: npx cypress info
 
-  basic-on-windows:
+  basic-on-windows-v9:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -50,7 +50,7 @@ jobs:
           working-directory: examples/v9/basic
           build: npx cypress info
 
-  basic-on-mac:
+  basic-on-mac-v9:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -65,7 +65,7 @@ jobs:
   # skips the binary installation
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
-  basic-without-binary-install:
+  basic-without-binary-install-v9:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -84,7 +84,7 @@ jobs:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  basic-ubuntu-20-v10:
+  basic-ubuntu-20:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -97,13 +97,13 @@ jobs:
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
         with:
-          working-directory: examples/v10/basic
+          working-directory: examples/basic
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-ubuntu-22-v10:
+  basic-ubuntu-22:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -112,10 +112,10 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic
+          working-directory: examples/basic
           build: npx cypress info
 
-  basic-on-windows-v10:
+  basic-on-windows:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -124,10 +124,10 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic
+          working-directory: examples/basic
           build: npx cypress info
 
-  basic-on-mac-v10:
+  basic-on-mac:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -136,13 +136,13 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic
+          working-directory: examples/basic
           build: npx cypress info
 
   # skips the binary installation
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
-  basic-without-binary-install-v10:
+  basic-without-binary-install:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -151,7 +151,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic
+          working-directory: examples/basic
           # since we do not install Cypress
           # we should not attempt to run tests
           runTests: false

@@ -6,7 +6,64 @@ on:
   pull_request:
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
+
+  parallel-v9:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v5
+        uses: ./
+        # let's give this action an ID so we can refer
+        # to its output values later
+        id: cypress
+        # Continue the build in case of an error, as we need to set the
+        # commit status in the next step, both in case of success and failure
+        continue-on-error: true
+        with:
+          working-directory: examples/v9/recording
+          record: true
+          parallel: true
+          group: Recording example v9
+          tag: action
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # see "outcome" and "conclusion" of a step doc
+      # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
+      # "output" can be success, failure, cancelled, or skipped
+      - name: Print Dashboard URL
+        run: |
+          echo Cypress finished with: ${{ steps.cypress.outcome }}
+          echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
+
+  group-v9:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v5
+        uses: ./
+        with:
+          working-directory: examples/v9/recording
+          record: true
+          # no parallel flag, just the group name
+          group: Recording group v9
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   parallel:
     runs-on: ubuntu-22.04
@@ -25,7 +82,7 @@ jobs:
         # commit status in the next step, both in case of success and failure
         continue-on-error: true
         with:
-          working-directory: examples/v9/recording
+          working-directory: examples/recording
           record: true
           parallel: true
           group: Recording example
@@ -54,67 +111,10 @@ jobs:
         # uses: cypress-io/github-action@v5
         uses: ./
         with:
-          working-directory: examples/v9/recording
+          working-directory: examples/recording
           record: true
           # no parallel flag, just the group name
           group: Recording group
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
-  parallel-v10:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        # normally you would write
-        # uses: cypress-io/github-action@v5
-        uses: ./
-        # let's give this action an ID so we can refer
-        # to its output values later
-        id: cypress
-        # Continue the build in case of an error, as we need to set the
-        # commit status in the next step, both in case of success and failure
-        continue-on-error: true
-        with:
-          working-directory: examples/v10/recording
-          record: true
-          parallel: true
-          group: Recording example v10
-          tag: action
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # see "outcome" and "conclusion" of a step doc
-      # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
-      # "output" can be success, failure, cancelled, or skipped
-      - name: Print Dashboard URL
-        run: |
-          echo Cypress finished with: ${{ steps.cypress.outcome }}
-          echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
-
-  group-v10:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        # normally you would write
-        # uses: cypress-io/github-action@v5
-        uses: ./
-        with:
-          working-directory: examples/v10/recording
-          record: true
-          # no parallel flag, just the group name
-          group: Recording group v10
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
