@@ -331,12 +331,12 @@ jobs:
         with:
           record: true
         env:
-          # pass the Cypress Cloud record key as an environment variable
+          # pass the Cypress Cloud record key as an environment variable (Actions secret)
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # pass the project ID from the secrets through environment variable
-          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          # pass the project ID as an environment variable (Actions variable)
+          CYPRESS_PROJECT_ID: ${{ vars.PROJECT_ID }}
 ```
 
 ### Quiet flag

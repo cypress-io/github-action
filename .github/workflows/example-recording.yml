@@ -1,9 +1,27 @@
 name: example-recording
+#
+# If this workflow is failing and you do not want to use it
+# then you can disable it individually.
+# See GitHub help: Disabling and enabling a workflow
+# https://docs.github.com/en/actions/managing-workflow-runs/disabling-and-enabling-a-workflow).
+#
+# To set it up to work with your own Cypress Cloud refer to the README
+# in the corresponding example directory examples/*/recording.
+#
 on:
   push:
     branches:
       - 'master'
   pull_request:
+
+env:
+  # Set up the Cypress Cloud project ID and record key as environment variables
+  # If the Actions variable EXAMPLE_PROJECT_ID is not defined then
+  # the projectId is taken from cypress.json (v9) or cypress.config.js (v10 and later).
+  CYPRESS_PROJECT_ID: ${{ vars.EXAMPLE_PROJECT_ID }}
+  CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
 
   # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
@@ -30,10 +48,6 @@ jobs:
           parallel: true
           group: Recording example v9
           tag: action
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # see "outcome" and "conclusion" of a step doc
       # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
@@ -58,10 +72,6 @@ jobs:
           record: true
           # no parallel flag, just the group name
           group: Recording group v9
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -87,10 +97,6 @@ jobs:
           parallel: true
           group: Recording example
           tag: action
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # see "outcome" and "conclusion" of a step doc
       # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
@@ -115,7 +121,3 @@ jobs:
           record: true
           # no parallel flag, just the group name
           group: Recording group
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

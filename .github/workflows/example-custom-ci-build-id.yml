@@ -1,3 +1,15 @@
+name: example-custom-ci-build-id
+#
+# If this workflow is failing and you do not want to use it
+# then you can disable it individually.
+# See GitHub help: Disabling and enabling a workflow
+# https://docs.github.com/en/actions/managing-workflow-runs/disabling-and-enabling-a-workflow).
+#
+# To set it up to work with your own Cypress Cloud refer to the README
+# in the example directory examples/v10/recording.
+#
+# ---
+#
 # Typically you would let this action
 # determine a unique build id to tie multiple parallel
 # test jobs together into a single logical Cypress Cloud run.
@@ -13,12 +25,22 @@
 # in 2019 so this is replaced by GitHub Environment files, see
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
 #
-name: example-custom-ci-build-id
+
 on:
   push:
     branches:
       - 'master'
   pull_request:
+
+env:
+  # Set up the Cypress Cloud project ID and record key as environment variables
+  # If the Actions variable EXAMPLE_PROJECT_ID is not defined then
+  # the projectId is taken from cypress.json (Legacy configuration)
+  # or cypress.config.js (v10 and later).
+  CYPRESS_PROJECT_ID: ${{ vars.EXAMPLE_PROJECT_ID }}
+  CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   # single job that generates and outputs a common id
   prepare:
@@ -59,9 +81,6 @@ jobs:
           ci-build-id: ${{ needs.prepare.outputs.uuid }}
           spec: 'cypress/e2e/spec-a.cy.js'
           working-directory: examples/recording
-        env:
-          # pass the Cypress Cloud record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 
   # if smoke tests pass, run all tests, splitting them in parallel
   # because we record with the same build id, smoke and these
@@ -92,6 +111,3 @@ jobs:
               --ci-build-id ${{ needs.prepare.outputs.uuid }} \
               --group "2 - all tests"
           working-directory: examples/recording
-        env:
-          # pass the Cypress Cloud record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
