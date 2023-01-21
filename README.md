@@ -134,7 +134,7 @@ name: Edge
 on: push
 jobs:
   edge:
-    runs-on: windows-latest
+    runs-on: ubuntu-22.04
     name: E2E on Edge
     steps:
       - uses: actions/checkout@v3
