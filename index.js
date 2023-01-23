@@ -858,7 +858,7 @@ const logGroup = (name, fn) => {
    }
 }
 
-logGroup("Restore cache and install", installMaybe)
+logGroup("Restore cache and install", installMaybe)()
   .then(logGroup("Build", buildAppMaybe))
   .then(logGroup("Start Servers", startServersMaybe))
   .then(logGroup("Wait...", waitOnMaybe))
