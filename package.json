@@ -1,7 +1,7 @@
 {
   "name": "@cypress/github-action",
   "version": "0.0.0-development",
-  "description": "GitHub Action for running Cypress end-to-end tests",
+  "description": "GitHub Action for running Cypress end-to-end and component tests",
   "private": false,
   "main": "dist/index.js",
   "files": [
