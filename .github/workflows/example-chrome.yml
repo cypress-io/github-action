@@ -56,11 +56,6 @@ jobs:
       - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/v9/chrome
 
-      # I wonder if GH Actions VM includes any of the tools that
-      # can tell us the resolution of a video file
-      - run: ffprobe cypress/videos/*.mp4 || true
-      - run: mplayer -really-quiet -ao null -vo null -identify -frames 0 cypress/videos/*.mp4 || true
-
       - name: Chrome headed
         uses: ./
         with:
@@ -130,11 +125,6 @@ jobs:
 
       - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/chrome
-
-      # I wonder if GH Actions VM includes any of the tools that
-      # can tell us the resolution of a video file
-      - run: ffprobe cypress/videos/*.mp4 || true
-      - run: mplayer -really-quiet -ao null -vo null -identify -frames 0 cypress/videos/*.mp4 || true
 
       - name: Chrome headless
         uses: ./
