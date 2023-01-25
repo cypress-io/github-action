@@ -1,9 +1,10 @@
-const { defineConfig } = require('cypress')
-const { devServer } = require('@cypress/react/plugins/react-scripts')
+import { defineConfig } from "cypress";
 
-module.exports = defineConfig({
+export default defineConfig({
   component: {
-    devServer,
-    specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}'
-  }
-})
+    devServer: {
+      framework: "react",
+      bundler: "vite",
+    },
+  },
+});
