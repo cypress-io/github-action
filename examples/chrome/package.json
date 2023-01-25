@@ -11,7 +11,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "^12.3.0",
+    "cypress": "12.4.1",
     "image-size": "0.8.3"
   }
 }

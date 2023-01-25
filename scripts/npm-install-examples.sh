@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ./examples/v10/basic && npm install cypress@latest
+cd ./examples/basic && npm install cypress@latest
 cd ../chrome && npm install cypress@latest
 cd ../component-tests && npm install cypress@latest
 cd ../config && npm install cypress@latest
