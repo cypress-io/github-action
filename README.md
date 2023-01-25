@@ -741,8 +741,6 @@ jobs:
           command-prefix: 'percy exec -- npx'
 ```
 
-See live example [angular-pizza-creator](https://github.com/cypress-io/angular-pizza-creator).
-
 ### Custom test command
 
 You can overwrite the Cypress run command with your own
