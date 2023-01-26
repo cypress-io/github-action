@@ -4,6 +4,7 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
 
 env:
   # Disable update-check called by serve through start or start2 script

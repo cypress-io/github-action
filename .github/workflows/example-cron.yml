@@ -3,6 +3,8 @@ on:
   schedule:
     # runs tests every day at 4am
     - cron: '0 4 * * *'
+  workflow_dispatch:
+
 jobs:
   nightly:
     runs-on: ubuntu-22.04

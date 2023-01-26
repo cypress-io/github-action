@@ -4,6 +4,8 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
 
   # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #

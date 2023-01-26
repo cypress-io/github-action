@@ -19,6 +19,8 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
   # single job that generates and outputs a common id
   prepare:

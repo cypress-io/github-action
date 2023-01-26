@@ -1,5 +1,5 @@
 name: Component Tests
-on: [push]
+on: [push, workflow_dispatch]
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
