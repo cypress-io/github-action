@@ -1,4 +1,8 @@
 name: example-recording
+#
+# To set up this workflow to work with your own Cypress Cloud project
+# refer to the README in the example directory examples/recording.
+#
 on:
   push:
     branches:
@@ -6,12 +10,37 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  # Set up the Cypress Cloud project ID and record key as environment variables
+  # If the Actions secret EXAMPLE_PROJECT_ID is not defined then
+  # the projectId is taken from cypress.json (v9) or cypress.config.js (v10 and later).
+  # If the Actions secret EXAMPLE_RECORDING_KEY is not defined then recording jobs are skipped.
+  CYPRESS_PROJECT_ID: ${{ secrets.EXAMPLE_PROJECT_ID }}
+  CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
+
+  check-record-key:
+    runs-on: ubuntu-22.04
+    outputs:
+      record-key-exists: ${{ steps.record-key-check.outputs.defined }}
+    steps:
+      - name: Check for record key
+        id: record-key-check
+        run: |
+          if [ "${{ secrets.EXAMPLE_RECORDING_KEY }}" != '' ]; then
+            echo "defined=true" >> $GITHUB_OUTPUT;
+          else
+            echo "defined=false" >> $GITHUB_OUTPUT;
+          fi
 
   # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
   parallel-v9:
     runs-on: ubuntu-22.04
+    needs: [check-record-key]
+    if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -32,10 +61,6 @@ jobs:
           parallel: true
           group: Recording example v9
           tag: action
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # see "outcome" and "conclusion" of a step doc
       # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
@@ -47,6 +72,8 @@ jobs:
 
   group-v9:
     runs-on: ubuntu-22.04
+    needs: [check-record-key]
+    if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -60,15 +87,13 @@ jobs:
           record: true
           # no parallel flag, just the group name
           group: Recording group v9
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   parallel:
     runs-on: ubuntu-22.04
+    needs: [check-record-key]
+    if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -89,10 +114,6 @@ jobs:
           parallel: true
           group: Recording example
           tag: action
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # see "outcome" and "conclusion" of a step doc
       # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
@@ -104,6 +125,8 @@ jobs:
 
   group:
     runs-on: ubuntu-22.04
+    needs: [check-record-key]
+    if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -117,7 +140,3 @@ jobs:
           record: true
           # no parallel flag, just the group name
           group: Recording group
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
