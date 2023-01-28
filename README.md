@@ -1160,7 +1160,7 @@ $ node src/ping-cli.js <url>
 For example
 
 ```
-$ node src/ping.js https://example.cypress.io
+$ node src/ping-cli.js https://example.cypress.io
 pinging url https://example.cypress.io for 30 seconds
 ::debug::pinging https://example.cypress.io has finished ok
 ```
