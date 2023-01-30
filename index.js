@@ -295,7 +295,7 @@ const verifyCypressBinary = () => {
   }
 
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  return io.which(getPackageManager(), true).then((packageManagerPath) => {
+  return io.which(getPackageManagerExecutionCommand(getPackageManager()), true).then((packageManagerPath) => {
     return exec.exec(
       quote(packageManagerPath),
       ['cypress', 'verify'],
@@ -311,6 +311,16 @@ const getPackageManager = () => {
     return 'pnpm'
   } else {
     return 'npm'
+  }
+}
+
+const getPackageManagerExecutionCommand = (packageManager) => {
+  if (packageManager === 'yarn') {
+    return 'yarn'
+  } else if (packageManager === 'pnpm') {
+    return 'pnpm exec'
+  } else {
+    return 'npx'
   }
 }
 
