@@ -295,13 +295,11 @@ const verifyCypressBinary = () => {
   }
 
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  return io.which(getPackageManagerExecutionCommand(getPackageManager()), true).then((packageManagerPath) => {
-    return exec.exec(
-      quote(packageManagerPath),
+  return exec.exec(
+      getPackageManagerExecutionCommand(getPackageManager()),
       ['cypress', 'verify'],
       cypressCommandOptions
-    )
-  })
+  );
 }
 
 const getPackageManager = () => {
