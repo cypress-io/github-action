@@ -233,8 +233,10 @@ const install = () => {
     return execCommand(installCommand, true, 'install command')
   }
 
-  if (useYarn()) {
-    debug('installing NPM dependencies using Yarn')
+  const packageManager = getPackageManager();
+
+  if (packageManager === 'yarn') {
+    debug('installing dependencies using Yarn')
     return io.which('yarn', true).then((yarnPath) => {
       debug(`yarn at "${yarnPath}"`)
       return exec.exec(
@@ -243,8 +245,8 @@ const install = () => {
         cypressCommandOptions
       )
     })
-  } else if (usePnpm()) {
-    debug('installing NPM dependencies using pnpm')
+  } else if (packageManager === 'pnpm') {
+    debug('installing dependencies using pnpm')
     return io.which('pnpm', true).then((pnpmPath) => {
       debug(`pnpm at "${pnpmPath}"`)
       return exec.exec(
@@ -254,7 +256,7 @@ const install = () => {
       )
     })
   } else {
-    debug('installing NPM dependencies')
+    debug('installing dependencies using NPM')
     return io.which('npm', true).then((npmPath) => {
       debug(`npm at "${npmPath}"`)
       return exec.exec(quote(npmPath), ['ci'], cypressCommandOptions)
@@ -273,9 +275,10 @@ const listCypressBinaries = () => {
   }
 
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  return io.which('npx', true).then((npxPath) => {
+
+  return io.which(getPackageManager(), true).then((packageManagerPath) => {
     return exec.exec(
-      quote(npxPath),
+      quote(packageManagerPath),
       ['cypress', 'cache', 'list'],
       cypressCommandOptions
     )
@@ -292,13 +295,23 @@ const verifyCypressBinary = () => {
   }
 
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  return io.which('npx', true).then((npxPath) => {
+  return io.which(getPackageManager(), true).then((packageManagerPath) => {
     return exec.exec(
-      quote(npxPath),
+      quote(packageManagerPath),
       ['cypress', 'verify'],
       cypressCommandOptions
     )
   })
+}
+
+const getPackageManager = () => {
+  if(useYarn()) {
+    return 'yarn'
+  } else if(usePnpm()) {
+    return 'pnpm'
+  } else {
+    return 'npm'
+  }
 }
 
 /**
