@@ -9,7 +9,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "^12.3.0",
+    "cypress": "12.4.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "react-scripts": "3.4.4"
