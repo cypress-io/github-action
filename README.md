@@ -404,6 +404,41 @@ The recording will have tags as labels on the run.
 
 You can pass multiple tags using commas like `tag: node-10,nightly,staging`.
 
+### Specify auto cancel after failures
+
+Passes the number of failed runs to cancel a run after when using the [Cypress Cloud Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration#Auto-Cancellation) feature.
+
+This feature requires Cypress 12.x or later and a [Cypress Cloud Business or Enterprise](https://www.cypress.io/cloud/) account.
+
+```yml
+name: Cypress E2E Tests
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    name: E2E
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          record: true
+          # Cancel the run after 2 failed tests
+          auto-cancel-after-failures: 2
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+See [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration#Auto-Cancellation) for more information.
+
 ### Artifacts
 
 If you don't record the test run on Cypress Cloud, you can still store generated videos and screenshots as CI artifacts. See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) and the workflow example below
