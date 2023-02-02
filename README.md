@@ -46,7 +46,7 @@
 
 ```yml
 name: End-to-end tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -91,7 +91,7 @@ Specify the browser name or path with `browser` parameter
 
 ```yml
 name: E2E on Chrome
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -153,7 +153,7 @@ Run the browser in headed mode - as of Cypress v8.0 the `cypress run` command ex
 
 ```yml
 name: Chrome headed
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -171,7 +171,7 @@ You can run tests in a GH Action in your Docker container.
 
 ```yml
 name: E2E in custom container
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -191,7 +191,7 @@ Specify the env argument with `env` parameter
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -209,7 +209,7 @@ When passing the environment variables this way, unfortunately due to GitHub Act
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -234,7 +234,7 @@ Specify the [spec files to run](https://docs.cypress.io/guides/guides/command-li
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -265,7 +265,7 @@ Specify the [project to run](https://docs.cypress.io/guides/guides/command-line.
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -285,7 +285,7 @@ For more information, visit [the Cypress command-line docs](https://on.cypress.i
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -317,7 +317,7 @@ jobs:
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -345,7 +345,7 @@ You can provide `quiet` flag for cypress run to silence any Cypress specific out
 
 ```yml
 name: example-quiet
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -369,7 +369,7 @@ You can pass a single or multiple tags when recording a run. For example
 
 ```yml
 name: tags
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -410,7 +410,7 @@ If you don't record the test run on Cypress Cloud, you can still store generated
 
 ```yml
 name: Artifacts
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -443,7 +443,7 @@ Specify [configuration](https://docs.cypress.io/guides/references/configuration.
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -466,7 +466,7 @@ Specify the path to your config file with `config-file` parameter
 
 ```yml
 name: Cypress tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -489,9 +489,7 @@ You can spin multiple containers running in parallel using `strategy: matrix` ar
 
 ```yml
 name: Parallel Cypress Tests
-
-on: [push]
-
+on: push
 jobs:
   test:
     name: Cypress run
@@ -556,7 +554,7 @@ You can run a build step before starting tests
 
 ```yml
 name: Build
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -575,7 +573,7 @@ If your tests run against a local server, use `start` parameter, the server will
 
 ```yml
 name: With server
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -592,7 +590,7 @@ jobs:
 
 ```yml
 name: With server
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -618,7 +616,7 @@ You can start multiple server processes. For example, if you have an API to star
 
 ```yml
 name: With servers
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -648,7 +646,7 @@ If you are starting a local server and it takes a while to start, you can add a 
 
 ```yml
 name: After server responds
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -723,7 +721,7 @@ You can prefix the default test command using the `command-prefix` option. This 
 
 ```yml
 name: Visual
-on: [push]
+on: push
 jobs:
   e2e:
     runs-on: ubuntu-22.04
@@ -764,7 +762,7 @@ You can overwrite [`ci-build-id`](https://on.cypress.io/parallelization#Linking-
 
 ```yml
 name: Parallel
-on: [push]
+on: push
 jobs:
   test:
     runs-on: ubuntu-22.04
@@ -871,7 +869,7 @@ repo/
 You can specify the `app-test` working directory when running Cypress tests using the `working-directory` parameter
 
 ```yml
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -934,7 +932,7 @@ This action should discover the Yarn workspaces correctly. For example, see fold
 
 ```yaml
 name: example-start-and-yarn-workspaces
-on: [push]
+on: push
 jobs:
   single:
     # the example has Yarn workspace in its "root" folder
@@ -959,7 +957,7 @@ Sometimes the default cache key does not work. For example, if you cannot share 
 
 ```yml
 name: End-to-end tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -994,7 +992,7 @@ You can run your tests across multiple Node versions.
 
 ```yml
 name: Node versions
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -1215,7 +1213,7 @@ If your repository does not have `package.json` or `yarn.json` (maybe it contain
 
 ```yml
 name: included
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -1235,7 +1233,7 @@ If you are NOT using the `build` command in your project, you can run the `cypre
 
 ```yml
 name: info
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -1252,7 +1250,7 @@ If you are already using the `build` parameter, you can split the [installation 
 
 ```yml
 name: info
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04

@@ -17,7 +17,7 @@
 
 ```yml
 name: End-to-end tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: 22.04
