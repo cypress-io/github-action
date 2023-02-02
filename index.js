@@ -575,6 +575,13 @@ const runTestsUsingCommandLine = async () => {
     cmd.push('--config-file')
     cmd.push(quoteArgument(configFileInput))
   }
+  const autoCancelAfterFailures = core.getInput(
+    'auto-cancel-after-failures'
+  )
+  if (autoCancelAfterFailures) {
+    cmd.push('--auto-cancel-after-failures')
+    cmd.push(quoteArgument(autoCancelAfterFailures))
+  }
 
   if (parallel || group) {
     let buildIdVar = null
