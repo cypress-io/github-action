@@ -710,6 +710,10 @@ const runTests = async () => {
     cypressOptions.browser = core.getInput('browser')
   }
 
+  if (core.getInput('auto-cancel-after-failures')) {
+    cypressOptions.autoCancelAfterFailures = core.getInput('auto-cancel-after-failures')
+  }
+
   if (core.getInput('env')) {
     cypressOptions.env = core.getInput('env')
   }
