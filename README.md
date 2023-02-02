@@ -1298,11 +1298,17 @@ See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 [![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
 
-## Migration guide
+## Changelog
 
-### v1 to v2
+See [Releases](https://github.com/cypress-io/github-action/releases) for full details of changes.
 
-This is noted as a breaking change ... but you should not see any changes. We have changed how we run Cypress (from using the command line to using the [NPM module API](https://on.cypress.io/module-api)), which is a big change. But hopefully our examples are complete and we did not break anyone's code.
+| Version | Changes                                                                                                                                  |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| v5      | Examples and workflows additionally use Node.js 18. Use of the end-of-life Node.js version 12 in examples and workflows is removed.      |
+| v4      | Support for Cypress 10 and later versions is added.                                                                                      |
+| v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                      |
+| v2      | Cypress runs using the [NPM module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
+| v1      | *This version is no longer runnable in GitHub due to security changes.*                                                                  |
 
 ## License
 
