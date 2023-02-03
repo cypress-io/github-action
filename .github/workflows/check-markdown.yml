@@ -1,0 +1,17 @@
+name: check-markdown
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check-markdown-links:
+    runs-on: ubuntu-22.04
+    name: Check links in Markdown files
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: bahmutov/npm-install@v1
+      - run: npm run check:markdown
