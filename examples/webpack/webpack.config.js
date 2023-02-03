@@ -6,6 +6,9 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   devServer: {
-    contentBase: __dirname
-  }
+    static: {
+      directory:  __dirname
+    }
+  },
+  mode: 'development'
 }
