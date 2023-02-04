@@ -780,6 +780,8 @@ const generateSummary = async (testResults) => {
     return testResults
   }
 
+  console.dir(testResults, {depth: null});
+
   const headers = [
     { data: 'Result', header: true },
     { data: 'Passed :white_check_mark:', header: true },
