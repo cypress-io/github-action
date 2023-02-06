@@ -776,6 +776,10 @@ const isSummaryEnabled = () => {
 }
 
 const generateSummary = async (testResults) => {
+  const compenentTestTypeParameter = getInputBool('component', true)
+
+  console.log('testingType', compenentTestTypeParameter ? 'component' : 'e2e ')
+  
   if (!isSummaryEnabled()) {
     return testResults
   }
