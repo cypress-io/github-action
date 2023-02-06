@@ -28,7 +28,9 @@ jobs:
     name: release
     needs: [build-and-test]
     # only release from the master branch
-    if: github.ref == 'refs/heads/master'
+    # in parent repository, not in a fork
+    if: (github.ref == 'refs/heads/master') &&
+      (github.repository == 'cypress-io/github-action')
     steps:
       - name: Checkout
         uses: actions/checkout@v3
