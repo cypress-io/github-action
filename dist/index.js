@@ -79222,9 +79222,9 @@ const isSummaryEnabled = () => {
 }
 
 const generateSummary = async (testResults) => {
-  const compenentTestTypeParameter = getInputBool('component', true)
+  // const compenentTestTypeParameter = getInputBool('component', true)
 
-  console.log('testingType', compenentTestTypeParameter ? 'component' : 'e2e ')
+  console.log('testingType', getInputBool('component', true) ? 'component' : 'e2e')
   
   if (!isSummaryEnabled()) {
     return testResults
@@ -79238,7 +79238,8 @@ const generateSummary = async (testResults) => {
     { data: 'Failed :x:', header: true },
     { data: 'Pending :hand:', header: true },
     { data: 'Skipped :leftwards_arrow_with_hook:', header: true },
-    { data: 'Duration :clock8:', header: true }
+    { data: 'Duration :clock8:', header: true },
+    { data: 'test type', header: true }
   ]
 
   const status =
@@ -79252,7 +79253,8 @@ const generateSummary = async (testResults) => {
     `${testResults.totalFailed}`,
     `${testResults.totalPending}`,
     `${testResults.totalSkipped}`,
-    `${testResults.totalDuration / 1000}s` || ''
+    `${testResults.totalDuration / 1000}s` || '',
+    getInputBool('component', true) ? 'component' : 'e2e',
   ]
 
   await core.summary
