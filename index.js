@@ -535,6 +535,7 @@ const runTestsUsingCommandLine = async () => {
 
   if (component) {
     cmd.push('--component')
+    cmd.push(component)
   }
   if (headed) {
     cmd.push('--headed')
@@ -641,7 +642,7 @@ const runTests = async () => {
     record: getInputBool('record'),
     parallel: getInputBool('parallel'),
     quiet: getInputBool('quiet'),
-    component: getInputBool('component')
+    // component: getInputBool('component')
   }
   const cypressModulePath =
     require.resolve('cypress', { paths: [workingDirectory] }) ||
@@ -705,6 +706,10 @@ const runTests = async () => {
 
   if (core.getInput('env')) {
     cypressOptions.env = core.getInput('env')
+  }
+
+  if (core.getInput('component')) {
+    cypressOptions.component = core.getInput('component')
   }
 
   if (cypressOptions.parallel || cypressOptions.group) {
@@ -779,6 +784,8 @@ const generateSummary = async (testResults) => {
   // const compenentTestTypeParameter = getInputBool('component', true)
 
   console.log('testingType', getInputBool('component', true) ? 'component' : 'e2e')
+
+  console.log('testingType', testResults.confir.testingType)
   
   if (!isSummaryEnabled()) {
     return testResults
