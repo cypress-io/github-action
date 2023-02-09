@@ -4,7 +4,8 @@
 
 ## Examples
 
-- [Basic](#basic)
+- [Basic (E2E)](#basic-e2e) testing
+- [Component](#component-testing) testing
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
   - using [Chrome](#chrome)
@@ -23,7 +24,7 @@
 - Set Cypress [config values](#config)
 - Use specific [config file](#config-file)
 - Run tests in [parallel](#parallel)
-- Run E2E and [Component tests](#component-tests)
+- Combine [Component and E2E](#component-and-e2e-testing) testing
 - [Build app](#build-app) before running the tests
 - [Start server](#start-server) before running the tests
 - [Start multiple servers](#start-multiple-servers) before running the tests
@@ -49,7 +50,7 @@ Current examples contained in this repository are based on Cypress 12.x and can 
 
 Some older **external** examples, linked to by this document, are based solely on Cypress 9 and below and therefore use a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration). These may need modification to be applied to Cypress 10 and later. Each of these external links is listed with a `(legacy)` notation.
 
-### Basic
+### Basic E2E
 
 ```yml
 name: End-to-end tests
@@ -68,9 +69,32 @@ jobs:
 
 [![Basic example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
 
-The workflow file [.github/workflows/example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), on Windows, and on Mac without additional OS dependencies necessary.
+The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), Windows, and macOS without additional OS dependencies necessary.
+
+The default [test type](https://on.cypress.io/guides/overview/why-cypress#Test-types) is [End-to-End (E2E) Testing](https://on.cypress.io/guides/overview/why-cypress#End-to-end). For the alternative test type see the [Component Testing](#component-testing) section below.
 
 **Note:** this package assumes that `cypress` is declared as a development dependency in the `package.json` file. The `cypress` NPM module is required to run Cypress via its [NPM module API](https://on.cypress.io/module-api).
+
+### Component Testing
+
+To use [Cypress Component Testing](https://on.cypress.io/component-testing) add `component: true`
+
+```yml
+name: End-to-end tests
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          component: true
+```
+
+See the example project [component-tests](examples/component-tests/) and the [example-component-test.yml](.github/workflows/example-component-test.yml) workflow for more details.
 
 ### Explicit version
 
@@ -565,24 +589,21 @@ jobs:
 
 The Cypress GH Action does not spawn or create any additional containers - it only links the multiple containers spawned using the matrix strategy into a single logical Cypress Cloud run and into splitting the specs amongst the machines. See the [Cypress parallelization](https://on.cypress.io/parallelization) guide for the explanation.
 
-### Component tests
+### Component and E2E Testing
 
-You can run [Cypress component tests](https://on.cypress.io/component-testing) in a job separate from E2E tests by adding `component: true`:
+[Component Testing](https://on.cypress.io/guides/overview/why-cypress#Component) and [End-to-End (E2E) Testing](https://on.cypress.io/guides/overview/why-cypress#End-to-end) types can be combined in the same job using separate steps
 
 ```yml
-- name: Run E2E tests 🧪
+- name: Run E2E tests
   uses: cypress-io/github-action@v5
 
-- name: Run Component tests 🧪
+- name: Run Component Testing
   uses: cypress-io/github-action@v5
   with:
     # we have already installed everything
     install: false
-    # to run component tests we need to use "component: true"
     component: true
 ```
-
-See the example project [component-test](examples/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
 
 ### Build app
 
@@ -1351,7 +1372,7 @@ See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 ### Suppress test summary
 
 The default test summary can be suppressed by using the parameter `publish-summary` and setting its value to `false`.
-Sometimes users want to publish test summary using a specific action. 
+Sometimes users want to publish test summary using a specific action.
 For example, a user running Cypress tests using a matrix and wants to retrieve the test summary for each matrix job and use a specific action that merges reports.
 
 ```yml
