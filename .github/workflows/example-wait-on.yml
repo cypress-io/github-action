@@ -178,8 +178,8 @@ jobs:
         uses: ./
         with:
           working-directory: examples/v9/wait-on-vite
-          start: npm start
-          wait-on: 'http://localhost:3000'
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -351,5 +351,5 @@ jobs:
         uses: ./
         with:
           working-directory: examples/wait-on-vite
-          start: npm start
-          wait-on: 'http://localhost:3000'
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
