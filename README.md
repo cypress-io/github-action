@@ -406,7 +406,7 @@ You can pass multiple tags using commas like `tag: node-10,nightly,staging`.
 
 ### Specify auto cancel after failures
 
-Passes the number of failed runs to cancel a run after when using the [Cypress Cloud Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration#Auto-Cancellation) feature.
+Specify the number of failed tests that will cancel a run when using the [Cypress Cloud Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration#Auto-Cancellation) feature.
 
 This feature requires Cypress 12.x or later and a [Cypress Cloud Business or Enterprise](https://www.cypress.io/cloud/) account.
 
