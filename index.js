@@ -711,7 +711,9 @@ const runTests = async () => {
   }
 
   if (core.getInput('auto-cancel-after-failures')) {
-    cypressOptions.autoCancelAfterFailures = core.getInput('auto-cancel-after-failures')
+    cypressOptions.autoCancelAfterFailures = core.getInput(
+      'auto-cancel-after-failures'
+    )
   }
 
   if (core.getInput('env')) {
