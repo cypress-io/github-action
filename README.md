@@ -420,8 +420,6 @@ jobs:
     steps:
       - name: Setup Node
         uses: actions/setup-node@v3
-        with:
-          node-version: 18
 
       - name: Checkout
         uses: actions/checkout@v3
