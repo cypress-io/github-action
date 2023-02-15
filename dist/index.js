@@ -78818,11 +78818,7 @@ const startServersMaybe = () => {
   )
 
   return separateStartCommands.map((startCommand) => {
-    return execCommand(
-      startCommand,
-      false,
-      `start server "${startCommand}`
-    )
+    return execCommand(startCommand, false, `start server`)
   })
 }
 
