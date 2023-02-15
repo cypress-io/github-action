@@ -15,9 +15,11 @@
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
+- Specify [auto cancel](#specify-auto-cancel-after-failures) after failures
 - Tag [recordings](#tag-recordings)
 - [Quiet output](#quiet-flag)
 - Store [test artifacts](#artifacts) on GitHub
+- [Quiet output](#quiet-flag)
 - Set Cypress [config values](#config)
 - Use specific [config file](#config-file)
 - Run tests in [parallel](#parallel)
