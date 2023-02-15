@@ -149,11 +149,23 @@ const getNpmCache = () => {
   return o
 }
 
+const getCypressCacheFolder = () => {
+  const paths = process.env.CYPRESS_CACHE_FOLDER
+    ? [process.env.CYPRESS_CACHE_FOLDER]
+    : [
+        path.join(homeDirectory, '.cache', 'Cypress'),
+        path.join(homeDirectory, 'Library', 'Caches', 'Cypress')
+      ]
+  const result = paths.find((p) => fs.existsSync(p))
+  if (!result) {
+    throw new Error(`Cypress cache folder missing`)
+  }
+  return result
+}
+
 // custom Cypress binary cache folder
 // see https://on.cypress.io/caching
-const CYPRESS_CACHE_FOLDER =
-  process.env.CYPRESS_CACHE_FOLDER ||
-  path.join(homeDirectory, '.cache', 'Cypress')
+const CYPRESS_CACHE_FOLDER = getCypressCacheFolder()
 debug(`using custom Cypress cache folder "${CYPRESS_CACHE_FOLDER}"`)
 
 const getCypressBinaryCache = () => {
