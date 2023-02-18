@@ -144,7 +144,7 @@ jobs:
         with:
           working-directory: examples/v9/react-scripts
           start: npm start
-          wait-on: 'http://localhost:3000'
+          wait-on: 'http://127.0.0.1:3000'
 
   wait-using-custom-command-v9:
     runs-on: ubuntu-22.04
@@ -157,7 +157,7 @@ jobs:
           working-directory: examples/v9/react-scripts
           start: npm start
           # let's use wait-on NPM package to check the URL
-          wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
+          wait-on: 'npx wait-on --timeout 5000 http://127.0.0.1:3000'
 
   ping-cli-v9:
     runs-on: ubuntu-22.04
@@ -179,7 +179,7 @@ jobs:
         with:
           working-directory: examples/v9/wait-on-vite
           start: npm run dev
-          wait-on: 'http://localhost:5173'
+          wait-on: 'http://ip6-localhost:5173'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -317,7 +317,7 @@ jobs:
         with:
           working-directory: examples/react-scripts
           start: npm start
-          wait-on: 'http://localhost:3000'
+          wait-on: 'http://127.0.0.1:3000'
 
   wait-using-custom-command:
     runs-on: ubuntu-22.04
@@ -330,7 +330,7 @@ jobs:
           working-directory: examples/react-scripts
           start: npm start
           # let's use wait-on NPM package to check the URL
-          wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
+          wait-on: 'npx wait-on --timeout 5000 http://127.0.0.1:3000'
 
   ping-cli:
     runs-on: ubuntu-22.04
@@ -352,4 +352,4 @@ jobs:
         with:
           working-directory: examples/wait-on-vite
           start: npm run dev
-          wait-on: 'http://localhost:5173'
+          wait-on: 'http://ip6-localhost:5173'
