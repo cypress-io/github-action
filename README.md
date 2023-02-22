@@ -755,7 +755,7 @@ You can even use your own command (usually by using `npm`, `yarn`, `npx`) to wai
 - uses: cypress-io/github-action@v5
   with:
     start: npm start
-    wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
+    wait-on: 'npx wait-on --timeout 60000 http://localhost:3000'
 ```
 
 See [example-wait-on.yml](.github/workflows/example-wait-on.yml) workflow file.
