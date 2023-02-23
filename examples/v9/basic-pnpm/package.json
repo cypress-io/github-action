@@ -1,7 +1,7 @@
 {
-  "name": "example-basic",
-  "version": "1.0.0",
-  "description": "basic example how to run Cypress tests",
+  "name": "example-basic-pnpm",
+  "version": "2.0.0",
+  "description": "basic pnpm example how to run Cypress tests",
   "main": "index.js",
   "scripts": {
     "test": "cypress run"
@@ -10,6 +10,6 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "9.6.1"
+    "cypress": "9.7.0"
   }
 }

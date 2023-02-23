@@ -1,6 +1,6 @@
 # cypress-io/github-action [![renovate-app badge][renovate-badge]][renovate-bot] [![Action status](https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions)
 
-> [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end tests. Includes NPM installation, custom caching and lots of configuration options.
+> [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes NPM installation, custom caching and lots of configuration options.
 
 ## Examples
 
@@ -49,7 +49,7 @@ name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -94,7 +94,7 @@ name: E2E on Chrome
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
@@ -115,9 +115,9 @@ name: Firefox
 on: push
 jobs:
   firefox:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container:
-      image: cypress/browsers:node12.16.1-chrome80-ff73
+      image: cypress/browsers:node18.12.0-chrome106-ff106
       options: --user 1001
     steps:
       - uses: actions/checkout@v3
@@ -147,8 +147,6 @@ jobs:
 
 [![Edge example](https://github.com/cypress-io/github-action/workflows/example-edge/badge.svg?branch=master)](.github/workflows/example-edge.yml)
 
-**Note:** Microsoft has not released Edge for Linux yet, thus you need to run these tests on Windows or Mac runners with Edge preinstalled. You can use [`cypress info`](https://on.cypress.io/command-line#cypress-info) command to see the browsers installed on the machine.
-
 ### Headed
 
 Run the browser in headed mode - as of Cypress v8.0 the `cypress run` command executes tests in `headless` mode by default
@@ -158,7 +156,7 @@ name: Chrome headed
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
@@ -176,10 +174,10 @@ name: E2E in custom container
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
-    # Cypress Docker image with Chrome v78
-    # and Firefox v70 pre-installed
-    container: cypress/browsers:node12.13.0-chrome78-ff70
+    runs-on: ubuntu-22.04
+    # Cypress Docker image with Chrome v106
+    # and Firefox v106 pre-installed
+    container: cypress/browsers:node18.12.0-chrome106-ff106
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
@@ -196,7 +194,7 @@ name: Cypress tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -214,7 +212,7 @@ name: Cypress tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -240,7 +238,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -251,7 +249,7 @@ jobs:
           spec: cypress/integration/spec1.js
 ```
 
-You can pass multiple multiple specs and wild card patterns using multi-line parameter, see [example-config.yml](./.github/workflows/example-config.yml):
+You can pass multiple specs and wild card patterns using multi-line parameter, see [example-config.yml](./.github/workflows/example-config.yml):
 
 ```yml
 spec: |
@@ -271,7 +269,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -291,7 +289,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -323,7 +321,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -350,7 +348,7 @@ name: example-quiet
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -374,7 +372,7 @@ name: tags
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
@@ -415,7 +413,7 @@ name: Artifacts
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Artifacts
     steps:
       - uses: actions/checkout@v3
@@ -449,7 +447,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -472,7 +470,7 @@ on: [push]
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -497,7 +495,7 @@ on: [push]
 jobs:
   test:
     name: Cypress run
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       # when one test fails, DO NOT cancel the other
       # containers, because this will kill Cypress processes
@@ -550,7 +548,7 @@ You can run [Cypress component tests](https://on.cypress.io/component-testing) i
     component: true
 ```
 
-See the example project [component-test](examples/v10/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
+See the example project [component-test](examples/component-tests/) and the [example-component-test-workflow](.github/workflows/example-component-test.yml) for more details.
 
 ### Build app
 
@@ -561,7 +559,7 @@ name: Build
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -580,7 +578,7 @@ name: With server
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -597,7 +595,7 @@ name: With server
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -623,7 +621,7 @@ name: With servers
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -653,7 +651,7 @@ name: After server responds
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -728,7 +726,7 @@ name: Visual
 on: [push]
 jobs:
   e2e:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -742,8 +740,6 @@ jobs:
           # and we need the second "npm" to execute "cypress run ..." command line
           command-prefix: 'percy exec -- npx'
 ```
-
-See live example [angular-pizza-creator](https://github.com/cypress-io/angular-pizza-creator).
 
 ### Custom test command
 
@@ -771,7 +767,7 @@ name: Parallel
 on: [push]
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         # run 3 copies of the current job in parallel
@@ -827,33 +823,67 @@ See the [example-custom-ci-build-id.yml](./.github/workflows/example-custom-ci-b
 
 ### Working directory
 
-In a monorepo, the end-to-end test might be placed in a different sub-folder from the application itself, like this
+In a monorepo, the end-to-end or component test might be placed in a different sub-folder from the application itself.
+
+Using a [Cypress legacy configuration](https://docs.cypress.io/guides/references/legacy-configuration) (Version 9 or earlier) the structure could look like this:
 
 ```text
 repo/
   app/
-  e2e/
-    cypress
+  app-test/
+    cypress/
+      fixtures/
+      integration/
+      plugins/
+      support/
     cypress.json
   package.json
 ```
 
-You can specify the `e2e` working directory when running Cypress tests using `working-directory` parameter
+For End-to-End testing using a [Cypress configuration](https://docs.cypress.io/guides/references/configuration) for Version 10 and later, the structure could look like this :
+
+```text
+repo/
+  app/
+  app-test/
+    cypress/
+      e2e/
+      fixtures/
+      support/
+    cypress.config.js
+  package.json
+```
+
+Similarly for Component Testing with a [Cypress configuration](https://docs.cypress.io/guides/references/configuration) for Version 10 and later, the structure could look like this:
+
+```text
+repo/
+  app/
+  app-test/
+    cypress/
+      component/
+      fixtures/
+      support/
+    cypress.config.js
+  package.json
+```
+
+You can specify the `app-test` working directory when running Cypress tests using the `working-directory` parameter
 
 ```yml
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
         with:
           start: npm start
-          working-directory: e2e
+          working-directory: app-test
 ```
 
-See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) for a running example
+See [example-basic.yml](.github/workflows/example-basic.yml) for an End-to-End test example and [example-component-test.yml](.github/workflows/example-component-test.yml) for a Component test example, using the parameter `working-directory`.
 
 ### Subfolders
 
@@ -880,7 +910,7 @@ name: E2E
 on: push
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
       - name: Install root dependencies
@@ -900,7 +930,7 @@ See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action
 
 ### Yarn workspaces
 
-This action should discover Yarn workspace correctly. For example, see folder [examples/v10/start-and-yarn-workspaces](examples/v10/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
+This action should discover the Yarn workspaces correctly. For example, see folder [examples/start-and-yarn-workspaces](examples/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
 
 ```yaml
 name: example-start-and-yarn-workspaces
@@ -910,12 +940,12 @@ jobs:
     # the example has Yarn workspace in its "root" folder
     # examples/start-and-yarn-workspaces
     # and tests in a subfolder like "workspace-1"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
         with:
-          working-directory: examples/v10/start-and-yarn-workspaces/workspace-1
+          working-directory: examples/start-and-yarn-workspaces/workspace-1
           build: yarn run build
           start: yarn start
           wait-on: 'http://localhost:5000'
@@ -932,7 +962,7 @@ name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
@@ -967,7 +997,7 @@ name: Node versions
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         node: [14, 16, 18]
@@ -993,7 +1023,7 @@ name: E2E
 on: push
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@master
       - name: Install dependencies
@@ -1046,7 +1076,7 @@ You can tell the CI to stop the job or the individual step if it runs for longer
 ```yml
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     # stop the job if it runs over 10 minutes
     # to prevent a hanging process from using all your CI minutes
     timeout-minutes: 10
@@ -1069,13 +1099,10 @@ Name | Description
 [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder
 [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies
 [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) | only install NPM dependencies, then install and cache Cypress binary yourself
-[cypress-gh-action-vue-example](https://github.com/cypress-io/cypress-gh-action-vue-example) | project was scaffolded using Vue CLI
-[gh-action-and-gh-integration](https://github.com/cypress-io/gh-action-and-gh-integration) | records to the dashboard and has [Cypress GH Integration](https://on.cypress.io/github-integration) app installed
 [test-personal-site](https://github.com/bahmutov/test-personal-site) | Testing an external website every night and by manually clicking a button.
 [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) | Shows how to run different Cypress projects depending on changed files
 [cypress-examples](https://github.com/bahmutov/cypress-examples) | Shows separate install job from parallel test jobs
 [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) | Shows a separate install job with the build step, and another job that runs the tests
-[cypress-and-jest-typescript-example](https://github.com/cypress-io/cypress-and-jest-typescript-example) | Run E2E and Jest unit tests in parallel
 [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example) | Run E2E and component tests using this action
 <!-- prettier-ignore-end -->
 
@@ -1133,7 +1160,7 @@ $ node src/ping-cli.js <url>
 For example
 
 ```
-$ node src/ping.js https://example.cypress.io
+$ node src/ping-cli.js https://example.cypress.io
 pinging url https://example.cypress.io for 30 seconds
 ::debug::pinging https://example.cypress.io has finished ok
 ```
@@ -1191,7 +1218,7 @@ name: included
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # Docker image with Cypress pre-installed
     # https://github.com/cypress-io/cypress-docker-images/tree/master/included
     container: cypress/included:3.8.3
@@ -1211,7 +1238,7 @@ name: info
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1228,7 +1255,7 @@ name: info
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1259,7 +1286,7 @@ on:
     - cron: '0 4 * * *'
 jobs:
   nightly:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -1271,11 +1298,17 @@ See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 [![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
 
-## Migration guide
+## Changelog
 
-### v1 to v2
+See [Releases](https://github.com/cypress-io/github-action/releases) for full details of changes.
 
-This is noted as a breaking change ... but you should not see any changes. We have changed how we run Cypress (from using the command line to using the [NPM module API](https://on.cypress.io/module-api)), which is a big change. But hopefully our examples are complete and we did not break anyone's code.
+| Version | Changes                                                                                                                                  |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| v5      | Examples and workflows additionally use Node.js 18. Use of the end-of-life Node.js version 12 in examples and workflows is removed.      |
+| v4      | Support for Cypress 10 and later versions is added.                                                                                      |
+| v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                      |
+| v2      | Cypress runs using the [NPM module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
+| v1      | *This version is no longer runnable in GitHub due to security changes.*                                                                  |
 
 ## License
 

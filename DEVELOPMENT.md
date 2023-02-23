@@ -20,7 +20,7 @@ name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
-    runs-on: ubuntu-latest
+    runs-on: 22.04
     steps:
       - uses: actions/checkout@v3
       # use specific commit pushed to GitHub

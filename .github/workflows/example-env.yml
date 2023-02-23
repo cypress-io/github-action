@@ -4,6 +4,8 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 env:
   # pass an environment variable to Cypress
   # a test can get its value like this
@@ -12,10 +14,10 @@ env:
   CYPRESS_environmentName: staging
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  e2e:
-    runs-on: ubuntu-20.04
+  e2e-v9:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,12 +30,12 @@ jobs:
           working-directory: examples/v9/env
           spec: cypress/integration/without-env-spec.js
 
-  with-env:
+  with-env-v9:
     # in the tests below, in addition to 'environmentName'
     # we are passing additional environment variables
     # using "--env" command line option
     # see https://on.cypress.io/configuration
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -49,8 +51,8 @@ jobs:
           env: host=http://api.dev.local,apiPort=4222
           spec: cypress/integration/spec.js
 
-  with-action-env:
-    runs-on: ubuntu-20.04
+  with-action-env-v9:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -67,12 +69,12 @@ jobs:
           working-directory: examples/v9/env
           spec: cypress/integration/spec.js
 
-  combined-env:
+  combined-env-v9:
     # combination of all 3 ways to pass environment variables
     # 'environmentName' value comes from the workflow's environment
     # 'apiPort' comes from the step's "env" block
     # 'host' is defined in the action's "with: env:" parameter
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -88,8 +90,8 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  e2e-v10:
-    runs-on: ubuntu-20.04
+  e2e:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -99,15 +101,15 @@ jobs:
       - name: Cypress run with env
         uses: ./
         with:
-          working-directory: examples/v10/env
+          working-directory: examples/env
           spec: cypress/e2e/without-env.cy.js
 
-  with-env-v10:
+  with-env:
     # in the tests below, in addition to 'environmentName'
     # we are passing additional environment variables
     # using "--env" command line option
     # see https://on.cypress.io/configuration
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -115,7 +117,7 @@ jobs:
       - name: Cypress run with env
         uses: ./
         with:
-          working-directory: examples/v10/env
+          working-directory: examples/env
           # additional env variables to pass to Cypress specs
           # variables are automatically casted
           # Cypress.env('host') // 'http://api.dev.local'
@@ -123,8 +125,8 @@ jobs:
           env: host=http://api.dev.local,apiPort=4222
           spec: cypress/e2e/spec.cy.js
 
-  with-action-env-v10:
-    runs-on: ubuntu-20.04
+  with-action-env:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -138,15 +140,15 @@ jobs:
           CYPRESS_apiPort: 4222
           CYPRESS_host: http://api.dev.local
         with:
-          working-directory: examples/v10/env
+          working-directory: examples/env
           spec: cypress/e2e/spec.cy.js
 
-  combined-env-v10:
+  combined-env:
     # combination of all 3 ways to pass environment variables
     # 'environmentName' value comes from the workflow's environment
     # 'apiPort' comes from the step's "env" block
     # 'host' is defined in the action's "with: env:" parameter
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -157,5 +159,5 @@ jobs:
           CYPRESS_apiPort: 4222
         with:
           env: host=http://api.dev.local
-          working-directory: examples/v10/env
+          working-directory: examples/env
           spec: cypress/e2e/spec.cy.js

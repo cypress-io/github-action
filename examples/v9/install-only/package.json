@@ -9,7 +9,7 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "cypress": "9.6.1"
+    "cypress": "9.7.0"
   },
   "dependencies": {
     "arg": "5.0.0",

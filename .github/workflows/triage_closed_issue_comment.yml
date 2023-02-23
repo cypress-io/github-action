@@ -1,0 +1,9 @@
+name: 'Closed Issue Comment'
+on:
+  issue_comment:
+    types:
+      - created
+jobs:
+  closed-issue-comment:
+    uses: cypress-io/cypress/.github/workflows/triage_closed_issue_comment.yml@develop
+    secrets: inherit

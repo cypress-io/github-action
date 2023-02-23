@@ -4,46 +4,23 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  firefox-v9:
-    # should include Firefox browser install
-    # https://github.com/actions/virtual-environments
-    #
-    # skip Firefox test on Cypress v9 due to Cypress issue
-    # https://github.com/cypress-io/cypress/issues/23215
-    if: false 
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Firefox
-        uses: ./
-        timeout-minutes: 3
-        with:
-          # let's show browser and system info
-          build: npx cypress info
-          working-directory: examples/v9/firefox
-          browser: firefox
-
-      # report screenshot size and store the screenshots as test artifacts
-      - uses: actions/upload-artifact@v3
-        with:
-          name: screenshots-in-firefox-v9
-          path: examples/v9/firefox/cypress/screenshots
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v9/firefox
+  # An example test using the Mozilla Firefox browser with Cypress v9 is no longer included here.
+  #
+  # Firefox connects unreliably with Cypress v9, as described in the closed Cypress issue
+  # https://github.com/cypress-io/cypress/issues/23215.
+  # It is not planned to resolve the issue in Cypress v9.
+  # The problem is however resolved in Cypress v10 and later.
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  firefox-v10:
-    # should include Firefox browser install
-    # https://github.com/actions/virtual-environments
-    runs-on: ubuntu-20.04
+  firefox:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -54,14 +31,14 @@ jobs:
         with:
           # let's show browser and system info
           build: npx cypress info
-          working-directory: examples/v10/firefox
+          working-directory: examples/firefox
           browser: firefox
 
       # report screenshot size and store the screenshots as test artifacts
       - uses: actions/upload-artifact@v3
         with:
-          name: screenshots-in-firefox-v10
-          path: examples/v10/firefox/cypress/screenshots
+          name: screenshots-in-firefox
+          path: examples/firefox/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v10/firefox
+        working-directory: examples/firefox

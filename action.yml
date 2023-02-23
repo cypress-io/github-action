@@ -30,7 +30,7 @@ inputs:
     description: 'A different start command on Windows'
     required: false
   build:
-    description: 'Command to run in build step before starting tests'
+    description: 'Command to run build step before starting tests'
     required: false
   install:
     description: 'Whether or not to run install'

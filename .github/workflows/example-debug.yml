@@ -4,9 +4,11 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
-  nightly:
-    runs-on: ubuntu-20.04
+  debug-logs:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -16,4 +18,4 @@ jobs:
         env:
           DEBUG: '@cypress/github-action'
         with:
-          working-directory: examples/v9/basic
+          working-directory: examples/basic

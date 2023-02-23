@@ -4,10 +4,12 @@ on:
     branches:
       - 'master'
   pull_request:
-jobs:
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  workflow_dispatch:
 
-  basic-pnpm-ubuntu-20:
+jobs:
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
+
+  basic-pnpm-ubuntu-20-v9:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -31,7 +33,7 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-pnpm-ubuntu-22:
+  basic-pnpm-ubuntu-22-v9:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -48,7 +50,7 @@ jobs:
           working-directory: examples/v9/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-windows:
+  basic-pnpm-on-windows-v9:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -65,7 +67,7 @@ jobs:
           working-directory: examples/v9/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-mac:
+  basic-pnpm-on-mac-v9:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -85,8 +87,8 @@ jobs:
   # skips the binary installation
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
-  basic-pnpm-without-binary-install:
-    runs-on: ubuntu-20.04
+  basic-pnpm-without-binary-install-v9:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -109,7 +111,7 @@ jobs:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  basic-pnpm-ubuntu-20-v10:
+  basic-pnpm-ubuntu-20:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
@@ -127,13 +129,13 @@ jobs:
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-pnpm-ubuntu-22-v10:
+  basic-pnpm-ubuntu-22:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -147,10 +149,10 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-windows-v10:
+  basic-pnpm-on-windows:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -164,10 +166,10 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-mac-v10:
+  basic-pnpm-on-mac:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -181,14 +183,14 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           build: npx cypress info
 
   # skips the binary installation
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
-  basic-pnpm-without-binary-install-v10:
-    runs-on: ubuntu-20.04
+  basic-pnpm-without-binary-install:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -201,7 +203,7 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           # since we do not install Cypress
           # we should not attempt to run tests
           runTests: false

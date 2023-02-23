@@ -1,0 +1,36 @@
+name: check-dist
+#
+# cypress-io/github-action runs from the dist/ directory
+# This workflow ensures that the contents of this directory
+# are in sync with the source files by using
+# npm run build which in turn calls ncc build
+#
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check-dist:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+      - uses: bahmutov/npm-install@v1
+      - run: npm run format
+      - run: npm run build
+
+      - name: Compare the expected and actual dist/ directories
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build.  See status below:"
+            git diff
+            exit 1
+          fi
