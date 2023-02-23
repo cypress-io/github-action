@@ -40,6 +40,7 @@
 - [timeouts](#timeouts) to avoid hanging CI jobs
 - [print Cypress info](#print-cypress-info) like detected browsers
 - [run tests nightly](#nightly-tests) or on any schedule
+- [Publish tests summary](#publish-tests-summary)
 - [more examples](#more-examples)
 
 ### Basic
@@ -1297,6 +1298,27 @@ jobs:
 See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 [![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
+
+### Publish tests summary
+
+Sometimes you want to publish the tests summary to the pull request even though the current runtime environment does not support job summaries. 
+For example, you are runing your Cypress tests using a matrix and you want to retrieve the tests summary for each matrix job.
+
+```yml
+name: info
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          # This will publish the tests summary to the pull request
+          publish-summary: true
+```
 
 ## Changelog
 
