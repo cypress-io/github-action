@@ -178,8 +178,8 @@ jobs:
         uses: ./
         with:
           working-directory: examples/v9/wait-on-vite
-          start: npm run dev
-          wait-on: 'http://ip6-localhost:5173'
+          start: npx vite --host
+          wait-on: 'http://localhost:5173'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -351,5 +351,5 @@ jobs:
         uses: ./
         with:
           working-directory: examples/wait-on-vite
-          start: npm run dev
-          wait-on: 'http://ip6-localhost:5173'
+          start: npx vite --host
+          wait-on: 'http://localhost:5173'
