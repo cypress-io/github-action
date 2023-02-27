@@ -571,6 +571,13 @@ const runTestsUsingCommandLine = async () => {
     cmd.push('--config-file')
     cmd.push(quoteArgument(configFileInput))
   }
+  const autoCancelAfterFailures = core.getInput(
+    'auto-cancel-after-failures'
+  )
+  if (autoCancelAfterFailures) {
+    cmd.push('--auto-cancel-after-failures')
+    cmd.push(quoteArgument(autoCancelAfterFailures))
+  }
 
   if (parallel || group) {
     let buildIdVar = null
@@ -697,6 +704,12 @@ const runTests = async () => {
 
   if (core.getInput('browser')) {
     cypressOptions.browser = core.getInput('browser')
+  }
+
+  if (core.getInput('auto-cancel-after-failures')) {
+    cypressOptions.autoCancelAfterFailures = core.getInput(
+      'auto-cancel-after-failures'
+    )
   }
 
   if (core.getInput('env')) {
