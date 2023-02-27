@@ -1,10 +1,10 @@
 lockfileVersion: 5.4
 
 specifiers:
-  cypress: ^12.4.1
+  cypress: ^12.6.0
 
 devDependencies:
-  cypress: 12.4.1
+  cypress: 12.6.0
 
 packages:
 
@@ -210,8 +210,8 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
-  /ci-info/3.7.1:
-    resolution: {integrity: sha512-4jYS4MOAaCIStSRwiuxc4B8MYhIe676yO1sYGzARnjXkWpmzZMMYxY6zu8WYWDhSuth5zhrQ1rhNSibyyvv4/w==}
+  /ci-info/3.8.0:
+    resolution: {integrity: sha512-eXTggHWSooYhq49F2opQhuHWgzucfF2YgODK4e1566GQs5BIfP30B0oenwBJHfWxAs2fyPB1s7Mg949zLf61Yw==}
     engines: {node: '>=8'}
     dev: true
 
@@ -293,8 +293,8 @@ packages:
       which: 2.0.2
     dev: true
 
-  /cypress/12.4.1:
-    resolution: {integrity: sha512-IFMPzc1RJ22Fac+YbdqywtpcuqZXqQJh+JqZDXn+A15zG/dw99njfv8f0bTvD+WAHhP118+xWG/VwilkFg1rnA==}
+  /cypress/12.6.0:
+    resolution: {integrity: sha512-WdHSVaS1lumSd5XpVTslZd8ui9GIGphrzvXq9+3DtVhqjRZC5M70gu5SW/Y/SLPq3D1wiXGZoHC6HJ7ESVE2lw==}
     engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
@@ -331,7 +331,7 @@ packages:
       listr2: 3.14.0_enquirer@2.3.6
       lodash: 4.17.21
       log-symbols: 4.1.0
-      minimist: 1.2.7
+      minimist: 1.2.8
       ospath: 1.2.2
       pretty-bytes: 5.6.0
       proxy-from-env: 1.0.0
@@ -615,7 +615,7 @@ packages:
     resolution: {integrity: sha512-ZYvCgrefwqoQ6yTyYUbQu64HsITZ3NfKX1lzaEYdkTDcfKzzCI/wthRRYKkdjHKFVgNiXKAKm65Zo1pk2as/QQ==}
     hasBin: true
     dependencies:
-      ci-info: 3.7.1
+      ci-info: 3.8.0
     dev: true
 
   /is-fullwidth-code-point/3.0.0:
@@ -773,8 +773,8 @@ packages:
       brace-expansion: 1.1.11
     dev: true
 
-  /minimist/1.2.7:
-    resolution: {integrity: sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==}
+  /minimist/1.2.8:
+    resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
     dev: true
 
   /ms/2.1.2:
