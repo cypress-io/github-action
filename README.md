@@ -1316,7 +1316,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          # This will publish the tests summary to the pull request
           publish-summary: true
 ```
 
