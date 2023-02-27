@@ -8,7 +8,7 @@
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
   - using [Firefox](#firefox)
-  - using [Edge](#edge)
+  - using [Edge](#edge) 
   - using [headed mode](#headed)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
@@ -17,7 +17,6 @@
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
 - Specify [auto cancel](#specify-auto-cancel-after-failures) after failures
 - Tag [recordings](#tag-recordings)
-- [Quiet output](#quiet-flag)
 - Store [test artifacts](#artifacts) on GitHub
 - [Quiet output](#quiet-flag)
 - Set Cypress [config values](#config)
