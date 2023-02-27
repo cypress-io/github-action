@@ -781,7 +781,7 @@ const runTests = async () => {
 
 // Summary is not available for GitHub Enterprise at the moment
 const isSummaryEnabled = () => {
-  const isSummaryInput = getInputBool('publish-summary');
+  const isSummaryInput = getInputBool('publish-summary')
   return process.env[SUMMARY_ENV_VAR] !== undefined && isSummaryInput
 }
 
