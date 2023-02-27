@@ -7,6 +7,9 @@ inputs:
     description: 'Sends test results to Cypress Dashboard'
     required: false
     default: false
+  auto-cancel-after-failures:
+    description: 'Overrides the global Cloud configuration to set the failed test threshold for auto cancellation or to disable auto cancellation when recording to the Cloud (requires Cypress 12.x or later)'
+    required: false
   config:
     description: 'Set configuration values. Separate multiple values with a comma. The values set here override any values set in your configuration file.'
     required: false
