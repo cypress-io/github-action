@@ -2,5 +2,5 @@
   "fixturesFolder": false,
   "supportFile": false,
   "pluginsFile": false,
-  "baseUrl": "http://localhost:3000"
+  "baseUrl": "http://localhost:5173"
 }

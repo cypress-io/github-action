@@ -45,11 +45,11 @@
     "quote": "0.4.0"
   },
   "devDependencies": {
-    "@types/node": "18.11.19",
+    "@types/node": "18.14.2",
     "@vercel/ncc": "0.36.1",
     "husky": "7.0.4",
     "markdown-link-check": "3.10.3",
-    "prettier": "2.8.3"
+    "prettier": "2.8.4"
   },
   "publishConfig": {
     "access": "public"

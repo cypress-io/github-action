@@ -8,16 +8,17 @@
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
   - using [Firefox](#firefox)
-  - using [Edge](#edge)
+  - using [Edge](#edge) 
   - using [headed mode](#headed)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
+- Specify [auto cancel](#specify-auto-cancel-after-failures) after failures
 - Tag [recordings](#tag-recordings)
-- [Quiet output](#quiet-flag)
 - Store [test artifacts](#artifacts) on GitHub
+- [Quiet output](#quiet-flag)
 - Set Cypress [config values](#config)
 - Use specific [config file](#config-file)
 - Run tests in [parallel](#parallel)
@@ -403,6 +404,39 @@ The recording will have tags as labels on the run.
 ![Tags](images/tags.png)
 
 You can pass multiple tags using commas like `tag: node-10,nightly,staging`.
+
+### Specify auto cancel after failures
+
+Specify the number of failed tests that will cancel a run when using the [Cypress Cloud Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration#Auto-Cancellation) feature.
+
+This feature requires Cypress 12.6.0 or later and a [Cypress Cloud Business or Enterprise](https://www.cypress.io/cloud/) account.
+
+```yml
+name: Cypress E2E Tests
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    name: E2E
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          record: true
+          # Cancel the run after 2 failed tests
+          auto-cancel-after-failures: 2
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+See [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration#Auto-Cancellation) for more information.
 
 ### Artifacts
 
@@ -1109,6 +1143,14 @@ Name | Description
 ### Installation
 
 This action installs local dependencies using lock files. If `yarn.lock` file is found, the install uses `yarn --frozen-lockfile` command. Otherwise it expects to find `package-lock.json` and install using `npm ci` command.
+
+The above default `yarn` installation command can be replaced for [Yarn Berry](https://yarnpkg.com/) (Yarn 2 and later) using the `install-command` parameter, for example:
+
+```yml
+- uses: cypress-io/github-action@v5
+  with:
+    install-command: yarn install
+```
 
 This action uses several production dependencies. The minimum Node version required to run this action depends on the minimum Node required by the dependencies.
 

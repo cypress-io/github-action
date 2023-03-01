@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  nightly:
+  debug-logs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
