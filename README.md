@@ -1335,7 +1335,7 @@ See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 ### Publish tests summary
 
-Sometimes you want to publish the tests summary to the pull request even though the current runtime environment does not support job summaries. 
+Sometimes users want to publish the test's summary to the pull request even if the current runtime environment does not support job summaries. 
 For example, a user running Cypress tests using a matrix and wanting to retrieve the tests summary for each matrix job.
 
 ```yml
