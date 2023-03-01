@@ -8,7 +8,7 @@
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
   - using [Firefox](#firefox)
-  - using [Edge](#edge) 
+  - using [Edge](#edge)
   - using [headed mode](#headed)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
@@ -413,7 +413,7 @@ This feature requires Cypress 12.6.0 or later and a [Cypress Cloud Business or E
 
 ```yml
 name: Cypress E2E Tests
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
