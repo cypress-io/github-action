@@ -8,7 +8,7 @@ There are two groups of examples which are used to test and demonstrate the use 
 
 1. The [examples](../examples) directory contains examples of the use of Cypress (Current) [Configuration](https://docs.cypress.io/guides/references/configuration) which applies to Cypress 10 and later.
 
-2. The [examples/v9](../examples/v9) directory contains examples which are set up to use Cypress 9.7.0 which is the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration) which applies to Cypress 9 and below.
+2. The [examples/v9](../examples/v9) directory contains examples which are set up to use Cypress `9.7.0` which is the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration) which applies to Cypress 9 and below.
 
 The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/) and [Yarn 1 (Classic)](https://classic.yarnpkg.com/) to define and install the packages being used.
 
