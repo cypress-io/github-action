@@ -46,7 +46,7 @@ When a new version of [Cypress](https://docs.cypress.io/guides/references/change
 
 From the root of a local clone of the repository, execute:
 
-```python
+```bash
 npm run update:cypress
 ```
 
