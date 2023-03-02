@@ -13,8 +13,8 @@
     "test": "echo \"There are no tests :(\"",
     "build": "ncc build -o dist index.js",
     "format": "prettier --write index.js",
-    "check:markdown": "find *.md -print0 | xargs -0 -n1 markdown-link-check -c md-linkcheck.json",
-    "install-deps": "./scripts/npm-install-examples.sh"
+    "check:markdown": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check -c md-linkcheck.json",
+    "update:cypress": "./scripts/update-cypress-latest.sh"
   },
   "repository": {
     "type": "git",
