@@ -1340,7 +1340,7 @@ For example, a user running Cypress tests using a matrix and wanting to retrieve
 
 ```yml
 name: info
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
