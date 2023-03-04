@@ -16,7 +16,8 @@ name: example-custom-ci-build-id
 # multiple testing jobs running in parallel
 # based on the recipe written in
 # https://medium.com/attest-r-and-d/adding-a-unique-github-build-identifier-7aa2e83cadca
-# The use of set-output is however deprecated by GitHub since the above blog # was written in 2019 so this is replaced by GitHub Environment files, see
+# The use of set-output is however deprecated by GitHub since the above blog
+# was written in 2019 so this is replaced by GitHub Environment files, see
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
 #
 
