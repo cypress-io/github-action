@@ -742,8 +742,8 @@ If this action times out waiting for the server to respond, please see [Debuggin
 Under Node.js version 18 and later, `wait-on` may fail to recognize that a `localhost` server is running. This affects development web servers which do not listen on both IPv4 and IPv6 network stacks.
 
 - Check your server documentation to see if it can be started using `0.0.0.0` (all addresses) and use this if available. If this option is not available or does not resolve the issue then carry on to the next steps:
-- If the action log shows that wait-on is failing to connect to `127.0.0.1`, replace `localhost` by `[::1]` (the IPv6 loopback address)
-- If the action log shows that wait-on is failing to connect to `::1`, replace `localhost` by `127.0.0.1` (the IPv4 loopback address)
+- If the action log shows that `wait-on` is failing to connect to `127.0.0.1`, replace `localhost` by `[::1]` (the IPv6 loopback address)
+- If the action log shows that `wait-on` is failing to connect to `::1`, replace `localhost` by `127.0.0.1` (the IPv4 loopback address)
 
 ### Custom install command
 
