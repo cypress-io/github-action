@@ -1339,7 +1339,7 @@ Sometimes users want to publish the test's summary to the pull request even if t
 For example, a user running Cypress tests using a matrix and wanting to retrieve the tests summary for each matrix job.
 
 ```yml
-name: info
+name: Example no summary
 on: push
 jobs:
   cypress-run:
