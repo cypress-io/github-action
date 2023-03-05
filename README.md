@@ -7,6 +7,7 @@
 - [Basic](#basic)
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
+  - using [Chrome](#chrome)
   - using [Firefox](#firefox)
   - using [Edge](#edge)
   - using [headed mode](#headed)
@@ -88,15 +89,16 @@ By using the full version tag, you will avoid accidentally using a newer version
 
 ### Browser
 
-Specify the browser name or path with `browser` parameter
+Specify the browser name or path with the `browser` parameter. The default browser, if none is specified, is the built-in [Electron browser](https://on.cypress.io/guides/guides/launching-browsers#Electron-Browser).
+
+### Chrome
 
 ```yml
-name: E2E on Chrome
+name: Chrome
 on: push
 jobs:
-  cypress-run:
+  chrome:
     runs-on: ubuntu-22.04
-    # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
       - uses: actions/checkout@v3
@@ -109,17 +111,13 @@ jobs:
 
 ### Firefox
 
-In order to run Firefox, you need to use non-root user (Firefox security restriction).
-
 ```yml
 name: Firefox
 on: push
 jobs:
   firefox:
     runs-on: ubuntu-22.04
-    container:
-      image: cypress/browsers:node18.12.0-chrome106-ff106
-      options: --user 1001
+    name: E2E on Firefox
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
@@ -129,16 +127,15 @@ jobs:
 
 [![Firefox example](https://github.com/cypress-io/github-action/workflows/example-firefox/badge.svg?branch=master)](.github/workflows/example-firefox.yml)
 
-**Note:** the magical user id `1001` works because it matches permissions settings on the home folder, see issue [#104](https://github.com/cypress-io/github-action/issues/104)
-
 ### Edge
 
 ```yml
 name: Edge
 on: push
 jobs:
-  tests:
+  edge:
     runs-on: windows-latest
+    name: E2E on Edge
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
