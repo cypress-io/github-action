@@ -1339,10 +1339,10 @@ See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 [![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
 
-### Publish tests summary
+### Suppress test summary
 
-Sometimes users want to publish the test's summary to the pull request even if the current runtime environment does not support job summaries. 
-For example, a user running Cypress tests using a matrix and wanting to retrieve the tests summary for each matrix job.
+Sometimes users want to publish test summary using a specific action. 
+For example, a user running Cypress tests using a matrix and wants to retrieve the test summary for each matrix job and use a specific action that merges reports.
 
 ```yml
 name: Example no summary
@@ -1356,7 +1356,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          publish-summary: true
+          publish-summary: false
 ```
 
 ## Changelog
