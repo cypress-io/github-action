@@ -13,8 +13,8 @@
     "test": "echo \"There are no tests :(\"",
     "build": "ncc build -o dist index.js",
     "format": "prettier --write index.js",
-    "check:markdown": "find *.md -print0 | xargs -0 -n1 markdown-link-check -c md-linkcheck.json",
-    "install-deps": "./scripts/npm-install-examples.sh"
+    "check:markdown": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check -c md-linkcheck.json",
+    "update:cypress": "./scripts/update-cypress-latest.sh"
   },
   "repository": {
     "type": "git",
@@ -45,7 +45,7 @@
     "quote": "0.4.0"
   },
   "devDependencies": {
-    "@types/node": "18.13.0",
+    "@types/node": "18.14.2",
     "@vercel/ncc": "0.36.1",
     "husky": "7.0.4",
     "markdown-link-check": "3.10.3",
