@@ -1341,7 +1341,7 @@ See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 ### Suppress test summary
 
-The default test summary can be suppressed by using the parameter publish-summary and setting its value to false.
+The default test summary can be suppressed by using the parameter `publish-summary` and setting its value to `false`.
 Sometimes users want to publish test summary using a specific action. 
 For example, a user running Cypress tests using a matrix and wants to retrieve the test summary for each matrix job and use a specific action that merges reports.
 
