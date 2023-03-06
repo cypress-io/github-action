@@ -41,7 +41,7 @@
 - [timeouts](#timeouts) to avoid hanging CI jobs
 - [print Cypress info](#print-cypress-info) like detected browsers
 - [run tests nightly](#nightly-tests) or on any schedule
-- [Publish tests summary](#publish-tests-summary)
+- [Suppress test summary](#suppress-test-summary)
 - [more examples](#more-examples)
 
 ### Basic
