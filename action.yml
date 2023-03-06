@@ -68,7 +68,7 @@ inputs:
   publish-summary:
     description: 'Whether or not to publish job summary'
     required: false
-    default: false
+    default: true
   spec:
     description: 'Provide a specific specs to run'
     required: false
