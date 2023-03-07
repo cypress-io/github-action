@@ -833,7 +833,7 @@ jobs:
         # take the current commit + timestamp together
         # the typical value would be something like
         # "sha-5d3fe...35d3-time-1620841214"
-        run: echo "::set-output name=value::sha-$GITHUB_SHA-time-$(date +"%s")"
+        run: echo "value=sha-$GITHUB_SHA-time-$(date +"%s")" >> $GITHUB_OUTPUT
   smoke-tests:
     needs: ['prepare']
     steps:
