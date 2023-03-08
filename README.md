@@ -7,6 +7,7 @@
 - [Basic](#basic)
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
+  - using [Chrome](#chrome)
   - using [Firefox](#firefox)
   - using [Edge](#edge)
   - using [headed mode](#headed)
@@ -89,15 +90,16 @@ By using the full version tag, you will avoid accidentally using a newer version
 
 ### Browser
 
-Specify the browser name or path with `browser` parameter
+Specify the browser name or path with the `browser` parameter. The default browser, if none is specified, is the built-in [Electron browser](https://on.cypress.io/guides/guides/launching-browsers#Electron-Browser).
+
+### Chrome
 
 ```yml
-name: E2E on Chrome
+name: Chrome
 on: push
 jobs:
-  cypress-run:
+  chrome:
     runs-on: ubuntu-22.04
-    # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
       - uses: actions/checkout@v3
@@ -110,17 +112,13 @@ jobs:
 
 ### Firefox
 
-In order to run Firefox, you need to use non-root user (Firefox security restriction).
-
 ```yml
 name: Firefox
 on: push
 jobs:
   firefox:
     runs-on: ubuntu-22.04
-    container:
-      image: cypress/browsers:node18.12.0-chrome106-ff106
-      options: --user 1001
+    name: E2E on Firefox
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
@@ -130,16 +128,15 @@ jobs:
 
 [![Firefox example](https://github.com/cypress-io/github-action/workflows/example-firefox/badge.svg?branch=master)](.github/workflows/example-firefox.yml)
 
-**Note:** the magical user id `1001` works because it matches permissions settings on the home folder, see issue [#104](https://github.com/cypress-io/github-action/issues/104)
-
 ### Edge
 
 ```yml
 name: Edge
 on: push
 jobs:
-  tests:
+  edge:
     runs-on: windows-latest
+    name: E2E on Edge
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
@@ -738,6 +735,14 @@ See [example-wait-on.yml](.github/workflows/example-wait-on.yml) workflow file.
 
 If this action times out waiting for the server to respond, please see [Debugging](#debugging) section in this README file.
 
+#### `wait-on` with Node.js 18+
+
+Under Node.js version 18 and later, `wait-on` may fail to recognize that a `localhost` server is running. This affects development web servers which do not listen on both IPv4 and IPv6 network stacks.
+
+- Check your server documentation to see if it can be started using `0.0.0.0` (all addresses) and use this if available. If this option is not available or does not resolve the issue then carry on to the next steps:
+- If the action log shows that `wait-on` is failing to connect to `127.0.0.1`, replace `localhost` by `[::1]` (the IPv6 loopback address)
+- If the action log shows that `wait-on` is failing to connect to `::1`, replace `localhost` by `127.0.0.1` (the IPv4 loopback address)
+
 ### Custom install command
 
 If you want to overwrite the install command
@@ -837,7 +842,7 @@ jobs:
         # take the current commit + timestamp together
         # the typical value would be something like
         # "sha-5d3fe...35d3-time-1620841214"
-        run: echo "::set-output name=value::sha-$GITHUB_SHA-time-$(date +"%s")"
+        run: echo "value=sha-$GITHUB_SHA-time-$(date +"%s")" >> $GITHUB_OUTPUT
   smoke-tests:
     needs: ['prepare']
     steps:
