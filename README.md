@@ -45,6 +45,10 @@
 - [Suppress test summary](#suppress-test-summary)
 - [more examples](#more-examples)
 
+Current examples contained in this repository are based on Cypress 12.x and can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) use Cypress `9.7.0` and are kept in the [examples/v9](./examples/v9) directory.
+
+Some older **external** examples, linked to by this document, are based solely on Cypress 9 and below and therefore use a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration). These may need modification to be applied to Cypress 10 and later. Each of these external links is listed with a `(legacy)` notation.
+
 ### Basic
 
 ```yml
@@ -438,7 +442,7 @@ See [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration
 
 ### Artifacts
 
-If you don't record the test run on Cypress Cloud, you can still store generated videos and screenshots as CI artifacts. See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) and the workflow example below
+If you don't record the test run on Cypress Cloud, you can still store generated videos and screenshots as CI artifacts. See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) (legacy) and the workflow example below
 
 ```yml
 name: Artifacts
@@ -964,7 +968,7 @@ jobs:
           working-directory: e2e
 ```
 
-See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) for example.
+See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) (legacy) for example.
 
 ### Yarn workspaces
 
@@ -1083,7 +1087,7 @@ See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-m
 
 ### Custom install
 
-Finally, you might not need this GH Action at all. For example, if you want to split the NPM dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself. See [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) for working example.
+Finally, you might not need this GH Action at all. For example, if you want to split the NPM dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself. See [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) for a working example.
 
 ### Install Cypress only
 
@@ -1125,23 +1129,23 @@ jobs:
         timeout-minutes: 5
 ```
 
-See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)
+See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) (legacy).
 
 ### More examples
 
 <!-- prettier-ignore-start -->
-Name | Description
---- | ---
-[cypress-gh-action-small-example](https://github.com/bahmutov/cypress-gh-action-small-example) | Runs tests and records them on Cypress Cloud
-[cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) | uses Yarn, and runs in parallel on several versions of Node, different browsers, and more.
-[cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) | splits install and running tests commands, runs Cypress from sub-folder
-[cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) | separate folder for Cypress dependencies
-[cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) | only install NPM dependencies, then install and cache Cypress binary yourself
-[test-personal-site](https://github.com/bahmutov/test-personal-site) | Testing an external website every night and by manually clicking a button.
-[cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) | Shows how to run different Cypress projects depending on changed files
-[cypress-examples](https://github.com/bahmutov/cypress-examples) | Shows separate install job from parallel test jobs
-[cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) | Shows a separate install job with the build step, and another job that runs the tests
-[cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example) | Run E2E and component tests using this action
+| Name                                                                                                    | Description                                                                               |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [cypress-gh-action-small-example](https://github.com/bahmutov/cypress-gh-action-small-example) (legacy) | Runs tests and records them on Cypress Cloud                                              |
+| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)  (legacy)            | Uses Yarn, and runs in parallel on several versions of Node, different browsers, and more |
+| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)                    | Splits install and running tests commands, runs Cypress from sub-folder                   |
+| [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) (legacy)       | Has separate folder for Cypress dependencies                                              |
+| [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) | Only install NPM dependencies, then install and cache Cypress binary yourself             |
+| [test-personal-site](https://github.com/bahmutov/test-personal-site) (legacy)                           | Testing an external website every night and by manually clicking a button                 |
+| [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) (legacy) | Shows how to run different Cypress projects depending on changed files                    |
+| [cypress-examples](https://github.com/bahmutov/cypress-examples)                                        | Shows separate install job from parallel test jobs                                        |
+| [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) (legacy)       | Shows a separate install job with the build step, and another job that runs the tests     |
+| [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example) (legacy) | Run E2E and component tests using this action                                             |
 <!-- prettier-ignore-end -->
 
 ## Notes
@@ -1257,7 +1261,7 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
 
 ### Docker image
 
-If your repository does not have `package.json` or `yarn.json` (maybe it contains a static site and does not need any dependencies), you can run Cypress tests using `cypress/included:...` [Cypress Docker images](https://github.com/cypress-io/cypress-docker-images/tree/master/included). In that case you don't even need this GH Action, instead use the Docker container and write `cypress run` command like this example from [cypress-gh-action-included](https://github.com/bahmutov/cypress-gh-action-included)
+If your repository does not have `package.json` or `yarn.json` (maybe it contains a static site and does not need any dependencies), you can run Cypress tests using `cypress/included:...` [Cypress Docker images](https://github.com/cypress-io/cypress-docker-images/tree/master/included). In that case you don't even need this GH Action, instead use the Docker container and write `cypress run` command like this example from [cypress-gh-action-included](https://github.com/bahmutov/cypress-gh-action-included) (legacy)
 
 ```yml
 name: included
