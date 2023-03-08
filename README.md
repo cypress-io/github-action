@@ -42,6 +42,7 @@
 - [timeouts](#timeouts) to avoid hanging CI jobs
 - [print Cypress info](#print-cypress-info) like detected browsers
 - [run tests nightly](#nightly-tests) or on any schedule
+- [Suppress test summary](#suppress-test-summary)
 - [more examples](#more-examples)
 
 Current examples contained in this repository are based on Cypress 12.x and can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) use Cypress `9.7.0` and are kept in the [examples/v9](./examples/v9) directory.
@@ -1346,6 +1347,27 @@ jobs:
 See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 [![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
+
+### Suppress test summary
+
+The default test summary can be suppressed by using the parameter `publish-summary` and setting its value to `false`.
+Sometimes users want to publish test summary using a specific action. 
+For example, a user running Cypress tests using a matrix and wants to retrieve the test summary for each matrix job and use a specific action that merges reports.
+
+```yml
+name: Example no summary
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          publish-summary: false
+```
 
 ## Changelog
 
