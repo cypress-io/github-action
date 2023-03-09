@@ -71,7 +71,7 @@ jobs:
 
 The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), Windows, and macOS without additional OS dependencies necessary.
 
-The default [test type](https://on.cypress.io/guides/overview/why-cypress#Test-types) is [End-to-End (E2E) Testing](https://on.cypress.io/guides/overview/why-cypress#End-to-end). For the alternative test type see the [Component Testing](#component-testing) section below.
+The default [test type](https://on.cypress.io/guides/overview/why-cypress#Test-types) is [End-to-End (E2E) Testing](https://on.cypress.io/guides/overview/why-cypress#End-to-end). Alternatively, [Component Testing](https://on.cypress.io/guides/overview/why-cypress#Component) can be utilized by referencing the [Component Testing](#component-testing) section below.
 
 **Note:** this package assumes that `cypress` is declared as a development dependency in the `package.json` file. The `cypress` NPM module is required to run Cypress via its [NPM module API](https://on.cypress.io/module-api).
 
