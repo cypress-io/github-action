@@ -55,6 +55,10 @@
 
 Current examples contained in this repository are based on Cypress 12.x and can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) use Cypress `9.7.0` and are kept in the [examples/v9](./examples/v9) directory.
 
+Live examples, such as [example-basic.yml](.github/workflows/example-basic.yml) are shown together with a status badge. Click on the status badge to read the source code of the workflow, for example
+
+[![End-to-End example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
+
 Some older **external** examples, linked to by this document, are based solely on Cypress 9 and below and therefore use a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration). These may need modification to be applied to Cypress 10 and later. Each of these external links is listed with a `(legacy)` notation.
 
 **Note:** this package assumes that [cypress](https://www.npmjs.com/package/cypress) is declared as a development dependency in the [package.json](https://docs.npmjs.com/creating-a-package-json-file) file. The [cypress npm module](https://www.npmjs.com/package/cypress) is required to run Cypress via its [Module API](https://on.cypress.io/module-api).
@@ -262,7 +266,7 @@ jobs:
           CYPRESS_port: 4222
 ```
 
-For more examples, see the workflow example below.
+For more examples, see the workflows below, using environment variables for [recording](#record-test-results-on-cypress-cloud).
 
 [![Env example](https://github.com/cypress-io/github-action/workflows/example-env/badge.svg?branch=master)](.github/workflows/example-env.yml)
 
@@ -287,7 +291,7 @@ jobs:
           spec: cypress/e2e/spec1.cy.js
 ```
 
-You can pass multiple specs and wild card patterns using multi-line parameter, see [example-config.yml](./.github/workflows/example-config.yml):
+You can pass multiple specs and wild card patterns using multi-line parameter, see [example-config.yml](.github/workflows/example-config.yml):
 
 ```yml
 spec: |
@@ -618,6 +622,8 @@ During staged rollout of a new GitHub-hosted runner version, GitHub may provide 
     component: true
 ```
 
+See the example project [component-test](examples/component-tests/) and the [example-component-test.yml](.github/workflows/example-component-test.yml) workflow for more details.
+
 ### Build app
 
 You can run a build step before starting tests
@@ -733,6 +739,8 @@ jobs:
 
 [![wait-on example](https://github.com/cypress-io/github-action/workflows/example-wait-on/badge.svg?branch=master)](.github/workflows/example-wait-on.yml)
 
+[![Webpack Dev Server example](https://github.com/cypress-io/github-action/workflows/example-webpack/badge.svg?branch=master)](.github/workflows/example-webpack.yml) (also uses `wait-on`)
+
 By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout in seconds using `wait-on-timeout`.
 
 ```yml
@@ -744,7 +752,7 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
     wait-on-timeout: 120
 ```
 
-See also [![Webpack Dev Server example](https://github.com/cypress-io/github-action/workflows/example-webpack/badge.svg?branch=master)](.github/workflows/example-webpack.yml)
+
 
 You can wait for multiple URLs to respond by separating urls with a comma
 
@@ -760,7 +768,7 @@ You can wait for multiple URLs to respond by separating urls with a comma
 
 The action will wait for the first url to respond, then will check the second url, and so on.
 
-You can even use your own command (usually by using `npm`, `yarn`, `npx`) to wait for the server to respond. For example, if you want to use [wait-on](https://github.com/jeffbski/wait-on) utility to ping the server and run the Cypress tests after the server responds:
+You can even use your own command (usually by using `npm`, `yarn`, `npx`) to wait for the server to respond. For example, if you want to use the [wait-on](https://github.com/jeffbski/wait-on) utility to ping the server and run the Cypress tests after the server responds:
 
 ```yml
 - uses: cypress-io/github-action@v5
@@ -834,7 +842,7 @@ steps:
 
 **Caution**: using the action parameter `command` causes multiple other parameters to be ignored including: `auto-cancel-after-failures`, `browser`, `ci-build-id`, `command-prefix`, `component`, `config`, `config-file`, `env`, `group`, `headed`, `parallel`, `project`, `publish-summary`, `quiet`, `record`, `spec` and `tag`.
 
-See [.github/workflows/example-custom-command.yml](.github/workflows/example-custom-command.yml) file.
+See [example-custom-command.yml](.github/workflows/example-custom-command.yml) file.
 
 ### Custom build id
 
@@ -868,7 +876,7 @@ jobs:
 
 ### Robust custom build id
 
-If you re-run the GitHub workflow, if you use the same custom build id during recording, Cypress Cloud will cancel the run with "Build already finished" error. To avoid this, you need to generate a _new_ custom build id on every workflow re-run. A good solution showing in the [example-custom-ci-build-id.yml](./.github/workflows/example-custom-ci-build-id.yml) file is to run a common job first that just generates a new random ID. This ID can be used by the testing jobs to tie the build together. If the user re-runs the workflow a new unique build id is generated, allowing recording the new Cypress Cloud run.
+If you re-run the GitHub workflow, if you use the same custom build id during recording, Cypress Cloud will cancel the run with "Build already finished" error. To avoid this, you need to generate a _new_ custom build id on every workflow re-run. A good solution showing in the [example-custom-ci-build-id.yml](.github/workflows/example-custom-ci-build-id.yml) file is to run a common job first that just generates a new random ID. This ID can be used by the testing jobs to tie the build together. If the user re-runs the workflow a new unique build id is generated, allowing recording the new Cypress Cloud run.
 
 ```yml
 jobs:
@@ -897,7 +905,7 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 ```
 
-See the [example-custom-ci-build-id.yml](./.github/workflows/example-custom-ci-build-id.yml) for the full workflow
+See the [example-custom-ci-build-id.yml](.github/workflows/example-custom-ci-build-id.yml) for the full workflow.
 
 ### Working directory
 
@@ -1050,8 +1058,6 @@ jobs:
           working-directory: examples/yarn-classic
 ```
 
-See [example-yarn-classic.yml](.github/workflows/example-yarn-classic.yml) for an example.
-
 [![Yarn classic example](https://github.com/cypress-io/github-action/workflows/example-yarn-classic/badge.svg?branch=master)](.github/workflows/example-yarn-classic.yml)
 
 ### Yarn Modern
@@ -1073,8 +1079,6 @@ jobs:
           working-directory: examples/yarn-modern
           install-command: yarn install
 ```
-
-See [example-yarn-modern.yml](.github/workflows/example-yarn-modern.yml) for an example.
 
 [![Yarn Modern example](https://github.com/cypress-io/github-action/workflows/example-yarn-modern/badge.svg?branch=master)](.github/workflows/example-yarn-modern.yml)
 
@@ -1214,7 +1218,7 @@ jobs:
           working-directory: e2e
 ```
 
-See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) for working example.
+See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) for a working example.
 
 ### Custom install
 
@@ -1237,8 +1241,6 @@ If the project has many dependencies, but you want to install just Cypress you c
   with:
     install: false
 ```
-
-See [.github/workflows/example-install-only.yml](.github/workflows/example-install-only.yml) file.
 
 [![Install only Cypress example](https://github.com/cypress-io/github-action/workflows/example-install-only/badge.svg?branch=master)](.github/workflows/example-install-only.yml)
 
@@ -1308,7 +1310,7 @@ You can set the environment variable using GitHub UI interface, or in the workfl
     DEBUG: '@cypress/github-action'
 ```
 
-See the [example-debug.yml](./.github/workflows/example-debug.yml) workflow file.
+See the [example-debug.yml](.github/workflows/example-debug.yml) workflow file.
 
 ### Logs from the test runner
 
@@ -1450,8 +1452,6 @@ jobs:
       - name: Cypress nightly tests 🌃
         uses: cypress-io/github-action@v5
 ```
-
-See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 
 [![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
 
