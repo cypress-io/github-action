@@ -4,7 +4,7 @@
 
 ## Examples
 
-- [Basic (E2E)](#basic-e2e) testing
+- [End-to-End](#end-to-end-testing) testing
 - [Component](#component-testing) testing
 - [Explicit version](#explicit-version)
 - Run tests in a given [browser](#browser)
@@ -50,7 +50,7 @@ Current examples contained in this repository are based on Cypress 12.x and can 
 
 Some older **external** examples, linked to by this document, are based solely on Cypress 9 and below and therefore use a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration). These may need modification to be applied to Cypress 10 and later. Each of these external links is listed with a `(legacy)` notation.
 
-### Basic E2E
+### End-to-End Testing
 
 ```yml
 name: End-to-end tests
@@ -67,11 +67,11 @@ jobs:
         uses: cypress-io/github-action@v5
 ```
 
-[![Basic example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
+[![End-to-End example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
 
 The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), Windows, and macOS without additional OS dependencies necessary.
 
-The default [test type](https://on.cypress.io/guides/overview/why-cypress#Test-types) is [End-to-End (E2E) Testing](https://on.cypress.io/guides/overview/why-cypress#End-to-end). Alternatively, [Component Testing](https://on.cypress.io/guides/overview/why-cypress#Component) can be utilized by referencing the [Component Testing](#component-testing) section below.
+This workflow uses the default [test type](https://on.cypress.io/guides/overview/why-cypress#Test-types) of [End-to-End (E2E) Testing](https://on.cypress.io/guides/overview/why-cypress#End-to-end). Alternatively, [Component Testing](https://on.cypress.io/guides/overview/why-cypress#Component) can be utilized by referencing the [Component Testing](#component-testing) section below.
 
 **Note:** this package assumes that `cypress` is declared as a development dependency in the `package.json` file. The `cypress` NPM module is required to run Cypress via its [NPM module API](https://on.cypress.io/module-api).
 
@@ -93,6 +93,8 @@ jobs:
         with:
           component: true
 ```
+
+[![Component Testing example](https://github.com/cypress-io/github-action/workflows/example-component-test/badge.svg?branch=master)](.github/workflows/example-component-test.yml)
 
 See the example project [component-tests](examples/component-tests/) and the [example-component-test.yml](.github/workflows/example-component-test.yml) workflow for more details.
 
