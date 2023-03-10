@@ -30,7 +30,15 @@ cd install-command
 yarn add cypress --dev --exact
 cd ..
 
+# examples/yarn-classic
+echo
+echo updating examples/yarn-classic to cypress@latest
+cd yarn-classic
+yarn add cypress --dev --exact
+cd ..
+
 # examples/basic-pnpm (pnpm)
+echo
 echo updating pnpm example to Cypress latest version
 echo
 echo updating examples/basic-pnpm to cypress@latest
