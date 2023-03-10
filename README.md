@@ -36,6 +36,7 @@
 - generate a [robust custom build id](#robust-custom-build-id) to allow re-running the workflow
 - use different [working-directory](#working-directory)
 - use [Yarn Classic](#yarn-classic)
+- use [Yarn Modern](#yarn-modern)
 - use [Yarn workspaces](#yarn-workspaces)
 - use [custom cache key](#custom-cache-key)
 - run tests on multiple [Node versions](#node-versions)
@@ -1018,7 +1019,29 @@ See [example-yarn-classic.yml](.github/workflows/example-yarn-classic.yml) for a
 
 [![Yarn classic example](https://github.com/cypress-io/github-action/workflows/example-yarn-classic/badge.svg?branch=master)](.github/workflows/example-yarn-classic.yml)
 
-See below under [Yarn Modern](#yarn-modern) (version 2 and later) for instructions on installing dependencies using this later version.
+### Yarn Modern
+
+To install dependencies using a `yarn.lock` file from [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) you need to override the default [Yarn 1 (Classic)](https://classic.yarnpkg.com/) installation command `yarn --frozen-lockfile`. You can do this by using the `install-command` parameter and specifying `yarn install` for example:
+
+```yaml
+name: example-yarn-modern
+on: push
+jobs:
+  yarn-classic:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          working-directory: examples/yarn-modern
+          install-command: yarn install
+```
+
+See [example-yarn-modern.yml](.github/workflows/example-yarn-modern.yml) for an example.
+
+[![Yarn Modern example](https://github.com/cypress-io/github-action/workflows/example-yarn-modern/badge.svg?branch=master)](.github/workflows/example-yarn-modern.yml)
 
 ### Yarn workspaces
 
@@ -1200,17 +1223,7 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 
 ### Installation
 
-This action installs local dependencies using lock files. If `yarn.lock` file is found, the install uses `yarn --frozen-lockfile` command. Otherwise it expects to find `package-lock.json` and install using `npm ci` command.
-
-#### Yarn Modern
-
-The above default `yarn` installation command can be replaced for [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) using the `install-command` parameter, for example:
-
-```yml
-- uses: cypress-io/github-action@v5
-  with:
-    install-command: yarn install
-```
+This action installs local dependencies using lock files. If `yarn.lock` file is found, the install uses `yarn --frozen-lockfile` command. Otherwise it expects to find `package-lock.json` and install using `npm ci` command. See the [Yarn Modern](#yarn-modern) example for instructions on installing dependencies using this later version.
 
 #### Minimum Node.js
 
