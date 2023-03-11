@@ -8,5 +8,7 @@ on:
       - opened
 jobs:
   add-to-triage-project-board:
+    # skip in fork
+    if: github.repository == 'cypress-io/github-action'
     uses: cypress-io/cypress/.github/workflows/triage_add_to_project.yml@develop
     secrets: inherit

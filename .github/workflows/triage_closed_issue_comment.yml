@@ -5,5 +5,7 @@ on:
       - created
 jobs:
   closed-issue-comment:
+    # skip in fork
+    if: github.repository == 'cypress-io/github-action'
     uses: cypress-io/cypress/.github/workflows/triage_closed_issue_comment.yml@develop
     secrets: inherit
