@@ -1144,7 +1144,6 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 | [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) (legacy) | Shows how to run different Cypress projects depending on changed files                    |
 | [cypress-examples](https://github.com/bahmutov/cypress-examples)                                        | Shows separate install job from parallel test jobs                                        |
 | [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) (legacy)       | Shows a separate install job with the build step, and another job that runs the tests     |
-| [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example) (legacy) | Run E2E and component tests using this action                                             |
 <!-- prettier-ignore-end -->
 
 ## Notes
