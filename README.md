@@ -1145,7 +1145,6 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 | [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) (legacy) | Shows how to run different Cypress projects depending on changed files                    |
 | [cypress-examples](https://github.com/bahmutov/cypress-examples)                                        | Shows separate install job from parallel test jobs                                        |
 | [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) (legacy)       | Shows a separate install job with the build step, and another job that runs the tests     |
-| [cypress-react-component-example](https://github.com/bahmutov/cypress-react-component-example) (legacy) | Run E2E and component tests using this action                                             |
 <!-- prettier-ignore-end -->
 
 ## Notes
@@ -1351,7 +1350,7 @@ See the [example-cron.yml](./.github/workflows/example-cron.yml) workflow.
 ### Suppress test summary
 
 The default test summary can be suppressed by using the parameter `publish-summary` and setting its value to `false`.
-Sometimes users want to publish test summary using a specific action. 
+Sometimes users want to publish test summary using a specific action.
 For example, a user running Cypress tests using a matrix and wants to retrieve the test summary for each matrix job and use a specific action that merges reports.
 
 ```yml
