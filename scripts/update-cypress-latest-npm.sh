@@ -5,7 +5,7 @@
 #
 npmExamples=(
     'basic'
-    'chrome'
+    'browser'
     'component-tests'
     'config'
     'custom-command'
