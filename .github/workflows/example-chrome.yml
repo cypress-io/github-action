@@ -23,60 +23,46 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          working-directory: examples/v9/chrome
-
-      - name: Electron
-        uses: ./
-        with:
-          working-directory: examples/v9/chrome
-
-      # store screenshot captured during the test
-      - uses: actions/upload-artifact@v3
-        with:
-          name: screenshots-in-electron-v9
-          path: examples/v9/chrome/cypress/screenshots
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v9/chrome
+          working-directory: examples/v9/browser
 
       - name: Chrome
         uses: ./
         with:
-          working-directory: examples/v9/chrome
+          working-directory: examples/v9/browser
           browser: chrome
 
       - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-chrome-v9
-          path: examples/v9/chrome/cypress/screenshots
+          path: examples/v9/browser/cypress/screenshots
 
       - uses: actions/upload-artifact@v3
         with:
           name: video-in-chrome-v9
-          path: examples/v9/chrome/cypress/videos
+          path: examples/v9/browser/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v9/chrome
+        working-directory: examples/v9/browser
 
       - name: Chrome headed
         uses: ./
         with:
-          working-directory: examples/v9/chrome
+          working-directory: examples/v9/browser
           browser: chrome
           headed: true
 
       - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-headed-chrome-v9
-          path: examples/v9/chrome/cypress/screenshots
+          path: examples/v9/browser/cypress/screenshots
 
       - uses: actions/upload-artifact@v3
         with:
           name: video-in-headed-chrome-v9
-          path: examples/v9/chrome/cypress/videos
+          path: examples/v9/browser/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v9/chrome
+        working-directory: examples/v9/browser
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -93,57 +79,43 @@ jobs:
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          working-directory: examples/chrome
-
-      - name: Electron
-        uses: ./
-        with:
-          working-directory: examples/chrome
-
-      # store screenshot captured during the test
-      - uses: actions/upload-artifact@v3
-        with:
-          name: screenshots-in-electron
-          path: examples/chrome/cypress/screenshots
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+          working-directory: examples/browser
 
       - name: Chrome
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/browser
           browser: chrome
 
       - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-chrome
-          path: examples/chrome/cypress/screenshots
+          path: examples/browser/cypress/screenshots
 
       - uses: actions/upload-artifact@v3
         with:
           name: video-in-chrome
-          path: examples/chrome/cypress/videos
+          path: examples/browser/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/browser
 
       - name: Chrome headless
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/browser
           browser: chrome
           headed: false
 
       - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-headless-chrome
-          path: examples/chrome/cypress/screenshots
+          path: examples/browser/cypress/screenshots
 
       - uses: actions/upload-artifact@v3
         with:
           name: video-in-headless-chrome
-          path: examples/chrome/cypress/videos
+          path: examples/browser/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+        working-directory: examples/browser

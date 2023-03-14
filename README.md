@@ -141,7 +141,7 @@ name: Edge
 on: push
 jobs:
   edge:
-    runs-on: windows-latest
+    runs-on: ubuntu-22.04
     name: E2E on Edge
     steps:
       - uses: actions/checkout@v3
@@ -1410,6 +1410,8 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                      |
 | v2      | Cypress runs using the [NPM module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
 | v1      | *This version is no longer runnable in GitHub due to security changes.*                                                                  |
+
+*Note: [GitHub announced](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) their plan to disable `save-state` and `set-output` commands by May 31, 2023. This will prevent [cypress-io/github-action](https://github.com/cypress-io/github-action) version [v4.2.1](https://github.com/cypress-io/github-action/releases/tag/v4.2.1), and earlier, running after this date since they use `set-output`. Affected users should update to using `v5` of the [cypress-io/github-action](https://github.com/cypress-io/github-action) action before the deadline.*
 
 ## License
 
