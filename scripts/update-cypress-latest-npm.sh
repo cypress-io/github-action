@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e # fail on error
 #
 # All examples using npm technology are updated to
 # Cypress latest version
