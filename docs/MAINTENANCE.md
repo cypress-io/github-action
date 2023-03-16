@@ -40,6 +40,12 @@ Again, this needs to be repeated if you change the base node version using nvm.
 
 - [Visual Studio Code](https://code.visualstudio.com/) or other editor
 
+Under Microsoft Windows it may be necessary to also execute the following preparatory command:
+
+```bash
+npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe" --location user
+```
+
 ## Updating examples
 
 When a new version of [Cypress](https://docs.cypress.io/guides/references/changelog) is published, the examples can be updated.

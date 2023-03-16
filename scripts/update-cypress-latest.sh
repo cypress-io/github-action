@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e # fail on error
 #
 # All examples are updated to Cypress latest version
 #
@@ -8,6 +9,11 @@
 # npm install pnpm -g
 # The VScode editor is also used in the last step if available.
 #
+# First check if the required package managers are installed
+./scripts/check-package-manager-npm.sh
+./scripts/check-package-managers-other.sh
+# then proceed to updating the examples
+echo
 ./scripts/update-cypress-latest-npm.sh
 ./scripts/update-cypress-latest-other.sh
 
