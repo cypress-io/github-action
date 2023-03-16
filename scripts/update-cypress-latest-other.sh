@@ -1,8 +1,11 @@
 #!/bin/bash
+set -e # fail on error
 #
 # Examples using yarn and pnpm package managers are
 # updated to Cypress latest version
 #
+# Make sure that pnpm and yarn are installed
+./scripts/check-package-managers-other.sh
 
 echo updating yarn examples to Cypress latest version
 cd examples
