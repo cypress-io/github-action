@@ -41,7 +41,8 @@
     "find-yarn-workspace-root": "2.0.0",
     "got": "11.8.6",
     "hasha": "5.2.2",
-    "quote": "0.4.0"
+    "quote": "0.4.0",
+    "supports-color": "9.3.1"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
