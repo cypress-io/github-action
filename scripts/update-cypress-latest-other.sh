@@ -40,6 +40,13 @@ cd yarn-classic
 yarn add cypress --dev --exact
 cd ..
 
+# examples/yarn-modern
+echo
+echo updating examples/yarn-modern to cypress@latest
+cd yarn-modern
+yarn add cypress --dev --exact
+cd ..
+
 # examples/basic-pnpm (pnpm)
 echo
 echo updating pnpm example to Cypress latest version
