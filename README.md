@@ -35,6 +35,7 @@
 - pass [custom build id](#custom-build-id) when recording to Cypress Cloud
 - generate a [robust custom build id](#robust-custom-build-id) to allow re-running the workflow
 - use different [working-directory](#working-directory)
+- use [pnpm](#pnpm)
 - use [Yarn Classic](#yarn-classic)
 - use [Yarn Modern](#yarn-modern)
 - use [Yarn workspaces](#yarn-workspaces)
@@ -996,6 +997,31 @@ jobs:
 
 See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) (legacy) for example.
 
+### pnpm
+
+The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`): to install `pnpm` include [pnpm/action-setup](https://github.com/pnpm/action-setup) in your workflow.  If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
+
+```yaml
+name: example-basic-pnpm
+on: push
+jobs:
+  basic-pnpm:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          working-directory: examples/basic-pnpm
+```
+
+[![pnpm example](https://github.com/cypress-io/github-action/workflows/example-basic-pnpm/badge.svg?branch=master)](.github/workflows/example-basic-pnpm.yml)
+
 ### Yarn Classic
 
 If a `yarn.lock` file is found, the action uses the [Yarn 1 (Classic)](https://classic.yarnpkg.com/) command `yarn --frozen-lockfile` by default to install dependencies.
@@ -1223,7 +1249,15 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 
 ### Installation
 
-This action installs local dependencies using lock files. If `yarn.lock` file is found, the install uses `yarn --frozen-lockfile` command. Otherwise it expects to find `package-lock.json` and install using `npm ci` command. See the [Yarn Modern](#yarn-modern) example for instructions on installing dependencies using this later version.
+This action installs local dependencies using lock files. Ensure that exactly one type of lock file is used for each project or working-directory from the following supported package managers:
+
+ | Lock file           | Package Manager                                                                                  | Installation command             |
+ | ------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------- |
+ | `package-lock.json` | [npm](https://docs.npmjs.com/cli/v9/commands/npm-ci)                                             | `npm ci`                         |
+ | `pnpm-lock.yaml`    | [pnpm](https://pnpm.io/cli/install#--frozen-lockfile)                                            | `pnpm install --frozen-lockfile` |
+ | `yarn.lock`         | [Yarn Classic](https://classic.yarnpkg.com/en/docs/cli/install#toc-yarn-install-frozen-lockfile) | `yarn --frozen-lockfile`         |
+
+See section [Yarn Modern](#yarn-modern) for information about using Yarn version 2 and later.
 
 #### Minimum Node.js
 
@@ -1441,6 +1475,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | Version | Changes                                                                                                                                  |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | v5      | Examples and workflows additionally use Node.js 18. Use of the end-of-life Node.js version 12 in examples and workflows is removed.      |
+| v4.2.0  | Support for pnpm added.                                                                                      |
 | v4      | Support for Cypress 10 and later versions is added.                                                                                      |
 | v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                      |
 | v2      | Cypress runs using the [NPM module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
