@@ -409,7 +409,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [14, 16, 18]
+        node: [14, 16, 18, 19]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -435,7 +435,7 @@ The recording will have tags as labels on the run.
 
 ![Tags](images/tags.png)
 
-You can pass multiple tags using commas like `tag: node-10,nightly,staging`.
+You can pass multiple tags using commas like `tag: node-18,nightly,staging`.
 
 ### Specify auto cancel after failures
 
@@ -1107,7 +1107,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [14, 16, 18]
+        node: [14, 16, 18, 19]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1141,7 +1141,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: [14, 16, 18]
+        node: [14, 16, 18, 19]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v3
@@ -1152,8 +1152,6 @@ jobs:
 ```
 
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
-
-**Note:** because this action uses `npm ci` and `npx` commands, it requires at least Node 8.12 that includes the version of NPM with those commands.
 
 ### Split install and tests
 
@@ -1259,9 +1257,15 @@ This action installs local dependencies using lock files. Ensure that exactly on
 
 See section [Yarn Modern](#yarn-modern) for information about using Yarn version 2 and later.
 
-#### Minimum Node.js
+#### Node.js Support
 
-This action uses several production dependencies. The minimum Node version required to run this action depends on the minimum Node version required by the dependencies.
+Node.js is required to run this action. The current version `v5` supports:
+
+- **Node.js** 14.x
+- **Node.js** 16.x
+- **Node.js** 18.x and above
+
+and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
 
 ## Debugging
 
