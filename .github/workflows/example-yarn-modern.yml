@@ -1,0 +1,39 @@
+name: example-yarn-modern
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
+
+  yarn-modern-v9:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Custom Yarn command
+        uses: ./
+        with:
+          working-directory: examples/v9/yarn-modern
+          # https://yarnpkg.com/cli/install
+          install-command: yarn install
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+  yarn-modern:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Custom Yarn command
+        uses: ./
+        with:
+          working-directory: examples/yarn-modern
+          # https://yarnpkg.com/cli/install
+          install-command: yarn install
