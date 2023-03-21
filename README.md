@@ -814,7 +814,7 @@ jobs:
 
 ### Custom test command
 
-You can overwrite the Cypress run command with your own
+You can overwrite the Cypress run command with your own command.
 
 ```yml
 steps:
@@ -826,6 +826,8 @@ steps:
     with:
       command: npm run e2e:ci
 ```
+
+**Caution**: using the action parameter `command` causes multiple other parameters to be ignored including: `auto-cancel-after-failures`, `browser`, `ci-build-id`, `command-prefix`, `component`, `config`, `config-file`, `env`, `group`, `headed`, `parallel`, `project`, `publish-summary`, `quiet`, `record`, `spec` and `tag`.
 
 See [.github/workflows/example-custom-command.yml](.github/workflows/example-custom-command.yml) file.
 
