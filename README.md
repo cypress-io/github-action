@@ -999,7 +999,7 @@ See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action
 
 ### pnpm
 
-The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`): to install `pnpm` include [pnpm/action-setup](https://github.com/pnpm/action-setup) in your workflow.  If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
+The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`): to install `pnpm` include [pnpm/action-setup](https://github.com/pnpm/action-setup) in your workflow. If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
 
 ```yaml
 name: example-basic-pnpm
