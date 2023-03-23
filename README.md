@@ -409,7 +409,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [14, 16, 18]
+        node: [14, 16, 18, 19]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -435,7 +435,7 @@ The recording will have tags as labels on the run.
 
 ![Tags](images/tags.png)
 
-You can pass multiple tags using commas like `tag: node-10,nightly,staging`.
+You can pass multiple tags using commas like `tag: node-18,nightly,staging`.
 
 ### Specify auto cancel after failures
 
@@ -1107,7 +1107,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [14, 16, 18]
+        node: [14, 16, 18, 19]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1141,7 +1141,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: [14, 16, 18]
+        node: [14, 16, 18, 19]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v3
@@ -1152,8 +1152,6 @@ jobs:
 ```
 
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
-
-**Note:** because this action uses `npm ci` and `npx` commands, it requires at least Node 8.12 that includes the version of NPM with those commands.
 
 ### Split install and tests
 
@@ -1259,9 +1257,15 @@ This action installs local dependencies using lock files. Ensure that exactly on
 
 See section [Yarn Modern](#yarn-modern) for information about using Yarn version 2 and later.
 
-#### Minimum Node.js
+#### Node.js Support
 
-This action uses several production dependencies. The minimum Node version required to run this action depends on the minimum Node version required by the dependencies.
+Node.js is required to run this action. The current version `v5` supports:
+
+- **Node.js** 14.x
+- **Node.js** 16.x
+- **Node.js** 18.x and above
+
+and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
 
 ## Debugging
 
@@ -1333,7 +1337,9 @@ If you add `workflow_dispatch` event to your workflow, you will be able to start
 
 ### Outputs
 
-This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/dashboard-introduction), see [action.yml](action.yml). To use this output:
+This action sets a GitHub step output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/dashboard-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `dashboardUrl` step output is saved.
+
+This is an example of using the step output `dashboardUrl`:
 
 ```yml
 - name: Cypress tests
@@ -1342,7 +1348,7 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
   # to its output values later
   id: cypress
   # Continue the build in case of an error, as we need to set the
-  # commit status in the next step, both in case of success and failure
+  # commit status in the next step, both in case of success or failure
   continue-on-error: true
   with:
     record: true
@@ -1356,25 +1362,7 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
-**Note:** every GH workflow step can have `outcome` and `conclusion` properties. See the documentation at [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context) page. In particular, the `output` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use the next steps that follow.
-
-### Docker image
-
-If your repository does not have `package.json` or `yarn.json` (maybe it contains a static site and does not need any dependencies), you can run Cypress tests using `cypress/included:...` [Cypress Docker images](https://github.com/cypress-io/cypress-docker-images/tree/master/included). In that case you don't even need this GH Action, instead use the Docker container and write `cypress run` command like this example from [cypress-gh-action-included](https://github.com/bahmutov/cypress-gh-action-included) (legacy)
-
-```yml
-name: included
-on: push
-jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
-    # Docker image with Cypress pre-installed
-    # https://github.com/cypress-io/cypress-docker-images/tree/master/included
-    container: cypress/included:3.8.3
-    steps:
-      - uses: actions/checkout@v3
-      - run: cypress run
-```
+**Note:** every GitHub workflow step can have `outcome` and `conclusion` properties. See the GitHub [Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) documentation section [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context). In particular, the `outcome` or `conclusion` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use in any following steps.
 
 ### Print Cypress info
 
