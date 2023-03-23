@@ -1337,7 +1337,9 @@ If you add `workflow_dispatch` event to your workflow, you will be able to start
 
 ### Outputs
 
-This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/dashboard-introduction), see [action.yml](action.yml). To use this output:
+This action sets a GitHub step output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/dashboard-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `dashboardUrl` step output is saved.
+
+This is an example of using the step output `dashboardUrl`:
 
 ```yml
 - name: Cypress tests
@@ -1346,7 +1348,7 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
   # to its output values later
   id: cypress
   # Continue the build in case of an error, as we need to set the
-  # commit status in the next step, both in case of success and failure
+  # commit status in the next step, both in case of success or failure
   continue-on-error: true
   with:
     record: true
@@ -1360,7 +1362,7 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
-**Note:** every GH workflow step can have `outcome` and `conclusion` properties. See the documentation at [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context) page. In particular, the `output` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use the next steps that follow.
+**Note:** every GitHub workflow step can have `outcome` and `conclusion` properties. See the GitHub [Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) documentation section [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context). In particular, the `outcome` or `conclusion` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use in any following steps.
 
 ### Print Cypress info
 
