@@ -74454,18 +74454,29 @@ const packageLockFilename = path.join(
 )
 
 const useYarn = () => fs.existsSync(yarnFilename)
-
 const usePnpm = () => fs.existsSync(pnpmLockFilename)
+const useNpm = () => fs.existsSync(packageLockFilename)
 
 const lockHash = () => {
   const lockFilename = useYarn()
     ? yarnFilename
     : usePnpm()
     ? pnpmLockFilename
-    : packageLockFilename
+    : useNpm()
+    ? packageLockFilename
+    : noLockFile()
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
+}
+
+const noLockFile = () => {
+  core.error(
+    `Action failed. Missing package manager lockfile. ` +
+      `Expecting one of package-lock.json (npm), pnpm-lock.yaml (pnpm) or yarn.lock (yarn) in working-directory ` +
+      workingDirectory
+  )
+  process.exit(1)
 }
 
 // enforce the same NPM cache folder across different operating systems
