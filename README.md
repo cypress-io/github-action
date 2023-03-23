@@ -1362,24 +1362,6 @@ This GH Action sets an output `dashboardUrl` if the run was recorded on [Cypress
 
 **Note:** every GH workflow step can have `outcome` and `conclusion` properties. See the documentation at [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context) page. In particular, the `output` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use the next steps that follow.
 
-### Docker image
-
-If your repository does not have `package.json` or `yarn.json` (maybe it contains a static site and does not need any dependencies), you can run Cypress tests using `cypress/included:...` [Cypress Docker images](https://github.com/cypress-io/cypress-docker-images/tree/master/included). In that case you don't even need this GH Action, instead use the Docker container and write `cypress run` command like this example from [cypress-gh-action-included](https://github.com/bahmutov/cypress-gh-action-included) (legacy)
-
-```yml
-name: included
-on: push
-jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
-    # Docker image with Cypress pre-installed
-    # https://github.com/cypress-io/cypress-docker-images/tree/master/included
-    container: cypress/included:3.8.3
-    steps:
-      - uses: actions/checkout@v3
-      - run: cypress run
-```
-
 ### Print Cypress info
 
 Sometimes you might want to print Cypress and OS information, like the list of detected browsers. You can use the [`cypress info`](https://on.cypress.io/command-line#cypress-info) command for this.
