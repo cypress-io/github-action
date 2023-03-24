@@ -44,6 +44,7 @@ cd ..
 echo
 echo updating examples/yarn-modern to cypress@latest
 cd yarn-modern
+yarn set version latest
 yarn add cypress --dev --exact
 cd ..
 
