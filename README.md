@@ -6,7 +6,7 @@
 
 - [End-to-End](#end-to-end-testing) testing
 - [Component](#component-testing) testing
-- [Explicit version](#explicit-version)
+- Select [action version](#action-version)
 - Run tests in a given [browser](#browser)
   - using [Chrome](#chrome)
   - using [Firefox](#firefox)
@@ -102,25 +102,27 @@ jobs:
 
 See the example project [component-tests](examples/component-tests/) and the [example-component-test.yml](.github/workflows/example-component-test.yml) workflow for more details.
 
-### Explicit version
+### Action version
 
 **Best practice:**
 
-Our examples specify the tag of the action to use listing only the major version `@v5`
+Our examples specify using branch [v5](https://github.com/cypress-io/github-action/tree/v5) which is the action's latest major version:
 
 ```yml
 - name: Cypress run
   uses: cypress-io/github-action@v5
 ```
 
-When using `cypress-io/github-action@v5` from your workflow file, you automatically will be using the latest [tagged version from this repository](https://github.com/cypress-io/github-action/tags). If you want to precisely control the version of this module, use the full tag version, for example:
+When using `cypress-io/github-action@v5` from your workflow file, you will automatically use the latest [tag](https://github.com/cypress-io/github-action/tags) from branch [v5](https://github.com/cypress-io/github-action/tree/v5).
+
+Alternatively, to mitigate unforeseen breaks, bind to a specific [tag](https://github.com/cypress-io/github-action/tags), for example:
 
 ```yml
 - name: Cypress run
   uses: cypress-io/github-action@v5.1.0
 ```
 
-By using the full version tag, you will avoid accidentally using a newer version of the action.
+The changes associated with each tag are shown under GitHub's [releases](https://github.com/cypress-io/github-action/releases) list. Refer also to the [Changelog](#changelog) for an overview of major changes.
 
 ### Browser
 
