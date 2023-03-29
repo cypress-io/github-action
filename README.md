@@ -1013,7 +1013,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
