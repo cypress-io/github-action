@@ -9,7 +9,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "12.8.1",
+    "cypress": "12.9.0",
     "webpack": "^5.76.1",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.12.0"
