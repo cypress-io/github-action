@@ -2,8 +2,8 @@
 
 This document describes topics useful to contributors to this repository. The repository's purpose is to provide a GitHub JavaScript action which is published to:
 
-1. the npm JavaScript Package Registry as [@cypress/github-action](https://www.npmjs.com/package/@cypress/github-action)
-2. the GitHub Marketplace as [cypress-io/github-action](https://github.com/marketplace/actions/cypress-io#cypress-iogithub-action--)
+1. npm's JavaScript Package Registry as [@cypress/github-action](https://www.npmjs.com/package/@cypress/github-action)
+2. GitHub's Marketplace as [cypress-io/github-action](https://github.com/marketplace/actions/cypress-io#cypress-iogithub-action--)
 
 You can read the GitHub document [Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action) for background information on how JavaScript actions for GitHub are created and how they work.
 
@@ -21,7 +21,7 @@ The action runs from the [dist](dist) directory, which requires a `build` step t
 1. If you are a new external contributor, then first fork the repository (see GitHub documentation [About forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)).
 1. Create a new branch with a meaningful name e.g. `fix/my-bug` based on the current `master` branch.
 1. Make the necessary source code changes, including additions or changes to the [README.md](./README.md) documentation if parameters are added or affected.
-1. Ensure you are using [Node.js LTS](https://nodejs.org/en) (currently version 18).
+1. Ensure you are using [Node.js LTS](https://nodejs.org/en).
 1. Execute the following in the root directory of the cloned repository
 
 ```bash
