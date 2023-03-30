@@ -636,10 +636,9 @@ const runTestsUsingCommandLine = async () => {
 
   debug(`in working directory "${cypressCommandOptions.cwd}"`)
 
-  const npxPath = await io.which('npx', true)
-  debug(`npx path: ${npxPath}`)
+  const bin = cmd[0]
 
-  return exec.exec(quote(npxPath), cmd, opts)
+  return exec.exec(bin, cmd.slice(1), opts)
 }
 
 /**
