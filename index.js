@@ -649,6 +649,11 @@ const runTestsUsingCommandLine = async () => {
  */
 const runTests = async () => {
   const commandPrefix = core.getInput('command-prefix')
+
+  if (commandPrefix) {
+    return runTestsUsingCommandLine()
+  }
+
   const customCommand = core.getInput('command')
   const cypressOptions = {
     headed: getInputBool('headed'),
@@ -676,10 +681,6 @@ const runTests = async () => {
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)
     return execCommand(customCommand, true, 'run tests')
-  }
-
-  if (commandPrefix) {
-    return runTestsUsingCommandLine()
   }
 
   debug('Running Cypress tests using NPM module API')
