@@ -626,7 +626,7 @@ const runTestsUsingCommandLine = async () => {
     cmd.push('--quiet')
   }
 
-  console.log('Cypress test command: npx %s', cmd.join(' '))
+  console.log('Cypress test command: %s', cmd.join(' '))
 
   // since we have quoted arguments ourselves, do not double quote them
   const opts = {
