@@ -1,4 +1,4 @@
-name: 'Closed Issue Comment'
+name: 'Handle Comment Workflow'
 on:
   issue_comment:
     types:
@@ -7,5 +7,5 @@ jobs:
   closed-issue-comment:
     # skip in fork
     if: github.repository == 'cypress-io/github-action'
-    uses: cypress-io/cypress/.github/workflows/triage_closed_issue_comment.yml@develop
+    uses: cypress-io/cypress/.github/workflows/triage_handle_new_comments.yml@develop
     secrets: inherit
