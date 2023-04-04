@@ -281,15 +281,15 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          spec: cypress/integration/spec1.js
+          spec: cypress/e2e/spec1.cy.js
 ```
 
 You can pass multiple specs and wild card patterns using multi-line parameter, see [example-config.yml](./.github/workflows/example-config.yml):
 
 ```yml
 spec: |
-  cypress/integration/spec-a.js
-  cypress/**/*-b.js
+  cypress/e2e/spec-a.cy.js
+  cypress/**/*-b.cy.js
 ```
 
 For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-env-lt-env-gt).
