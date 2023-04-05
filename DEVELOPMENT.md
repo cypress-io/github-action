@@ -16,7 +16,9 @@ The main source code elements for the action are:
 - [index.js](index.js)
 - [src/ping.js](src/ping.js)
 
-The action runs from the [dist](dist) directory, which requires a `build` step to set up. This step uses [@vercel/ncc](https://github.com/vercel/ncc) to compile the code and modules into one file used for distribution. See below:
+The action runs from the [dist](dist) directory, which requires a `build` step to set up. This step uses [@vercel/ncc](https://github.com/vercel/ncc) to compile the code and modules into one file used for distribution.
+
+To contribute changes, follow these instructions in the order given below:
 
 1. If you are a new external contributor, then first fork the repository (see GitHub documentation [About forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)).
 1. Create a new branch with a meaningful name e.g. `fix/my-bug` based on the current `master` branch.
@@ -45,9 +47,9 @@ The repository is set up with a `git` / `Husky` pre-commit hook which ensures th
 
 ## Adding a new example
 
-1. If you are creating a new example, add this as a new project in the `examples` directory (and if appropriate also in the `examples/v9` directory). An example project is a regular NPM package with its own `package.json` and Cypress dev dependency.
-2. Add a corresponding `.github/workflows` YAML file that uses this action and runs using your new `examples/X` (and `examples/v9/X)` through the `working-directory` parameter. The example should demonstrate any new feature.
-3. Add a workflow status badge to the [README.md](README.md) file if needed (see [Adding a workflow status badge](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge)), like the following:
+1. If you are creating a new example, add this as a new project in the `examples` directory. An example project is a regular NPM package with its own `package.json` and Cypress dev dependency. (Note: Legacy `examples/v9` should not be extended.)
+2. Add a corresponding `.github/workflows` YAML file that uses this action and runs using your new `examples/X` through the `working-directory` parameter. The example should demonstrate any new feature.
+3. Add a workflow status badge to the [README.md](README.md) file (see [Adding a workflow status badge](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge)), like the following:
 
 [![Chrome example](https://github.com/cypress-io/github-action/workflows/example-chrome/badge.svg?branch=master)](.github/workflows/example-chrome.yml)
 
@@ -90,8 +92,7 @@ BREAKING CHANGE: requires minimum Node.js 16 to run
 ```
 
 3. New versions of this action will be released automatically by the CI, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `v5` branch. Thus specifying `uses: cypress-io/github-action@v5` selects the new version automatically.
-
-4. The action's CI is configured to use the [default Angular release rules](https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js), which means that only `feat:`, `fix:` and `perf:` trigger a release and log this commit to the [releases](https://github.com/cypress-io/github-action/releases) page. Other Angular commit types listed on [Contributing to Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) can be used for documentation purposes, however they are ignored by the currently configured release process.
+4. The action's CI is configured to use the [default Angular release rules](https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js). This means that only `feat:`, `fix:` and `perf:` trigger a new release which is then logged to the [releases](https://github.com/cypress-io/github-action/releases) page. Other Angular commit types listed on [Contributing to Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) can be used for documentation purposes, however they are ignored by the currently configured release process.
 
 ## GitHub Marketplace publication
 
