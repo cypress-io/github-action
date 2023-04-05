@@ -91,7 +91,7 @@ fix: upgrade dependency X
 BREAKING CHANGE: requires minimum Node.js 16 to run
 ```
 
-3. New versions of this action will be released automatically by the CI, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `v5` branch. Thus specifying `uses: cypress-io/github-action@v5` selects the new version automatically.
+3. New versions of this action will be released automatically by the CI when merged to master, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `v5` branch. Thus specifying `uses: cypress-io/github-action@v5` selects the new version automatically. This **will not** push the latest release to Github Marketplace.
 4. The action's CI is configured to use the [default Angular release rules](https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js). This means that only `feat:`, `fix:` and `perf:` trigger a new release which is then logged to the [releases](https://github.com/cypress-io/github-action/releases) page. Other Angular commit types listed on [Contributing to Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) can be used for documentation purposes, however they are ignored by the currently configured release process.
 
 ## GitHub Marketplace publication
