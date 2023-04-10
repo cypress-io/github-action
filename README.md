@@ -1,6 +1,6 @@
-# cypress-io/github-action [![Action status](https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/main.yml) [![renovate-app badge][renovate-badge]][renovate-bot]
+# cypress-io/github-action [![Action status][ci-badge]][ci-workflow] [![cypress][cloud-badge]][cloud-project] [![renovate-app badge][renovate-badge]][renovate-bot]
 
-> [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes NPM installation, custom caching and lots of configuration options.
+ > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes NPM installation, custom caching and lots of configuration options.
 
 ## Examples
 
@@ -1471,15 +1471,20 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 ## Contributing
 
-[![cypress](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/3tb7jn/master&style=flat&logo=cypress)](https://cloud.cypress.io/projects/3tb7jn/runs) [![Action status](https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/main.yml)
-
 Please see our [Contributing Guideline](./CONTRIBUTING.md) which explains how to contribute fixes or features to the repo and how to test.
 
 ## License
 
-[![license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/cypress-io/github-action/blob/master/LICENSE.md)
+[![license][license-badge]][license-file]
 
-This project is licensed under the terms of the [MIT license](./LICENSE.md).
+This project is licensed under the terms of the [MIT license][license-file].
 
+<!-- badge links follow -->
+[ci-badge]: https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master
+[ci-workflow]: https://github.com/cypress-io/github-action/actions/workflows/main.yml
+[cloud-badge]: https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/3tb7jn/master&style=flat&logo=cypress
+[cloud-project]: https://cloud.cypress.io/projects/3tb7jn/runs
 [renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
 [renovate-bot]: https://github.com/renovatebot
+[license-badge]: https://img.shields.io/badge/license-MIT-green.svg
+[license-file]: ./LICENSE.md
