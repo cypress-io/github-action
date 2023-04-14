@@ -307,7 +307,7 @@ jobs:
           # wait for all services to respond
           wait-on: 'http://localhost:3050, http://localhost:3060, http://localhost:3070'
 
-  wait-on-react-scripts:
+  wait-on-nextjs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -315,9 +315,9 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/react-scripts
-          start: npm start
-          wait-on: 'http://127.0.0.1:3000'
+          working-directory: examples/nextjs
+          start: npm run dev
+          wait-on: 'http://localhost:3000'
 
   wait-using-custom-command:
     runs-on: ubuntu-22.04
@@ -327,10 +327,10 @@ jobs:
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/react-scripts
-          start: npm start
+          working-directory: examples/nextjs
+          start: npm run dev
           # let's use wait-on NPM package to check the URL
-          wait-on: 'npx wait-on --timeout 60000 http://127.0.0.1:3000'
+          wait-on: 'npx wait-on --timeout 60000 http://localhost:3000'
 
   ping-cli:
     runs-on: ubuntu-22.04
