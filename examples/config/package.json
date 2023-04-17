@@ -14,7 +14,7 @@
   "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "12.9.0",
+    "cypress": "12.10.0",
     "serve": "^14.2.0",
     "start-server-and-test": "1.11.5"
   }
