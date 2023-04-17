@@ -551,9 +551,9 @@ jobs:
 
 ### Parallel
 
-**Note:** Cypress parallelization requires [Cypress Cloud](https://on.cypress.io/dashboard-introduction) account.
+**Note:** Cypress parallelization requires a [Cypress Cloud](https://on.cypress.io/dashboard-introduction) account.
 
-You can spin multiple containers running in parallel using `strategy: matrix` argument. Just add more dummy items to the `containers: [1, 2, ...]` array to spin more free or paid containers. Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization)
+You can spin multiple containers running in parallel using `strategy: matrix` argument. Just add more dummy items to the `containers: [1, 2, ...]` array to spin more free or paid containers. Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization).
 
 ```yml
 name: Parallel Cypress Tests
@@ -593,9 +593,11 @@ jobs:
 
 ![Parallel run](images/parallel.png)
 
-**Warning ⚠️:** Cypress actions use `GITHUB_TOKEN` to get the correct branch and the number of jobs run, making it possible to re-run without the need of pushing an empty commit. If you don't want to use the `GITHUB_TOKEN` you can still run your tests without problem with the only note that Cypress Cloud's API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name. If you attempt to re-run GitHub checks, Cypress Cloud thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca)
+**Warning ⚠️:** Cypress actions use `GITHUB_TOKEN` to get the correct branch and the number of jobs run, making it possible to re-run without the need of pushing an empty commit. If you don't want to use the `GITHUB_TOKEN` you can still run your tests without problem with the only note that Cypress Cloud's API connects parallel jobs into a single logical run using GitHub commit SHA plus workflow name. If you attempt to re-run GitHub checks, Cypress Cloud thinks the run has already ended. In order to truly rerun parallel jobs, push an empty commit with `git commit --allow-empty -m "re-run checks" && git push`. As another work around you can generate and cache a custom build id, read [Adding a unique build number to GitHub Actions](https://medium.com/attest-engineering/adding-a-unique-github-build-identifier-7aa2e83cadca).
 
-The Cypress GH Action does not spawn or create any additional containers - it only links the multiple containers spawned using the matrix strategy into a single logical Cypress Cloud run and into splitting the specs amongst the machines. See the [Cypress parallelization](https://on.cypress.io/parallelization) guide for the explanation.
+The Cypress GH Action does not spawn or create any additional containers - it only links the multiple containers spawned using the matrix strategy into a single logical Cypress Cloud run where it splits the specs amongst the machines. See the [Cypress parallelization](https://on.cypress.io/parallelization) guide for the explanation.
+
+During staged rollout of a new GitHub-hosted runner version, GitHub may provide a mixture of current and new image versions used by the container matrix. It is recommended to use a [Docker image](#docker-image) in the parallel job run which avoids any Cypress Cloud errors due to browser major version mismatch from the two different image versions. A [Docker image](#docker-image) is not necessary if testing against the default built-in Electron browser because this browser version is fixed by the Cypress version in use and it is unaffected by any GitHub runner image rollout.
 
 ### Component and E2E Testing
 
