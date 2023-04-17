@@ -1,6 +1,6 @@
-# cypress-io/github-action [![renovate-app badge][renovate-badge]][renovate-bot] [![Action status](https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions)
+# cypress-io/github-action [![Action status][ci-badge]][ci-workflow] [![cypress][cloud-badge]][cloud-project] [![renovate-app badge][renovate-badge]][renovate-bot]
 
-> [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes NPM installation, custom caching and lots of configuration options.
+ > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes NPM installation, custom caching and lots of configuration options.
 
 ## Examples
 
@@ -1322,10 +1322,6 @@ pinging url https://example.cypress.io for 30 seconds
 ::debug::pinging https://example.cypress.io has finished ok
 ```
 
-## Development
-
-Read [DEVELOPMENT.md](DEVELOPMENT.md)
-
 ## More information
 
 - Read our blog post [Drastically Simplify Testing on CI with Cypress GitHub Action](https://www.cypress.io/blog/2019/11/20/drastically-simplify-your-testing-with-cypress-github-action/)
@@ -1475,9 +1471,22 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 *Note: [GitHub announced](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) their plan to disable `save-state` and `set-output` commands by May 31, 2023. This will prevent [cypress-io/github-action](https://github.com/cypress-io/github-action) version [v4.2.1](https://github.com/cypress-io/github-action/releases/tag/v4.2.1), and earlier, running after this date since they use `set-output`. Affected users should update to using `v5` of the [cypress-io/github-action](https://github.com/cypress-io/github-action) action before the deadline.*
 
+## Contributing
+
+Please see our [Contributing Guideline](./CONTRIBUTING.md) which explains how to contribute fixes or features to the repo and how to test.
+
 ## License
 
-[MIT License](./LICENSE.md)
+[![license][license-badge]][license-file]
 
+This project is licensed under the terms of the [MIT license][license-file].
+
+<!-- badge links follow -->
+[ci-badge]: https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master
+[ci-workflow]: https://github.com/cypress-io/github-action/actions/workflows/main.yml
+[cloud-badge]: https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/3tb7jn/master&style=flat&logo=cypress
+[cloud-project]: https://cloud.cypress.io/projects/3tb7jn/runs
 [renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
 [renovate-bot]: https://github.com/renovatebot
+[license-badge]: https://img.shields.io/badge/license-MIT-green.svg
+[license-file]: ./LICENSE.md
