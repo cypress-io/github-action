@@ -17,11 +17,11 @@
   "author": "",
   "license": "ISC",
   "private": true,
-  "devDependencies": {
-    "cypress": "12.9.0"
-  },
   "dependencies": {
     "arg": "5.0.0",
     "debug": "4.2.0"
+  },
+  "devDependencies": {
+    "cypress": "12.10.0"
   }
 }
