@@ -40,6 +40,11 @@ jobs:
   parallel-v9:
     runs-on: ubuntu-22.04
     needs: [check-record-key]
+    strategy:
+      fail-fast: false
+      matrix:
+        # run copies of the current job in parallel
+        containers: [1, 2]
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
@@ -93,6 +98,11 @@ jobs:
   parallel:
     runs-on: ubuntu-22.04
     needs: [check-record-key]
+    strategy:
+      fail-fast: false
+      matrix:
+        # run copies of the current job in parallel
+        containers: [1, 2]
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
