@@ -351,7 +351,7 @@ jobs:
 
 **Tip 3:** if running on `pull_request` event, the commit message is "merge SHA into SHA", which is not what you want probably. You can overwrite the commit message sent to Cypress Cloud by setting an environment variable. See [issue 124](https://github.com/cypress-io/github-action/issues/124#issuecomment-653180260) for details.
 
-**Tip 4:** to record the project needs `projectId`. Typically this value is saved in the [Cypress Configuration File `cypress.json.*`](https://docs.cypress.io/guides/references/configuration#Configuration-File). If you want to avoid this, pass the `projectId` using an environment variable:
+**Tip 4:** to record the project needs `projectId`. Typically this value is saved in the [Cypress Configuration File](https://docs.cypress.io/guides/references/configuration#Configuration-File). If you want to avoid this, pass the `projectId` using an environment variable:
 
 ```yml
 name: Cypress tests
