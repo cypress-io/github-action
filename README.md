@@ -17,8 +17,8 @@
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
-- Specify [auto cancel](#specify-auto-cancel-after-failures) after failures
 - Tag [recordings](#tag-recordings)
+- Specify [auto cancel](#specify-auto-cancel-after-failures) after failures
 - Store [test artifacts](#artifacts) on GitHub
 - [Quiet output](#quiet-flag)
 - Set Cypress [config values](#config)
@@ -29,26 +29,24 @@
 - [Start server](#start-server) before running the tests
 - [Start multiple servers](#start-multiple-servers) before running the tests
 - [Wait for server](#wait-on) to respond before running the tests
-- use [custom install command](#custom-install-command)
-- use [command prefix](#command-prefix)
-- use [own custom test command](#custom-test-command)
-- pass [custom build id](#custom-build-id) when recording to Cypress Cloud
-- generate a [robust custom build id](#robust-custom-build-id) to allow re-running the workflow
-- use different [working-directory](#working-directory)
-- use [pnpm](#pnpm)
-- use [Yarn Classic](#yarn-classic)
-- use [Yarn Modern](#yarn-modern)
-- use [Yarn workspaces](#yarn-workspaces)
-- use [custom cache key](#custom-cache-key)
-- run tests on multiple [Node versions](#node-versions)
-- split [install and tests](#split-install-and-tests) into separate jobs
-- use [custom install commands](#custom-install)
-- install [only Cypress](#install-cypress-only) to avoid installing all dependencies
-- [timeouts](#timeouts) to avoid hanging CI jobs
-- [print Cypress info](#print-cypress-info) like detected browsers
-- [run tests nightly](#nightly-tests) or on any schedule
-- [Suppress test summary](#suppress-test-summary)
-- [more examples](#more-examples)
+- Use [custom install command](#custom-install-command)
+- Use [command prefix](#command-prefix)
+- Use [own custom test command](#custom-test-command)
+- Pass [custom build id](#custom-build-id) when recording to Cypress Cloud
+- Generate a [robust custom build id](#robust-custom-build-id) to allow re-running the workflow
+- Use different [working-directory](#working-directory)
+- Use [Yarn Classic](#yarn-classic)
+- Use [Yarn workspaces](#yarn-workspaces)
+- Use [custom cache key](#custom-cache-key)
+- Run tests on multiple [Node versions](#node-versions)
+- Split [install and tests](#split-install-and-tests) into separate jobs
+- Use [custom install commands](#custom-install)
+- Install [only Cypress](#install-cypress-only) to avoid installing all dependencies
+- Use [timeouts](#timeouts) to avoid hanging CI jobs
+- Print [Cypress info](#print-cypress-info) like detected browsers
+- Run [tests nightly](#nightly-tests) or on any schedule
+- Suppress [test summary](#suppress-test-summary)
+- [More examples](#more-examples)
 
 Current examples contained in this repository are based on Cypress 12.x and can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) use Cypress `9.7.0` and are kept in the [examples/v9](./examples/v9) directory.
 
@@ -374,30 +372,6 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
 ```
 
-### Quiet flag
-
-You can provide `quiet` flag for cypress run to silence any Cypress specific output from stdout
-
-```yml
-name: example-quiet
-on: push
-jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests with `quiet` parameter
-      - name: Cypress run
-        uses: ./
-        with:
-          working-directory: examples/quiet
-          quiet: true
-```
-
-[![example-quiet](https://github.com/cypress-io/github-action/workflows/example-quiet/badge.svg?branch=master)](.github/workflows/example-quiet.yml)
-
 ### Tag recordings
 
 You can pass a single or multiple tags when recording a run. For example
@@ -504,6 +478,30 @@ jobs:
           name: cypress-videos
           path: cypress/videos
 ```
+
+### Quiet flag
+
+You can provide `quiet` flag for cypress run to silence any Cypress specific output from stdout
+
+```yml
+name: example-quiet
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests with `quiet` parameter
+      - name: Cypress run
+        uses: ./
+        with:
+          working-directory: examples/quiet
+          quiet: true
+```
+
+[![example-quiet](https://github.com/cypress-io/github-action/workflows/example-quiet/badge.svg?branch=master)](.github/workflows/example-quiet.yml)
 
 ### Config
 
