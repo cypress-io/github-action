@@ -1,6 +1,6 @@
 # cypress-io/github-action [![Action status][ci-badge]][ci-workflow] [![cypress][cloud-badge]][cloud-project] [![renovate-app badge][renovate-badge]][renovate-bot]
 
- > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes NPM installation, custom caching and lots of configuration options.
+ > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes npm, pnpm and Yarn installation, custom caching and lots of configuration options.
 
 ## Examples
 
@@ -1461,10 +1461,10 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | Version | Changes                                                                                                                                  |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | v5      | Examples and workflows additionally use Node.js 18. Use of the end-of-life Node.js version 12 in examples and workflows is removed.      |
-| v4.2.0  | Support for pnpm added.                                                                                      |
+| v4.2.0  | Support for pnpm added.                                                                                                                  |
 | v4      | Support for Cypress 10 and later versions is added.                                                                                      |
 | v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                      |
-| v2      | Cypress runs using the [NPM module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
+| v2      | Cypress runs using the [Module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line.     |
 | v1      | *This version is no longer runnable in GitHub due to security changes.*                                                                  |
 
 *Note: [GitHub announced](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) their plan to disable `save-state` and `set-output` commands by May 31, 2023. This will prevent [cypress-io/github-action](https://github.com/cypress-io/github-action) version [v4.2.1](https://github.com/cypress-io/github-action/releases/tag/v4.2.1), and earlier, running after this date since they use `set-output`. Affected users should update to using `v5` of the [cypress-io/github-action](https://github.com/cypress-io/github-action) action before the deadline.*
