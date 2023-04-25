@@ -52,6 +52,8 @@ Current examples contained in this repository are based on Cypress 12.x and can 
 
 Some older **external** examples, linked to by this document, are based solely on Cypress 9 and below and therefore use a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration). These may need modification to be applied to Cypress 10 and later. Each of these external links is listed with a `(legacy)` notation.
 
+**Note:** this package assumes that [cypress](https://www.npmjs.com/package/cypress) is declared as a development dependency in the [package.json](https://docs.npmjs.com/creating-a-package-json-file) file. The [cypress npm module](https://www.npmjs.com/package/cypress) is required to run Cypress via its [Module API](https://on.cypress.io/module-api).
+
 ### End-to-End Testing
 
 ```yml
@@ -74,8 +76,6 @@ jobs:
 The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), Windows, and macOS without additional OS dependencies necessary.
 
 This workflow uses the default [test type](https://on.cypress.io/guides/overview/why-cypress#Test-types) of [End-to-End (E2E) Testing](https://on.cypress.io/guides/overview/why-cypress#End-to-end). Alternatively, [Component Testing](https://on.cypress.io/guides/overview/why-cypress#Component) can be utilized by referencing the [Component Testing](#component-testing) section below.
-
-**Note:** this package assumes that `cypress` is declared as a development dependency in the `package.json` file. The `cypress` NPM module is required to run Cypress via its [NPM module API](https://on.cypress.io/module-api).
 
 ### Component Testing
 
@@ -1464,7 +1464,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | v4.2.0  | Support for pnpm added.                                                                                      |
 | v4      | Support for Cypress 10 and later versions is added.                                                                                      |
 | v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                      |
-| v2      | Cypress runs using the [NPM module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
+| v2      | Cypress runs using the [Module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line.     |
 | v1      | *This version is no longer runnable in GitHub due to security changes.*                                                                  |
 
 *Note: [GitHub announced](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) their plan to disable `save-state` and `set-output` commands by May 31, 2023. This will prevent [cypress-io/github-action](https://github.com/cypress-io/github-action) version [v4.2.1](https://github.com/cypress-io/github-action/releases/tag/v4.2.1), and earlier, running after this date since they use `set-output`. Affected users should update to using `v5` of the [cypress-io/github-action](https://github.com/cypress-io/github-action) action before the deadline.*
