@@ -25,7 +25,7 @@
     "actions",
     "cypress-io"
   ],
-  "author": "Gleb Bahmutov <gleb@cypress.io>",
+  "author": "Cypress-io",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cypress-io/github-action/issues"
