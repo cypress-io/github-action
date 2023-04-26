@@ -74479,7 +74479,7 @@ const noLockFile = () => {
   process.exit(1)
 }
 
-// enforce the same NPM cache folder across different operating systems
+// enforce the same npm cache folder across different operating systems
 const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
 const getNpmCache = () => {
   const o = {}
@@ -74505,7 +74505,7 @@ const getNpmCache = () => {
     o.inputPath = NPM_CACHE_FOLDER
   }
 
-  // use exact restore key to prevent NPM cache from growing
+  // use exact restore key to prevent npm cache from growing
   // https://glebbahmutov.com/blog/do-not-let-npm-cache-snowball/
   o.restoreKeys = o.primaryKey = key
   return o
@@ -74532,21 +74532,21 @@ const getCypressBinaryCache = () => {
 }
 
 const restoreCachedNpm = () => {
-  debug('trying to restore cached NPM modules')
+  debug('trying to restore cached npm modules')
   const NPM_CACHE = getNpmCache()
   return restoreCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey, [
     NPM_CACHE.restoreKeys
   ]).catch((e) => {
-    console.warn('Restoring NPM cache error: %s', e.message)
+    console.warn('Restoring npm cache error: %s', e.message)
   })
 }
 
 const saveCachedNpm = () => {
-  debug('saving NPM modules')
+  debug('saving npm modules')
   const NPM_CACHE = getNpmCache()
   return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
     (e) => {
-      console.warn('Saving NPM cache error: %s', e.message)
+      console.warn('Saving npm cache error: %s', e.message)
     }
   )
 }
@@ -74584,7 +74584,7 @@ const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  // set NPM cache path in case the user has custom install command
+  // set npm cache path in case the user has custom install command
   core.exportVariable('npm_config_cache', NPM_CACHE_FOLDER)
 
   // Note: need to quote found tool to avoid Windows choking on
@@ -74596,7 +74596,7 @@ const install = () => {
   }
 
   if (useYarn()) {
-    debug('installing NPM dependencies using Yarn')
+    debug('installing npm dependencies using Yarn')
     return io.which('yarn', true).then((yarnPath) => {
       debug(`yarn at "${yarnPath}"`)
       return exec.exec(
@@ -74606,7 +74606,7 @@ const install = () => {
       )
     })
   } else if (usePnpm()) {
-    debug('installing NPM dependencies using pnpm')
+    debug('installing npm dependencies using pnpm')
     return io.which('pnpm', true).then((pnpmPath) => {
       debug(`pnpm at "${pnpmPath}"`)
       return exec.exec(
@@ -74616,7 +74616,7 @@ const install = () => {
       )
     })
   } else {
-    debug('installing NPM dependencies')
+    debug('installing npm dependencies')
     return io.which('npm', true).then((npmPath) => {
       debug(`npm at "${npmPath}"`)
       return exec.exec(quote(npmPath), ['ci'], cypressCommandOptions)
@@ -75034,7 +75034,7 @@ const runTests = async () => {
     'cypress'
   const cypress = require(cypressModulePath)
 
-  debug('Running Cypress tests using NPM module API')
+  debug('Running Cypress tests using Module API')
   debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
   debug(`working directory ${workingDirectory}`)
   debug(`resolved cypress ${cypressModulePath}`)
