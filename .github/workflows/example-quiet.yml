@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
+      # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
         uses: ./
@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
+      # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
         uses: ./

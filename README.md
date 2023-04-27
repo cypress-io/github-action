@@ -1,6 +1,6 @@
 # cypress-io/github-action [![Action status][ci-badge]][ci-workflow] [![cypress][cloud-badge]][cloud-project] [![renovate-app badge][renovate-badge]][renovate-bot]
 
- > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes NPM installation, custom caching and lots of configuration options.
+ > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes npm installation, custom caching and lots of configuration options.
 
 ## Examples
 
@@ -65,7 +65,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
+      # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v5
@@ -492,7 +492,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
+      # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
         uses: ./
@@ -1188,7 +1188,7 @@ See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-m
 
 ### Custom install
 
-Finally, you might not need this GH Action at all. For example, if you want to split the NPM dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself. See [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) for a working example.
+Finally, you might not need this GH Action at all. For example, if you want to split the npm dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself. See [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) for a working example.
 
 ### Install Cypress only
 
@@ -1241,7 +1241,7 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 | [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)  (legacy)            | Uses Yarn, and runs in parallel on several versions of Node, different browsers, and more |
 | [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)                    | Splits install and running tests commands, runs Cypress from sub-folder                   |
 | [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) (legacy)       | Has separate folder for Cypress dependencies                                              |
-| [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) | Only install NPM dependencies, then install and cache Cypress binary yourself             |
+| [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) | Only install npm dependencies, then install and cache Cypress binary yourself             |
 | [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) (legacy) | Shows how to run different Cypress projects depending on changed files                    |
 | [cypress-examples](https://github.com/bahmutov/cypress-examples)                                        | Shows separate install job from parallel test jobs                                        |
 | [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) (legacy)       | Shows a separate install job with the build step, and another job that runs the tests     |
