@@ -5,7 +5,6 @@
   "scripts": {
     "test": "cypress run"
   },
-  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
   "license": "MIT",
   "private": true,
   "devDependencies": {

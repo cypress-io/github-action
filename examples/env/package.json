@@ -6,7 +6,6 @@
   "scripts": {
     "test": "cypress run"
   },
-  "author": "",
   "license": "ISC",
   "private": true,
   "devDependencies": {

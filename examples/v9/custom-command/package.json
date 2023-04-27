@@ -7,7 +7,6 @@
     "test": "cypress run",
     "custom-test": "node ."
   },
-  "author": "",
   "license": "ISC",
   "private": true,
   "devDependencies": {
