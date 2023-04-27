@@ -9,7 +9,6 @@
     "start": "serve public",
     "start2": "serve -p 8000 public"
   },
-  "author": "",
   "license": "ISC",
   "private": true,
   "devDependencies": {

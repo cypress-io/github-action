@@ -8,7 +8,6 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "author": "",
   "license": "ISC",
   "private": true,
   "devDependencies": {
