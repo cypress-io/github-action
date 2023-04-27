@@ -1,6 +1,6 @@
 # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/metadata-syntax-for-github-actions
 name: 'Cypress.io'
-description: 'GitHub Action for running Cypress end-to-end tests'
+description: 'GitHub Action for running Cypress end-to-end and component tests'
 author: 'Cypress-io'
 inputs:
   record:
