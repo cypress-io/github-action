@@ -74484,8 +74484,8 @@ const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
 const getNpmCache = () => {
   const o = {}
   let key = core.getInput('cache-key')
-  const hash = lockHash()
   if (!key) {
+    const hash = lockHash()
     if (useYarn()) {
       key = `yarn-${platformAndArch}-${hash}`
     } else if (usePnpm()) {
@@ -74522,9 +74522,12 @@ const getCypressBinaryCache = () => {
   const o = {
     inputPath: CYPRESS_CACHE_FOLDER
   }
-  const hash = lockHash()
-  const key = `cypress-${platformAndArch}-${hash}`
 
+  let key = core.getInput('binary-cache-key')
+  if (!key) {
+    const hash = lockHash()
+    key = `cypress-${platformAndArch}-${hash}`
+  }
   // use only exact restore key to prevent cached folder growing in size
   // https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
   o.restoreKeys = o.primaryKey = key

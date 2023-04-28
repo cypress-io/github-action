@@ -174,8 +174,8 @@ const getCypressBinaryCache = () => {
 
   let key = core.getInput('binary-cache-key')
   if (!key) {
-     const hash = lockHash()
-     key = `cypress-${platformAndArch}-${hash}`
+    const hash = lockHash()
+    key = `cypress-${platformAndArch}-${hash}`
   }
   // use only exact restore key to prevent cached folder growing in size
   // https://glebbahmutov.com/blog/do-not-let-cypress-cache-snowball/
