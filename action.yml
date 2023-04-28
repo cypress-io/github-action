@@ -84,6 +84,9 @@ inputs:
   cache-key:
     description: 'Custom cache key'
     required: false
+  binary-cache-key:
+    description: 'Custom cache key for cypress binaries'
+    required: false
   quiet:
     description: 'Whether or not to silence any Cypress specific output from stdout'
     required: false
