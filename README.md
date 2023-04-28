@@ -1100,7 +1100,9 @@ jobs:
 
 ### Custom cache key
 
-Sometimes the default cache key does not work. For example, if you cannot share the Node modules across Node versions due to native extensions. In that case pass your own `cache-key` parameter.
+Sometimes the default cache keys does not work. For example, if you cannot share the Node modules across Node versions due to native extensions, 
+or the package lock is in a non-standard location. 
+In that case pass your own `cache-key` and `binary-cache-key` parameter. 
 
 ```yml
 name: End-to-end tests
@@ -1128,6 +1130,7 @@ jobs:
           record: true
           group: Tests on Node v${{ matrix.node }}
           cache-key: node-v${{ matrix.node }}-on-${{ runner.os }}-hash-${{ hashFiles('yarn.lock') }}
+          binary-cache-key: cypress-${{ runner.os }}-hash-${{ hashFiles('yarn.lock') }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
