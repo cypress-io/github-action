@@ -14,7 +14,6 @@
     "start3-after-200-seconds": "node ./index3 --delay 200",
     "start4": "node ./index4"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "9.7.0"

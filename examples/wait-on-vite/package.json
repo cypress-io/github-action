@@ -8,7 +8,6 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "12.11.0",
