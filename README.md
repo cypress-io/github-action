@@ -394,7 +394,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [16, 18, 19, 20]
+        node: [16, 18, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1141,7 +1141,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [16, 18, 19, 20]
+        node: [16, 18, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1175,7 +1175,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: [16, 18, 19, 20]
+        node: [16, 18, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v3
@@ -1481,7 +1481,8 @@ jobs:
 Node.js is required to run this action. The current version `v5` supports:
 
 - **Node.js** 16.x
-- **Node.js** 18.x and above
+- **Node.js** 18.x
+- **Node.js** 20.x and above
 
 and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
 
@@ -1491,6 +1492,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 | Version | Changes                                                                                                                              |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| v5.8.1  | Examples remove Node.js 19. End of support for Node.js 19.                                                                           |
 | v5.6.2  | Examples add Node.js 20. End of support and removal of Node.js 14 examples.                                                          |
 | v5.2.0  | Examples add Node.js 19.                                                                                                             |
 | v5.0.0  | Examples add Node.js 18 and remove Node.js 12.                                                                                       |
