@@ -389,7 +389,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [14, 16, 18, 19]
+        node: [16, 18, 19, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1115,7 +1115,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [14, 16, 18, 19]
+        node: [16, 18, 19, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1149,7 +1149,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: [14, 16, 18, 19]
+        node: [16, 18, 19, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v3
@@ -1264,16 +1264,6 @@ This action installs local dependencies using lock files. Ensure that exactly on
  | `yarn.lock`         | [Yarn Classic](https://classic.yarnpkg.com/en/docs/cli/install#toc-yarn-install-frozen-lockfile) | `yarn --frozen-lockfile`         |
 
 See section [Yarn Modern](#yarn-modern) for information about using Yarn version 2 and later.
-
-#### Node.js Support
-
-Node.js is required to run this action. The current version `v5` supports:
-
-- **Node.js** 14.x
-- **Node.js** 16.x
-- **Node.js** 18.x and above
-
-and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
 
 ## Debugging
 
@@ -1460,18 +1450,30 @@ jobs:
           publish-summary: false
 ```
 
+## Node.js Support
+
+Node.js is required to run this action. The current version `v5` supports:
+
+- **Node.js** 16.x
+- **Node.js** 18.x and above
+
+and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
+
 ## Changelog
 
 See [Releases](https://github.com/cypress-io/github-action/releases) for full details of changes.
 
-| Version | Changes                                                                                                                                  |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| v5      | Examples and workflows additionally use Node.js 18. Use of the end-of-life Node.js version 12 in examples and workflows is removed.      |
-| v4.2.0  | Support for pnpm added.                                                                                      |
-| v4      | Support for Cypress 10 and later versions is added.                                                                                      |
-| v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                      |
-| v2      | Cypress runs using the [Module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line.     |
-| v1      | *This version is no longer runnable in GitHub due to security changes.*                                                                  |
+| Version | Changes                                                                                                                              |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| v5.6.2  | Examples add Node.js 20. End of support and removal of Node.js 14 examples.                                                          |
+| v5.2.0  | Examples add Node.js 19.                                                                                                             |
+| v5.0.0  | Examples add Node.js 18 and remove Node.js 12.                                                                                       |
+| v4.2.2  | Dependency on GitHub `set-output` workflow command removed.                                                                          |
+| v4.2.0  | Support for `pnpm` added.                                                                                                            |
+| v4.0.0  | Support for Cypress 10 and later versions added.                                                                                     |
+| v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                  |
+| v2      | Cypress runs using the [Module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
+| v1      | *This version is no longer runnable in GitHub due to security changes.*                                                              |
 
 *Note: [GitHub announced](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) their plan to disable `save-state` and `set-output` commands by May 31, 2023. This will prevent [cypress-io/github-action](https://github.com/cypress-io/github-action) version [v4.2.1](https://github.com/cypress-io/github-action/releases/tag/v4.2.1), and earlier, running after this date since they use `set-output`. Affected users should update to using `v5` of the [cypress-io/github-action](https://github.com/cypress-io/github-action) action before the deadline.*
 
