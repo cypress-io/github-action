@@ -29,13 +29,17 @@
 - [Start server](#start-server) before running the tests
 - [Start multiple servers](#start-multiple-servers) before running the tests
 - [Wait for server](#wait-on) to respond before running the tests
+- [`wait-on` with Node.js 18+](#wait-on-with-nodejs-18) workarounds
 - Use [custom install command](#custom-install-command)
 - Use [command prefix](#command-prefix)
 - Use [own custom test command](#custom-test-command)
 - Pass [custom build id](#custom-build-id) when recording to Cypress Cloud
 - Generate a [robust custom build id](#robust-custom-build-id) to allow re-running the workflow
 - Use different [working-directory](#working-directory)
+- Use [subfolders](#subfolders)
+- Use [pnpm](#pnpm)
 - Use [Yarn Classic](#yarn-classic)
+- Use [Yarn Modern](#yarn-modern)
 - Use [Yarn workspaces](#yarn-workspaces)
 - Use [custom cache key](#custom-cache-key)
 - Run tests on multiple [Node versions](#node-versions)
