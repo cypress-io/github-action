@@ -9,7 +9,6 @@
     "start": "serve public",
     "start2": "serve -p 8000 public"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "9.7.0",
