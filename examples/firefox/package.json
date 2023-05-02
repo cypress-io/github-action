@@ -9,7 +9,6 @@
     "cy:run": "cypress run",
     "cy:run:firefox": "cypress run --browser firefox"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "12.11.0",

@@ -7,7 +7,6 @@
     "test": "cypress run",
     "info": "cypress info"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "12.11.0",

@@ -10,7 +10,6 @@
     "cy:run:chrome": "cypress run --browser chrome",
     "cy:run:edge": "cypress run --browser edge"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "9.7.0",

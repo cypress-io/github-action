@@ -6,7 +6,6 @@
     "test": "cypress run",
     "start": "BROWSER=none react-scripts start"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "9.7.0",
