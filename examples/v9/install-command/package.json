@@ -5,7 +5,6 @@
   "scripts": {
     "test": "cypress run"
   },
-  "license": "MIT",
   "private": true,
   "devDependencies": {
     "cypress": "9.7.0"

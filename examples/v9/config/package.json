@@ -10,7 +10,6 @@
     "cy:open": "cypress open",
     "dev": "CYPRESS_baseUrl=http://localhost:3333 start-test 3333 cy:open"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "9.7.0",

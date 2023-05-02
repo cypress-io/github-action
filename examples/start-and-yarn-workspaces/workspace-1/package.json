@@ -8,7 +8,6 @@
     "build": "echo building ... server ... done!",
     "start": "serve -p 5000 public"
   },
-  "license": "ISC",
   "private": true,
   "devDependencies": {
     "cypress": "12.11.0",
