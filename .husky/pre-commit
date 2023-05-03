@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo action source code is being reformatted and recompiled
+npm run format
+npm run build
+if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+    echo
+    echo changes to action source code were detected
+    echo action source code changes are added to this commit
+    git add index.js src/ping.js dist
+fi

@@ -1,0 +1,18 @@
+{
+  "name": "example-browser",
+  "version": "1.1.0",
+  "description": "running Cypress using different browsers",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run cy:run",
+    "info": "cypress info",
+    "cy:run": "cypress run",
+    "cy:run:chrome": "cypress run --browser chrome",
+    "cy:run:edge": "cypress run --browser edge"
+  },
+  "private": true,
+  "devDependencies": {
+    "cypress": "9.7.0",
+    "image-size": "^1.0.2"
+  }
+}

@@ -4,16 +4,18 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  cypress-run:
-    runs-on: ubuntu-latest
+  cypress-run-v9:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      # Install NPM dependencies, cache them correctly
+        uses: actions/checkout@v3
+      # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
         uses: ./
@@ -23,15 +25,15 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  cypress-run-v10:
-    runs-on: ubuntu-latest
+  cypress-run:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      # Install NPM dependencies, cache them correctly
+        uses: actions/checkout@v3
+      # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
         uses: ./
         with:
-          working-directory: examples/v10/quiet
+          working-directory: examples/quiet
           quiet: true

@@ -4,27 +4,30 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  cypress-run:
-    runs-on: ubuntu-20.04
+  cypress-run-v9:
+    runs-on: ubuntu-22.04
     # let's make sure Cypress works on several versions of Node
     strategy:
+      fail-fast: false
       matrix:
-        node: [12, 14, 16]
-    name: E2E on Node v${{ matrix.node }}
+        node: [16, 18, 19, 20]
+    name: Cypress v9 E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Hmm, should we rebuild the "dist" before using the action?
 
@@ -34,26 +37,27 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  cypress-run-v10:
-    runs-on: ubuntu-20.04
+  cypress-run:
+    runs-on: ubuntu-22.04
     # let's make sure Cypress works on several versions of Node
     strategy:
+      fail-fast: false
       matrix:
-        node: [12, 14, 16]
-    name: E2E on Node v${{ matrix.node }}
+        node: [16, 18, 19, 20]
+    name: Cypress E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Hmm, should we rebuild the "dist" before using the action?
 
       - uses: ./
         with:
-          working-directory: examples/v10/node-versions
+          working-directory: examples/node-versions

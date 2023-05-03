@@ -4,17 +4,19 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  start:
+  start-v9:
     # example where instead of forming the default "cypress run ..."
     # the user can specify their own command
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Custom tests 🧪
         uses: ./
@@ -27,19 +29,19 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  start-v10:
+  start:
     # example where instead of forming the default "cypress run ..."
     # the user can specify their own command
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Custom tests 🧪
         uses: ./
         with:
           command: npm run custom-test
-          working-directory: examples/v10/custom-command
+          working-directory: examples/custom-command
 
       - name: Show saved file 🖨
-        run: cat examples/v10/custom-command/results.json
+        run: cat examples/custom-command/results.json

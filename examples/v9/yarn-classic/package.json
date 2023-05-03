@@ -1,0 +1,12 @@
+{
+  "name": "example-yarn-classic",
+  "version": "1.0.0",
+  "description": "Install dependencies using Yarn",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "private": true,
+  "devDependencies": {
+    "cypress": "9.7.0"
+  }
+}

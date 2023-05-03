@@ -4,16 +4,18 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  start:
+  start-v9:
     # example where we pass custom base URL
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
@@ -24,12 +26,12 @@ jobs:
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
 
-  separate-specs:
+  separate-specs-v9:
     # example where we pass specs to run via multiple lines
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
@@ -43,12 +45,12 @@ jobs:
             cypress/integration/spec-a.js
             cypress/integration/spec-b.js
 
-  separate-specs-with-wildcard:
+  separate-specs-with-wildcard-v9:
     # example where we pass specs to run via multiple lines and wildcards
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
@@ -64,33 +66,33 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  start-v10:
+  start:
     # example where we pass custom base URL
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/config
+          working-directory: examples/config
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
 
-  separate-specs-v10:
+  separate-specs:
     # example where we pass specs to run via multiple lines
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/config
+          working-directory: examples/config
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3333'
@@ -99,17 +101,17 @@ jobs:
             cypress/e2e/spec-a.cy.js
             cypress/e2e/spec-b.cy.js
 
-  separate-specs-with-wildcard-v10:
+  separate-specs-with-wildcard:
     # example where we pass specs to run via multiple lines and wildcards
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/config
+          working-directory: examples/config
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3333'

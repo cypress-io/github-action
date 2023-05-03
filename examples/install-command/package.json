@@ -1,0 +1,16 @@
+{
+  "name": "example-install-command",
+  "version": "1.0.0",
+  "description": "Install dependencies using custom command",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "private": true,
+  "devDependencies": {
+    "cypress": "12.11.0"
+  },
+  "dependencies": {
+    "arg": "5.0.0",
+    "debug": "4.2.0"
+  }
+}

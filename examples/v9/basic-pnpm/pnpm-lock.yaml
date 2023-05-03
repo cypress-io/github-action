@@ -1,10 +1,10 @@
 lockfileVersion: 5.4
 
 specifiers:
-  cypress: 9.6.1
+  cypress: 9.7.0
 
 devDependencies:
-  cypress: 9.6.1
+  cypress: 9.7.0
 
 packages:
 
@@ -269,7 +269,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
 
   /core-util-is/1.0.2:
@@ -285,8 +285,8 @@ packages:
       which: 2.0.2
     dev: true
 
-  /cypress/9.6.1:
-    resolution: {integrity: sha512-ECzmV7pJSkk+NuAhEw6C3D+RIRATkSb2VAHXDY6qGZbca/F9mv5pPsj2LO6Ty6oIFVBTrwCyL9agl28MtJMe2g==}
+  /cypress/9.7.0:
+    resolution: {integrity: sha512-+1EE1nuuuwIt/N1KXRR2iWHU+OiIt7H28jJDyyI4tiUftId/DrXYEwoDa5+kH2pki1zxnA0r6HrUGHV5eLbF5Q==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     requiresBuild: true

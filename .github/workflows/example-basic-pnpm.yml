@@ -1,26 +1,28 @@
-name: example-basic
+name: example-basic-pnpm
 on:
   push:
     branches:
       - 'master'
   pull_request:
-jobs:
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  workflow_dispatch:
 
-  basic-pnpm-ubuntu-18:
-    runs-on: ubuntu-18.04
+jobs:
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
+
+  basic-pnpm-ubuntu-20-v9:
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
@@ -31,16 +33,16 @@ jobs:
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-pnpm-ubuntu-20:
-    runs-on: ubuntu-20.04
+  basic-pnpm-ubuntu-22-v9:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7
 
       - name: Cypress tests
         uses: ./
@@ -48,16 +50,16 @@ jobs:
           working-directory: examples/v9/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-windows:
+  basic-pnpm-on-windows-v9:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7
 
       - name: Cypress tests
         uses: ./
@@ -65,16 +67,16 @@ jobs:
           working-directory: examples/v9/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-mac:
+  basic-pnpm-on-mac-v9:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7
 
       - name: Cypress tests
         uses: ./
@@ -85,16 +87,16 @@ jobs:
   # skips the binary installation
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
-  basic-pnpm-without-binary-install:
-    runs-on: ubuntu-20.04
+  basic-pnpm-without-binary-install-v9:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7
 
       - name: Cypress tests
         uses: ./
@@ -109,99 +111,99 @@ jobs:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  basic-pnpm-ubuntu-18-v10:
-    runs-on: ubuntu-18.04
+  basic-pnpm-ubuntu-20:
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 8
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v2
+        # uses: cypress-io/github-action@v5
         uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
 
-  basic-pnpm-ubuntu-20-v10:
-    runs-on: ubuntu-20.04
+  basic-pnpm-ubuntu-22:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 8
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-windows-v10:
+  basic-pnpm-on-windows:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 8
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           build: npx cypress info
 
-  basic-pnpm-on-mac-v10:
+  basic-pnpm-on-mac:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 8
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           build: npx cypress info
 
   # skips the binary installation
   # shows that the job should not fail
   # https://github.com/cypress-io/github-action/issues/327
-  basic-pnpm-without-binary-install-v10:
-    runs-on: ubuntu-20.04
+  basic-pnpm-without-binary-install:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 8
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/basic-pnpm
+          working-directory: examples/basic-pnpm
           # since we do not install Cypress
           # we should not attempt to run tests
           runTests: false

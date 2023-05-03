@@ -4,18 +4,26 @@ on:
     branches:
       - 'master'
   pull_request:
+  workflow_dispatch:
+
+env:
+  # Disable update-check called by serve through start or start2 script
+  # works around issue when more than one instance of serve is started
+  # See PR https://github.com/vercel/serve/pull/457
+  NO_UPDATE_CHECK: 1
+
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v9 and lower ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
 
-  start:
+  start-v9:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
@@ -25,13 +33,13 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3000'
 
-  start-multiple:
+  start-multiple-v9:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
@@ -45,13 +53,13 @@ jobs:
           wait-on: 'http://localhost:8000'
           config: 'baseUrl=http://localhost:8000'
 
-  start-multiple-commas:
+  start-multiple-commas-v9:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
@@ -65,35 +73,35 @@ jobs:
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-  start-v10:
+  start:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/start
+          working-directory: examples/start
           build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
 
-  start-multiple-v10:
+  start-multiple:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/start
+          working-directory: examples/start
           build: npm run build
           # single start command per line
           start: |
@@ -102,18 +110,18 @@ jobs:
           wait-on: 'http://localhost:8000'
           config: 'baseUrl=http://localhost:8000'
 
-  start-multiple-commas-v10:
+  start-multiple-commas:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/v10/start
+          working-directory: examples/start
           build: npm run build
           # use commas to separate the commands
           start: npm start, npm run start2

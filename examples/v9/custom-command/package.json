@@ -7,11 +7,9 @@
     "test": "cypress run",
     "custom-test": "node ."
   },
-  "author": "",
-  "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "9.6.1",
+    "cypress": "9.7.0",
     "lodash": "4.17.15"
   }
 }

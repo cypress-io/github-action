@@ -103,18 +103,29 @@ const packageLockFilename = path.join(
 )
 
 const useYarn = () => fs.existsSync(yarnFilename)
-
 const usePnpm = () => fs.existsSync(pnpmLockFilename)
+const useNpm = () => fs.existsSync(packageLockFilename)
 
 const lockHash = () => {
   const lockFilename = useYarn()
     ? yarnFilename
     : usePnpm()
     ? pnpmLockFilename
-    : packageLockFilename
+    : useNpm()
+    ? packageLockFilename
+    : noLockFile()
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
+}
+
+const noLockFile = () => {
+  core.error(
+    `Action failed. Missing package manager lockfile. ` +
+      `Expecting one of package-lock.json (npm), pnpm-lock.yaml (pnpm) or yarn.lock (yarn) in working-directory ` +
+      workingDirectory
+  )
+  process.exit(1)
 }
 
 // enforce the same NPM cache folder across different operating systems
@@ -372,11 +383,7 @@ const startServersMaybe = () => {
   )
 
   return separateStartCommands.map((startCommand) => {
-    return execCommand(
-      startCommand,
-      false,
-      `start server "${startCommand}`
-    )
+    return execCommand(startCommand, false, `start server`)
   })
 }
 
@@ -575,6 +582,13 @@ const runTestsUsingCommandLine = async () => {
     cmd.push('--config-file')
     cmd.push(quoteArgument(configFileInput))
   }
+  const autoCancelAfterFailures = core.getInput(
+    'auto-cancel-after-failures'
+  )
+  if (autoCancelAfterFailures) {
+    cmd.push('--auto-cancel-after-failures')
+    cmd.push(quoteArgument(autoCancelAfterFailures))
+  }
 
   if (parallel || group) {
     let buildIdVar = null
@@ -704,6 +718,12 @@ const runTests = async () => {
     cypressOptions.browser = core.getInput('browser')
   }
 
+  if (core.getInput('auto-cancel-after-failures')) {
+    cypressOptions.autoCancelAfterFailures = core.getInput(
+      'auto-cancel-after-failures'
+    )
+  }
+
   if (core.getInput('env')) {
     cypressOptions.env = core.getInput('env')
   }
@@ -773,7 +793,8 @@ const runTests = async () => {
 
 // Summary is not available for GitHub Enterprise at the moment
 const isSummaryEnabled = () => {
-  return process.env[SUMMARY_ENV_VAR] !== undefined
+  const isSummaryInput = getInputBool('publish-summary')
+  return process.env[SUMMARY_ENV_VAR] !== undefined && isSummaryInput
 }
 
 const generateSummary = async (testResults) => {
