@@ -835,18 +835,6 @@ steps:
 
 See [.github/workflows/example-custom-command.yml](.github/workflows/example-custom-command.yml) file.
 
-This is also useful for [yarn pnp](https://yarnpkg.com/features/pnp) users, where we need to specify that the tests should be run with yarn dlx instead of npx so the imports are correctly resolved and the action can find the correct cypress command.
-
-```yml
-- name: Cypress run
-  uses: cypress-io/github-action@v4
-  with:
-    command: yarn dlx cypress run
-```
-
-See [.github/workflows/example-yarn-pnp.yml](.github/workflows/example-yarn-pnp.yml) file.
-
-
 ### Custom build id
 
 You can overwrite [`ci-build-id`](https://on.cypress.io/parallelization#Linking-CI-machines-for-parallelization-or-grouping) used to link separate machines running tests into a single parallel run.
@@ -1113,6 +1101,29 @@ jobs:
 ```
 
 [![Yarn workspaces example](https://github.com/cypress-io/github-action/workflows/example-start-and-yarn-workspaces/badge.svg?branch=master)](.github/workflows/example-start-and-yarn-workspaces.yml)
+
+### Yarn Plug'n'Play
+
+If you are using a modern yarn (Yarn 2 and later) with [Plug'n'Play enabled](https://yarnpkg.com/features/pnp), you will need to use the `command` parameter to run cypress using yarn dlx instead of npx so the imports are correctly resolved and the action can find the correct cypress command.
+
+```yaml
+name: example-yarn-modern
+on: push
+jobs:
+  yarn-classic:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          working-directory: examples/yarn-modern
+          install-command: yarn install
+          command: yarn dlx cypress run
+```
+
+See [.github/workflows/example-yarn-modern-pnp.yml](.github/workflows/example-yarn-modern-pnp.yml) file.
 
 ### Custom cache key
 
