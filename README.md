@@ -1107,7 +1107,7 @@ jobs:
 If you are using a modern yarn (Yarn 2 and later) with [Plug'n'Play enabled](https://yarnpkg.com/features/pnp), you will need to use the `command` parameter to run cypress using yarn dlx instead of npx so the imports are correctly resolved and the action can find the correct cypress command.
 
 ```yaml
-name: example-yarn-modern
+name: example-yarn-modern-pnp
 on: push
 jobs:
   yarn-classic:
@@ -1118,7 +1118,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          working-directory: examples/yarn-modern
+          working-directory: examples/yarn-modern-pnp
           install-command: yarn install
           command: yarn dlx cypress run
 ```
