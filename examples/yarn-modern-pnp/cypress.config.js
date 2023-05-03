@@ -5,5 +5,6 @@ module.exports = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {},
     supportFile: false,
+    baseUrl: 'https://example.cypress.io/',
   },
 })
