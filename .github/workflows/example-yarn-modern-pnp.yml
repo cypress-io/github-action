@@ -8,22 +8,6 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  yarn-modern-pnp-v9:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Custom Yarn command
-        uses: ./
-        with:
-          working-directory: examples/v9/yarn-modern-pnp
-          # https://yarnpkg.com/cli/install
-          install-command: yarn install
-          command: yarn dlx cypress@9 run
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   yarn-modern-pnp:
@@ -38,4 +22,4 @@ jobs:
           working-directory: examples/yarn-modern-pnp
           # https://yarnpkg.com/cli/install
           install-command: yarn install
-          command: yarn dlx cypress@9 run
+          command: yarn dlx cypress run
