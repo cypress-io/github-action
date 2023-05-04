@@ -41,6 +41,7 @@
 - Use [Yarn Classic](#yarn-classic)
 - Use [Yarn Modern](#yarn-modern)
 - Use [Yarn workspaces](#yarn-workspaces)
+- Use [Yarn Plug'n'Play](#yarn-plugnplay)
 - Use [custom cache key](#custom-cache-key)
 - Run tests on multiple [Node versions](#node-versions)
 - Split [install and tests](#split-install-and-tests) into separate jobs
@@ -1124,6 +1125,8 @@ jobs:
 ```
 
 See [.github/workflows/example-yarn-modern-pnp.yml](.github/workflows/example-yarn-modern-pnp.yml) file.
+
+**Caution**: using the action parameter `command` causes multiple other parameters to be ignored. [See `command` section for more information.](#custom-test-command)
 
 ### Custom cache key
 
