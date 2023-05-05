@@ -40,8 +40,8 @@
 - Use [pnpm](#pnpm)
 - Use [Yarn Classic](#yarn-classic)
 - Use [Yarn Modern](#yarn-modern)
-- Use [Yarn workspaces](#yarn-workspaces)
 - Use [Yarn Plug'n'Play](#yarn-plugnplay)
+- Use [Yarn workspaces](#yarn-workspaces)
 - Use [custom cache key](#custom-cache-key)
 - Run tests on multiple [Node versions](#node-versions)
 - Split [install and tests](#split-install-and-tests) into separate jobs
@@ -1078,31 +1078,6 @@ See [example-yarn-modern.yml](.github/workflows/example-yarn-modern.yml) for an 
 
 [![Yarn Modern example](https://github.com/cypress-io/github-action/workflows/example-yarn-modern/badge.svg?branch=master)](.github/workflows/example-yarn-modern.yml)
 
-### Yarn workspaces
-
-This action should discover the Yarn workspaces correctly. For example, see folder [examples/start-and-yarn-workspaces](examples/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
-
-```yaml
-name: example-start-and-yarn-workspaces
-on: push
-jobs:
-  single:
-    # the example has Yarn workspace in its "root" folder
-    # examples/start-and-yarn-workspaces
-    # and tests in a subfolder like "workspace-1"
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: cypress-io/github-action@v5
-        with:
-          working-directory: examples/start-and-yarn-workspaces/workspace-1
-          build: yarn run build
-          start: yarn start
-          wait-on: 'http://localhost:5000'
-```
-
-[![Yarn workspaces example](https://github.com/cypress-io/github-action/workflows/example-start-and-yarn-workspaces/badge.svg?branch=master)](.github/workflows/example-start-and-yarn-workspaces.yml)
-
 ### Yarn Plug'n'Play
 
 When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run [yarn dlx](https://yarnpkg.com/cli/dlx) instead of [npx](https://docs.npmjs.com/cli/v9/commands/npx).
@@ -1127,6 +1102,31 @@ jobs:
 [![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
 
 **Caution**: using the action parameter `command` causes multiple other parameters to be ignored. [See `command` section for more information.](#custom-test-command)
+
+### Yarn workspaces
+
+This action should discover the Yarn workspaces correctly. For example, see folder [examples/start-and-yarn-workspaces](examples/start-and-yarn-workspaces) and workflow file [example-start-and-yarn-workspaces.yml](.github/workflows/example-start-and-yarn-workspaces.yml)
+
+```yaml
+name: example-start-and-yarn-workspaces
+on: push
+jobs:
+  single:
+    # the example has Yarn workspace in its "root" folder
+    # examples/start-and-yarn-workspaces
+    # and tests in a subfolder like "workspace-1"
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v5
+        with:
+          working-directory: examples/start-and-yarn-workspaces/workspace-1
+          build: yarn run build
+          start: yarn start
+          wait-on: 'http://localhost:5000'
+```
+
+[![Yarn workspaces example](https://github.com/cypress-io/github-action/workflows/example-start-and-yarn-workspaces/badge.svg?branch=master)](.github/workflows/example-start-and-yarn-workspaces.yml)
 
 ### Custom cache key
 
