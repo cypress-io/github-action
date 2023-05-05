@@ -75008,10 +75008,6 @@ const runTests = async () => {
     quiet: getInputBool('quiet'),
     component: getInputBool('component')
   }
-  const cypressModulePath =
-    require.resolve('cypress', { paths: [workingDirectory] }) ||
-    'cypress'
-  const cypress = require(cypressModulePath)
   const runTests = getInputBool('runTests', true)
   const spec = getSpecsList()
 
@@ -75032,6 +75028,11 @@ const runTests = async () => {
   if (commandPrefix) {
     return runTestsUsingCommandLine()
   }
+
+  const cypressModulePath =
+    require.resolve('cypress', { paths: [workingDirectory] }) ||
+    'cypress'
+  const cypress = require(cypressModulePath)
 
   debug('Running Cypress tests using NPM module API')
   debug(`requiring cypress dependency, cwd is ${process.cwd()}`)

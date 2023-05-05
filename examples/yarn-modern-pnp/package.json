@@ -1,0 +1,13 @@
+{
+  "name": "example-yarn-modern",
+  "version": "1.0.0",
+  "description": "Use modern yarn with pnp",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "private": true,
+  "devDependencies": {
+    "cypress": "12.11.0"
+  },
+  "packageManager": "yarn@3.5.0"
+}
