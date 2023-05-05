@@ -1105,7 +1105,7 @@ jobs:
 
 ### Yarn Plug'n'Play
 
-If you are using a modern yarn (Yarn 2 and later) with [Plug'n'Play enabled](https://yarnpkg.com/features/pnp), you will need to use the `command` parameter to run cypress using yarn dlx instead of npx so the imports are correctly resolved and the action can find the correct cypress command.
+When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run [yarn dlx](https://yarnpkg.com/cli/dlx) instead of [npx](https://docs.npmjs.com/cli/v9/commands/npx).
 
 ```yaml
 name: example-yarn-modern-pnp
