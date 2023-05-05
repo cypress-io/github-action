@@ -40,6 +40,7 @@
 - Use [pnpm](#pnpm)
 - Use [Yarn Classic](#yarn-classic)
 - Use [Yarn Modern](#yarn-modern)
+- Use [Yarn Plug'n'Play](#yarn-plugnplay)
 - Use [Yarn workspaces](#yarn-workspaces)
 - Use [custom cache key](#custom-cache-key)
 - Run tests on multiple [Node versions](#node-versions)
@@ -1076,6 +1077,31 @@ jobs:
 See [example-yarn-modern.yml](.github/workflows/example-yarn-modern.yml) for an example.
 
 [![Yarn Modern example](https://github.com/cypress-io/github-action/workflows/example-yarn-modern/badge.svg?branch=master)](.github/workflows/example-yarn-modern.yml)
+
+### Yarn Plug'n'Play
+
+When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run [yarn dlx](https://yarnpkg.com/cli/dlx) instead of [npx](https://docs.npmjs.com/cli/v9/commands/npx).
+
+```yaml
+name: example-yarn-modern-pnp
+on: push
+jobs:
+  yarn-classic:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          working-directory: examples/yarn-modern-pnp
+          install-command: yarn install
+          command: yarn dlx cypress run
+```
+
+[![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
+
+**Caution**: using the action parameter `command` causes multiple other parameters to be ignored. [See `command` section for more information.](#custom-test-command)
 
 ### Yarn workspaces
 
