@@ -554,7 +554,7 @@ jobs:
 
 ### Parallel
 
-**Note:** Cypress parallelization requires a [Cypress Cloud](https://on.cypress.io/dashboard-introduction) account.
+**Note:** Cypress parallelization requires a [Cypress Cloud](https://on.cypress.io/cloud-introduction) account.
 
 You can spin multiple containers running in parallel using `strategy: matrix` argument. Just add more dummy items to the `containers: [1, 2, ...]` array to spin more free or paid containers. Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization).
 
@@ -1357,7 +1357,7 @@ If you add `workflow_dispatch` event to your workflow, you will be able to start
 
 ### Outputs
 
-This action sets a GitHub step output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/dashboard-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `dashboardUrl` step output is saved.
+This action sets a GitHub step output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `dashboardUrl` step output is saved.
 
 This is an example of using the step output `dashboardUrl`:
 
