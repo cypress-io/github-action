@@ -345,7 +345,7 @@ jobs:
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
-**Tip 1:** We recommend using the action with `on: [push]` instead of `on: [pull_request]` to get the most accurate information related to the commit on the dashboard. With pull requests, the merge commit is created automatically and might not correspond to a meaningful commit in the repository.
+**Tip 1:** We recommend using the action with `on: [push]` instead of `on: [pull_request]` to get the most accurate information related to the commit on Cypress Cloud. With pull requests, the merge commit is created automatically and might not correspond to a meaningful commit in the repository.
 
 **Tip 2:** we recommend passing the `GITHUB_TOKEN` secret (created by the GH Action automatically) as an environment variable. This will allow correctly identifying every build and avoid confusion when re-running a build.
 
@@ -554,7 +554,7 @@ jobs:
 
 ### Parallel
 
-**Note:** Cypress parallelization requires a [Cypress Cloud](https://on.cypress.io/dashboard-introduction) account.
+**Note:** Cypress parallelization requires a [Cypress Cloud](https://on.cypress.io/cloud-introduction) account.
 
 You can spin multiple containers running in parallel using `strategy: matrix` argument. Just add more dummy items to the `containers: [1, 2, ...]` array to spin more free or paid containers. Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization).
 
@@ -1357,7 +1357,7 @@ If you add `workflow_dispatch` event to your workflow, you will be able to start
 
 ### Outputs
 
-This action sets a GitHub step output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/dashboard-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `dashboardUrl` step output is saved.
+This action sets a GitHub step output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `dashboardUrl` step output is saved.
 
 This is an example of using the step output `dashboardUrl`:
 
