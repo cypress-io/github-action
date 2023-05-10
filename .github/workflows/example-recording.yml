@@ -70,7 +70,7 @@ jobs:
       # see "outcome" and "conclusion" of a step doc
       # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
       # "output" can be success, failure, cancelled, or skipped
-      - name: Print Dashboard URL
+      - name: Print Cypress Cloud URL
         run: |
           echo Cypress finished with: ${{ steps.cypress.outcome }}
           echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
@@ -128,7 +128,7 @@ jobs:
       # see "outcome" and "conclusion" of a step doc
       # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
       # "output" can be success, failure, cancelled, or skipped
-      - name: Print Dashboard URL
+      - name: Print Cypress Cloud URL
         run: |
           echo Cypress finished with: ${{ steps.cypress.outcome }}
           echo See results at ${{ steps.cypress.outputs.dashboardUrl }}

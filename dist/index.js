@@ -75180,7 +75180,7 @@ const generateSummary = async (testResults) => {
     .addHeading('Cypress Results', 2)
     .addTable([headers, summaryRows])
     .addLink(
-      testResults.runUrl ? 'View Run in Dashboard' : '',
+      testResults.runUrl ? 'View run in Cypress Cloud' : '',
       testResults.runUrl || ''
     )
     .write()
