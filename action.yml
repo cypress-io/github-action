@@ -4,7 +4,7 @@ description: 'GitHub Action for running Cypress end-to-end and component tests'
 author: 'Cypress-io'
 inputs:
   record:
-    description: 'Sends test results to Cypress Dashboard'
+    description: 'Sends test results to Cypress Cloud'
     required: false
     default: false
   auto-cancel-after-failures:
