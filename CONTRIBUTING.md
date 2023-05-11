@@ -36,7 +36,7 @@ To contribute changes, follow these instructions in the order given below:
 1. If you are a new external contributor, then first fork the repository (see GitHub documentation [About forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)).
 1. Create a new branch with a meaningful name e.g. `fix/my-bug` based on the current `master` branch.
 1. Make the necessary source code changes, including additions or changes to the [README.md](./README.md) documentation if parameters are added or affected.
-1. Ensure you are using [Node.js LTS](https://nodejs.org/en).
+1. Ensure you have [`Node.js`](https://nodejs.org/en/) installed. (See the root [.node-version](.node-version) file for the required version. You can find a list of tools on [node-version-usage](https://github.com/shadowspawn/node-version-usage) to switch the version of [`Node.js`](https://nodejs.org/en/) based on [.node-version](.node-version)).
 1. Execute the following in the root directory of the cloned repository
 
     ```bash
