@@ -1359,9 +1359,9 @@ If you add `workflow_dispatch` event to your workflow, you will be able to start
 
 ### Outputs
 
-This action sets a GitHub step output `dashboardUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `dashboardUrl` step output is saved.
+This action sets a GitHub step output `resultsUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `resultsUrl` step output is saved.
 
-This is an example of using the step output `dashboardUrl`:
+This is an example of using the step output `resultsUrl`:
 
 ```yml
 - name: Cypress tests
@@ -1379,8 +1379,10 @@ This is an example of using the step output `dashboardUrl`:
 - name: Print Cypress Cloud URL
   run: |
     echo Cypress finished with: ${{ steps.cypress.outcome }}
-    echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
+    echo See results at ${{ steps.cypress.outputs.resultsUrl }}
 ```
+
+The GitHub step output `dashboardUrl` is deprecated. Cypress Dashboard is now [Cypress Cloud](https://on.cypress.io/cloud-introduction).
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
