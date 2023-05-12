@@ -1276,7 +1276,7 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 | [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) | Only install npm dependencies, then install and cache Cypress binary yourself             |
 | [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) (legacy) | Shows how to run different Cypress projects depending on changed files                    |
 | [cypress-examples](https://github.com/bahmutov/cypress-examples)                                        | Shows separate install job from parallel test jobs                                        |
-| [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs) (legacy)       | Shows a separate install job with the build step, and another job that runs the tests     |
+| [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs)                | Shows a separate install job with the build step, and another job that runs the tests     |
 <!-- prettier-ignore-end -->
 
 ## Notes
