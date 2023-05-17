@@ -645,7 +645,7 @@ jobs:
 
 ### Start server
 
-If your tests run against a local server, use `start` parameter, the server will run in the background and will shut down after tests complete
+If your tests run against a local server, use the `start` parameter to start your server. The server will run in the background.
 
 ```yml
 name: With server
@@ -662,7 +662,7 @@ jobs:
           start: npm start
 ```
 
-**Note:** sometimes on Windows you need to run a different start command. You can use `start-windows` parameter for this
+**Note:** sometimes on Windows you need to run a different start command. You can use the `start-windows` parameter for this.
 
 ```yml
 name: With server
@@ -684,7 +684,7 @@ jobs:
 
 [![start example](https://github.com/cypress-io/github-action/workflows/example-start/badge.svg?branch=master)](.github/workflows/example-start.yml)
 
-**Note:** GitHub cleans up the running server processes automatically. This action does not stop them.
+**Note:** A server continues to run until the end of the GitHub workflow job that started it. At the end of the job the GitHub workflow runner executes a "Complete job" phase automatically where it terminates any server processes which are still running.
 
 ### Start multiple servers
 
