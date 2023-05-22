@@ -73,7 +73,7 @@ jobs:
       - name: Print Cypress Cloud URL
         run: |
           echo Cypress finished with: ${{ steps.cypress.outcome }}
-          echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
+          echo See results at ${{ steps.cypress.outputs.dashboardUrl }} # note: dashboardUrl is now deprecated
 
   group-v9:
     runs-on: ubuntu-22.04
@@ -131,7 +131,7 @@ jobs:
       - name: Print Cypress Cloud URL
         run: |
           echo Cypress finished with: ${{ steps.cypress.outcome }}
-          echo See results at ${{ steps.cypress.outputs.dashboardUrl }}
+          echo See results at ${{ steps.cypress.outputs.resultsUrl }}
 
   group:
     runs-on: ubuntu-22.04
