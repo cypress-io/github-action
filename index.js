@@ -740,8 +740,7 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
-    const dashboardUrl = testResults.runUrl // dashboardUrl is deprecated
-    const resultsUrl = testResults.runUrl // and replaced by resultsUrl
+    const resultsUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
     if (testResults.failures) {
@@ -769,7 +768,7 @@ const runTests = async () => {
     }
 
     // we still set the output explicitly
-    core.setOutput('dashboardUrl', dashboardUrl) // deprecated and retained for backward compatibility
+    core.setOutput('dashboardUrl', resultsUrl) // deprecated and retained for backward compatibility
     core.setOutput('resultsUrl', resultsUrl) // replacement for dashboardUrl
 
     if (testResults.totalFailed) {
