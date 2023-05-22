@@ -740,7 +740,7 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
-    const dashboardUrl = testResults.runUrl
+    const resultsUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
     if (testResults.failures) {
@@ -761,14 +761,15 @@ const runTests = async () => {
 
     debug(`Cypress tests: ${testResults.totalFailed} failed`)
 
-    if (dashboardUrl) {
-      debug(`Dashboard url ${dashboardUrl}`)
+    if (resultsUrl) {
+      debug(`resultsUrl ${resultsUrl}`)
     } else {
-      debug('There is no Dashboard url')
+      debug('There is no resultsUrl')
     }
 
     // we still set the output explicitly
-    core.setOutput('dashboardUrl', dashboardUrl)
+    core.setOutput('dashboardUrl', resultsUrl) // deprecated and retained for backward compatibility
+    core.setOutput('resultsUrl', resultsUrl) // replacement for dashboardUrl
 
     if (testResults.totalFailed) {
       return Promise.reject(
