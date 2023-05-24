@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 devDependencies:
   cypress:
-    specifier: 12.12.0
-    version: 12.12.0
+    specifier: 12.13.0
+    version: 12.13.0
 
 packages:
 
@@ -292,8 +292,8 @@ packages:
       which: 2.0.2
     dev: true
 
-  /cypress@12.12.0:
-    resolution: {integrity: sha512-UU5wFQ7SMVCR/hyKok/KmzG6fpZgBHHfrXcHzDmPHWrT+UUetxFzQgt7cxCszlwfozckzwkd22dxMwl/vNkWRw==}
+  /cypress@12.13.0:
+    resolution: {integrity: sha512-QJlSmdPk+53Zhy69woJMySZQJoWfEWun3X5OOenGsXjRPVfByVTHorxNehbzhZrEzH9RDUDqVcck0ahtlS+N/Q==}
     engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
