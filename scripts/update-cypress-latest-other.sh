@@ -48,6 +48,14 @@ yarn set version latest
 yarn add cypress --dev --exact
 cd ..
 
+# examples/yarn-modern-pnp
+echo
+echo updating examples/yarn-modern-pnp to cypress@latest
+cd yarn-modern-pnp
+yarn set version latest
+yarn add cypress --dev --exact
+cd ..
+
 # examples/basic-pnpm (pnpm)
 echo
 echo updating pnpm example to Cypress latest version
