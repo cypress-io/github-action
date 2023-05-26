@@ -457,7 +457,7 @@ See [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration
 
 ### Artifacts
 
-If you don't record the test run on Cypress Cloud, you can still store generated videos and screenshots as CI artifacts. See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) (legacy) and the workflow example below
+If you don't record the test run on Cypress Cloud, you can still store generated videos and screenshots as CI artifacts. See the workflow example below.
 
 ```yml
 name: Artifacts
@@ -469,23 +469,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
-      # after the test run completes
-      # store videos and any screenshots
-      # NOTE: screenshots will be generated only if E2E test failed
-      # thus we store screenshots only on failures
-      # Alternative: create and commit an empty cypress/screenshots folder
-      # to always have something to upload
+      # after the test run completes store videos and any screenshots
       - uses: actions/upload-artifact@v3
-        if: failure()
+        # add the line below to store screenshots only on failures
+        # if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
-      # Test run video was always captured, so this action uses "always()" condition
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
       - uses: actions/upload-artifact@v3
-        if: always()
         with:
           name: cypress-videos
           path: cypress/videos
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
 ```
 
 ### Quiet flag
