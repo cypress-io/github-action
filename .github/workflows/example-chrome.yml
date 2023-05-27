@@ -92,11 +92,6 @@ jobs:
           name: screenshots-in-chrome
           path: examples/browser/cypress/screenshots
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: video-in-chrome
-          path: examples/browser/cypress/videos
-
       - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/browser
 
@@ -111,11 +106,6 @@ jobs:
         with:
           name: screenshots-in-headless-chrome
           path: examples/browser/cypress/screenshots
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: video-in-headless-chrome
-          path: examples/browser/cypress/videos
 
       - run: npx image-size cypress/screenshots/**/*.png
         working-directory: examples/browser

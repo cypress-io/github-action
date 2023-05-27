@@ -27,5 +27,6 @@ module.exports = defineConfig({
       })
     },
     supportFile: false,
+    video: false
   },
 })
