@@ -8,27 +8,6 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  start-v9:
-    # example where instead of forming the default "cypress run ..."
-    # the user can specify their own command
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@v3
-
-      - name: Custom tests 🧪
-        uses: ./
-        with:
-          command: npm run custom-test
-          working-directory: examples/v9/custom-command
-
-      - name: Show saved file 🖨
-        run: cat examples/v9/custom-command/results.json
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   start:
     # example where instead of forming the default "cypress run ..."
     # the user can specify their own command

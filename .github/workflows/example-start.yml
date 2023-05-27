@@ -14,65 +14,6 @@ env:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  start-v9:
-    # example with web application build,
-    # server start and waiting for the server
-    # to respond before running tests
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/v9/start
-          build: npm run build
-          start: npm start
-          wait-on: 'http://localhost:3000'
-
-  start-multiple-v9:
-    # example with web application build
-    # and several services to start
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/v9/start
-          build: npm run build
-          # single start command per line
-          start: |
-            npm start
-            npm run start2
-          wait-on: 'http://localhost:8000'
-          config: 'baseUrl=http://localhost:8000'
-
-  start-multiple-commas-v9:
-    # example with web application build
-    # and several services to start
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/v9/start
-          build: npm run build
-          # use commas to separate the commands
-          start: npm start, npm run start2
-          wait-on: 'http://localhost:8000'
-          config: 'baseUrl=http://localhost:8000'
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   start:
     # example with web application build,
     # server start and waiting for the server

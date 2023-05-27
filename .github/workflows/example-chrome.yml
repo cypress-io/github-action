@@ -8,64 +8,6 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  tests-v9:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress info
-        uses: ./
-        with:
-          # just for full picture after installing Cypress
-          # print information about detected browsers, etc
-          # see https://on.cypress.io/command-line#cypress-info
-          build: npx cypress info
-          working-directory: examples/v9/browser
-
-      - name: Chrome
-        uses: ./
-        with:
-          working-directory: examples/v9/browser
-          browser: chrome
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: screenshots-in-chrome-v9
-          path: examples/v9/browser/cypress/screenshots
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: video-in-chrome-v9
-          path: examples/v9/browser/cypress/videos
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v9/browser
-
-      - name: Chrome headed
-        uses: ./
-        with:
-          working-directory: examples/v9/browser
-          browser: chrome
-          headed: true
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: screenshots-in-headed-chrome-v9
-          path: examples/v9/browser/cypress/screenshots
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: video-in-headed-chrome-v9
-          path: examples/v9/browser/cypress/videos
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/v9/browser
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   tests:
     runs-on: ubuntu-22.04
     steps:
