@@ -57,7 +57,7 @@
 - Suppress [test summary](#suppress-test-summary)
 - [More examples](#more-examples)
 
-Current examples contained in this repository are based on Cypress 12.x and can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) use Cypress `9.7.0` and are kept in the [examples/v9](./examples/v9) directory.
+Current examples contained in this repository are based on Cypress 12.x and can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) which use Cypress `9.7.0` are no longer maintained. They can be referred to in the [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) directory of the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch.
 
 Live examples, such as [example-basic.yml](.github/workflows/example-basic.yml) are shown together with a status badge. Click on the status badge to read the source code of the workflow, for example
 

@@ -4,13 +4,11 @@ This document describes updating the [examples](../examples) in this repository 
 
 ## Examples
 
-There are two groups of examples which are used to test and demonstrate the use of [cypress-io/github-action](https://github.com/cypress-io/github-action):
+The [examples](../examples) directory contains examples of the use of Cypress (Current) [Configuration](https://docs.cypress.io/guides/references/configuration) which applies to Cypress 10 and later. These examples test and demonstrate the use of [cypress-io/github-action](https://github.com/cypress-io/github-action).
 
-1. The [examples](../examples) directory contains examples of the use of Cypress (Current) [Configuration](https://docs.cypress.io/guides/references/configuration) which applies to Cypress 10 and later.
+The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [Yarn 1 (Classic)](https://classic.yarnpkg.com/) and [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) to define and install the packages being used.
 
-2. The [examples/v9](../examples/v9) directory contains examples which are set up to use Cypress `9.7.0` which is the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration) which applies to Cypress 9 and below.
-
-The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/) and [Yarn 1 (Classic)](https://classic.yarnpkg.com/) to define and install the packages being used.
+*The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch. This directory contains examples which were set up to use Cypress `9.7.0`, the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration), covering Cypress 9 and below. These `v9` examples are no longer maintained.
 
 ## Prerequisites
 
@@ -56,7 +54,7 @@ From the root of a local clone of the repository, execute:
 npm run update:cypress
 ```
 
-This updates all [examples](../examples) (except [examples/v9](../examples/v9)) to cypress@latest.
+This updates all [examples](../examples) to cypress@latest.
 
 [.github/workflows/example-install-only.yml](../.github/workflows/example-install-only.yml) contains a hard-coded Cypress version number. This can be updated by hand.
 
