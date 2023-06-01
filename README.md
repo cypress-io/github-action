@@ -1080,7 +1080,7 @@ jobs:
 
 ### Yarn Plug'n'Play
 
-When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run [yarn dlx](https://yarnpkg.com/cli/dlx) instead of [npx](https://docs.npmjs.com/cli/v9/commands/npx).
+When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run `yarn` instead of [npx](https://docs.npmjs.com/cli/v9/commands/npx).
 
 ```yaml
 name: example-yarn-modern-pnp
@@ -1096,7 +1096,7 @@ jobs:
         with:
           working-directory: examples/yarn-modern-pnp
           install-command: yarn install
-          command: yarn dlx cypress run
+          command: yarn cypress run
 ```
 
 [![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
