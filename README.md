@@ -1493,6 +1493,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | Version | Changes                                                                                                                              |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | v5.8.1  | Examples remove Node.js 19. End of support for Node.js 19.                                                                           |
+| v5.8.0  | Add GitHub step output `resultsUrl`. Deprecate `dashboardUrl`.                                                                       |
 | v5.6.2  | Examples add Node.js 20. End of support and removal of Node.js 14 examples.                                                          |
 | v5.2.0  | Examples add Node.js 19.                                                                                                             |
 | v5.0.0  | Examples add Node.js 18 and remove Node.js 12.                                                                                       |
