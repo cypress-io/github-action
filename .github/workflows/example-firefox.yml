@@ -31,14 +31,14 @@ jobs:
         with:
           # let's show browser and system info
           build: npx cypress info
-          working-directory: examples/firefox
+          working-directory: examples/browser
           browser: firefox
 
       # report screenshot size and store the screenshots as test artifacts
       - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-firefox
-          path: examples/firefox/cypress/screenshots
+          path: examples/browser/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/firefox
+        working-directory: examples/browser
