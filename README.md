@@ -227,6 +227,25 @@ jobs:
           browser: chrome
 ```
 
+Note that if you are using Firefox and a container, you need to pass a `--user 1001` to the options for the container, as Firefox cannot be ran as root.
+Example:
+
+```yml
+name: E2E in custom container
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    container: 
+     image: cypress/browsers:node-18.16.0-chrome-113.0.5672.92-1-ff-113.0-edge-113.0.1774.35-1
+     options: --user 1001  
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cypress-io/github-action@v5
+        with:
+          browser: firefox
+```
+
 ### Env
 
 Specify the env argument with `env` parameter
