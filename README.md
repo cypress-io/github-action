@@ -227,7 +227,7 @@ jobs:
           browser: chrome
 ```
 
-Note that if you are using Firefox and a container, you need to pass a `--user 1001` to the options for the container, as Firefox cannot be (ran as root)[https://github.com/cypress-io/cypress-docker-images/issues/85#issuecomment-849705914].
+Note that if you are using Firefox and a container, you need to pass a `--user 1001` to the options for the container, otherwise it will not work.
 Example:
 
 ```yml
@@ -237,7 +237,7 @@ jobs:
   cypress-run:
     runs-on: ubuntu-22.04
     container: 
-     image: cypress/browsers:node-18.16.0-chrome-113.0.5672.92-1-ff-113.0-edge-113.0.1774.35-1
+     image: cypress/browsers:node18.12.0-chrome106-ff106
      options: --user 1001  
     steps:
       - uses: actions/checkout@v3
