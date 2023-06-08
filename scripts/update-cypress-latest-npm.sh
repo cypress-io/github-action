@@ -11,7 +11,6 @@ npmExamples=(
     'config'
     'custom-command'
     'env'
-    'firefox'
     'install-only'
     'nextjs'
     'node-versions'
