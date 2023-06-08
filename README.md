@@ -227,7 +227,7 @@ jobs:
           browser: chrome
 ```
 
-Note that if you are using Firefox and a container, you need to pass a `--user 1001` to the options for the container, as Firefox cannot be ran as root.
+Note that if you are using Firefox and a container, you need to pass a `--user 1001` to the options for the container, as Firefox cannot be (ran as root)[https://github.com/cypress-io/cypress-docker-images/issues/85#issuecomment-849705914].
 Example:
 
 ```yml
