@@ -22,3 +22,5 @@ examples/**/.yarn/*
 !examples/**/.yarn/releases
 !examples/**/.yarn/sdks
 !examples/**/.yarn/versions
+
+.idea
