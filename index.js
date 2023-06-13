@@ -106,10 +106,7 @@ const useYarn = () => fs.existsSync(yarnFilename)
 const usePnpm = () => fs.existsSync(pnpmLockFilename)
 const useNpm = () => fs.existsSync(packageLockFilename)
 
-let runPrefix = 'npx'
-if (useYarn()) {
-  runPrefix = 'yarn'
-}
+const runPrefix = useYarn() ? 'yarn' : 'npx'
 
 const lockHash = () => {
   const lockFilename = useYarn()
