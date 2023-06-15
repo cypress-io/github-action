@@ -103,7 +103,7 @@ jobs:
       matrix:
         # run copies of the current job in parallel
         containers: [1, 2]
-    if: needs.check-record-key.outputs.record-key-exists == 'true'
+    if: always() # needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
