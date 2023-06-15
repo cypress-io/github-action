@@ -800,15 +800,9 @@ const isSummaryEnabled = () => {
 }
 
 const generateSummary = async (testResults) => {
-  console.log(
-    'Generating summary: %s',
-    isSummaryEnabled() ? 'yes' : 'no'
-  )
   if (!isSummaryEnabled()) {
     return testResults
   }
-
-  console.log('after generating summary')
 
   const headers = [
     { data: 'Result', header: true },
@@ -846,10 +840,6 @@ const generateSummary = async (testResults) => {
 }
 
 const generateOutputTestResultsObject = (testResults) => {
-  console.log('Generating output test results object')
-  console.log(JSON.stringify(outputObject))
-  console.log(testResults)
-
   const outputObject = {
     success: testResults.totalFailed === 0,
     totalPassed: testResults.totalPassed,
