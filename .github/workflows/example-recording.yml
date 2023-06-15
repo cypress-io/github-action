@@ -133,6 +133,24 @@ jobs:
           echo Cypress finished with: ${{ steps.cypress.outcome }}
           echo See results at ${{ steps.cypress.outputs.resultsUrl }}
 
+      # print the `testResultsObject` output directly as string
+      - name: Print Cypress test results output
+        run: |
+          echo Cypress test results: ${{ steps.cypress.outputs.testResultsObject }}
+
+      # parse the `testResultsObject` output as JSON
+      - name: Parse the Cypress test results output
+        uses: actions/github-script@v6.4.1
+        with:
+          script: |
+            const testResults = JSON.parse('${{ steps.cypress.outputs.testResultsObject }}')
+            console.log("Success: " + testResults.success)
+            console.log("TotalPassed: " + testResults.totalPassed)
+            console.log("TotalFailed: " + testResults.totalFailed)
+            console.log("TotalPending: " + testResults.totalPending)
+            console.log("TotalSkipped: " + testResults.totalSkipped)
+            console.log("TotalDuration: " + testResults.totalDuration)
+
   group:
     runs-on: ubuntu-22.04
     needs: [check-record-key]
