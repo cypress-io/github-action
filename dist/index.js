@@ -74457,8 +74457,6 @@ const useYarn = () => fs.existsSync(yarnFilename)
 const usePnpm = () => fs.existsSync(pnpmLockFilename)
 const useNpm = () => fs.existsSync(packageLockFilename)
 
-const runPrefix = useYarn() ? 'yarn' : 'npx'
-
 const lockHash = () => {
   const lockFilename = useYarn()
     ? yarnFilename
@@ -74637,9 +74635,9 @@ const listCypressBinaries = () => {
   }
 
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  return io.which(runPrefix, true).then((runPath) => {
+  return io.which('npx', true).then((npxPath) => {
     return exec.exec(
-      quote(runPath),
+      quote(npxPath),
       ['cypress', 'cache', 'list'],
       cypressCommandOptions
     )
@@ -74656,9 +74654,9 @@ const verifyCypressBinary = () => {
   }
 
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  return io.which(runPrefix, true).then((runPath) => {
+  return io.which('npx', true).then((npxPath) => {
     return exec.exec(
-      quote(runPath),
+      quote(npxPath),
       ['cypress', 'verify'],
       cypressCommandOptions
     )
