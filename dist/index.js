@@ -75197,7 +75197,7 @@ const generateOutputTestResultsObject = (testResults) => {
     totalFailed: testResults.totalFailed,
     totalPending: testResults.totalPending,
     totalSkipped: testResults.totalSkipped,
-    totalDuration: testResults.totalDuration / 1000 + 's' || 0
+    totalDuration: testResults.totalDuration / 1000 || ''
   }
 
   core.setOutput('testResultsObject', JSON.stringify(outputObject))

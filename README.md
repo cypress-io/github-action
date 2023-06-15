@@ -1386,6 +1386,34 @@ The GitHub step output `dashboardUrl` is deprecated. Cypress Dashboard is now [C
 
 **Note:** every GitHub workflow step can have `outcome` and `conclusion` properties. See the GitHub [Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) documentation section [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context). In particular, the `outcome` or `conclusion` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use in any following steps.
 
+It also sets a step output `testResultsObject` which contains a stringified test results JSON object.  
+In order to use it you should parse the string into an object.  
+Ex:
+```yaml
+...
+  steps:
+    - name: Parse results
+      uses: actions/github-script@v6.4.1
+      with:
+        script: |
+          const testResults = JSON.parse('${{ steps.cypress-run.outputs.testResultsObject }}')
+          console.log(testResults.success)
+          console.log(testResults.totalPassed)
+          ...
+```
+Example structure of the JSON object:
+```json
+{
+  "success": true,
+  "totalPassed": 5,
+  "totalFailed": 2,
+  "totalPending": 0,
+  "totalSkipped": 1,
+  "totalDuration": 25
+}
+```
+**Note:** `totalDuration` is expressed in seconds.
+
 ### Print Cypress info
 
 Sometimes you might want to print Cypress and OS information, like the list of detected browsers. You can use the [`cypress info`](https://on.cypress.io/command-line#cypress-info) command for this.
