@@ -1347,7 +1347,6 @@ pinging url https://example.cypress.io for 30 seconds
 - Read our blog post [Drastically Simplify Testing on CI with Cypress GitHub Action](https://www.cypress.io/blog/2019/11/20/drastically-simplify-your-testing-with-cypress-github-action/)
 - Read [Test the Preview Vercel Deploys](https://glebbahmutov.com/blog/develop-preview-test/) blog post
 - [Creating actions](https://docs.github.com/en/actions/creating-actions) docs
-- practice using the Cypress GitHub Action by following the [Cypress on CI Workshop](https://github.com/cypress-io/cypress-workshop-ci)
 
 ## Extras
 
