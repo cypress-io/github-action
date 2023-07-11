@@ -6,8 +6,8 @@ settings:
 
 devDependencies:
   cypress:
-    specifier: 12.17.0
-    version: 12.17.0
+    specifier: 12.17.1
+    version: 12.17.1
 
 packages:
 
@@ -296,8 +296,8 @@ packages:
       which: 2.0.2
     dev: true
 
-  /cypress@12.17.0:
-    resolution: {integrity: sha512-nq0ug8Zrjq/2khHU1PTNxg+3/n1oqtmAFCxwQhS6QzkQ4mR6RLitX+cGIOuIMfnEbDAtVub0hZh661FOA16JxA==}
+  /cypress@12.17.1:
+    resolution: {integrity: sha512-eKfBgO6t8waEyhegL4gxD7tcI6uTCGttu+ZU7y9Hq8BlpMztd7iLeIF4AJFAnbZH1xjX+wwgg4cRKFNSvv3VWQ==}
     engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
