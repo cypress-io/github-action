@@ -29,8 +29,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Hmm, should we rebuild the "dist" before using the action?
-
       - uses: ./
         with:
           working-directory: examples/v9/node-versions
@@ -55,8 +53,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
-
-      # Hmm, should we rebuild the "dist" before using the action?
 
       - uses: ./
         with:
