@@ -1185,6 +1185,8 @@ jobs:
       - uses: cypress-io/github-action@v5
 ```
 
+See the [Node.js](#nodejs) section for information about supported versions and usage of Node.js.
+
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
 
 ### Split install and tests
@@ -1475,7 +1477,9 @@ jobs:
           publish-summary: false
 ```
 
-## Node.js Support
+## Node.js
+
+### Support
 
 Node.js is required to run this action. The current version `v5` supports:
 
@@ -1484,6 +1488,14 @@ Node.js is required to run this action. The current version `v5` supports:
 - **Node.js** 20.x and above
 
 and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
+
+### Usage
+
+`github-action` command-type options such as [`install-command`](https://github.com/cypress-io/github-action#custom-install-command), [`build`](https://github.com/cypress-io/github-action#build-app), [`start`](https://github.com/cypress-io/github-action#start-server) and [`command`](https://github.com/cypress-io/github-action#custom-test-command) are executed with the runner's version of Node.js. You can use GitHub's [actions/setup-node](https://github.com/actions/setup-node) to install an explicit Node.js version into the runner.
+
+[![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
+
+Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). For `github-action@v5` this is `node16`.
 
 ## Changelog
 
