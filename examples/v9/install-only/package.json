@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "arg": "5.0.0",
-    "debug": "4.2.0"
+    "debug": "4.3.4"
   }
 }
