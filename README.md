@@ -1096,7 +1096,7 @@ jobs:
         with:
           working-directory: examples/yarn-modern-pnp
           install-command: yarn install
-          command: yarn cypress run
+          command: yarn run --binaries-only cypress run
 ```
 
 [![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
