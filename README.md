@@ -1064,7 +1064,7 @@ To install dependencies using a `yarn.lock` file from [Yarn Modern](https://yarn
 name: example-yarn-modern
 on: push
 jobs:
-  yarn-classic:
+  yarn-modern:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
