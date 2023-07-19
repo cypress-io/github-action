@@ -1076,7 +1076,7 @@ jobs:
           install-command: yarn install
 ```
 
-This description covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration `nodeLinker: node-modules` which Yarn uses by default for projects updated from Yarn Classic. For `nodeLinker: pnp` see [Yarn Plug'n'Play](#yarn-plugnplay) below.
+This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration `nodeLinker: node-modules` which Yarn uses by default for projects updated from Yarn Classic. For `nodeLinker: pnp` see [Yarn Plug'n'Play](#yarn-plugnplay) below.
 (Note that `github-action` is not compatible with the `nodeLinker: pnpm` setting.)
 
 [![Yarn Modern example](https://github.com/cypress-io/github-action/workflows/example-yarn-modern/badge.svg?branch=master)](.github/workflows/example-yarn-modern.yml)
