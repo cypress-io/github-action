@@ -1102,7 +1102,7 @@ jobs:
           command: yarn cypress run
 ```
 
-This description covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration when `nodeLinker` is undefined or set to `nodeLinker: pnp` corresponding to Yarn Plug'n'Play. Yarn uses this by default for projects newly created with Yarn Modern.
+This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration when `nodeLinker` is undefined or set to `nodeLinker: pnp` corresponding to Yarn Plug'n'Play. Yarn uses this by default for projects newly created with Yarn Modern.
 
 [![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
 
