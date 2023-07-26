@@ -663,7 +663,7 @@ jobs:
         with:
           start: npm start
 ```
-**Caution:** use the `start` parameter only to start a server, not to run Cypress, otherwise tests may be run twice. The action runs Cypress tests by default, unless the parameter `runTests` is to `false`.
+**Caution:** use the `start` parameter only to start a server, not to run Cypress, otherwise tests may be run twice. The action runs Cypress tests by default, unless the parameter `runTests` is set to `false`.
 
 **Note:** sometimes on Windows you need to run a different start command. You can use the `start-windows` parameter for this.
 
