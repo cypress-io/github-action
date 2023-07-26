@@ -325,6 +325,8 @@ For more information, visit [the Cypress command-line docs](https://on.cypress.i
 
 ### Record test results on Cypress Cloud
 
+By setting the parameter `record` to `true`, you can record your test results into the [Cypress Cloud](https://on.cypress.io/cloud). Read the [Cypress Cloud documentation](https://on.cypress.io/guides/cloud/introduction) to learn how to sign up and create a Cypress Cloud project.
+
 ```yml
 name: Cypress tests
 on: push
