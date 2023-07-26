@@ -2,6 +2,10 @@
 
  > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes npm, pnpm and Yarn installation, custom caching and lots of configuration options.
 
+ Placing `use: cypress-io/github-action@v5` into a GitHub Action workflow gives you a simple way to run Cypress. The action takes the project's npm, pnpm or Yarn package manager lock file, installs dependencies and caches these dependencies for future use. It then proceeds to run Cypress end-to-end tests with the built-in Electron browser and provides a test summary after completion.
+
+ If you are testing against a running server like the [Cypress Kitchen Sink showcase example](https://example.cypress.io/) on https://example.cypress.io/ no other parameters are necessary. In other cases where you need to fire up a development server, you can add the [start](#start-server) parameter to the workflow. Browse through the examples to find other useful parameters.
+
 ## Examples
 
 - [End-to-End](#end-to-end-testing) testing
