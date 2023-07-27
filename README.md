@@ -1106,7 +1106,7 @@ jobs:
         with:
           working-directory: examples/yarn-modern-pnp
           install-command: yarn install
-          command: yarn cypress run
+          command: yarn run --binaries-only cypress run
 ```
 
 This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration when `nodeLinker` is undefined or set to `nodeLinker: pnp` corresponding to Yarn Plug'n'Play. Yarn uses this by default for projects newly created with Yarn Modern.
