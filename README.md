@@ -1515,8 +1515,10 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 
 ## Compatibility
 
-[GitHub announced](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) their plan to disable `save-state` and `set-output` commands. This will prevent [cypress-io/github-action](https://github.com/cypress-io/github-action) version [v4.2.1](https://github.com/cypress-io/github-action/releases/tag/v4.2.1) and earlier from running, since they use `set-output`. Affected users should update to using `v5` of the [cypress-io/github-action](https://github.com/cypress-io/github-action) action.
+- `v5` is the recommended version of [cypress-io/github-action](https://github.com/cypress-io/github-action)
+- `v4` is the minimum version required for Cypress `10.x` and later
 
+Pay attention to any GitHub Actions deprecation warnings shown in logs which may recommend updating.
 
 ## Contributing
 
