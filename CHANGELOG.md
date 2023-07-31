@@ -8,8 +8,14 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | v5.8.1  | Examples remove Node.js 19. End of support for Node.js 19.                                                                           |
 | v5.8.0  | Add GitHub step output `resultsUrl`. Deprecate `dashboardUrl`.                                                                       |
+| v5.7.0  | Add basic Yarn Modern Plug'n'Play support.                                                                                           |
 | v5.6.2  | Examples add Node.js 20. End of support and removal of Node.js 14 examples.                                                          |
+| v5.6.0  | Add check for lockfile presence.                                                                                                     |
+| v5.5.0  | Examples add Yarn Modern.                                                                                                            |
+| v5.4.0  | Examples add Yarn Classic.                                                                                                           |
+| v5.3.0  | Add parameter `publish-summary` (default `true`).                                                                                    |
 | v5.2.0  | Examples add Node.js 19.                                                                                                             |
+| v5.1.0  | Add parameter `auto-cancel-after-failures`.                                                                                          |
 | v5.0.0  | Examples add Node.js 18 and remove Node.js 12.                                                                                       |
 | v4.2.2  | Dependency on GitHub `set-output` workflow command removed.                                                                          |
 | v4.2.0  | Support for `pnpm` added.                                                                                                            |
