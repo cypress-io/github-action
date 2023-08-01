@@ -2,6 +2,10 @@
 
  > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes npm, pnpm and Yarn installation, custom caching and lots of configuration options.
 
+ Placing `use: cypress-io/github-action@v5` into a GitHub Action workflow gives you a simple way to run Cypress. The action takes the project's npm, pnpm or Yarn package manager lock file, installs dependencies and caches these dependencies for future use. It then proceeds to run Cypress end-to-end tests with the built-in Electron browser and provides a test summary after completion.
+
+ If you are testing against a running server like the [Cypress Kitchen Sink showcase example](https://example.cypress.io/) on https://example.cypress.io/ no other parameters are necessary. In other cases where you need to fire up a development server, you can add the [start](#start-server) parameter to the workflow. Browse through the examples to find other useful parameters.
+
 ## Examples
 
 - [End-to-End](#end-to-end-testing) testing
@@ -324,6 +328,8 @@ jobs:
 For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-project-lt-project-path-gt).
 
 ### Record test results on Cypress Cloud
+
+By setting the parameter `record` to `true`, you can record your test results into the [Cypress Cloud](https://on.cypress.io/cloud). Read the [Cypress Cloud documentation](https://on.cypress.io/guides/cloud/introduction) to learn how to sign up and create a Cypress Cloud project.
 
 ```yml
 name: Cypress tests
@@ -657,6 +663,7 @@ jobs:
         with:
           start: npm start
 ```
+**Caution:** use the `start` parameter only to start a server, not to run Cypress, otherwise tests may be run twice. The action runs Cypress tests by default, unless the parameter `runTests` is set to `false`.
 
 **Note:** sometimes on Windows you need to run a different start command. You can use the `start-windows` parameter for this.
 
@@ -1064,7 +1071,7 @@ To install dependencies using a `yarn.lock` file from [Yarn Modern](https://yarn
 name: example-yarn-modern
 on: push
 jobs:
-  yarn-classic:
+  yarn-modern:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -1076,11 +1083,14 @@ jobs:
           install-command: yarn install
 ```
 
+This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration `nodeLinker: node-modules` which Yarn uses by default for projects updated from Yarn Classic. For `nodeLinker: pnp` see [Yarn Plug'n'Play](#yarn-plugnplay) below.
+(Note that `github-action` is not compatible with the `nodeLinker: pnpm` setting.)
+
 [![Yarn Modern example](https://github.com/cypress-io/github-action/workflows/example-yarn-modern/badge.svg?branch=master)](.github/workflows/example-yarn-modern.yml)
 
 ### Yarn Plug'n'Play
 
-When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run `yarn` instead of [npx](https://docs.npmjs.com/cli/v9/commands/npx).
+When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run [`yarn`](https://yarnpkg.com/cli/run) instead of [`npx`](https://docs.npmjs.com/cli/v9/commands/npx).
 
 ```yaml
 name: example-yarn-modern-pnp
@@ -1096,8 +1106,10 @@ jobs:
         with:
           working-directory: examples/yarn-modern-pnp
           install-command: yarn install
-          command: yarn cypress run
+          command: yarn run --binaries-only cypress run
 ```
+
+This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration when `nodeLinker` is undefined or set to `nodeLinker: pnp` corresponding to Yarn Plug'n'Play. Yarn uses this by default for projects newly created with Yarn Modern.
 
 [![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
 
@@ -1184,6 +1196,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
 ```
+
+See the [Node.js](#nodejs) section for information about supported versions and usage of Node.js.
 
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
 
@@ -1503,7 +1517,9 @@ jobs:
           publish-summary: false
 ```
 
-## Node.js Support
+## Node.js
+
+### Support
 
 Node.js is required to run this action. The current version `v5` supports:
 
@@ -1513,25 +1529,24 @@ Node.js is required to run this action. The current version `v5` supports:
 
 and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
 
+### Usage
+
+`github-action` command-type options such as [`install-command`](https://github.com/cypress-io/github-action#custom-install-command), [`build`](https://github.com/cypress-io/github-action#build-app), [`start`](https://github.com/cypress-io/github-action#start-server) and [`command`](https://github.com/cypress-io/github-action#custom-test-command) are executed with the runner's version of Node.js. You can use GitHub's [actions/setup-node](https://github.com/actions/setup-node) to install an explicit Node.js version into the runner.
+
+[![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
+
+Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). For `github-action@v5` this is `node16`.
+
 ## Changelog
 
-See [Releases](https://github.com/cypress-io/github-action/releases) for full details of changes.
+View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes.
 
-| Version | Changes                                                                                                                              |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| v5.8.1  | Examples remove Node.js 19. End of support for Node.js 19.                                                                           |
-| v5.8.0  | Add GitHub step output `resultsUrl`. Deprecate `dashboardUrl`.                                                                       |
-| v5.6.2  | Examples add Node.js 20. End of support and removal of Node.js 14 examples.                                                          |
-| v5.2.0  | Examples add Node.js 19.                                                                                                             |
-| v5.0.0  | Examples add Node.js 18 and remove Node.js 12.                                                                                       |
-| v4.2.2  | Dependency on GitHub `set-output` workflow command removed.                                                                          |
-| v4.2.0  | Support for `pnpm` added.                                                                                                            |
-| v4.0.0  | Support for Cypress 10 and later versions added.                                                                                     |
-| v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                  |
-| v2      | Cypress runs using the [Module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
-| v1      | *This version is no longer runnable in GitHub due to security changes.*                                                              |
+## Compatibility
 
-*Note: [GitHub announced](https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/) their plan to disable `save-state` and `set-output` commands. This will prevent [cypress-io/github-action](https://github.com/cypress-io/github-action) version [v4.2.1](https://github.com/cypress-io/github-action/releases/tag/v4.2.1) and earlier from running, since they use `set-output`. Affected users should update to using `v5` of the [cypress-io/github-action](https://github.com/cypress-io/github-action) action.*
+- `v5` is the recommended version of [cypress-io/github-action](https://github.com/cypress-io/github-action)
+- `v4` is the minimum version required for Cypress `10.x` and later
+
+Pay attention to any GitHub Actions deprecation warnings shown in logs which may recommend updating.
 
 ## Contributing
 

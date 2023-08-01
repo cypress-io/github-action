@@ -7,10 +7,10 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "12.14.0"
+    "cypress": "12.17.2"
   },
   "dependencies": {
     "arg": "5.0.0",
-    "debug": "4.2.0"
+    "debug": "4.3.4"
   }
 }
