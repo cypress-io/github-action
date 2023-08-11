@@ -50,7 +50,7 @@
     "@vercel/ncc": "0.36.1",
     "husky": "8.0.3",
     "markdown-link-check": "3.11.1",
-    "prettier": "2.8.4"
+    "prettier": "3.0.1"
   },
   "publishConfig": {
     "access": "public"
