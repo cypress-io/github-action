@@ -213,23 +213,31 @@ jobs:
 
 ### Docker image
 
-You can run tests in a GH Action in your Docker container.
+You can run the action in a Docker container.
 
 ```yml
-name: E2E in custom container
+name: Test in Docker
 on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
-    # Cypress Docker image with Chrome v106
-    # and Firefox v106 pre-installed
-    container: cypress/browsers:node18.12.0-chrome106-ff106
+    # Cypress Docker image from https://hub.docker.com/r/cypress
+    # with browsers pre-installed
+    container:
+      image: cypress/browsers:latest
+      options: --user 1001
     steps:
       - uses: actions/checkout@v3
       - uses: cypress-io/github-action@v5
         with:
           browser: chrome
 ```
+
+Replace the `latest` tag with a specific version image tag from [`cypress/browsers` on Docker Hub](https://hub.docker.com/r/cypress/browsers/tags) to avoid breaking changes when new images are released (especially when they include new major versions of Node.js).
+
+Include `options: --user 1001` to avoid permissions issues.
+
+Refer to [cypress-io/cypress-docker-images](https://github.com/cypress-io/cypress-docker-images) for further information about using Cypress Docker images. Cypress offers the [Cypress Docker Factory](https://github.com/cypress-io/cypress-docker-images/tree/master/factory) to generate additional Docker images with selected components and versions.
 
 ### Env
 
