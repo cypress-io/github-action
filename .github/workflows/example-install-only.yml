@@ -63,7 +63,7 @@ jobs:
           key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Cypress 📥
-        run: npm i cypress@12.17.3
+        run: npm i cypress@12.17.4
 
       - name: Cypress tests 🧪
         uses: ./
