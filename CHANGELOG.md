@@ -6,6 +6,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 | Version | Changes                                                                                                                              |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| v6.0.0  | Action runs under Node.js 20 instead of Node.js 16.                                                                                  |
 | v5.8.1  | Examples remove Node.js 19. End of support for Node.js 19.                                                                           |
 | v5.8.0  | Add GitHub step output `resultsUrl`. Deprecate `dashboardUrl`.                                                                       |
 | v5.7.0  | Add basic Yarn Modern Plug'n'Play support.                                                                                           |

@@ -14,11 +14,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          # Action runs: using: node16 as defined in
+          # Action runs: using: node20 as defined in
           # https://github.com/cypress-io/github-action/blob/master/action.yml
           # Node.js minor version is aligned to
           # https://github.com/actions/runner/blob/main/src/Misc/externals.sh
-          node-version: 16.16.0
+          node-version: 20.5.0
       - uses: bahmutov/npm-install@v1
       - run: npm run format
       - run: npm run build

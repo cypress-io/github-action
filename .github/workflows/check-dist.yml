@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.16.0
+          node-version: 20.5.0
       - uses: bahmutov/npm-install@v1
       - run: npm run format
       - run: npm run build
