@@ -63,7 +63,7 @@ Live examples, such as [example-basic.yml](.github/workflows/example-basic.yml) 
 
 [![End-to-End example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
 
-Some older **external** examples, linked to by this document, are based solely on Cypress 9 and below and therefore use a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration). These may need modification to be applied to Cypress 10 and later. Each of these external links is listed with a `(legacy)` notation.
+Older **external** examples based on a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) for Cypress `9` and earlier can be found in the [README](https://github.com/cypress-io/github-action/blob/v5/README.md) for version `v5`.
 
 **Note:** this package assumes that [cypress](https://www.npmjs.com/package/cypress) is declared as a development dependency in the [package.json](https://docs.npmjs.com/creating-a-package-json-file) file. The [cypress npm module](https://www.npmjs.com/package/cypress) is required to run Cypress via its [Module API](https://on.cypress.io/module-api).
 
@@ -1023,8 +1023,6 @@ jobs:
           working-directory: e2e
 ```
 
-See [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) (legacy) for example.
-
 ### pnpm
 
 The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`): to install `pnpm` include [pnpm/action-setup](https://github.com/pnpm/action-setup) in your workflow. If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
@@ -1240,7 +1238,7 @@ See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-m
 
 ### Custom install
 
-Finally, you might not need this GH Action at all. For example, if you want to split the npm dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself. See [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) for a working example.
+Finally, you might not need this GH Action at all. For example, if you want to split the npm dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself.
 
 ### Install Cypress only
 
@@ -1280,8 +1278,6 @@ jobs:
         timeout-minutes: 5
 ```
 
-See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example) (legacy).
-
 ### More examples
 
 <!-- prettier-ignore-start -->
@@ -1289,12 +1285,7 @@ See [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-ex
 | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | [cypress-io/cypress-example-kitchensink](https://github.com/cypress-io/cypress-example-kitchensink)     | Runs every API command in Cypress using various CI platforms including GitHub Actions     |
 | [cypress-io/cypress-realworld-app](https://github.com/cypress-io/cypress-realworld-app)                 | A real-world example payment application. Uses GitHub Actions and CircleCI.               |
-| [cypress-gh-action-small-example](https://github.com/bahmutov/cypress-gh-action-small-example) (legacy) | Runs tests and records them on Cypress Cloud                                              |
-| [cypress-gh-action-example](https://github.com/bahmutov/cypress-gh-action-example)  (legacy)            | Uses Yarn, and runs in parallel on several versions of Node, different browsers, and more |
 | [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)                    | Splits install and running tests commands, runs Cypress from sub-folder                   |
-| [cypress-gh-action-subfolders](https://github.com/bahmutov/cypress-gh-action-subfolders) (legacy)       | Has separate folder for Cypress dependencies                                              |
-| [cypress-gh-action-split-install](https://github.com/bahmutov/cypress-gh-action-split-install) (legacy) | Only install npm dependencies, then install and cache Cypress binary yourself             |
-| [cypress-gh-action-changed-files](https://github.com/bahmutov/cypress-gh-action-changed-files) (legacy) | Shows how to run different Cypress projects depending on changed files                    |
 | [cypress-examples](https://github.com/bahmutov/cypress-examples)                                        | Shows separate install job from parallel test jobs                                        |
 | [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs)                | Shows a separate install job with the build step, and another job that runs the tests     |
 <!-- prettier-ignore-end -->
