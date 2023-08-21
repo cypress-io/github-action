@@ -117,7 +117,7 @@ See the example project [component-tests](examples/component-tests/) and the [ex
 
 **Best practice:**
 
-Our examples specify using branch [v5](https://github.com/cypress-io/github-action/tree/v5) which is the action's latest major version:
+Our examples specify using branch [v5](https://github.com/cypress-io/github-action/tree/v5) which is the action's recommended major version:
 
 ```yml
 - name: Cypress run
@@ -1501,7 +1501,7 @@ jobs:
 
 ### Support
 
-Node.js is required to run this action. The current version `v5` supports:
+Node.js is required to run this action. The currently recommended version `v5` supports:
 
 - **Node.js** 16.x
 - **Node.js** 18.x
@@ -1515,7 +1515,7 @@ and is generally aligned with [Node.js's release schedule](https://github.com/no
 
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
 
-Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). For `github-action@v5` this is `node16`.
+Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). `github-action@v5` uses `node16` and `github-action@v6` uses `node20`.
 
 ## Changelog
 
@@ -1523,7 +1523,8 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 
 ## Compatibility
 
-- `v5` is the recommended version of [cypress-io/github-action](https://github.com/cypress-io/github-action)
+- `v6` is provided for early adopters needing full `node20` support
+- `v5` is the current recommended version
 - `v4` is the minimum version required for Cypress `10.x` and later
 
 Pay attention to any GitHub Actions deprecation warnings shown in logs which may recommend updating.
