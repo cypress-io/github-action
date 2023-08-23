@@ -560,9 +560,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"example-yarn-modern@workspace:.":
+"example-yarn-modern-pnp@workspace:.":
   version: 0.0.0-use.local
-  resolution: "example-yarn-modern@workspace:."
+  resolution: "example-yarn-modern-pnp@workspace:."
   dependencies:
     cypress: 12.17.3
   languageName: unknown
