@@ -8,17 +8,6 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  # An example test using the Mozilla Firefox browser with Cypress v9 is no longer included here.
-  #
-  # Firefox connects unreliably with Cypress v9, as described in the closed Cypress issue
-  # https://github.com/cypress-io/cypress/issues/23215.
-  # It is not planned to resolve the issue in Cypress v9.
-  # The problem is however resolved in Cypress v10 and later.
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   firefox:
     runs-on: ubuntu-22.04
     steps:

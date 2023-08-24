@@ -8,8 +8,6 @@ on:
 
 jobs:
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   yarn-modern-pnp:
     runs-on: ubuntu-22.04
     steps:
