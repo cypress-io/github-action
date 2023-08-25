@@ -83,10 +83,10 @@ which calls the action code from the branch they are running in when the workflo
 From another (external) repository, the production version of the action is called with
 
 ```yaml
-- uses: cypress-io/github-action@v5
+- uses: cypress-io/github-action@v6
 ```
 
-To test out a branch in development calling it from another repository, replace `v5` by the name of your branch. If your branch is in a fork, then also replace `cypress-io` by your own GitHub username in the form:
+To test out a branch in development calling it from another repository, replace `v6` by the name of your branch. If your branch is in a fork, then also replace `cypress-io` by your own GitHub username in the form:
 
 `- uses: <your-username>/github-action@<your-branch>`
 
@@ -110,7 +110,7 @@ This information is for Cypress.io Members or Collaborators who merge pull reque
     BREAKING CHANGE: requires minimum Node.js 16 to run
     ```
 
-1. New versions of this action will be released automatically by the CI when merged to the `master` branch, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `v5` branch. Thus specifying `uses: cypress-io/github-action@v5` selects the new version automatically. This **will not** push the latest release to GitHub Marketplace.
+1. New versions of this action will be released automatically by the CI when merged to the `master` branch, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current highest branch from the series `v5`, `v6`, ... etc. Thus specifying `uses: cypress-io/github-action@v6` (or higher version if available) selects the new version automatically. This **will not** push the latest release to GitHub Marketplace.
 1. The action's CI is configured to use the [default Angular release rules](https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js). This means that only `feat:`, `fix:` and `perf:` trigger a new release which is then logged to the [releases](https://github.com/cypress-io/github-action/releases) page. Other Angular commit types listed on [Contributing to Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) can be used for documentation purposes, however they are ignored by the currently configured release process.
 
 ## GitHub Marketplace publication
