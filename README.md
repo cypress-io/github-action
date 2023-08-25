@@ -920,24 +920,9 @@ See the [example-custom-ci-build-id.yml](.github/workflows/example-custom-ci-bui
 
 ### Working directory
 
-In a monorepo, the end-to-end or component test might be placed in a different sub-folder from the application itself.
+In a monorepo, the end-to-end or component test might be placed in a different sub-folder from the application itself. This sub-folder is the Cypress "working directory" which you can specify using the `working-directory` parameter.
 
-Using a [Cypress legacy configuration](https://docs.cypress.io/guides/references/legacy-configuration) (Version 9 or earlier) the structure could look like this:
-
-```text
-repo/
-  app/
-  app-test/
-    cypress/
-      fixtures/
-      integration/
-      plugins/
-      support/
-    cypress.json
-  package.json
-```
-
-For End-to-End testing using a [Cypress configuration](https://docs.cypress.io/guides/references/configuration) for Version 10 and later, the structure could look like this :
+In the following example of a directory layout for end-to-end testing, the Cypress working directory is `app-test`. The working directory contains the Cypress tests and a package manager lock file:
 
 ```text
 repo/
@@ -949,23 +934,10 @@ repo/
       support/
     cypress.config.js
   package.json
+  package-lock.json
 ```
 
-Similarly for Component Testing with a [Cypress configuration](https://docs.cypress.io/guides/references/configuration) for Version 10 and later, the structure could look like this:
-
-```text
-repo/
-  app/
-  app-test/
-    cypress/
-      component/
-      fixtures/
-      support/
-    cypress.config.js
-  package.json
-```
-
-You can specify the `app-test` working directory when running Cypress tests using the `working-directory` parameter
+ We use `working-directory: app-test` to match the above example directory structure:
 
 ```yml
 on: push
@@ -980,7 +952,9 @@ jobs:
           working-directory: app-test
 ```
 
-See [example-basic.yml](.github/workflows/example-basic.yml) for an End-to-End test example and [example-component-test.yml](.github/workflows/example-component-test.yml) for a Component test example, using the parameter `working-directory`.
+See the Cypress documentation [Folder structure](https://on.cypress.io/guides/core-concepts/writing-and-organizing-tests#Folder-Structure) section for examples of standard directory layouts, covering end-to-end testing and component testing with both JavaScript and TypeScript options.
+
+Each of the examples in this monorepo is separated from other examples by using different working directories. See [example-basic.yml](.github/workflows/example-basic.yml) for one end-to-end test example using the parameter `working-directory` and [example-component-test.yml](.github/workflows/example-component-test.yml) for a component test example.
 
 ### Subfolders
 
