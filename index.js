@@ -443,7 +443,9 @@ const detectPrNumber = async () => {
     GITHUB_RUN_ID,
     GITHUB_REPOSITORY,
     GITHUB_HEAD_REF,
-    GITHUB_REF
+    GITHUB_REF,
+    CYPRESS_PULL_REQUEST_ID,
+    CYPRESS_PULL_REQUEST_URL
   } = process.env
 
   const [owner, repo] = GITHUB_REPOSITORY.split('/')
@@ -479,6 +481,10 @@ const detectPrNumber = async () => {
     }
 
     if (prNumber) {
+      if (!CYPRESS_PULL_REQUEST_ID) {
+        core.exportVariable('CYPRESS_PULL_REQUEST_ID', prNumber)
+      }
+
       const prResp = await client.request(
         'GET /repos/:owner/:repo/pulls/:pull_number',
         {
@@ -489,12 +495,12 @@ const detectPrNumber = async () => {
       )
 
       if (prResp && prResp.data && prResp.data.html_url) {
-        // TODO: Check for existence of these variables
-        core.exportVariable('CYPRESS_PULL_REQUEST_ID', prNumber)
-        core.exportVariable(
-          'CYPRESS_PULL_REQUEST_URL',
-          prResp.data.html_url
-        )
+        if (!CYPRESS_PULL_REQUEST_URL) {
+          core.exportVariable(
+            'CYPRESS_PULL_REQUEST_URL',
+            prResp.data.html_url
+          )
+        }
       }
     }
   }
