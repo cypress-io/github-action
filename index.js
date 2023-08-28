@@ -462,8 +462,7 @@ const detectPrNumber = async () => {
 
     if (GITHUB_HEAD_REF) {
       // GITHUB_HEAD_REF is only defined when the event that triggered it was 'pull_request' or 'pull_request_target' (meaning a PR number should be readily-available)
-
-      // GITHUB_REF should have format refs/pull/<pr_number>/merge when triggered by pull_request workflow
+      // should have format refs/pull/<pr_number>/merge when triggered by pull_request workflow
       prNumber = parseInt(GITHUB_REF.split('/')[2])
     } else {
       const resp = await client.request(
