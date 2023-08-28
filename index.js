@@ -436,6 +436,70 @@ const waitOnMaybe = () => {
 
 const I = (x) => x
 
+const detectPrNumber = async () => {
+  const {
+    GITHUB_SHA,
+    GITHUB_TOKEN,
+    GITHUB_RUN_ID,
+    GITHUB_REPOSITORY,
+    GITHUB_HEAD_REF,
+    GITHUB_REF
+  } = process.env
+
+  const [owner, repo] = GITHUB_REPOSITORY.split('/')
+  let prNumber
+
+  if (GITHUB_TOKEN) {
+    debug(
+      `Detecting PR number by asking GitHub about run ${GITHUB_RUN_ID}`
+    )
+
+    const client = new Octokit({
+      auth: GITHUB_TOKEN
+    })
+
+    if (GITHUB_HEAD_REF) {
+      // GITHUB_HEAD_REF is only defined when the event that triggered it was 'pull_request' or 'pull_request_target' (meaning a PR number should be readily-available)
+
+      // GITHUB_REF should have format refs/pull/<pr_number>/merge when triggered by pull_request workflow
+      prNumber = parseInt(GITHUB_REF.split('/')[2])
+    } else {
+      const resp = await client.request(
+        'GET /repos/:owner/:repo/commits/:commit_sha/pulls',
+        {
+          owner,
+          repo,
+          commit_sha: GITHUB_SHA
+        }
+      )
+
+      if (resp && resp.data && resp.data[0] && resp.data[0].number) {
+        prNumber = resp.data[0].number
+      }
+    }
+
+    if (prNumber) {
+      const prResp = await client.request(
+        'GET /repos/:owner/:repo/pulls/:pull_number',
+        {
+          owner,
+          repo,
+          pull_number: prNumber
+        }
+      )
+
+      if (prResp && prResp.data && prResp.data.html_url) {
+        // TODO: Check for existence of these variables
+        core.exportVariable('CYPRESS_PULL_REQUEST_ID', prNumber)
+        core.exportVariable(
+          'CYPRESS_PULL_REQUEST_URL',
+          prResp.data.html_url
+        )
+      }
+    }
+  }
+}
+
 /**
  * Asks Cypress API if there were already builds for this commit.
  * In that case increments the count to get unique parallel id.
@@ -668,6 +732,8 @@ const runTests = async () => {
   // export common environment variables that help run Cypress
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   core.exportVariable('TERM', 'xterm')
+
+  await detectPrNumber()
 
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)
