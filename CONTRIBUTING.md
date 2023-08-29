@@ -20,6 +20,12 @@ This document describes topics useful to contributors to this repository. The re
 
 You can read the GitHub document [Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action) for background information on how JavaScript actions for GitHub are created and how they work.
 
+### Requirements
+
+You must have the following installed on your system to contribute locally:
+
+- [`Node.js`](https://nodejs.org/en/) (See the [.node-version](.node-version) file for the required version. You can find a list of tools on [node-version-usage](https://github.com/shadowspawn/node-version-usage) to switch the version of [`Node.js`](https://nodejs.org/en/) based on [.node-version](.node-version).)
+
 ### Providing fixes or features
 
 If you are submitting a Pull Request (PR) to provide a fix or feature for the action, the following is relevant to you:
@@ -34,9 +40,9 @@ The action runs from the [dist](dist) directory, which requires a `build` step t
 To contribute changes, follow these instructions in the order given below:
 
 1. If you are a new external contributor, then first fork the repository (see GitHub documentation [About forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)).
+1. Clone the repository
 1. Create a new branch with a meaningful name e.g. `fix/my-bug` based on the current `master` branch.
 1. Make the necessary source code changes, including additions or changes to the [README.md](./README.md) documentation if parameters are added or affected.
-1. Ensure you have [`Node.js`](https://nodejs.org/en/) installed. (See the root [.node-version](.node-version) file for the required version. You can find a list of tools on [node-version-usage](https://github.com/shadowspawn/node-version-usage) to switch the version of [`Node.js`](https://nodejs.org/en/) based on [.node-version](.node-version)).
 1. Execute the following in the root directory of the cloned repository
 
     ```bash
