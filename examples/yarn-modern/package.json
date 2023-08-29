@@ -6,8 +6,8 @@
     "test": "cypress run"
   },
   "private": true,
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@3.6.3",
   "devDependencies": {
-    "cypress": "12.17.4"
+    "cypress": "13.0.0"
   }
 }
