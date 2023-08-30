@@ -454,6 +454,7 @@ const detectPrNumber = async () => {
   const [owner, repo] = GITHUB_REPOSITORY.split('/')
   let prNumber
 
+  console.log(`USING TOKEN: `, GITHUB_TOKEN)
   if (GITHUB_TOKEN) {
     debug(
       `Detecting PR number by asking GitHub about run ${GITHUB_RUN_ID}`
