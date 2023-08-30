@@ -449,18 +449,13 @@ const detectPrNumber = async () => {
     CYPRESS_PULL_REQUEST_URL
   } = process.env
 
-  console.log(`DETECTING PR NUMBER`)
-
   const [owner, repo] = GITHUB_REPOSITORY.split('/')
   let prNumber
 
-  console.log(`USING TOKEN: `, GITHUB_TOKEN)
   if (GITHUB_TOKEN) {
     debug(
       `Detecting PR number by asking GitHub about run ${GITHUB_RUN_ID}`
     )
-
-    console.log(`Token detected`)
 
     const client = new Octokit({
       auth: GITHUB_TOKEN
@@ -486,12 +481,11 @@ const detectPrNumber = async () => {
     }
 
     if (prNumber) {
-      console.log(`PR NUMBER DETECTED: ${prNumber}`)
       if (!CYPRESS_PULL_REQUEST_ID) {
         core.exportVariable('CYPRESS_PULL_REQUEST_ID', prNumber)
       }
 
-      const url = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pulls/${prNumber}`
+      const url = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/${prNumber}`
       if (!CYPRESS_PULL_REQUEST_URL) {
         core.exportVariable('CYPRESS_PULL_REQUEST_URL', url)
       }
