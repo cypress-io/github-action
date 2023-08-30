@@ -475,8 +475,6 @@ const detectPrNumber = async () => {
         }
       )
 
-      console.log(`RESPONSE: `, resp)
-
       if (resp && resp.data && resp.data[0] && resp.data[0].number) {
         prNumber = resp.data[0].number
       }
