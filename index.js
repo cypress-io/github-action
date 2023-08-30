@@ -458,6 +458,8 @@ const detectPrNumber = async () => {
       `Detecting PR number by asking GitHub about run ${GITHUB_RUN_ID}`
     )
 
+    console.log(`Token detected`)
+
     const client = new Octokit({
       auth: GITHUB_TOKEN
     })
