@@ -448,6 +448,8 @@ const detectPrNumber = async () => {
     CYPRESS_PULL_REQUEST_URL
   } = process.env
 
+  console.log(`DETECTING PR NUMBER`)
+
   const [owner, repo] = GITHUB_REPOSITORY.split('/')
   let prNumber
 
