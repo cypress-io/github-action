@@ -10,11 +10,11 @@ The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/)
 
 *The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch. This directory contains examples which were set up to use Cypress `9.7.0`, the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration), covering Cypress 9 and below. These `v9` examples are no longer maintained.
 
-## Prerequisites
+## Requirements
 
 - A local system running [Ubuntu](https://ubuntu.com/), [Microsoft Windows](https://www.microsoft.com/windows/) or [Apple macOS](https://www.apple.com/macos/).
 
-- The LTS version of [Node.js](https://nodejs.org/). For convenience of switching to other versions of Node.js, [nvm](https://github.com/nvm-sh/nvm) for unix, macOS and windows WSL. For Windows [nvm-windows](https://github.com/coreybutler/nvm-windows).
+- [Node.js](https://nodejs.org/en/) as described in the [CONTRIBUTING](../CONTRIBUTING.md#requirements) document.
 
 - [git](https://git-scm.com/) distributed version control system.
 
@@ -26,15 +26,11 @@ The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/)
 npm install pnpm@latest -g
 ```
 
-This needs to be repeated if you change the base node version using nvm.
-
 - [Yarn 1 (Classic)](https://classic.yarnpkg.com/) installed through:
 
 ```bash
 npm install yarn@latest -g
 ```
-
-Again, this needs to be repeated if you change the base node version using nvm.
 
 - [Visual Studio Code](https://code.visualstudio.com/) or other editor
 
