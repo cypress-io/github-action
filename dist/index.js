@@ -74878,6 +74878,7 @@ const detectPrNumber = async () => {
     }
 
     if (prNumber) {
+      console.log(`PR NUMBER DETECTED: ${prNumber}`)
       if (!CYPRESS_PULL_REQUEST_ID) {
         core.exportVariable('CYPRESS_PULL_REQUEST_ID', prNumber)
       }
@@ -74892,6 +74893,7 @@ const detectPrNumber = async () => {
       )
 
       if (prResp && prResp.data && prResp.data.html_url) {
+        console.log(`PR URL DETECTED: ${prResp.data.html_url}`)
         if (!CYPRESS_PULL_REQUEST_URL) {
           core.exportVariable(
             'CYPRESS_PULL_REQUEST_URL',
