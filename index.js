@@ -449,6 +449,11 @@ const detectPrNumber = async () => {
     CYPRESS_PULL_REQUEST_URL
   } = process.env
 
+  if (CYPRESS_PULL_REQUEST_ID && CYPRESS_PULL_REQUEST_URL) {
+    // Both pull request envs are already defined - no need to do anything else
+    return
+  }
+
   const [owner, repo] = GITHUB_REPOSITORY.split('/')
   let prNumber
 
@@ -474,8 +479,6 @@ const detectPrNumber = async () => {
           commit_sha: GITHUB_SHA
         }
       )
-
-      console.log(`RESPONSE: `, resp)
 
       if (resp && resp.data && resp.data[0] && resp.data[0].number) {
         prNumber = resp.data[0].number
