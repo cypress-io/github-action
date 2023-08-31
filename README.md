@@ -1499,7 +1499,7 @@ If there is no PR for a branch, there are two paths:
 **With related PRs**
 When a commit on a branch without a PR is made, the Cypress GitHub Action checks to see if the commit that triggered the workflow has a 
 related PR. If the commit exists in any other PRs, it's considered a related PR. When there are related PRs, we grab the first related PR
-and use that PR's PR number and URL for `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
+and use that PR's number and URL for `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
 
 **Without related PRs**
 When there are no related PRs detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` will be undefined
