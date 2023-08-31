@@ -1469,7 +1469,7 @@ via the workflow `env`. When set, this value enables the Action to perform addit
 exist) and sets them in the environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
 * See Cypress' documentation on [CI Build Information](https://docs.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
 
-Example workflow using the new variables:
+Example workflow using the variables:
 ```yml
 name: Example echo PR number and URL
 on: push
