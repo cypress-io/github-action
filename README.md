@@ -1468,7 +1468,7 @@ The PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: $
 this value enables the Action to perform additional logic that grabs the related PR number and URL (if they exist) and sets them in the
 environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
 
-Example workflow using the new variables:
+Example workflow using the variables:
 ```yml
 name: Example echo PR number and URL
 on: push
