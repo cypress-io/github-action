@@ -1481,6 +1481,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Cypress run
         uses: cypress-io/github-action@v5
+        with:
+          record: true
       - run: echo "PR number is $CYPRESS_PULL_REQUEST_ID"
       - run: echo "PR URL is $CYPRESS_PULL_REQUEST_URL"
     env:
