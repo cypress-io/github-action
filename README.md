@@ -1471,7 +1471,7 @@ environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, 
 Example workflow using the new variables:
 ```yml
 name: Example echo PR number and URL
-on: [push]
+on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
