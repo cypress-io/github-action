@@ -74867,17 +74867,29 @@ const detectPrNumber = async () => {
       // should have format refs/pull/<pr_number>/merge when triggered by pull_request workflow
       prNumber = parseInt(GITHUB_REF.split('/')[2])
     } else {
-      const resp = await client.request(
-        'GET /repos/:owner/:repo/commits/:commit_sha/pulls',
-        {
-          owner,
-          repo,
-          commit_sha: GITHUB_SHA
-        }
-      )
+      try {
+        const resp = await client.request(
+          'GET /repos/:owner/:repo/commits/:commit_sha/pulls',
+          {
+            owner,
+            repo,
+            commit_sha: GITHUB_SHA
+          }
+        )
 
-      if (resp && resp.data && resp.data[0] && resp.data[0].number) {
-        prNumber = resp.data[0].number
+        if (
+          resp &&
+          resp.data &&
+          resp.data[0] &&
+          resp.data[0].number
+        ) {
+          prNumber = resp.data[0].number
+        }
+      } catch (e) {
+        console.error(
+          `Unable to fetch related PR data for commit: '${GITHUB_SHA}': `,
+          e
+        )
       }
     }
 
