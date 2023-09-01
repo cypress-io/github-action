@@ -1467,7 +1467,7 @@ jobs:
 When recording runs to Cypress Cloud, the PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` 
 via the workflow `env`. When set, this value enables the Action to perform additional logic that grabs the related PR number and URL (if they
 exist) and sets them in the environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
-* See Cypress' documentation on [CI Build Information](https://docs.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
+* See Cypress' documentation on [CI Build Information](https://on.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
 
 Example workflow using the variables:
 ```yml
