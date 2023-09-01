@@ -1490,23 +1490,18 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-#### Branch with PR
+#### Triggering event: `pull_request`/`pull_request_target`
 
-If the workflow was triggered by a commit for a branch with an open PR, then the PR number and URL should simply point to the branch PR.
+For either of these events, we set `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` to that of the PR number and URL, respectively, of the
+PR that triggered the workflow.
 
-#### Branch without PR
+#### Triggering event: `push`
 
-If there is no PR for a branch, there are two paths:
-1. *With related PRs*
-2. *Without related PRs*
-
-##### With related PRs
 When a commit on a branch without a PR is made, the Cypress GitHub Action checks to see if the commit that triggered the workflow has a 
 related PR. If the commit exists in any other PRs, it's considered a related PR. When there are related PRs, we grab the first related PR
 and use that PR's number and URL for `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
 
-##### Without related PRs
-When there are no related PRs detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` will be undefined
+If no related PR is detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` will be undefined.
 
 ## Node.js
 
