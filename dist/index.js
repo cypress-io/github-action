@@ -74832,6 +74832,80 @@ const waitOnMaybe = () => {
 
 const I = (x) => x
 
+const detectPrNumber = async () => {
+  const {
+    GITHUB_SHA,
+    GITHUB_TOKEN,
+    GITHUB_RUN_ID,
+    GITHUB_REPOSITORY,
+    GITHUB_HEAD_REF,
+    GITHUB_REF,
+    GITHUB_SERVER_URL,
+    CYPRESS_PULL_REQUEST_ID,
+    CYPRESS_PULL_REQUEST_URL
+  } = process.env
+
+  if (CYPRESS_PULL_REQUEST_ID && CYPRESS_PULL_REQUEST_URL) {
+    // Both pull request envs are already defined - no need to do anything else
+    return
+  }
+
+  const [owner, repo] = GITHUB_REPOSITORY.split('/')
+  let prNumber
+
+  if (GITHUB_TOKEN) {
+    debug(
+      `Detecting PR number by asking GitHub about run ${GITHUB_RUN_ID}`
+    )
+
+    const client = new Octokit({
+      auth: GITHUB_TOKEN
+    })
+
+    if (GITHUB_HEAD_REF) {
+      // GITHUB_HEAD_REF is only defined when the event that triggered it was 'pull_request' or 'pull_request_target' (meaning a PR number should be readily-available)
+      // should have format refs/pull/<pr_number>/merge when triggered by pull_request workflow
+      prNumber = parseInt(GITHUB_REF.split('/')[2])
+    } else {
+      try {
+        const resp = await client.request(
+          'GET /repos/:owner/:repo/commits/:commit_sha/pulls',
+          {
+            owner,
+            repo,
+            commit_sha: GITHUB_SHA
+          }
+        )
+
+        if (
+          resp &&
+          resp.data &&
+          resp.data[0] &&
+          resp.data[0].number
+        ) {
+          prNumber = resp.data[0].number
+        }
+      } catch (e) {
+        console.error(
+          `Unable to fetch related PR data for commit: '${GITHUB_SHA}': `,
+          e
+        )
+      }
+    }
+
+    if (prNumber) {
+      if (!CYPRESS_PULL_REQUEST_ID) {
+        core.exportVariable('CYPRESS_PULL_REQUEST_ID', prNumber)
+      }
+
+      const url = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/${prNumber}`
+      if (!CYPRESS_PULL_REQUEST_URL) {
+        core.exportVariable('CYPRESS_PULL_REQUEST_URL', url)
+      }
+    }
+  }
+}
+
 /**
  * Asks Cypress API if there were already builds for this commit.
  * In that case increments the count to get unique parallel id.
@@ -75064,6 +75138,8 @@ const runTests = async () => {
   // export common environment variables that help run Cypress
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   core.exportVariable('TERM', 'xterm')
+
+  await detectPrNumber()
 
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)

@@ -1462,6 +1462,47 @@ jobs:
           publish-summary: false
 ```
 
+### Automatic PR number & URL detection
+
+When recording runs to Cypress Cloud, the PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` 
+via the workflow `env`. When set, this value enables the Action to perform additional logic that grabs the related PR number and URL (if they
+exist) and sets them in the environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
+* See Cypress' documentation on [CI Build Information](https://on.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
+
+Example workflow using the variables:
+```yml
+name: Example echo PR number and URL
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+      - run: echo "PR number is $CYPRESS_PULL_REQUEST_ID"
+      - run: echo "PR URL is $CYPRESS_PULL_REQUEST_URL"
+    env:
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+#### Triggering event: `pull_request`/`pull_request_target`
+
+For either of these events, we set `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` to that of the PR number and URL, respectively, of the
+PR that triggered the workflow.
+
+#### Triggering event: `push`
+
+When a commit on a branch without a PR is made, the Cypress GitHub Action checks to see if the commit that triggered the workflow has a 
+related PR. If the commit exists in any other PRs, it's considered a related PR. When there are related PRs, we grab the first related PR
+and use that PR's number and URL for `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
+
+If no related PR is detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` will be undefined.
+
 ## Node.js
 
 ### Support
