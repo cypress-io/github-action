@@ -50,7 +50,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v5
+        # uses: cypress-io/github-action@v6
         uses: ./
         # let's give this action an ID so we can refer
         # to its output values later
@@ -83,7 +83,7 @@ jobs:
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v5
+        # uses: cypress-io/github-action@v6
         uses: ./
         with:
           working-directory: examples/recording
