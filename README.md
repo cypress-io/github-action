@@ -1480,7 +1480,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Cypress run
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           record: true
       - run: echo "PR number is $CYPRESS_PULL_REQUEST_ID"
