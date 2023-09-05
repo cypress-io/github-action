@@ -117,14 +117,14 @@ See the example project [component-tests](examples/component-tests/) and the [ex
 
 **Best practice:**
 
-Our examples specify using branch [v5](https://github.com/cypress-io/github-action/tree/v5) which is the action's recommended major version:
+Our examples specify using branch [v6](https://github.com/cypress-io/github-action/tree/v6) which is the action's recommended major version:
 
 ```yml
 - name: Cypress run
   uses: cypress-io/github-action@v6
 ```
 
-When using `cypress-io/github-action@v6` from your workflow file, you will automatically use the latest [tag](https://github.com/cypress-io/github-action/tags) from branch [v5](https://github.com/cypress-io/github-action/tree/v5).
+When using `cypress-io/github-action@v6` from your workflow file, you will automatically use the latest [tag](https://github.com/cypress-io/github-action/tags) from branch [v6](https://github.com/cypress-io/github-action/tree/v6).
 
 Alternatively, to mitigate unforeseen breaks, bind to a specific [tag](https://github.com/cypress-io/github-action/tags), for example:
 
@@ -1464,7 +1464,7 @@ jobs:
 
 ### Automatic PR number & URL detection
 
-When recording runs to Cypress Cloud, the PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}` 
+When recording runs to Cypress Cloud, the PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}`
 via the workflow `env`. When set, this value enables the Action to perform additional logic that grabs the related PR number and URL (if they
 exist) and sets them in the environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
 * See Cypress' documentation on [CI Build Information](https://on.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
@@ -1497,7 +1497,7 @@ PR that triggered the workflow.
 
 #### Triggering event: `push`
 
-When a commit on a branch without a PR is made, the Cypress GitHub Action checks to see if the commit that triggered the workflow has a 
+When a commit on a branch without a PR is made, the Cypress GitHub Action checks to see if the commit that triggered the workflow has a
 related PR. If the commit exists in any other PRs, it's considered a related PR. When there are related PRs, we grab the first related PR
 and use that PR's number and URL for `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
 

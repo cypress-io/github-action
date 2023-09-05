@@ -6,6 +6,8 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 | Version | Changes                                                                                                                              |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| v6.4.0  | Action adds PR number and URL if available when recording                                                                            |
+| v6.3.0  | v6 is recommended action version                                                                                                     |
 | v6.2.0  | Examples updated to Cypress 13                                                                                                       |
 | v6.1.0  | Examples for Cypress 9 archived in action's [v5](https://github.com/cypress-io/github-action/tree/v5) branch                         |
 | v6.0.0  | Action runs under Node.js 20 instead of Node.js 16.                                                                                  |
