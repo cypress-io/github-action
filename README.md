@@ -239,6 +239,8 @@ Include `options: --user 1001` to avoid permissions issues.
 
 Refer to [cypress-io/cypress-docker-images](https://github.com/cypress-io/cypress-docker-images) for further information about using Cypress Docker images. Cypress offers the [Cypress Docker Factory](https://github.com/cypress-io/cypress-docker-images/tree/master/factory) to generate additional Docker images with selected components and versions.
 
+[![Docker example](https://github.com/cypress-io/github-action/workflows/example-docker/badge.svg?branch=master)](.github/workflows/example-docker.yml)
+
 ### Env
 
 Specify the env argument with `env` parameter
