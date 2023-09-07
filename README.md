@@ -452,8 +452,6 @@ jobs:
     runs-on: ubuntu-22.04
     name: E2E
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@v3
 
       - name: Checkout
         uses: actions/checkout@v3
