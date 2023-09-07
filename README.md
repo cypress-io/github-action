@@ -410,7 +410,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [16, 18, 20]
+        node: [18, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1133,7 +1133,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [16, 18, 20]
+        node: [18, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1167,7 +1167,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: [16, 18, 20]
+        node: [18, 20]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v3
@@ -1509,7 +1509,6 @@ If no related PR is detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUES
 
 Node.js is required to run this action. The recommended version `v6` supports:
 
-- **Node.js** 16.x
 - **Node.js** 18.x
 - **Node.js** 20.x and above
 
@@ -1521,7 +1520,7 @@ and is generally aligned with [Node.js's release schedule](https://github.com/no
 
 [![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
 
-Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). `github-action@v5` uses `node16` and `github-action@v6` uses `node20`.
+Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). `github-action@v6` uses `node20`.
 
 ## Changelog
 

@@ -107,7 +107,7 @@ This information is for Cypress.io Members or Collaborators who merge pull reque
     ```text
     fix: upgrade dependency X
 
-    BREAKING CHANGE: requires minimum Node.js 16 to run
+    BREAKING CHANGE: requires minimum Node.js 18 to run
     ```
 
 1. New versions of this action will be released automatically by the CI when merged to the `master` branch, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current highest branch from the series `v5`, `v6`, ... etc. Thus specifying `uses: cypress-io/github-action@v6` (or higher version if available) selects the new version automatically. This **will not** push the latest release to GitHub Marketplace.
