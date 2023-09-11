@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Print custom build id 🖨
         run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
@@ -109,7 +109,7 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Print custom build id 🖨
         run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
