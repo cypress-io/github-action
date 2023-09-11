@@ -46,7 +46,7 @@ jobs:
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         # normally you would write
@@ -79,7 +79,7 @@ jobs:
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         # normally you would write
