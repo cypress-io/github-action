@@ -958,7 +958,7 @@ Each of the examples in this monorepo is separated from other examples by using 
 
 ### Subfolders
 
-Sometimes Cypress and end-to-end tests have their own `package.json` file in a subfolder, like
+Sometimes the application under test and the Cypress end-to-end tests may have separately defined dependencies. In the example below, Cypress has its own `package.json` file in a subfolder:
 
 ```text
 root/
@@ -966,15 +966,15 @@ root/
     (code for installing and running Cypress tests)
     package.json
     package-lock.json
-    cypress.json
-    cypress
+    cypress.config.js
+    cypress/
 
   (code for running the "app" with "npm start")
   package.json
-  yarn.lock
+  package-lock.json
 ```
 
-In that case you can combine this action with [bahmutov/npm-install](https://github.com/bahmutov/npm-install) action to install dependencies separately.
+In this case you can first install the dependencies for the application (`npm ci`), then start the application server (`npm start`) before calling `cypress-io/github-action` to install the dependencies for Cypress and to run Cypress. You may also need to use the [wait-on](#wait-on) parameter to make sure that the app server is fully available.
 
 ```yml
 name: E2E
@@ -985,7 +985,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install root dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm ci
 
       - name: Start server in the background
         run: npm start &
