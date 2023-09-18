@@ -163,7 +163,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm ci
       - name: Run ping from CLI
         run: node src/ping-cli https://example.cypress.io
 
