@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20.5.0
-      - uses: bahmutov/npm-install@v1
+      - run: npm ci
       - run: npm run format
       - run: npm run build
 

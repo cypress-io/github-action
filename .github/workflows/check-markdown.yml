@@ -13,5 +13,5 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - uses: bahmutov/npm-install@v1
+      - run: npm ci
       - run: npm run check:markdown
