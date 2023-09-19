@@ -21,7 +21,10 @@ jobs:
           # including detected browsers
           # which are pre-installed in GitHub-hosted runners
           # see https://on.cypress.io/command-line#cypress-info
-          # For convenience, (mis-)use build parameter to get cypress info
+          # We do not need the build parameter to build an app here
+          # because the remote https://example.cypress.io site
+          # is already built and running, and so for convenience
+          # we repurpose the build parameter to get cypress info instead.
           build: npx cypress info
           working-directory: examples/browser
           browser: chrome
