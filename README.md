@@ -1529,8 +1529,8 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 ## Compatibility
 
 - `v6` is the current recommended version and uses `node20`
-- `v5` uses `node16`
-- `v4` is the minimum version required for Cypress `10.x` and later - also uses `node16`
+- `v5` uses the deprecated version `node16`
+- `v4` is the minimum version required for Cypress `10.x` and later - also uses the deprecated version `node16`
 
 Pay attention to any GitHub Actions deprecation warnings shown in logs which may recommend updating.
 
