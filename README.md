@@ -547,7 +547,7 @@ jobs:
 
 ### Config File
 
-Specify the path to your config file with `config-file` parameter
+Specify the path to your [Configuration File](https://on.cypress.io/guides/references/configuration#Configuration-File) with `config-file` parameter
 
 ```yml
 name: Cypress tests
@@ -563,8 +563,10 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          config-file: tests/cypress-config.json
+          config-file: cypress.config-alternate.js
 ```
+
+[![example-config](https://github.com/cypress-io/github-action/workflows/example-config/badge.svg?branch=master)](.github/workflows/example-config.yml)
 
 ### Parallel
 
