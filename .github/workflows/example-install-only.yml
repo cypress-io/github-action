@@ -7,39 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  # do not install every dependency in this example
-  # just install Cypress, but make sure to cache it
-  install-cypress-only-v9:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@v3
-
-      # cache npm modules and Cypress binary folder
-      # we can use "package-lock.json" as the key file
-      # to make sure we use the precise Cypress version
-      # (which is important when using ^ version in package.json)
-      # see https://github.com/actions/cache
-      - name: Cache npm and Cypress 📦
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/Cypress
-            node_modules
-          key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Cypress 📥
-        run: npm i cypress@9.7.0
-
-      - name: Cypress tests 🧪
-        uses: ./
-        with:
-          working-directory: examples/v9/install-only
-          install: false
-
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
   # do not install every dependency in this example
   # just install Cypress, but make sure to cache it
@@ -47,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # cache npm modules and Cypress binary folder
       # we can use "package-lock.json" as the key file
@@ -63,7 +30,7 @@ jobs:
           key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Cypress 📥
-        run: npm i cypress@12.17.2
+        run: npm i cypress@13.3.0
 
       - name: Cypress tests 🧪
         uses: ./

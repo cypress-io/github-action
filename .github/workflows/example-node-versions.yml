@@ -8,40 +8,13 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  cypress-run-v9:
-    runs-on: ubuntu-22.04
-    # let's make sure Cypress works on several versions of Node
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [16, 18, 20]
-    name: Cypress v9 E2E on Node v${{ matrix.node }}
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: node -v
-      - run: npm -v
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - uses: ./
-        with:
-          working-directory: examples/v9/node-versions
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   cypress-run:
     runs-on: ubuntu-22.04
     # let's make sure Cypress works on several versions of Node
     strategy:
       fail-fast: false
       matrix:
-        node: [16, 18, 20]
+        node: [18, 20]
     name: Cypress E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -52,7 +25,7 @@ jobs:
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: ./
         with:

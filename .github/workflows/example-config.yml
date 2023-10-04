@@ -8,70 +8,12 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  start-v9:
-    # example where we pass custom base URL
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/v9/config
-          build: npm run build
-          start: npm start
-          wait-on: 'http://localhost:3333'
-          config: baseUrl=http://localhost:3333
-
-  separate-specs-v9:
-    # example where we pass specs to run via multiple lines
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/v9/config
-          build: npm run build
-          start: npm start
-          wait-on: 'http://localhost:3333'
-          config: baseUrl=http://localhost:3333
-          spec: |
-            cypress/integration/spec-a.js
-            cypress/integration/spec-b.js
-
-  separate-specs-with-wildcard-v9:
-    # example where we pass specs to run via multiple lines and wildcards
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/v9/config
-          build: npm run build
-          start: npm start
-          wait-on: 'http://localhost:3333'
-          config: baseUrl=http://localhost:3333
-          spec: |
-            cypress/integration/spec-a.js
-            cypress/**/*-b.js
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   start:
     # example where we pass custom base URL
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -87,7 +29,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -106,7 +48,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./

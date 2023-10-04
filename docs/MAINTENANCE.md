@@ -4,19 +4,17 @@ This document describes updating the [examples](../examples) in this repository 
 
 ## Examples
 
-There are two groups of examples which are used to test and demonstrate the use of [cypress-io/github-action](https://github.com/cypress-io/github-action):
+The [examples](../examples) directory contains examples of the use of Cypress (Current) [Configuration](https://docs.cypress.io/guides/references/configuration) which applies to Cypress 10 and later. These examples test and demonstrate the use of [cypress-io/github-action](https://github.com/cypress-io/github-action).
 
-1. The [examples](../examples) directory contains examples of the use of Cypress (Current) [Configuration](https://docs.cypress.io/guides/references/configuration) which applies to Cypress 10 and later.
+The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [Yarn 1 (Classic)](https://classic.yarnpkg.com/) and [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) to define and install the packages being used.
 
-2. The [examples/v9](../examples/v9) directory contains examples which are set up to use Cypress `9.7.0` which is the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration) which applies to Cypress 9 and below.
+*The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch. This directory contains examples which were set up to use Cypress `9.7.0`, the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration), covering Cypress 9 and below. These `v9` examples are no longer maintained.
 
-The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/) and [Yarn 1 (Classic)](https://classic.yarnpkg.com/) to define and install the packages being used.
-
-## Prerequisites
+## Requirements
 
 - A local system running [Ubuntu](https://ubuntu.com/), [Microsoft Windows](https://www.microsoft.com/windows/) or [Apple macOS](https://www.apple.com/macos/).
 
-- The LTS version of [Node.js](https://nodejs.org/). For convenience of switching to other versions of Node.js, [nvm](https://github.com/nvm-sh/nvm) for unix, macOS and windows WSL. For Windows [nvm-windows](https://github.com/coreybutler/nvm-windows).
+- [Node.js](https://nodejs.org/en/) as described in the [CONTRIBUTING](../CONTRIBUTING.md#requirements) document.
 
 - [git](https://git-scm.com/) distributed version control system.
 
@@ -28,15 +26,11 @@ The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/)
 npm install pnpm@latest -g
 ```
 
-This needs to be repeated if you change the base node version using nvm.
-
 - [Yarn 1 (Classic)](https://classic.yarnpkg.com/) installed through:
 
 ```bash
 npm install yarn@latest -g
 ```
-
-Again, this needs to be repeated if you change the base node version using nvm.
 
 - [Visual Studio Code](https://code.visualstudio.com/) or other editor
 
@@ -56,7 +50,7 @@ From the root of a local clone of the repository, execute:
 npm run update:cypress
 ```
 
-This updates all [examples](../examples) (except [examples/v9](../examples/v9)) to cypress@latest.
+This updates all [examples](../examples) to cypress@latest.
 
 [.github/workflows/example-install-only.yml](../.github/workflows/example-install-only.yml) contains a hard-coded Cypress version number. This can be updated by hand.
 

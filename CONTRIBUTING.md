@@ -20,6 +20,12 @@ This document describes topics useful to contributors to this repository. The re
 
 You can read the GitHub document [Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action) for background information on how JavaScript actions for GitHub are created and how they work.
 
+### Requirements
+
+You must have the following installed on your system to contribute locally:
+
+- [`Node.js`](https://nodejs.org/en/) (See the [.node-version](.node-version) file for the required version. You can find a list of tools on [node-version-usage](https://github.com/shadowspawn/node-version-usage) to switch the version of [`Node.js`](https://nodejs.org/en/) based on [.node-version](.node-version).)
+
 ### Providing fixes or features
 
 If you are submitting a Pull Request (PR) to provide a fix or feature for the action, the following is relevant to you:
@@ -34,9 +40,9 @@ The action runs from the [dist](dist) directory, which requires a `build` step t
 To contribute changes, follow these instructions in the order given below:
 
 1. If you are a new external contributor, then first fork the repository (see GitHub documentation [About forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks)).
+1. Clone the repository
 1. Create a new branch with a meaningful name e.g. `fix/my-bug` based on the current `master` branch.
 1. Make the necessary source code changes, including additions or changes to the [README.md](./README.md) documentation if parameters are added or affected.
-1. Ensure you have [`Node.js`](https://nodejs.org/en/) installed. (See the root [.node-version](.node-version) file for the required version. You can find a list of tools on [node-version-usage](https://github.com/shadowspawn/node-version-usage) to switch the version of [`Node.js`](https://nodejs.org/en/) based on [.node-version](.node-version)).
 1. Execute the following in the root directory of the cloned repository
 
     ```bash
@@ -60,7 +66,7 @@ The repository is set up with a `git` / `Husky` pre-commit hook which ensures th
 
 ### Adding a new example
 
-1. If you are creating a new example, add this as a new project in the `examples` directory. An example project is a regular npm package with its own `package.json` and Cypress dev dependency. (Note: Legacy `examples/v9` should not be extended.)
+1. If you are creating a new example, add this as a new project in the `examples` directory. An example project is a regular npm package with its own `package.json` and Cypress dev dependency. (Note: Legacy `examples/v9` are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch. It is not expected to create any new `v9` examples.)
 1. Add a corresponding `.github/workflows` YAML file that uses this action and runs using your new `examples/X` through the `working-directory` parameter. The example should demonstrate any new feature.
 1. Add a workflow status badge to the [README.md](README.md) file (see [Adding a workflow status badge](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge)), like the following:
 
@@ -77,10 +83,10 @@ which calls the action code from the branch they are running in when the workflo
 From another (external) repository, the production version of the action is called with
 
 ```yaml
-- uses: cypress-io/github-action@v5
+- uses: cypress-io/github-action@v6
 ```
 
-To test out a branch in development calling it from another repository, replace `v5` by the name of your branch. If your branch is in a fork, then also replace `cypress-io` by your own GitHub username in the form:
+To test out a branch in development calling it from another repository, replace `v6` by the name of your branch. If your branch is in a fork, then also replace `cypress-io` by your own GitHub username in the form:
 
 `- uses: <your-username>/github-action@<your-branch>`
 
@@ -101,10 +107,10 @@ This information is for Cypress.io Members or Collaborators who merge pull reque
     ```text
     fix: upgrade dependency X
 
-    BREAKING CHANGE: requires minimum Node.js 16 to run
+    BREAKING CHANGE: requires minimum Node.js 18 to run
     ```
 
-1. New versions of this action will be released automatically by the CI when merged to the `master` branch, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current `v5` branch. Thus specifying `uses: cypress-io/github-action@v5` selects the new version automatically. This **will not** push the latest release to GitHub Marketplace.
+1. New versions of this action will be released automatically by the CI when merged to the `master` branch, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current highest branch from the series `v5`, `v6`, ... etc. Thus specifying `uses: cypress-io/github-action@v6` (or higher version if available) selects the new version automatically. This **will not** push the latest release to GitHub Marketplace.
 1. The action's CI is configured to use the [default Angular release rules](https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js). This means that only `feat:`, `fix:` and `perf:` trigger a new release which is then logged to the [releases](https://github.com/cypress-io/github-action/releases) page. Other Angular commit types listed on [Contributing to Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) can be used for documentation purposes, however they are ignored by the currently configured release process.
 
 ## GitHub Marketplace publication

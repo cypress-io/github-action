@@ -35,66 +35,6 @@ jobs:
             echo "defined=false" >> $GITHUB_OUTPUT;
           fi
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  parallel-v9:
-    runs-on: ubuntu-22.04
-    needs: [check-record-key]
-    strategy:
-      fail-fast: false
-      matrix:
-        # run copies of the current job in parallel
-        containers: [1, 2]
-    if: needs.check-record-key.outputs.record-key-exists == 'true'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        # normally you would write
-        # uses: cypress-io/github-action@v5
-        uses: ./
-        # let's give this action an ID so we can refer
-        # to its output values later
-        id: cypress
-        # Continue the build in case of an error, as we need to set the
-        # commit status in the next step, both in case of success and failure
-        continue-on-error: true
-        with:
-          working-directory: examples/v9/recording
-          record: true
-          parallel: true
-          group: Recording example v9
-          tag: action
-
-      # see "outcome" and "conclusion" of a step doc
-      # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
-      # "output" can be success, failure, cancelled, or skipped
-      - name: Print Cypress Cloud URL
-        run: |
-          echo Cypress finished with: ${{ steps.cypress.outcome }}
-          echo See results at ${{ steps.cypress.outputs.dashboardUrl }} # note: dashboardUrl is now deprecated
-
-  group-v9:
-    runs-on: ubuntu-22.04
-    needs: [check-record-key]
-    if: needs.check-record-key.outputs.record-key-exists == 'true'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cypress tests
-        # normally you would write
-        # uses: cypress-io/github-action@v5
-        uses: ./
-        with:
-          working-directory: examples/v9/recording
-          record: true
-          # no parallel flag, just the group name
-          group: Recording group v9
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   parallel:
     runs-on: ubuntu-22.04
     needs: [check-record-key]
@@ -106,11 +46,11 @@ jobs:
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v5
+        # uses: cypress-io/github-action@v6
         uses: ./
         # let's give this action an ID so we can refer
         # to its output values later
@@ -163,11 +103,11 @@ jobs:
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         # normally you would write
-        # uses: cypress-io/github-action@v5
+        # uses: cypress-io/github-action@v6
         uses: ./
         with:
           working-directory: examples/recording

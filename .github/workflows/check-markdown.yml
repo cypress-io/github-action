@@ -12,6 +12,6 @@ jobs:
     name: Check links in Markdown files
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: bahmutov/npm-install@v1
+        uses: actions/checkout@v4
+      - run: npm ci
       - run: npm run check:markdown

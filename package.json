@@ -46,11 +46,11 @@
     "supports-color": "9.3.1"
   },
   "devDependencies": {
-    "@types/node": "18.17.1",
-    "@vercel/ncc": "0.36.1",
+    "@types/node": "20.6.5",
+    "@vercel/ncc": "0.38.0",
     "husky": "8.0.3",
     "markdown-link-check": "3.11.1",
-    "prettier": "2.8.4"
+    "prettier": "3.0.3"
   },
   "publishConfig": {
     "access": "public"
