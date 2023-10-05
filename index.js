@@ -917,7 +917,6 @@ const generateSummary = async (testResults) => {
 
 const generateOutputTestResultsObject = (testResults) => {
   const outputObject = {
-    success: testResults.totalFailed === 0,
     totalPassed: testResults.totalPassed,
     totalFailed: testResults.totalFailed,
     totalPending: testResults.totalPending,
