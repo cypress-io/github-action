@@ -90,7 +90,6 @@ jobs:
             }
 
             const testResults = JSON.parse('${{ steps.cypress.outputs.testResultsObject }}')
-            console.log("Success: " + testResults.success)
             console.log("TotalPassed: " + testResults.totalPassed)
             console.log("TotalFailed: " + testResults.totalFailed)
             console.log("TotalPending: " + testResults.totalPending)

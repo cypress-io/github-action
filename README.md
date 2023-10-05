@@ -1383,14 +1383,12 @@ Ex:
       with:
         script: |
           const testResults = JSON.parse('${{ steps.cypress-run.outputs.testResultsObject }}')
-          console.log(testResults.success)
           console.log(testResults.totalPassed)
           ...
 ```
 Example structure of the JSON object:
 ```json
 {
-  "success": true,
   "totalPassed": 5,
   "totalFailed": 2,
   "totalPending": 0,
