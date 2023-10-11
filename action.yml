@@ -96,7 +96,7 @@ outputs:
     description: 'Cypress Cloud URL if the run was recorded (deprecated)'
   resultsUrl:
     description: 'Cypress Cloud URL if the run was recorded'
-  testResultsObject:
+  testResults:
     description: 'Cypress test results stringifyed JSON object'
 runs:
   using: 'node20'

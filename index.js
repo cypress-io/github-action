@@ -816,6 +816,8 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
+    core.setOutput('testResults', testResults)
+
     const resultsUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
@@ -864,7 +866,6 @@ const runTests = async () => {
   process.chdir(workingDirectory)
   return cypress
     .run(cypressOptions)
-    .then(generateOutputTestResultsObject)
     .then(generateSummary)
     .then(onTestsFinished, onTestsError)
 }
@@ -911,20 +912,6 @@ const generateSummary = async (testResults) => {
       testResults.runUrl || ''
     )
     .write()
-
-  return testResults
-}
-
-const generateOutputTestResultsObject = (testResults) => {
-  const outputObject = {
-    totalPassed: testResults.totalPassed,
-    totalFailed: testResults.totalFailed,
-    totalPending: testResults.totalPending,
-    totalSkipped: testResults.totalSkipped,
-    totalDuration: testResults.totalDuration / 1000 || ''
-  }
-
-  core.setOutput('testResultsObject', JSON.stringify(outputObject))
 
   return testResults
 }

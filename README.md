@@ -1372,7 +1372,7 @@ The GitHub step output `dashboardUrl` is deprecated. Cypress Dashboard is now [C
 
 **Note:** every GitHub workflow step can have `outcome` and `conclusion` properties. See the GitHub [Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) documentation section [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context). In particular, the `outcome` or `conclusion` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use in any following steps.
 
-It also sets a step output `testResultsObject` which contains a stringified test results JSON object.  
+It also sets a step output `testResults` which contains a stringified test results JSON object.  
 In order to use it you should parse the string into an object.  
 Ex:
 ```yaml
@@ -1382,21 +1382,11 @@ Ex:
       uses: actions/github-script@v6.4.1
       with:
         script: |
-          const testResults = JSON.parse('${{ steps.cypress-run.outputs.testResultsObject }}')
+          const testResults = JSON.parse('${{ steps.cypress-run.outputs.testResults }}')
           console.log(testResults.totalPassed)
           ...
 ```
-Example structure of the JSON object:
-```json
-{
-  "totalPassed": 5,
-  "totalFailed": 2,
-  "totalPending": 0,
-  "totalSkipped": 1,
-  "totalDuration": 25
-}
-```
-**Note:** `totalDuration` is expressed in seconds.
+Structure of the test results object can be found [here](https://docs.cypress.io/guides/guides/module-api#Results).
 
 ### Print Cypress info
 
