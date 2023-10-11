@@ -73,10 +73,10 @@ jobs:
           echo Cypress finished with: ${{ steps.cypress.outcome }}
           echo See results at ${{ steps.cypress.outputs.resultsUrl }}
 
-      # print the `testResultsObject` output directly as string
+      # print the `testResults` output directly as string
       - name: Print Cypress test results output
         run: |
-          echo Cypress test results: ${{ steps.cypress.outputs.testResultsObject }}
+          echo Cypress test results: ${{ steps.cypress.outputs.testResults }}
 
       # parse the `testResults` output as JSON.
       # Note that the output is a string and empty if there is a custom command passed to the action and the command runs through CLI
