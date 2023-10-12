@@ -81,7 +81,7 @@ jobs:
       # parse the `testResults` output as JSON.
       # Note that the output is a string and empty if there is a custom command passed to the action and the command runs through CLI
       - name: Parse the Cypress test results output
-        uses: actions/github-script@v6.4.1
+        uses: actions/github-script@v6
         with:
           script: |
             if (${{ steps.cypress.outputs.testResults }} == "") {
