@@ -1381,7 +1381,7 @@ Ex:
 ...
   steps:
     - name: Parse results
-      uses: actions/github-script@v6.4.1
+      uses: actions/github-script@v6
       with:
         script: |
           const testResults = JSON.parse('${{ steps.cypress-run.outputs.testResults }}')
