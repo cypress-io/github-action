@@ -28,6 +28,7 @@ jobs:
           build: npx cypress info
           working-directory: examples/browser
           browser: chrome
+          summary-title: 'Chrome headless'
           # As of Cypress v8.0 the `cypress run` command
           # executes tests in `headless` mode by default
 
@@ -47,6 +48,7 @@ jobs:
           working-directory: examples/browser
           browser: chrome
           headed: true
+          summary-title: 'Chrome headed'
 
       - uses: actions/upload-artifact@v3
         with:
