@@ -54,7 +54,8 @@
 - Use [timeouts](#timeouts) to avoid hanging CI jobs
 - Print [Cypress info](#print-cypress-info) like detected browsers
 - Run [tests nightly](#nightly-tests) or on any schedule
-- Suppress [test summary](#suppress-test-summary)
+- Specify [job summary title](#job-summary-title)
+- Suppress [job summary](#suppress-job-summary)
 - [More examples](#more-examples)
 
 Examples contained in this repository, based on current Cypress versions, can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration), which use Cypress `9.7.0`, are no longer maintained. They can be referred to in the [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) directory of the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch.
@@ -1457,11 +1458,39 @@ jobs:
 
 [![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
 
-### Suppress test summary
+### Job summary title
 
-The default test summary can be suppressed by using the parameter `publish-summary` and setting its value to `false`.
-Sometimes users want to publish test summary using a specific action.
-For example, a user running Cypress tests using a matrix and wants to retrieve the test summary for each matrix job and use a specific action that merges reports.
+By default, the action produces a job summary in the GitHub Actions log for each workflow step where `github-action` is used. Each job summary shows a Passing / Failing status, the test counts for Passed, Failed, Pending & Skipped, followed by the Duration of the run. The job summaries are grouped by job.
+
+To specify a title for a Job Summary, use the parameter `summary-title`. If no title is specified, then the default "Cypress Results" is used:
+
+```yml
+name: Summary titles
+on: push
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cypress headless tests
+        uses: cypress-io/github-action@v6
+        with:
+          summary-title: 'Headless'
+      - name: Cypress headed tests
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          headed: true
+          summary-title: 'Headed'
+```
+
+The name of the GitHub Actions job is shown at the top of one or more job summaries from the same job. If multiple summaries belong to the same job, then giving them separate titles allows them to be uniquely identified.
+
+See the [example-chrome.yml](.github/workflows/example-chrome.yml) workflow, with multiple calls to `cypress-io/github-action` in one job, making use of the `summary-title` parameter. View the [example-chrome.yml - actions log](https://github.com/cypress-io/github-action/actions/workflows/example-chrome.yml) for an example of the resulting job summaries.
+
+### Suppress job summary
+
+The default job summary can be suppressed by using the parameter `publish-summary` and setting its value to `false`.
 
 ```yml
 name: Example no summary

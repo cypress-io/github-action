@@ -66,9 +66,12 @@ inputs:
     description: 'Whether or not to use headed mode'
     required: false
   publish-summary:
-    description: 'Whether or not to publish job summary'
+    description: 'Whether or not to publish a job summary'
     required: false
     default: true
+  summary-title:
+    description: 'Title for job summary'
+    required: false
   spec:
     description: 'Provide a specific specs to run'
     required: false
