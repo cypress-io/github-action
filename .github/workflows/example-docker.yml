@@ -19,7 +19,7 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@v4
-      # replace by the following for regular use:
+      # replace with the following for regular use:
       # uses: cypress-io/github-action@v6
       - uses: ./
         with:
