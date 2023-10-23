@@ -75212,7 +75212,7 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
-    core.setOutput('testResults', testResults)
+    core.setOutput('runResults', testResults)
 
     const resultsUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
