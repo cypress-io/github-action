@@ -73,28 +73,28 @@ jobs:
           echo Cypress finished with: ${{ steps.cypress.outcome }}
           echo See results at ${{ steps.cypress.outputs.resultsUrl }}
 
-      # print the `testResults` output directly as string
-      - name: Print Cypress test results output
+      # print the `runResults` output directly as string
+      - name: Print Cypress run results output
         run: |
-          echo Cypress test results: ${{ steps.cypress.outputs.testResults }}
+          echo Cypress run results: ${{ steps.cypress.outputs.runResults }}
 
-      # parse the `testResults` output as JSON.
+      # parse the `runResults` output as JSON.
       # Note that the output is a string and empty if there is a custom command passed to the action and the command runs through CLI
-      - name: Parse the Cypress test results output
+      - name: Parse the Cypress run results output
         uses: actions/github-script@v6
         with:
           script: |
-            if (${{ steps.cypress.outputs.testResults }} == "") {
-              console.log('No test results found')
+            if (${{ steps.cypress.outputs.runResults }} == "") {
+              console.log('No run results found')
               return
             }
 
-            const testResults = JSON.parse('${{ steps.cypress.outputs.testResults }}')
-            console.log("TotalPassed: " + testResults.totalPassed)
-            console.log("TotalFailed: " + testResults.totalFailed)
-            console.log("TotalPending: " + testResults.totalPending)
-            console.log("TotalSkipped: " + testResults.totalSkipped)
-            console.log("TotalDuration: " + testResults.totalDuration) 
+            const runResults = JSON.parse('${{ steps.cypress.outputs.runResults }}')
+            console.log("TotalPassed: " + runResults.totalPassed)
+            console.log("TotalFailed: " + runResults.totalFailed)
+            console.log("TotalPending: " + runResults.totalPending)
+            console.log("TotalSkipped: " + runResults.totalSkipped)
+            console.log("TotalDuration: " + runResults.totalDuration) 
 
   group:
     runs-on: ubuntu-22.04

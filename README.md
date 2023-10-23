@@ -1370,25 +1370,26 @@ This is an example of using the step output `resultsUrl`:
 
 The GitHub step output `dashboardUrl` is deprecated. Cypress Dashboard is now [Cypress Cloud](https://on.cypress.io/cloud-introduction).
 
-[![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
+This action also sets a GitHub step output `runResults` which contains a stringified JSON object.  
 
-**Note:** every GitHub workflow step can have `outcome` and `conclusion` properties. See the GitHub [Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) documentation section [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context). In particular, the `outcome` or `conclusion` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use in any following steps.
+This is an example of parsing the `runResults`.  
 
-It also sets a step output `testResults` which contains a stringified test results JSON object.  
-In order to use it you should parse the string into an object.  
-Ex:
 ```yaml
 ...
   steps:
-    - name: Parse results
+    - name: Parse run results
       uses: actions/github-script@v6
       with:
         script: |
-          const testResults = JSON.parse('${{ steps.cypress-run.outputs.testResults }}')
-          console.log(testResults.totalPassed)
+          const runResults = JSON.parse('${{ steps.cypress-run.outputs.runResults }}')
+          console.log(runResults.totalPassed)
           ...
 ```
-Structure of the test results object can be found [here](https://docs.cypress.io/guides/guides/module-api#Results).
+Structure of the run results object can be found [here](https://docs.cypress.io/guides/guides/module-api#Results).
+
+[![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
+
+**Note:** every GitHub workflow step can have `outcome` and `conclusion` properties. See the GitHub [Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) documentation section [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context). In particular, the `outcome` or `conclusion` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use in any following steps.
 
 ### Print Cypress info
 
