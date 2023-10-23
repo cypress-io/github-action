@@ -414,7 +414,7 @@ jobs:
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
@@ -1151,7 +1151,7 @@ jobs:
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - name: Checkout
@@ -1184,7 +1184,7 @@ jobs:
         node: [18, 20, 21]
     name: E2E on Node v${{ matrix.node }}
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - uses: actions/checkout@v4
