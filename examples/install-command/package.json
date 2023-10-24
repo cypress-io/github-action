@@ -12,5 +12,6 @@
   "dependencies": {
     "arg": "5.0.0",
     "debug": "4.3.4"
-  }
+  },
+  "packageManager": "yarn@4.0.0"
 }

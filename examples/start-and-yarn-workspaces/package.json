@@ -3,5 +3,6 @@
   "workspaces": [
     "workspace-1",
     "workspace-2"
-  ]
+  ],
+  "packageManager": "yarn@4.0.0"
 }
