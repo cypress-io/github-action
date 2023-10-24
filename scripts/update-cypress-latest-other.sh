@@ -45,6 +45,7 @@ echo
 echo updating examples/yarn-modern to cypress@latest
 cd yarn-modern
 yarn set version latest
+touch yarn.lock # create if missing to avoid a Yarn error
 yarn add cypress --dev --exact
 cd ..
 
@@ -53,6 +54,7 @@ echo
 echo updating examples/yarn-modern-pnp to cypress@latest
 cd yarn-modern-pnp
 yarn set version latest
+touch yarn.lock # create if missing to avoid a Yarn error
 yarn add cypress --dev --exact
 cd ..
 
