@@ -15,11 +15,8 @@ echo
 echo updating examples/start-and-yarn-workspaces to cypress@latest
 cd start-and-yarn-workspaces
 for i in 1 2; do
-cd workspace-${i}
 echo updating workspace-${i}
-npm install cypress@latest --save-dev --save-exact --package-lock=false
-npm ls cypress
-cd ..
+yarn workspace workspace-${i} add cypress --dev --exact
 done
 echo
 echo updating yarn lockfile for start-and-yarn-workspaces
