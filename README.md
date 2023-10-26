@@ -410,7 +410,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [18, 20]
+        node: [18, 20, 21]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1002,6 +1002,7 @@ jobs:
 ### pnpm
 
 The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`): to install `pnpm` include [pnpm/action-setup](https://github.com/pnpm/action-setup) in your workflow. If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
+At this time the action does not automatically cache dependencies installed by pnpm. The example below includes steps to locate the pnpm store directory and to cache its contents for later use.
 
 ```yaml
 name: example-basic-pnpm
@@ -1016,6 +1017,17 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -1135,7 +1147,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [18, 20]
+        node: [18, 20, 21]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1169,7 +1181,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: [18, 20]
+        node: [18, 20, 21]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v3

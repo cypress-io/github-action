@@ -12,7 +12,7 @@ The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/)
 
 ## Requirements
 
-- A local system running [Ubuntu](https://ubuntu.com/), [Microsoft Windows](https://www.microsoft.com/windows/) or [Apple macOS](https://www.apple.com/macos/).
+- A local system running [Ubuntu](https://ubuntu.com/), <!-- markdown-link-check-disable -->[Microsoft Windows](https://www.microsoft.com/windows/)<!-- markdown-link-check-enable --> or [Apple macOS](https://www.apple.com/macos/).
 
 - [Node.js](https://nodejs.org/en/) as described in the [CONTRIBUTING](../CONTRIBUTING.md#requirements) document.
 
