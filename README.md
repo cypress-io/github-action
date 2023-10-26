@@ -1296,7 +1296,7 @@ See section [Yarn Modern](#yarn-modern) for information about using Yarn version
 
 This action uses the [debug](https://github.com/visionmedia/debug#readme) module to output additional verbose logs. You can see these debug messages by setting the following environment variable:
 
-```
+```yml
 DEBUG: @cypress/github-action
 ```
 
@@ -1311,9 +1311,11 @@ You can set the environment variable using GitHub UI interface, or in the workfl
 
 See the [example-debug.yml](.github/workflows/example-debug.yml) workflow file.
 
+To collect more verbose GitHub Action logs you can set a GitHub secret or variable `ACTIONS_STEP_DEBUG` to `true`. This is useful to see detailed caching steps. See [Enabling debug logging](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging) from GitHub Actions documentation for more information.
+
 ### Logs from the test runner
 
-The above `ACTIONS_STEP_DEBUG` setting enables the debug logs from the action itself. To see the [Cypress debug logs](http://on.cypress.io/troubleshooting#Print-DEBUG-logs) add an environment variable to the action:
+To see the [Cypress debug logs](http://on.cypress.io/troubleshooting#Print-DEBUG-logs) add an environment variable to the action:
 
 ```yml
 - name: Cypress tests with debug logs
