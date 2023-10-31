@@ -75298,8 +75298,10 @@ const generateSummary = async (testResults) => {
     `${testResults.totalDuration / 1000}s` || ''
   ]
 
+  const summaryTitle = core.getInput('summary-title')
+
   await core.summary
-    .addHeading('Cypress Results', 2)
+    .addHeading(summaryTitle ? summaryTitle : 'Cypress Results', 2)
     .addTable([headers, summaryRows])
     .addLink(
       testResults.runUrl ? 'View run in Cypress Cloud' : '',
