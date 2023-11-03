@@ -8,22 +8,11 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  # An example test using the Mozilla Firefox browser with Cypress v9 is no longer included here.
-  #
-  # Firefox connects unreliably with Cypress v9, as described in the closed Cypress issue
-  # https://github.com/cypress-io/cypress/issues/23215.
-  # It is not planned to resolve the issue in Cypress v9.
-  # The problem is however resolved in Cypress v10 and later.
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   firefox:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Firefox
         uses: ./
@@ -31,14 +20,14 @@ jobs:
         with:
           # let's show browser and system info
           build: npx cypress info
-          working-directory: examples/firefox
+          working-directory: examples/browser
           browser: firefox
 
       # report screenshot size and store the screenshots as test artifacts
       - uses: actions/upload-artifact@v3
         with:
           name: screenshots-in-firefox
-          path: examples/firefox/cypress/screenshots
+          path: examples/browser/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/firefox
+        working-directory: examples/browser

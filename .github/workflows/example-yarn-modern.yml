@@ -1,0 +1,22 @@
+name: example-yarn-modern
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  yarn-modern:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Custom Yarn command
+        uses: ./
+        with:
+          working-directory: examples/yarn-modern
+          # https://yarnpkg.com/cli/install
+          install-command: yarn install

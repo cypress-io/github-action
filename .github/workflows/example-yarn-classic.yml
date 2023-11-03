@@ -1,0 +1,20 @@
+name: example-yarn-classic
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  yarn-classic:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test with Yarn Classic
+        uses: ./
+        with:
+          working-directory: examples/yarn-classic

@@ -10,12 +10,10 @@
     "cy:open": "cypress open",
     "dev": "CYPRESS_baseUrl=http://localhost:3333 start-test 3333 cy:open"
   },
-  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
-  "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "12.4.1",
-    "serve": "^14.2.0",
-    "start-server-and-test": "1.11.5"
+    "cypress": "13.4.0",
+    "serve": "14.2.1",
+    "start-server-and-test": "2.0.0"
   }
 }

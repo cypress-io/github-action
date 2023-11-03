@@ -1,16 +1,14 @@
 {
   "name": "example-recording",
   "version": "1.0.0",
-  "description": "recording test results to Cypress Dashboard",
+  "description": "recording test results to Cypress Cloud",
   "main": "index.js",
   "scripts": {
     "test": "cypress run",
     "cy:open": "cypress open"
   },
-  "author": "",
-  "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "12.4.1"
+    "cypress": "13.4.0"
   }
 }

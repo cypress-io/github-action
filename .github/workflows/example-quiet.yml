@@ -8,29 +8,12 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  cypress-run-v9:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests with `quiet` parameter
-      - name: Cypress run
-        uses: ./
-        with:
-          working-directory: examples/v9/quiet
-          quiet: true
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   cypress-run:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
+        uses: actions/checkout@v4
+      # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
         uses: ./

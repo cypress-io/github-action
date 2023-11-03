@@ -1,12 +1,15 @@
 # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/metadata-syntax-for-github-actions
 name: 'Cypress.io'
-description: 'GitHub Action for running Cypress end-to-end tests'
-author: 'Gleb Bahmutov'
+description: 'GitHub Action for running Cypress end-to-end and component tests'
+author: 'Cypress-io'
 inputs:
   record:
-    description: 'Sends test results to Cypress Dashboard'
+    description: 'Sends test results to Cypress Cloud'
     required: false
     default: false
+  auto-cancel-after-failures:
+    description: 'Overrides the global Cloud configuration to set the failed test threshold for auto cancellation or to disable auto cancellation when recording to the Cloud (requires Cypress 12.x or later)'
+    required: false
   config:
     description: 'Set configuration values. Separate multiple values with a comma. The values set here override any values set in your configuration file.'
     required: false
@@ -62,6 +65,13 @@ inputs:
   headed:
     description: 'Whether or not to use headed mode'
     required: false
+  publish-summary:
+    description: 'Whether or not to publish a job summary'
+    required: false
+    default: true
+  summary-title:
+    description: 'Title for job summary'
+    required: false
   spec:
     description: 'Provide a specific specs to run'
     required: false
@@ -86,9 +96,11 @@ inputs:
     default: false
 outputs:
   dashboardUrl:
-    description: 'Cypress Dashboard URL if the run was recorded'
+    description: 'Cypress Cloud URL if the run was recorded (deprecated)'
+  resultsUrl:
+    description: 'Cypress Cloud URL if the run was recorded'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   color: 'green'

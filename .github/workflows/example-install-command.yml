@@ -8,28 +8,11 @@ on:
 
 jobs:
 
-  # ~~~~~~~~~~~~~~~~~~ Cypress v9 and below (using Legacy configuration) ~~~~~~~~~~~~~~~~~~~ #
-
-  install-command-v9:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Custom Yarn command
-        uses: ./
-        with:
-          working-directory: examples/v9/install-command
-          # https://classic.yarnpkg.com/en/docs/cli/install
-          install-command: yarn --frozen-lockfile --silent
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cypress v10 and higher ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
   install-command:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Custom Yarn command
         uses: ./
