@@ -1370,14 +1370,12 @@ This is an example of using the step output `resultsUrl`:
   # let's give this action an ID so we can refer
   # to its output values later
   id: cypress
-  # Continue the build in case of an error, as we need to set the
-  # commit status in the next step, both in case of success or failure
-  continue-on-error: true
   with:
     record: true
   env:
     CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
 - name: Print Cypress Cloud URL
+  if: always()
   run: |
     echo Cypress finished with: ${{ steps.cypress.outcome }}
     echo See results at ${{ steps.cypress.outputs.resultsUrl }}
