@@ -1,0 +1,21 @@
+name: example-component-test
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cypress run
+        # normally you would write
+        # uses: cypress-io/github-action@v6
+        uses: ./
+        with:
+          working-directory: examples/component-tests
+          component: true

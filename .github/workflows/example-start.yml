@@ -1,14 +1,27 @@
 name: example-start
-on: [push]
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # Disable update-check called by serve through start or start2 script
+  # works around issue when more than one instance of serve is started
+  # See PR https://github.com/vercel/serve/pull/457
+  NO_UPDATE_CHECK: 1
+
 jobs:
+
   start:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -16,15 +29,15 @@ jobs:
           working-directory: examples/start
           build: npm run build
           start: npm start
-          wait-on: 'http://localhost:5000'
+          wait-on: 'http://localhost:3000'
 
   start-multiple:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -41,10 +54,10 @@ jobs:
   start-multiple-commas:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./

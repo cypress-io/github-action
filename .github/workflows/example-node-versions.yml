@@ -1,25 +1,31 @@
 name: example-node-versions
-on: [push]
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
 jobs:
+
   cypress-run:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     # let's make sure Cypress works on several versions of Node
     strategy:
+      fail-fast: false
       matrix:
-        node: [8.12, 10, 12]
-    name: E2E on Node v${{ matrix.node }}
+        node: [18, 20, 21]
+    name: Cypress E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
       - run: npm -v
 
       - name: Checkout
-        uses: actions/checkout@v2
-
-      # Hmm, should we rebuild the "dist" before using the action?
+        uses: actions/checkout@v4
 
       - uses: ./
         with:

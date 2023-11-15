@@ -1,20 +1,63 @@
+name: example-custom-ci-build-id
+#
+# To set up this workflow to work with your own Cypress Cloud project
+# refer to the README in the example directory examples/recording.
+#
+# ---
+#
 # Typically you would let this action
-# determine the unique build it to tie multiple parallel
-# test jobs together into a single logical Dashboard run.
+# determine a unique build id to tie multiple parallel
+# test jobs together into a single logical Cypress Cloud run.
 # But sometimes you need to execute Cypress using
 # your own custom command and pass your --ci-build-id
 # In that case it is important to make sure this build id
 # is generated _again_ on workflow re-run. This example
-# shows how to do create a unique ID then pass it to
+# shows how to create a unique ID then pass it to
 # multiple testing jobs running in parallel
 # based on the recipe written in
 # https://medium.com/attest-r-and-d/adding-a-unique-github-build-identifier-7aa2e83cadca
-name: example-custom-ci-build-id
-on: [push]
+# The use of set-output is however deprecated by GitHub since the above blog
+# was written in 2019 so this is replaced by GitHub Environment files, see
+# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
+#
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # Set up the Cypress Cloud project ID and record key as environment variables
+  # If the Actions secret EXAMPLE_PROJECT_ID is not defined then
+  # the projectId is taken from cypress.json (v9) or cypress.config.js (v10 and later).
+  # If the Actions secret EXAMPLE_RECORDING_KEY is not defined then recording jobs are skipped.
+  CYPRESS_PROJECT_ID: ${{ secrets.EXAMPLE_PROJECT_ID }}
+  CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
+
+  check-record-key:
+    runs-on: ubuntu-22.04
+    outputs:
+      record-key-exists: ${{ steps.record-key-check.outputs.defined }}
+    steps:
+      - name: Check for record key
+        id: record-key-check
+        run: |
+          if [ "${{ secrets.EXAMPLE_RECORDING_KEY }}" != '' ]; then
+            echo "defined=true" >> $GITHUB_OUTPUT;
+          else
+            echo "defined=false" >> $GITHUB_OUTPUT;
+          fi
+
   # single job that generates and outputs a common id
   prepare:
-    runs-on: ubuntu-20.04
+    needs: [check-record-key]
+    runs-on: ubuntu-22.04
+    if: needs.check-record-key.outputs.record-key-exists == 'true'
     outputs:
       uuid: ${{ steps.uuid.outputs.value }}
     steps:
@@ -23,19 +66,19 @@ jobs:
         # take the current commit + timestamp together
         # the typical value would be something like
         # "sha-5d3fe...35d3-time-1620841214"
-        run: echo "::set-output name=value::sha-$GITHUB_SHA-time-$(date +"%s")"
+        run: echo "value=sha-$GITHUB_SHA-time-$(date +"%s")" >> $GITHUB_OUTPUT
 
       - name: Print unique ID 🖨`
         run: echo "generated id ${{ steps.uuid.outputs.value }}"
 
-  # let's run small subset of the tests
-  # and record it to the dashboard
+  # let's run a small subset of the tests
+  # and record it to the Cypress Cloud
   smoke-tests:
-    needs: ['prepare']
-    runs-on: ubuntu-20.04
+    needs: [prepare]
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Print custom build id 🖨
         run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
@@ -49,19 +92,16 @@ jobs:
           parallel: true
           group: '1 - smoke tests'
           ci-build-id: ${{ needs.prepare.outputs.uuid }}
-          spec: 'cypress/integration/spec-a.js'
+          spec: 'cypress/e2e/spec-a.cy.js'
           working-directory: examples/recording
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 
   # if smoke tests pass, run all tests, splitting them in parallel
   # because we record with the same build id, smoke and these
   # tests should be under the same logical recorded run
   # under different groups
   all-tests:
-    needs: ['prepare', 'smoke-tests']
-    runs-on: ubuntu-20.04
+    needs: [prepare, smoke-tests]
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -69,7 +109,7 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Print custom build id 🖨
         run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
@@ -84,6 +124,3 @@ jobs:
               --ci-build-id ${{ needs.prepare.outputs.uuid }} \
               --group "2 - all tests"
           working-directory: examples/recording
-        env:
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}

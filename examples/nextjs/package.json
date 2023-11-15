@@ -1,0 +1,20 @@
+{
+  "name": "example-nextjs",
+  "version": "1.0.0",
+  "description": "Example using Next.js",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "cypress run"
+  },
+  "dependencies": {
+    "next": "14.0.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "cypress": "13.5.1"
+  }
+}

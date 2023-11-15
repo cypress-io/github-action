@@ -7,11 +7,9 @@
     "test": "cypress run",
     "info": "cypress info"
   },
-  "author": "",
-  "license": "ISC",
   "private": true,
   "devDependencies": {
-    "cypress": "4.9.0",
+    "cypress": "13.5.1",
     "image-size": "0.8.3"
   }
 }

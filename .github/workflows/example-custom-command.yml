@@ -1,13 +1,20 @@
 name: example-custom-command
-on: [push]
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
 jobs:
+
   start:
     # example where instead of forming the default "cypress run ..."
     # the user can specify their own command
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Custom tests 🧪
         uses: ./

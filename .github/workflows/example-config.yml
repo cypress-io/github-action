@@ -1,12 +1,19 @@
 name: example-config
-on: [push]
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
 jobs:
+
   start:
     # example where we pass custom base URL
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -16,13 +23,29 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
+
+  config-file:
+    # example where we use a custom config-file
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/config
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3333'
+          config-file: cypress.config-alternate.js
 
   separate-specs:
     # example where we pass specs to run via multiple lines
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -33,15 +56,15 @@ jobs:
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
           spec: |
-            cypress/integration/spec-a.js
-            cypress/integration/spec-b.js
+            cypress/e2e/spec-a.cy.js
+            cypress/e2e/spec-b.cy.js
 
   separate-specs-with-wildcard:
     # example where we pass specs to run via multiple lines and wildcards
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -52,5 +75,5 @@ jobs:
           wait-on: 'http://localhost:3333'
           config: baseUrl=http://localhost:3333
           spec: |
-            cypress/integration/spec-a.js
-            cypress/**/*-b.js
+            cypress/e2e/spec-a.cy.js
+            cypress/**/*-b.cy.js

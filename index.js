@@ -13,6 +13,7 @@ const cliParser = require('argument-vector')()
 const findYarnWorkspaceRoot = require('find-yarn-workspace-root')
 const debug = require('debug')('@cypress/github-action')
 const { ping } = require('./src/ping')
+const { SUMMARY_ENV_VAR } = require('@actions/core/lib/summary')
 
 /**
  * Parses input command, finds the tool and
@@ -55,6 +56,17 @@ const isWindows = () => os.platform() === 'win32'
 const isUrl = (s) => /^https?:\/\//.test(s)
 
 /**
+ * Quote strings that contain Windows delimiters.
+ * https://github.com/cypress-io/github-action/issues/459
+ */
+const quoteWindowsArgument = (value) => {
+  if (!/[,;=\s]/.test(value)) {
+    return value
+  }
+  return quote(value)
+}
+
+/**
  * Returns true if the Cypress binary installation was skipped
  * via an environment variable https://on.cypress.io/installing
  */
@@ -84,21 +96,39 @@ const yarnFilename = path.join(
   findYarnWorkspaceRoot(workingDirectory) || workingDirectory,
   'yarn.lock'
 )
+const pnpmLockFilename = path.join(workingDirectory, 'pnpm-lock.yaml')
 const packageLockFilename = path.join(
   workingDirectory,
   'package-lock.json'
 )
 
 const useYarn = () => fs.existsSync(yarnFilename)
+const usePnpm = () => fs.existsSync(pnpmLockFilename)
+const useNpm = () => fs.existsSync(packageLockFilename)
 
 const lockHash = () => {
-  const lockFilename = useYarn() ? yarnFilename : packageLockFilename
+  const lockFilename = useYarn()
+    ? yarnFilename
+    : usePnpm()
+    ? pnpmLockFilename
+    : useNpm()
+    ? packageLockFilename
+    : noLockFile()
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
 }
 
-// enforce the same NPM cache folder across different operating systems
+const noLockFile = () => {
+  core.error(
+    `Action failed. Missing package manager lockfile. ` +
+      `Expecting one of package-lock.json (npm), pnpm-lock.yaml (pnpm) or yarn.lock (yarn) in working-directory ` +
+      workingDirectory
+  )
+  process.exit(1)
+}
+
+// enforce the same npm cache folder across different operating systems
 const NPM_CACHE_FOLDER = path.join(homeDirectory, '.npm')
 const getNpmCache = () => {
   const o = {}
@@ -107,6 +137,8 @@ const getNpmCache = () => {
   if (!key) {
     if (useYarn()) {
       key = `yarn-${platformAndArch}-${hash}`
+    } else if (usePnpm()) {
+      key = `pnpm-${platformAndArch}-${hash}`
     } else {
       key = `npm-${platformAndArch}-${hash}`
     }
@@ -116,11 +148,13 @@ const getNpmCache = () => {
 
   if (useYarn()) {
     o.inputPath = path.join(homeDirectory, '.cache', 'yarn')
+  } else if (usePnpm()) {
+    o.inputPath = NPM_CACHE_FOLDER
   } else {
     o.inputPath = NPM_CACHE_FOLDER
   }
 
-  // use exact restore key to prevent NPM cache from growing
+  // use exact restore key to prevent npm cache from growing
   // https://glebbahmutov.com/blog/do-not-let-npm-cache-snowball/
   o.restoreKeys = o.primaryKey = key
   return o
@@ -147,21 +181,21 @@ const getCypressBinaryCache = () => {
 }
 
 const restoreCachedNpm = () => {
-  debug('trying to restore cached NPM modules')
+  debug('trying to restore cached npm modules')
   const NPM_CACHE = getNpmCache()
   return restoreCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey, [
     NPM_CACHE.restoreKeys
   ]).catch((e) => {
-    console.warn('Restoring NPM cache error: %s', e.message)
+    console.warn('Restoring npm cache error: %s', e.message)
   })
 }
 
 const saveCachedNpm = () => {
-  debug('saving NPM modules')
+  debug('saving npm modules')
   const NPM_CACHE = getNpmCache()
   return saveCache([NPM_CACHE.inputPath], NPM_CACHE.primaryKey).catch(
     (e) => {
-      console.warn('Saving NPM cache error: %s', e.message)
+      console.warn('Saving npm cache error: %s', e.message)
     }
   )
 }
@@ -199,7 +233,7 @@ const install = () => {
   // prevent lots of progress messages during install
   core.exportVariable('CI', '1')
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
-  // set NPM cache path in case the user has custom install command
+  // set npm cache path in case the user has custom install command
   core.exportVariable('npm_config_cache', NPM_CACHE_FOLDER)
 
   // Note: need to quote found tool to avoid Windows choking on
@@ -211,7 +245,7 @@ const install = () => {
   }
 
   if (useYarn()) {
-    debug('installing NPM dependencies using Yarn')
+    debug('installing npm dependencies using Yarn')
     return io.which('yarn', true).then((yarnPath) => {
       debug(`yarn at "${yarnPath}"`)
       return exec.exec(
@@ -220,9 +254,18 @@ const install = () => {
         cypressCommandOptions
       )
     })
+  } else if (usePnpm()) {
+    debug('installing npm dependencies using pnpm')
+    return io.which('pnpm', true).then((pnpmPath) => {
+      debug(`pnpm at "${pnpmPath}"`)
+      return exec.exec(
+        quote(pnpmPath),
+        ['install', '--frozen-lockfile'],
+        cypressCommandOptions
+      )
+    })
   } else {
-    debug('installing NPM dependencies')
-
+    debug('installing npm dependencies')
     return io.which('npm', true).then((npmPath) => {
       debug(`npm at "${npmPath}"`)
       return exec.exec(quote(npmPath), ['ci'], cypressCommandOptions)
@@ -355,11 +398,7 @@ const startServersMaybe = () => {
   )
 
   return separateStartCommands.map((startCommand) => {
-    return execCommand(
-      startCommand,
-      false,
-      `start server "${startCommand}`
-    )
+    return execCommand(startCommand, false, `start server`)
   })
 }
 
@@ -411,6 +450,80 @@ const waitOnMaybe = () => {
 }
 
 const I = (x) => x
+
+const detectPrNumber = async () => {
+  const {
+    GITHUB_SHA,
+    GITHUB_TOKEN,
+    GITHUB_RUN_ID,
+    GITHUB_REPOSITORY,
+    GITHUB_HEAD_REF,
+    GITHUB_REF,
+    GITHUB_SERVER_URL,
+    CYPRESS_PULL_REQUEST_ID,
+    CYPRESS_PULL_REQUEST_URL
+  } = process.env
+
+  if (CYPRESS_PULL_REQUEST_ID && CYPRESS_PULL_REQUEST_URL) {
+    // Both pull request envs are already defined - no need to do anything else
+    return
+  }
+
+  const [owner, repo] = GITHUB_REPOSITORY.split('/')
+  let prNumber
+
+  if (GITHUB_TOKEN) {
+    debug(
+      `Detecting PR number by asking GitHub about run ${GITHUB_RUN_ID}`
+    )
+
+    const client = new Octokit({
+      auth: GITHUB_TOKEN
+    })
+
+    if (GITHUB_HEAD_REF) {
+      // GITHUB_HEAD_REF is only defined when the event that triggered it was 'pull_request' or 'pull_request_target' (meaning a PR number should be readily-available)
+      // should have format refs/pull/<pr_number>/merge when triggered by pull_request workflow
+      prNumber = parseInt(GITHUB_REF.split('/')[2])
+    } else {
+      try {
+        const resp = await client.request(
+          'GET /repos/:owner/:repo/commits/:commit_sha/pulls',
+          {
+            owner,
+            repo,
+            commit_sha: GITHUB_SHA
+          }
+        )
+
+        if (
+          resp &&
+          resp.data &&
+          resp.data[0] &&
+          resp.data[0].number
+        ) {
+          prNumber = resp.data[0].number
+        }
+      } catch (e) {
+        console.error(
+          `Unable to fetch related PR data for commit: '${GITHUB_SHA}': `,
+          e
+        )
+      }
+    }
+
+    if (prNumber) {
+      if (!CYPRESS_PULL_REQUEST_ID) {
+        core.exportVariable('CYPRESS_PULL_REQUEST_ID', prNumber)
+      }
+
+      const url = `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/pull/${prNumber}`
+      if (!CYPRESS_PULL_REQUEST_URL) {
+        core.exportVariable('CYPRESS_PULL_REQUEST_URL', url)
+      }
+    }
+  }
+}
 
 /**
  * Asks Cypress API if there were already builds for this commit.
@@ -490,7 +603,7 @@ const getCiBuildId = async () => {
  */
 const runTestsUsingCommandLine = async () => {
   debug('Running Cypress tests using CLI command')
-  const quoteArgument = isWindows() ? quote : I
+  const quoteArgument = isWindows() ? quoteWindowsArgument : I
 
   const commandPrefix = core.getInput('command-prefix')
   if (!commandPrefix) {
@@ -499,7 +612,8 @@ const runTestsUsingCommandLine = async () => {
 
   const record = getInputBool('record')
   const parallel = getInputBool('parallel')
-  const headless = getInputBool('headless')
+  const component = getInputBool('component')
+  const headed = getInputBool('headed')
 
   // TODO using yarn to run cypress when yarn is used for install
   // split potentially long command?
@@ -514,8 +628,12 @@ const runTestsUsingCommandLine = async () => {
   // push each CLI argument separately
   cmd.push('cypress')
   cmd.push('run')
-  if (headless) {
-    cmd.push('--headless')
+
+  if (component) {
+    cmd.push('--component')
+  }
+  if (headed) {
+    cmd.push('--headed')
   }
   if (record) {
     cmd.push('--record')
@@ -553,15 +671,26 @@ const runTestsUsingCommandLine = async () => {
     cmd.push('--config-file')
     cmd.push(quoteArgument(configFileInput))
   }
+  const autoCancelAfterFailures = core.getInput(
+    'auto-cancel-after-failures'
+  )
+  if (autoCancelAfterFailures) {
+    cmd.push('--auto-cancel-after-failures')
+    cmd.push(quoteArgument(autoCancelAfterFailures))
+  }
 
   if (parallel || group) {
-    const { branch, buildId } = await getCiBuildId()
-    if (branch) {
-      core.exportVariable('GH_BRANCH', branch)
+    let buildIdVar = null
+    if (!core.getInput('ci-build-id')) {
+      const { branch, buildId } = await getCiBuildId()
+      if (branch) {
+        core.exportVariable('GH_BRANCH', branch)
+      }
+      buildIdVar = buildId
     }
 
     cmd.push('--ci-build-id')
-    const ciBuildId = core.getInput('ci-build-id') || buildId
+    const ciBuildId = core.getInput('ci-build-id') || buildIdVar
     cmd.push(quoteArgument(ciBuildId))
   }
 
@@ -608,7 +737,18 @@ const runTestsUsingCommandLine = async () => {
  * @see https://on.cypress.io/module-api
  */
 const runTests = async () => {
+  const commandPrefix = core.getInput('command-prefix')
+  const customCommand = core.getInput('command')
+  const cypressOptions = {
+    headed: getInputBool('headed'),
+    record: getInputBool('record'),
+    parallel: getInputBool('parallel'),
+    quiet: getInputBool('quiet'),
+    component: getInputBool('component')
+  }
   const runTests = getInputBool('runTests', true)
+  const spec = getSpecsList()
+
   if (!runTests) {
     console.log('Skipping running tests: runTests parameter is false')
     return
@@ -618,48 +758,44 @@ const runTests = async () => {
   core.exportVariable('CYPRESS_CACHE_FOLDER', CYPRESS_CACHE_FOLDER)
   core.exportVariable('TERM', 'xterm')
 
-  const customCommand = core.getInput('command')
+  await detectPrNumber()
+
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)
     return execCommand(customCommand, true, 'run tests')
   }
 
-  const commandPrefix = core.getInput('command-prefix')
   if (commandPrefix) {
     return runTestsUsingCommandLine()
   }
 
-  debug('Running Cypress tests using NPM module API')
+  const cypressModulePath =
+    require.resolve('cypress', { paths: [workingDirectory] }) ||
+    'cypress'
+  const cypress = require(cypressModulePath)
+
+  debug('Running Cypress tests using Module API')
   debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
   debug(`working directory ${workingDirectory}`)
-  const cypressModulePath =
-    require.resolve('cypress', {
-      paths: [workingDirectory]
-    }) || 'cypress'
   debug(`resolved cypress ${cypressModulePath}`)
-
-  const cypress = require(cypressModulePath)
-  const cypressOptions = {
-    headless: getInputBool('headless'),
-    record: getInputBool('record'),
-    parallel: getInputBool('parallel'),
-    quiet: getInputBool('quiet')
-  }
 
   if (core.getInput('group')) {
     cypressOptions.group = core.getInput('group')
   }
+
   if (core.getInput('tag')) {
     cypressOptions.tag = core.getInput('tag')
   }
+
   if (core.getInput('config')) {
     cypressOptions.config = core.getInput('config')
     debug(`Cypress config "${cypressOptions.config}"`)
   }
-  const spec = getSpecsList()
+
   if (spec) {
     cypressOptions.spec = spec
   }
+
   if (core.getInput('config-file')) {
     cypressOptions.configFile = core.getInput('config-file')
   }
@@ -668,9 +804,17 @@ const runTests = async () => {
   if (core.getInput('project')) {
     cypressOptions.project = core.getInput('project')
   }
+
   if (core.getInput('browser')) {
     cypressOptions.browser = core.getInput('browser')
   }
+
+  if (core.getInput('auto-cancel-after-failures')) {
+    cypressOptions.autoCancelAfterFailures = core.getInput(
+      'auto-cancel-after-failures'
+    )
+  }
+
   if (core.getInput('env')) {
     cypressOptions.env = core.getInput('env')
   }
@@ -687,6 +831,7 @@ const runTests = async () => {
   debug(`Cypress options ${JSON.stringify(cypressOptions)}`)
 
   const onTestsFinished = (testResults) => {
+    const resultsUrl = testResults.runUrl
     process.chdir(startWorkingDirectory)
 
     if (testResults.failures) {
@@ -707,14 +852,15 @@ const runTests = async () => {
 
     debug(`Cypress tests: ${testResults.totalFailed} failed`)
 
-    const dashboardUrl = testResults.runUrl
-    if (dashboardUrl) {
-      debug(`Dashboard url ${dashboardUrl}`)
+    if (resultsUrl) {
+      debug(`resultsUrl ${resultsUrl}`)
     } else {
-      debug('There is no Dashboard url')
+      debug('There is no resultsUrl')
     }
+
     // we still set the output explicitly
-    core.setOutput('dashboardUrl', dashboardUrl)
+    core.setOutput('dashboardUrl', resultsUrl) // deprecated and retained for backward compatibility
+    core.setOutput('resultsUrl', resultsUrl) // replacement for dashboardUrl
 
     if (testResults.totalFailed) {
       return Promise.reject(
@@ -733,7 +879,56 @@ const runTests = async () => {
   process.chdir(workingDirectory)
   return cypress
     .run(cypressOptions)
+    .then(generateSummary)
     .then(onTestsFinished, onTestsError)
+}
+
+// Summary is not available for GitHub Enterprise at the moment
+const isSummaryEnabled = () => {
+  const isSummaryInput = getInputBool('publish-summary')
+  return process.env[SUMMARY_ENV_VAR] !== undefined && isSummaryInput
+}
+
+const generateSummary = async (testResults) => {
+  if (!isSummaryEnabled()) {
+    return testResults
+  }
+
+  const headers = [
+    { data: 'Result', header: true },
+    { data: 'Passed :white_check_mark:', header: true },
+    { data: 'Failed :x:', header: true },
+    { data: 'Pending :hand:', header: true },
+    { data: 'Skipped :leftwards_arrow_with_hook:', header: true },
+    { data: 'Duration :clock8:', header: true }
+  ]
+
+  const status =
+    testResults.totalFailed === 0
+      ? 'Passing :white_check_mark:'
+      : 'Failing :red_circle:'
+
+  const summaryRows = [
+    status,
+    `${testResults.totalPassed}`,
+    `${testResults.totalFailed}`,
+    `${testResults.totalPending}`,
+    `${testResults.totalSkipped}`,
+    `${testResults.totalDuration / 1000}s` || ''
+  ]
+
+  const summaryTitle = core.getInput('summary-title')
+
+  await core.summary
+    .addHeading(summaryTitle ? summaryTitle : 'Cypress Results', 2)
+    .addTable([headers, summaryRows])
+    .addLink(
+      testResults.runUrl ? 'View run in Cypress Cloud' : '',
+      testResults.runUrl || ''
+    )
+    .write()
+
+  return testResults
 }
 
 const installMaybe = () => {

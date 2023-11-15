@@ -1,11 +1,18 @@
 name: example-wait-on
-on: [push]
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
 jobs:
+
   wait:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -17,10 +24,10 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait-server-starts-after-100-seconds:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -31,10 +38,10 @@ jobs:
           wait-on-timeout: 110
 
   wait2:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -44,10 +51,10 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait2-delay-50:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -57,10 +64,10 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait2-delay-120:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress tests
         uses: ./
@@ -71,10 +78,10 @@ jobs:
           wait-on-timeout: 130
 
   wait3:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cypress tests
         uses: ./
         with:
@@ -85,10 +92,10 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait3-for-200-seconds:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cypress tests
         uses: ./
         with:
@@ -100,10 +107,10 @@ jobs:
           wait-on-timeout: 210
 
   wait4:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cypress tests
         uses: ./
         with:
@@ -112,10 +119,10 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait-multiple:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cypress tests
         uses: ./
         with:
@@ -125,49 +132,49 @@ jobs:
           # wait for all services to respond
           wait-on: 'http://localhost:3050, http://localhost:3060, http://localhost:3070'
 
-  wait-on-react-scripts:
-    runs-on: ubuntu-20.04
+  wait-on-nextjs:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/react-scripts
-          start: npm start
+          working-directory: examples/nextjs
+          start: npm run dev
           wait-on: 'http://localhost:3000'
 
   wait-using-custom-command:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/react-scripts
-          start: npm start
-          # let's use wait-on NPM package to check the URL
-          wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
+          working-directory: examples/nextjs
+          start: npm run dev
+          # let's use the wait-on npm package to check the URL
+          wait-on: 'npx wait-on --timeout 60000 http://localhost:3000'
 
   ping-cli:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm ci
       - name: Run ping from CLI
         run: node src/ping-cli https://example.cypress.io
 
   wait-on-vite:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cypress tests
         uses: ./
         with:
           working-directory: examples/wait-on-vite
-          start: npm start
-          wait-on: 'http://localhost:3000'
+          start: npx vite --host
+          wait-on: 'http://localhost:5173'

@@ -1,0 +1,23 @@
+name: example-yarn-modern-pnp
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  yarn-modern-pnp:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Custom Yarn command
+        uses: ./
+        with:
+          working-directory: examples/yarn-modern-pnp
+          # https://yarnpkg.com/cli/install
+          install-command: yarn install
+          command: yarn run --binaries-only cypress run

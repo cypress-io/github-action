@@ -1,11 +1,17 @@
 name: example-debug
-on: push
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
 jobs:
-  nightly:
-    runs-on: ubuntu-20.04
+  debug-logs:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cypress debug logs 📝
         uses: ./

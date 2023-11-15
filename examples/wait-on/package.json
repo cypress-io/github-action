@@ -14,14 +14,12 @@
     "start3-after-200-seconds": "node ./index3 --delay 200",
     "start4": "node ./index4"
   },
-  "author": "",
-  "license": "ISC",
   "private": true,
-  "devDependencies": {
-    "cypress": "6.8.0"
-  },
   "dependencies": {
     "arg": "5.0.0",
-    "debug": "4.2.0"
+    "debug": "4.3.4"
+  },
+  "devDependencies": {
+    "cypress": "13.5.1"
   }
 }
