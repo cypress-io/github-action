@@ -18,6 +18,7 @@
   - using [headed mode](#headed)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
+  - Getting [git information](#git-information) env vars
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
@@ -284,6 +285,34 @@ jobs:
 For more examples, see the workflows below, using environment variables for [recording](#record-test-results-on-cypress-cloud).
 
 [![Env example](https://github.com/cypress-io/github-action/workflows/example-env/badge.svg?branch=master)](.github/workflows/example-env.yml)
+
+### Git information
+
+In case the Git information related to a specific run isn't accessible, or if you need to replace it with different data in the Cloud, you have the option to provide all the necessary Git details using custom environment variables.
+
+```yml
+name: Cypress tests
+on: push
+jobs:
+  cypress-run:
+    name: Cypress run
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+        env:
+          # Get the short ref name of the branch that triggered the workflow run
+          COMMIT_INFO_BRANCH: ${{ github.ref_name }}
+```
+
+Please refer to the [Cloud git information environment variables](https://docs.cypress.io/guides/continuous-integration/introduction#Git-information) section in our documentation for more examples.
+
+Please refer to the [default GitHub environment variables](https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables) for additional GitHub examples. 
 
 ### Specs
 
