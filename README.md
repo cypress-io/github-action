@@ -467,7 +467,7 @@ If no related PR is detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUES
 
 ### Merge SHA into SHA
 
-We recommend using the action with `on: push` rather than `on: pull_request` for more accurate commit information in Cypress Cloud. When running on pull_request, the commit message defaults to "merge SHA into SHA". You can overwrite the commit message sent to Cypress Cloud by setting an environment variable.
+We recommend using the action with `on: push` rather than `on: pull_request` or `on: merge_group` for more accurate commit information in Cypress Cloud. When running on pull_request or merge_group, the commit message defaults to "merge SHA into SHA". You can overwrite the commit message sent to Cypress Cloud by setting an environment variable.
 
 ```yml
 name: Cypress tests
