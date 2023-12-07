@@ -22,7 +22,7 @@
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
   - Storing the [Project ID and Record Key](#project-id-and-record-key)
-  - Getting [git information](#git-information) env vars
+  - Getting [Git information](#git-information) environment variables
   - Getting [PR and URL](#automatic-pr-number-and-url-detection) automatically
   - Overwriting [Merge SHA into SHA](#merge-sha-into-sha) message
 - Tag [recordings](#tag-recordings)
