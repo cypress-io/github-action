@@ -420,7 +420,7 @@ jobs:
           COMMIT_INFO_BRANCH: ${{ github.ref_name }}
 ```
 
-Please refer to the [Cypress Cloud git information environment variables](https://docs.cypress.io/guides/continuous-integration/introduction#Git-information) section in our documentation for more examples.
+Please refer to the [Cypress Cloud Git information environment variables](https://on.cypress.io/guides/continuous-integration/introduction#Git-information) section in our documentation for more examples.
 
 Please refer to the [default GitHub environment variables](https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables) for additional GitHub examples. 
 
