@@ -398,7 +398,7 @@ jobs:
 
 ### Git information
 
-Cypress uses the `@cypress/commit-info` package to associate git details (branch, commit message, author) with each run. It typically uses Git commands, expecting a .git folder. In Docker or similar environments where .git is absent, or if you need different data in the Cypress Cloud, git information can be passed via custom environment variables.
+Cypress uses the [@cypress/commit-info](https://github.com/cypress-io/commit-info) package to associate Git details (branch, commit message, author) with each run. It typically uses Git commands, expecting a .git folder. In Docker or similar environments where .git is absent, or if you need different data in the Cypress Cloud, Git information can be passed via custom environment variables.
 
 ```yml
 name: Cypress tests
