@@ -372,7 +372,9 @@ jobs:
 
 ### Project ID and Record Key
 
-To record the project needs `projectId` and `recordKey`. Typically this value is saved in the [Cypress Configuration File](https://docs.cypress.io/guides/references/configuration#Configuration-File). If you want to avoid this, pass the `projectId` using an environment variable:
+To record the project needs `projectId` and `recordKey`. 
+
+Typically, the `projectId` is stored in the [Cypress Configuration File](https://docs.cypress.io/guides/references/configuration#Configuration-File), while the `recordKey` is set as a [CLI parameter](https://docs.cypress.io/guides/guides/command-line#cypress-run-record-key-lt-record-key-gt). If you want to avoid this, both the `projectId` and `recordKey` can be provided as environment variables using [GitHub secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
 
 ```yml
 name: Cypress tests
