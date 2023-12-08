@@ -21,6 +21,10 @@
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
+  - Storing the [Project ID and Record Key](#project-id-and-record-key)
+  - Getting [Git information](#git-information) environment variables
+  - Getting [PR and URL](#automatic-pr-number-and-url-detection) automatically
+  - Overwriting [Merge SHA into SHA](#merge-sha-into-sha) message
 - Tag [recordings](#tag-recordings)
 - Specify [auto cancel](#specify-auto-cancel-after-failures) after failures
 - Store [test artifacts](#artifacts) on GitHub
@@ -342,6 +346,8 @@ For more information, visit [the Cypress command-line docs](https://on.cypress.i
 
 By setting the parameter `record` to `true`, you can record your test results into the [Cypress Cloud](https://on.cypress.io/cloud). Read the [Cypress Cloud documentation](https://on.cypress.io/guides/cloud/introduction) to learn how to sign up and create a Cypress Cloud project.
 
+We recommend passing the `GITHUB_TOKEN` secret (created by the GH Action automatically) as an environment variable. This will allow correctly identifying every build and avoid confusion when re-running a build.
+
 ```yml
 name: Cypress tests
 on: push
@@ -358,21 +364,17 @@ jobs:
         with:
           record: true
         env:
-          # pass the Cypress Cloud record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 [![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
 
-**Tip 1:** We recommend using the action with `on: push` instead of `on: pull_request` to get the most accurate information related to the commit on Cypress Cloud. With pull requests, the merge commit is created automatically and might not correspond to a meaningful commit in the repository.
+### Project ID and Record Key
 
-**Tip 2:** we recommend passing the `GITHUB_TOKEN` secret (created by the GH Action automatically) as an environment variable. This will allow correctly identifying every build and avoid confusion when re-running a build.
+To record the project needs `projectId` and `recordKey`. 
 
-**Tip 3:** if running on `pull_request` event, the commit message is "merge SHA into SHA", which is not what you want probably. You can overwrite the commit message sent to Cypress Cloud by setting an environment variable. See [issue 124](https://github.com/cypress-io/github-action/issues/124#issuecomment-653180260) for details.
-
-**Tip 4:** to record the project needs `projectId`. Typically this value is saved in the [Cypress Configuration File](https://docs.cypress.io/guides/references/configuration#Configuration-File). If you want to avoid this, pass the `projectId` using an environment variable:
+Typically, the `projectId` is stored in the [Cypress Configuration File](https://docs.cypress.io/guides/references/configuration#Configuration-File), while the `recordKey` is set as a [CLI parameter](https://docs.cypress.io/guides/guides/command-line#cypress-run-record-key-lt-record-key-gt). If you want to avoid this, both the `projectId` and `recordKey` can be provided as environment variables using [GitHub secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
 
 ```yml
 name: Cypress tests
@@ -392,11 +394,106 @@ jobs:
         env:
           # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # pass the project ID from the secrets through environment variable
           CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
 ```
+
+### Git information
+
+Cypress uses the [@cypress/commit-info](https://github.com/cypress-io/commit-info) package to associate Git details (branch, commit message, author) with each run. It typically uses Git commands, expecting a .git folder. In Docker or similar environments where .git is absent, or if you need different data in the Cypress Cloud, Git information can be passed via custom environment variables.
+
+```yml
+name: Cypress tests
+on: push
+jobs:
+  cypress-run:
+    name: Cypress run
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+        env:
+          # Get the short ref name of the branch that triggered the workflow run
+          COMMIT_INFO_BRANCH: ${{ github.ref_name }}
+```
+
+Please refer to the [Cypress Cloud Git information environment variables](https://on.cypress.io/guides/continuous-integration/introduction#Git-information) section in our documentation for more examples.
+
+Please refer to the [default GitHub environment variables](https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables) for additional GitHub examples. 
+
+### Automatic PR number and URL detection
+
+When recording runs to Cypress Cloud, the PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}`
+via the workflow `env`. When set, this value enables the Action to perform additional logic that grabs the related PR number and URL (if they
+exist) and sets them in the environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
+* See Cypress' documentation on [CI Build Information](https://on.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
+
+Example workflow using the variables:
+```yml
+name: Example echo PR number and URL
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+      - run: echo "PR number is $CYPRESS_PULL_REQUEST_ID"
+      - run: echo "PR URL is $CYPRESS_PULL_REQUEST_URL"
+    env:
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+#### Triggering event: `pull_request`/`pull_request_target`
+
+For either of these events, we set `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` to that of the PR number and URL, respectively, of the
+PR that triggered the workflow.
+
+#### Triggering event: `push`
+
+When a commit on a branch without a PR is made, the Cypress GitHub Action checks to see if the commit that triggered the workflow has a
+related PR. If the commit exists in any other PRs, it's considered a related PR. When there are related PRs, we grab the first related PR
+and use that PR's number and URL for `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
+
+If no related PR is detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` will be undefined.
+
+### Merge SHA into SHA
+
+We recommend using the action with `on: push` rather than `on: pull_request` or `on: merge_group` for more accurate commit information in Cypress Cloud. When running on pull_request or merge_group, the commit message defaults to "merge SHA into SHA". You can overwrite the commit message sent to Cypress Cloud by setting an environment variable.
+
+```yml
+name: Cypress tests
+on: push
+jobs:
+  cypress-run:
+    name: Cypress run
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+        env:
+          # overwrite commit message sent to Cypress Cloud
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          # re-enable PR comment bot
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+```
+
+See [issue 124](https://github.com/cypress-io/github-action/issues/124#issuecomment-1076826988) for details.
 
 ### Tag recordings
 
@@ -1504,47 +1601,6 @@ jobs:
         with:
           publish-summary: false
 ```
-
-### Automatic PR number & URL detection
-
-When recording runs to Cypress Cloud, the PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}`
-via the workflow `env`. When set, this value enables the Action to perform additional logic that grabs the related PR number and URL (if they
-exist) and sets them in the environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
-* See Cypress' documentation on [CI Build Information](https://on.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
-
-Example workflow using the variables:
-```yml
-name: Example echo PR number and URL
-on: push
-jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          record: true
-      - run: echo "PR number is $CYPRESS_PULL_REQUEST_ID"
-      - run: echo "PR URL is $CYPRESS_PULL_REQUEST_URL"
-    env:
-      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-#### Triggering event: `pull_request`/`pull_request_target`
-
-For either of these events, we set `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` to that of the PR number and URL, respectively, of the
-PR that triggered the workflow.
-
-#### Triggering event: `push`
-
-When a commit on a branch without a PR is made, the Cypress GitHub Action checks to see if the commit that triggered the workflow has a
-related PR. If the commit exists in any other PRs, it's considered a related PR. When there are related PRs, we grab the first related PR
-and use that PR's number and URL for `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
-
-If no related PR is detected, `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL` will be undefined.
 
 ## Node.js
 
