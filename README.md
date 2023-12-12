@@ -138,7 +138,7 @@ Alternatively, to mitigate unforeseen breaks, bind to a specific [tag](https://g
   uses: cypress-io/github-action@v6.1.0
 ```
 
-The changes associated with each tag are shown under GitHub's [releases](https://github.com/cypress-io/github-action/releases) list. Refer also to the [Changelog](#changelog) for an overview of major changes.
+The changes associated with each tag are shown under GitHub's [releases](https://github.com/cypress-io/github-action/releases) list. Refer also to the [CHANGELOG](./CHANGELOG.md) for an overview of major changes.
 
 ### Browser
 
