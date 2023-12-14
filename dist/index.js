@@ -74506,10 +74506,10 @@ const lockHash = () => {
   const lockFilename = useYarn()
     ? yarnFilename
     : usePnpm()
-    ? pnpmLockFilename
-    : useNpm()
-    ? packageLockFilename
-    : noLockFile()
+      ? pnpmLockFilename
+      : useNpm()
+        ? packageLockFilename
+        : noLockFile()
   const fileHash = hasha.fromFileSync(lockFilename)
   debug(`Hash from file ${lockFilename} is ${fileHash}`)
   return fileHash
