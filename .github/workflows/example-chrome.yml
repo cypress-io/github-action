@@ -32,7 +32,7 @@ jobs:
           # As of Cypress v8.0 the `cypress run` command
           # executes tests in `headless` mode by default
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: screenshots-headless-chrome
           path: examples/browser/cypress/screenshots
@@ -50,7 +50,7 @@ jobs:
           headed: true
           summary-title: 'Chrome headed'
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: screenshots-headed-chrome
           path: examples/browser/cypress/screenshots
