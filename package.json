@@ -46,7 +46,7 @@
     "supports-color": "9.3.1"
   },
   "devDependencies": {
-    "@types/node": "20.10.6",
+    "@types/node": "20.10.8",
     "@vercel/ncc": "0.38.1",
     "husky": "8.0.3",
     "markdown-link-check": "3.11.1",
