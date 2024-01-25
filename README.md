@@ -1103,7 +1103,7 @@ jobs:
 
 ### pnpm
 
-The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`): to install `pnpm` include [pnpm/action-setup](https://github.com/pnpm/action-setup) in your workflow. If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
+The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`) and so it must be installed in a separate workflow step (see below). If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
 At this time the action does not automatically cache dependencies installed by pnpm. The example below includes steps to locate the pnpm store directory and to cache its contents for later use.
 
 ```yaml
@@ -1116,9 +1116,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+        run: npm install -g pnpm@8
       - name: Get pnpm store directory
         shell: bash
         run: |
