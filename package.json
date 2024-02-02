@@ -15,7 +15,7 @@
     "format": "prettier --write index.js src/ping.js",
     "check:markdown": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check -c md-linkcheck.json",
     "update:cypress": "./scripts/update-cypress-latest.sh",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
   "devDependencies": {
     "@types/node": "20.11.5",
     "@vercel/ncc": "0.38.1",
-    "husky": "8.0.3",
+    "husky": "9.0.6",
     "markdown-link-check": "3.11.1",
     "prettier": "3.2.4"
   },

@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 echo action source code is being reformatted and recompiled
 npm run format
 npm run build
