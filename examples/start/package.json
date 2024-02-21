@@ -11,7 +11,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "13.6.4",
+    "cypress": "13.6.5",
     "serve": "14.2.1"
   }
 }
