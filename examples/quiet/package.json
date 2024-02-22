@@ -9,7 +9,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "13.6.5",
+    "cypress": "13.6.6",
     "image-size": "0.8.3"
   }
 }
