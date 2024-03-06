@@ -32,10 +32,7 @@ jobs:
     # in each Yarn workspaces subfolder
     runs-on: ubuntu-22.04
     strategy:
-      # when one test fails, DO NOT cancel the other
-      # containers, because this will kill Cypress processes
-      # leaving the Cypress Cloud hanging ...
-      # https://github.com/cypress-io/github-action/issues/48
+      # fail-fast: false allows tests for both workspaces to run even if one fails
       fail-fast: false
       matrix:
         cypress:
