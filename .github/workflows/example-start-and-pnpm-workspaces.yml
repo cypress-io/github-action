@@ -1,0 +1,127 @@
+name: example-start-and-pnpm-workspaces
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+    # The example has pnpm workspaces in its "root" folder
+    # examples/start-and-pnpm-workspaces
+
+  single-ws:
+    # This job installs pnpm,
+    # installs all dependencies,
+    # caches the pnpm store,
+    # caches the Cypress binary cache,
+    # then runs Cypress tests in the single workspace
+    # of the subfolder "packages/workspace-1".
+    runs-on: ubuntu-22.04
+    name: Single workspace
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+        # pnpm is not installed by default on GitHub runners
+      - name: Install pnpm
+        run: npm install -g pnpm@8
+
+        # locate the pnpm store directory where pnpm dependencies are installed
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+        # Cypress github-action does not cache pnpm dependencies by default.
+        # Cache the dependencies.
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        # with Cypress GitHub Action.
+        # Calling the Cypress GitHub Action causes all dependencies from
+        # the root of the pnpm workspace examples/start-and-pnpm-workspaces
+        # to be installed
+        # AND it automatically caches the Cypress binary.
+        #
+        # If you copy this workflow to another repository replace the following with
+        # uses: cypress-io/github-action@v6
+        # The notation ./ is a special usage only used here.
+        # It causes the version of the action code from whatever branch it is launched in to be used.
+        # Do not try to use the ./ notation this outside of this repository!
+        uses: ./ # approximately equivalent to using cypress-io/github-action@v6
+        with:
+          working-directory: examples/start-and-pnpm-workspaces
+          runTests: false
+
+      - name: Cypress test Single
+        # Run Cypress in examples/start-and-pnpm-workspaces/packages/workspace-1 only
+        uses: ./ # equivalent to using cypress-io/github-action@v6
+        with:
+          # Do not attempt to install dependencies in the workspace using the action.
+          # There is no pnpm-lock.yaml file in a workspace for
+          # Cypress GitHub Action to use.
+          # We already installed dependencies when we called the action previously.
+          install: false
+          working-directory: examples/start-and-pnpm-workspaces/packages/workspace-1
+          build: pnpm run build
+          start: pnpm start
+          wait-on: 'http://localhost:5000'
+
+  multiple-ws:
+    # This job installs pnpm,
+    # installs all dependencies,
+    # caches the pnpm store,
+    # caches the Cypress binary cache,
+    # then runs Cypress tests in each of the workspaces.
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        cypress:
+          - working_directory: examples/start-and-pnpm-workspaces/packages/workspace-1
+          - working_directory: examples/start-and-pnpm-workspaces/packages/workspace-2
+    name: Multiple workspaces
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        run: npm install -g pnpm@8
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        uses: ./ # approximately equivalent to using cypress-io/github-action@v6
+        with:
+          working-directory: examples/start-and-pnpm-workspaces
+          runTests: false
+
+      - name: Cypress test Multiple
+        # Run Cypress in
+        # examples/start-and-pnpm-workspaces/packages/workspace-1 and
+        # examples/start-and-pnpm-workspaces/packages/workspace-2
+        uses: ./ # equivalent to using cypress-io/github-action@v6
+        with:
+          install: false
+          working-directory: ${{ matrix.cypress.working_directory }}
+          build: pnpm run build
+          start: pnpm start
+          wait-on: 'http://localhost:5000'

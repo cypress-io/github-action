@@ -46,6 +46,7 @@
 - Use different [working-directory](#working-directory)
 - Use [subfolders](#subfolders)
 - Use [pnpm](#pnpm)
+- Use [pnpm workspaces](#pnpm-workspaces)
 - Use [Yarn Classic](#yarn-classic)
 - Use [Yarn Modern](#yarn-modern)
 - Use [Yarn Plug'n'Play](#yarn-plugnplay)
@@ -1135,6 +1136,30 @@ jobs:
 ```
 
 [![pnpm example](https://github.com/cypress-io/github-action/workflows/example-basic-pnpm/badge.svg?branch=master)](.github/workflows/example-basic-pnpm.yml)
+
+### pnpm workspaces
+
+If you are using [pnpm workspaces](https://pnpm.io/workspaces) you need to install dependencies and run Cypress tests in a workspace in separate steps. The snippet below shows this principle.
+
+```yml
+      ...
+      - name: Install dependencies
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: examples/start-and-pnpm-workspaces
+          runTests: false
+
+      - name: Cypress test
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          working-directory: examples/start-and-pnpm-workspaces/packages/workspace-1
+        ...
+```
+
+[![pnpm workspaces example](https://github.com/cypress-io/github-action/workflows/example-start-and-pnpm-workspaces/badge.svg?branch=master)](.github/workflows/example-start-and-pnpm-workspaces.yml)
+
+See the example project [start-and-pnpm-workspaces](examples/start-and-pnpm-workspaces/) and the [example-start-and-pnpm-workspaces.yml](.github/workflows/example-start-and-pnpm-workspaces.yml) workflow for a full working example including pnpm caching.
 
 ### Yarn Classic
 

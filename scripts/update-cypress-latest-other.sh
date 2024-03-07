@@ -63,4 +63,14 @@ pnpm add cypress@latest --save-dev --save-exact
 pnpm ls cypress
 cd ..
 
+# examples/start-and-pnpm-workspaces
+echo
+echo updating pnpm workspaces example to Cypress latest version
+echo
+echo updating examples/start-and-pnpm-workspaces to cypress@latest
+cd start-and-pnpm-workspaces
+pnpm update cypress --latest --recursive
+pnpm ls cypress --recursive
+cd ..
+
 cd ..
