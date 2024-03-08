@@ -67,7 +67,7 @@ Examples contained in this repository, based on current Cypress versions, can be
 
 Live examples, such as [example-basic.yml](.github/workflows/example-basic.yml) are shown together with a status badge. Click on the status badge to read the source code of the workflow, for example
 
-[![End-to-End example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
+[![End-to-End example](https://github.com/cypress-io/github-action/actions/workflows/example-basic.yml/badge.svg)](.github/workflows/example-basic.yml)
 
 Older **external** examples based on a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) for Cypress `9` and earlier can be found in the [README](https://github.com/cypress-io/github-action/blob/v5/README.md) for version `v5`.
 
@@ -90,7 +90,7 @@ jobs:
         uses: cypress-io/github-action@v6
 ```
 
-[![End-to-End example](https://github.com/cypress-io/github-action/workflows/example-basic/badge.svg?branch=master)](.github/workflows/example-basic.yml)
+[![End-to-End example](https://github.com/cypress-io/github-action/actions/workflows/example-basic.yml/badge.svg)](.github/workflows/example-basic.yml)
 
 The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), Windows, and macOS without additional OS dependencies necessary.
 
@@ -115,7 +115,7 @@ jobs:
           component: true
 ```
 
-[![Component Testing example](https://github.com/cypress-io/github-action/workflows/example-component-test/badge.svg?branch=master)](.github/workflows/example-component-test.yml)
+[![Component Testing example](https://github.com/cypress-io/github-action/actions/workflows/example-component-test.yml/badge.svg)](.github/workflows/example-component-test.yml)
 
 See the example project [component-tests](examples/component-tests/) and the [example-component-test.yml](.github/workflows/example-component-test.yml) workflow for more details.
 
@@ -161,7 +161,7 @@ jobs:
           browser: chrome
 ```
 
-[![Chrome example](https://github.com/cypress-io/github-action/workflows/example-chrome/badge.svg?branch=master)](.github/workflows/example-chrome.yml)
+[![Chrome example](https://github.com/cypress-io/github-action/actions/workflows/example-chrome.yml/badge.svg)](.github/workflows/example-chrome.yml)
 
 ### Firefox
 
@@ -179,7 +179,7 @@ jobs:
           browser: firefox
 ```
 
-[![Firefox example](https://github.com/cypress-io/github-action/workflows/example-firefox/badge.svg?branch=master)](.github/workflows/example-firefox.yml)
+[![Firefox example](https://github.com/cypress-io/github-action/actions/workflows/example-firefox.yml/badge.svg)](.github/workflows/example-firefox.yml)
 
 ### Edge
 
@@ -197,7 +197,7 @@ jobs:
           browser: edge
 ```
 
-[![Edge example](https://github.com/cypress-io/github-action/workflows/example-edge/badge.svg?branch=master)](.github/workflows/example-edge.yml)
+[![Edge example](https://github.com/cypress-io/github-action/actions/workflows/example-edge.yml/badge.svg)](.github/workflows/example-edge.yml)
 
 ### Headed
 
@@ -245,7 +245,7 @@ Include `options: --user 1001` to avoid permissions issues.
 
 Refer to [cypress-io/cypress-docker-images](https://github.com/cypress-io/cypress-docker-images) for further information about using Cypress Docker images. Cypress offers the [Cypress Docker Factory](https://github.com/cypress-io/cypress-docker-images/tree/master/factory) to generate additional Docker images with selected components and versions.
 
-[![Docker example](https://github.com/cypress-io/github-action/workflows/example-docker/badge.svg?branch=master)](.github/workflows/example-docker.yml)
+[![Docker example](https://github.com/cypress-io/github-action/actions/workflows/example-docker.yml/badge.svg)](.github/workflows/example-docker.yml)
 
 ### Env
 
@@ -288,7 +288,7 @@ jobs:
 
 For more examples, see the workflows below, using environment variables for [recording](#record-test-results-on-cypress-cloud).
 
-[![Env example](https://github.com/cypress-io/github-action/workflows/example-env/badge.svg?branch=master)](.github/workflows/example-env.yml)
+[![Env example](https://github.com/cypress-io/github-action/actions/workflows/example-env.yml/badge.svg)](.github/workflows/example-env.yml)
 
 ### Specs
 
@@ -369,7 +369,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-[![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
+[![recording example](https://github.com/cypress-io/github-action/actions/workflows/example-recording.yml/badge.svg)](.github/workflows/example-recording.yml)
 
 ### Project ID and Record Key
 
@@ -619,7 +619,7 @@ jobs:
           quiet: true
 ```
 
-[![example-quiet](https://github.com/cypress-io/github-action/workflows/example-quiet/badge.svg?branch=master)](.github/workflows/example-quiet.yml)
+[![example-quiet](https://github.com/cypress-io/github-action/actions/workflows/example-quiet.yml/badge.svg)](.github/workflows/example-quiet.yml)
 
 ### Config
 
@@ -642,7 +642,7 @@ jobs:
           config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
 ```
 
-[![example-config](https://github.com/cypress-io/github-action/workflows/example-config/badge.svg?branch=master)](.github/workflows/example-config.yml)
+[![example-config](https://github.com/cypress-io/github-action/actions/workflows/example-config.yml/badge.svg)](.github/workflows/example-config.yml)
 
 ### Config File
 
@@ -665,7 +665,7 @@ jobs:
           config-file: cypress.config-alternate.js
 ```
 
-[![example-config](https://github.com/cypress-io/github-action/workflows/example-config/badge.svg?branch=master)](.github/workflows/example-config.yml)
+[![example-config](https://github.com/cypress-io/github-action/actions/workflows/example-config.yml/badge.svg)](.github/workflows/example-config.yml)
 
 ### Parallel
 
@@ -798,7 +798,7 @@ jobs:
           start-windows: npm run start:windows:server
 ```
 
-[![start example](https://github.com/cypress-io/github-action/workflows/example-start/badge.svg?branch=master)](.github/workflows/example-start.yml)
+[![start example](https://github.com/cypress-io/github-action/actions/workflows/example-start.yml/badge.svg)](.github/workflows/example-start.yml)
 
 **Note:** A server continues to run until the end of the GitHub workflow job that started it. At the end of the job the GitHub workflow runner executes a "Complete job" phase automatically where it terminates any server processes which are still running.
 
@@ -830,7 +830,7 @@ with:
     npm run web
 ```
 
-[![start example](https://github.com/cypress-io/github-action/workflows/example-start/badge.svg?branch=master)](.github/workflows/example-start.yml)
+[![start example](https://github.com/cypress-io/github-action/actions/workflows/example-start.yml/badge.svg)](.github/workflows/example-start.yml)
 
 ### Wait-on
 
@@ -853,9 +853,9 @@ jobs:
           wait-on: 'http://localhost:8080'
 ```
 
-[![wait-on example](https://github.com/cypress-io/github-action/workflows/example-wait-on/badge.svg?branch=master)](.github/workflows/example-wait-on.yml)
+[![wait-on example](https://github.com/cypress-io/github-action/actions/workflows/example-wait-on.yml/badge.svg)](.github/workflows/example-wait-on.yml)
 
-[![Webpack Dev Server example](https://github.com/cypress-io/github-action/workflows/example-webpack/badge.svg?branch=master)](.github/workflows/example-webpack.yml) (also uses `wait-on`)
+[![Webpack Dev Server example](https://github.com/cypress-io/github-action/actions/workflows/example-webpack.yml/badge.svg)](.github/workflows/example-webpack.yml) (also uses `wait-on`)
 
 By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout in seconds using `wait-on-timeout`.
 
@@ -1135,7 +1135,7 @@ jobs:
           working-directory: examples/basic-pnpm
 ```
 
-[![pnpm example](https://github.com/cypress-io/github-action/workflows/example-basic-pnpm/badge.svg?branch=master)](.github/workflows/example-basic-pnpm.yml)
+[![pnpm example](https://github.com/cypress-io/github-action/actions/workflows/example-basic-pnpm.yml/badge.svg)](.github/workflows/example-basic-pnpm.yml)
 
 ### pnpm workspaces
 
@@ -1157,7 +1157,7 @@ If you are using [pnpm workspaces](https://pnpm.io/workspaces) you need to insta
         ...
 ```
 
-[![pnpm workspaces example](https://github.com/cypress-io/github-action/workflows/example-start-and-pnpm-workspaces/badge.svg?branch=master)](.github/workflows/example-start-and-pnpm-workspaces.yml)
+[![pnpm workspaces example](https://github.com/cypress-io/github-action/actions/workflows/example-start-and-pnpm-workspaces.yml/badge.svg)](.github/workflows/example-start-and-pnpm-workspaces.yml)
 
 See the example project [start-and-pnpm-workspaces](examples/start-and-pnpm-workspaces/) and the [example-start-and-pnpm-workspaces.yml](.github/workflows/example-start-and-pnpm-workspaces.yml) workflow for a full working example including pnpm caching.
 
@@ -1180,7 +1180,7 @@ jobs:
           working-directory: examples/yarn-classic
 ```
 
-[![Yarn classic example](https://github.com/cypress-io/github-action/workflows/example-yarn-classic/badge.svg?branch=master)](.github/workflows/example-yarn-classic.yml)
+[![Yarn classic example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-classic.yml/badge.svg)](.github/workflows/example-yarn-classic.yml)
 
 ### Yarn Modern
 
@@ -1205,7 +1205,7 @@ jobs:
 This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration `nodeLinker: node-modules` which Yarn uses by default for projects updated from Yarn Classic. For `nodeLinker: pnp` see [Yarn Plug'n'Play](#yarn-plugnplay) below.
 (Note that `github-action` is not compatible with the `nodeLinker: pnpm` setting.)
 
-[![Yarn Modern example](https://github.com/cypress-io/github-action/workflows/example-yarn-modern/badge.svg?branch=master)](.github/workflows/example-yarn-modern.yml)
+[![Yarn Modern example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern.yml/badge.svg)](.github/workflows/example-yarn-modern.yml)
 
 ### Yarn Plug'n'Play
 
@@ -1230,7 +1230,7 @@ jobs:
 
 This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration when `nodeLinker` is undefined or set to `nodeLinker: pnp` corresponding to Yarn Plug'n'Play. Yarn uses this by default for projects newly created with Yarn Modern.
 
-[![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg?branch=master)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
+[![Yarn Plug'n'Play example](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml/badge.svg)](https://github.com/cypress-io/github-action/actions/workflows/example-yarn-modern-pnp.yml)
 
 **Caution**: using the action parameter `command` causes multiple other parameters to be ignored. [See `command` section for more information.](#custom-test-command)
 
@@ -1257,7 +1257,7 @@ jobs:
           wait-on: 'http://localhost:5000'
 ```
 
-[![Yarn workspaces example](https://github.com/cypress-io/github-action/workflows/example-start-and-yarn-workspaces/badge.svg?branch=master)](.github/workflows/example-start-and-yarn-workspaces.yml)
+[![Yarn workspaces example](https://github.com/cypress-io/github-action/actions/workflows/example-start-and-yarn-workspaces.yml/badge.svg)](.github/workflows/example-start-and-yarn-workspaces.yml)
 
 ### Custom cache key
 
@@ -1318,7 +1318,7 @@ jobs:
 
 See the [Node.js](#nodejs) section for information about supported versions and usage of Node.js.
 
-[![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
+[![Node versions example](https://github.com/cypress-io/github-action/actions/workflows/example-node-versions.yml/badge.svg)](.github/workflows/example-node-versions.yml)
 
 ### Split install and tests
 
@@ -1371,7 +1371,7 @@ If the project has many dependencies, but you want to install just Cypress you c
     install: false
 ```
 
-[![Install only Cypress example](https://github.com/cypress-io/github-action/workflows/example-install-only/badge.svg?branch=master)](.github/workflows/example-install-only.yml)
+[![Install only Cypress example](https://github.com/cypress-io/github-action/actions/workflows/example-install-only.yml/badge.svg)](.github/workflows/example-install-only.yml)
 
 ### Timeouts
 
@@ -1507,7 +1507,7 @@ This is an example of using the step output `resultsUrl`:
 
 The GitHub step output `dashboardUrl` is deprecated. Cypress Dashboard is now [Cypress Cloud](https://on.cypress.io/cloud-introduction).
 
-[![recording example](https://github.com/cypress-io/github-action/workflows/example-recording/badge.svg?branch=master)](.github/workflows/example-recording.yml)
+[![recording example](https://github.com/cypress-io/github-action/actions/workflows/example-recording.yml/badge.svg)](.github/workflows/example-recording.yml)
 
 **Note:** every GitHub workflow step can have `outcome` and `conclusion` properties. See the GitHub [Contexts](https://docs.github.com/en/actions/learn-github-actions/contexts) documentation section [steps context](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context). In particular, the `outcome` or `conclusion` value can be `success`, `failure`, `cancelled`, or `skipped` which you can use in any following steps.
 
@@ -1578,7 +1578,7 @@ jobs:
         uses: cypress-io/github-action@v6
 ```
 
-[![cron example](https://github.com/cypress-io/github-action/workflows/example-cron/badge.svg?branch=master)](.github/workflows/example-cron.yml)
+[![cron example](https://github.com/cypress-io/github-action/actions/workflows/example-cron.yml/badge.svg)](.github/workflows/example-cron.yml)
 
 ### Job summary title
 
@@ -1644,7 +1644,7 @@ and is generally aligned with [Node.js's release schedule](https://github.com/no
 
 `github-action` command-type options such as [`install-command`](https://github.com/cypress-io/github-action#custom-install-command), [`build`](https://github.com/cypress-io/github-action#build-app), [`start`](https://github.com/cypress-io/github-action#start-server) and [`command`](https://github.com/cypress-io/github-action#custom-test-command) are executed with the runner's version of Node.js. You can use GitHub's [actions/setup-node](https://github.com/actions/setup-node) to install an explicit Node.js version into the runner.
 
-[![Node versions example](https://github.com/cypress-io/github-action/workflows/example-node-versions/badge.svg?branch=master)](.github/workflows/example-node-versions.yml)
+[![Node versions example](https://github.com/cypress-io/github-action/actions/workflows/example-node-versions.yml/badge.svg)](.github/workflows/example-node-versions.yml)
 
 Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). `github-action@v6` uses `node20`.
 
@@ -1671,7 +1671,7 @@ Please see our [Contributing Guideline](./CONTRIBUTING.md) which explains how to
 This project is licensed under the terms of the [MIT license][license-file].
 
 <!-- badge links follow -->
-[ci-badge]: https://github.com/cypress-io/github-action/workflows/main/badge.svg?branch=master
+[ci-badge]: https://github.com/cypress-io/github-action/actions/workflows/main.yml/badge.svg
 [ci-workflow]: https://github.com/cypress-io/github-action/actions/workflows/main.yml
 [cloud-badge]: https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/3tb7jn/master&style=flat&logo=cypress
 [cloud-project]: https://cloud.cypress.io/projects/3tb7jn/runs
