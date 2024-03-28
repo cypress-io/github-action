@@ -101,7 +101,7 @@ This workflow uses the default [test type](https://on.cypress.io/guides/overview
 To use [Cypress Component Testing](https://on.cypress.io/component-testing) add `component: true`
 
 ```yml
-name: End-to-end tests
+name: Component tests
 on: push
 jobs:
   cypress-run:
