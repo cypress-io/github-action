@@ -11,11 +11,13 @@ set -e # fail on error
 #
 # First check if the required package managers are installed
 ./scripts/check-package-manager-npm.sh
-./scripts/check-package-managers-other.sh
+./scripts/check-package-manager-yarn.sh
+./scripts/check-package-manager-pnpm.sh
 # then proceed to updating the examples
 echo
 ./scripts/update-cypress-latest-npm.sh
-./scripts/update-cypress-latest-other.sh
+./scripts/update-cypress-latest-yarn.sh
+./scripts/update-cypress-latest-pnpm.sh
 
 echo
 echo please manually edit run command in
