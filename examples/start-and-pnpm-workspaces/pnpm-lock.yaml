@@ -11,8 +11,8 @@ importers:
   packages/workspace-1:
     devDependencies:
       cypress:
-        specifier: 13.7.1
-        version: 13.7.1
+        specifier: 13.7.2
+        version: 13.7.2
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -20,8 +20,8 @@ importers:
   packages/workspace-2:
     devDependencies:
       cypress:
-        specifier: 13.7.1
-        version: 13.7.1
+        specifier: 13.7.2
+        version: 13.7.2
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -68,8 +68,8 @@ packages:
       - supports-color
     dev: true
 
-  /@types/node@20.11.30:
-    resolution: {integrity: sha512-dHM6ZxwlmuZaRmUPfv1p+KrdD1Dci04FbdEm/9wEMouFqxYoFl5aMkt0VMAUtYRQDyYvD41WJLukhq/ha3YuTw==}
+  /@types/node@20.12.2:
+    resolution: {integrity: sha512-zQ0NYO87hyN6Xrclcqp7f8ZbXNbRfoGWNcMvHTPQp9UUrwI0mI7XBz+cu7/W6/VClYo2g63B0cjull/srU7LgQ==}
     requiresBuild: true
     dependencies:
       undici-types: 5.26.5
@@ -88,7 +88,7 @@ packages:
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
     requiresBuild: true
     dependencies:
-      '@types/node': 20.11.30
+      '@types/node': 20.12.2
     dev: true
     optional: true
 
@@ -337,8 +337,8 @@ packages:
       restore-cursor: 3.1.0
     dev: true
 
-  /cli-table3@0.6.3:
-    resolution: {integrity: sha512-w5Jac5SykAeZJKntOxJCrm63Eg5/4dhMWIcuTbo9rpE+brgaSZo0RuNJZeOyMgsUdhDeojvgyQLmjI+K50ZGyg==}
+  /cli-table3@0.6.4:
+    resolution: {integrity: sha512-Lm3L0p+/npIQWNIiyF/nAn7T5dnOwR3xNTHXYEBFBFVPXzCVNZ5lqEC/1eo/EVfpDsQ1I+TX4ORPQgp+UI0CRw==}
     engines: {node: 10.* || >= 12.*}
     dependencies:
       string-width: 4.2.3
@@ -439,8 +439,8 @@ packages:
       which: 2.0.2
     dev: true
 
-  /cypress@13.7.1:
-    resolution: {integrity: sha512-4u/rpFNxOFCoFX/Z5h+uwlkBO4mWzAjveURi3vqdSu56HPvVdyGTxGw4XKGWt399Y1JwIn9E1L9uMXQpc0o55w==}
+  /cypress@13.7.2:
+    resolution: {integrity: sha512-FF5hFI5wlRIHY8urLZjJjj/YvfCBrRpglbZCLr/cYcL9MdDe0+5usa8kTIrDHthlEc9lwihbkb5dmwqBDNS2yw==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     requiresBuild: true
@@ -457,7 +457,7 @@ packages:
       chalk: 4.1.2
       check-more-types: 2.24.0
       cli-cursor: 3.1.0
-      cli-table3: 0.6.3
+      cli-table3: 0.6.4
       commander: 6.2.1
       common-tags: 1.8.2
       dayjs: 1.11.10
