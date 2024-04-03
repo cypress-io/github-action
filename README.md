@@ -1117,7 +1117,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install pnpm
-        run: npm install -g pnpm@8
+        run: npm install -g pnpm@9
       - name: Get pnpm store directory
         shell: bash
         run: |
