@@ -11,8 +11,8 @@ importers:
   packages/workspace-1:
     devDependencies:
       cypress:
-        specifier: 13.7.2
-        version: 13.7.2
+        specifier: 13.7.3
+        version: 13.7.3
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -20,8 +20,8 @@ importers:
   packages/workspace-2:
     devDependencies:
       cypress:
-        specifier: 13.7.2
-        version: 13.7.2
+        specifier: 13.7.3
+        version: 13.7.3
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -68,8 +68,8 @@ packages:
       - supports-color
     dev: true
 
-  /@types/node@20.12.2:
-    resolution: {integrity: sha512-zQ0NYO87hyN6Xrclcqp7f8ZbXNbRfoGWNcMvHTPQp9UUrwI0mI7XBz+cu7/W6/VClYo2g63B0cjull/srU7LgQ==}
+  /@types/node@20.12.7:
+    resolution: {integrity: sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==}
     requiresBuild: true
     dependencies:
       undici-types: 5.26.5
@@ -88,7 +88,7 @@ packages:
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
     requiresBuild: true
     dependencies:
-      '@types/node': 20.12.2
+      '@types/node': 20.12.7
     dev: true
     optional: true
 
@@ -439,8 +439,8 @@ packages:
       which: 2.0.2
     dev: true
 
-  /cypress@13.7.2:
-    resolution: {integrity: sha512-FF5hFI5wlRIHY8urLZjJjj/YvfCBrRpglbZCLr/cYcL9MdDe0+5usa8kTIrDHthlEc9lwihbkb5dmwqBDNS2yw==}
+  /cypress@13.7.3:
+    resolution: {integrity: sha512-uoecY6FTCAuIEqLUYkTrxamDBjMHTYak/1O7jtgwboHiTnS1NaMOoR08KcTrbRZFCBvYOiS4tEkQRmsV+xcrag==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     requiresBuild: true
