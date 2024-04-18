@@ -101,7 +101,7 @@ outputs:
     description: 'Cypress Cloud URL if the run was recorded'
 runs:
   using: 'node20'
-  main: 'dist/index.js'
+  main: 'index.js'
 branding:
   color: 'green'
   icon: 'check-square'
