@@ -24,33 +24,32 @@ jobs:
       - run: npm run build
       - run: npm test
 
-  release:
-    runs-on: ubuntu-22.04
-    name: release
-    needs: [build-and-test]
-    # only release from the master branch
-    # in parent repository, not in a fork
-    if: (github.ref == 'refs/heads/master') &&
-      (github.repository == 'cypress-io/github-action')
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - run: npm ci
-      # https://github.com/cycjimmy/semantic-release-action
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
-        id: semantic
-        with:
-          branches: master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # release:
+  #   runs-on: ubuntu-22.04
+  #   name: release
+  #   needs: [build-and-test]
+  #   # only release from the master branch
+  #   # in parent repository, not in a fork
+  #   if: (github.ref == 'refs/heads/master')
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - run: npm ci
+  #     # https://github.com/cycjimmy/semantic-release-action
+  #     - name: Semantic Release
+  #       uses: cycjimmy/semantic-release-action@v4
+  #       id: semantic
+  #       with:
+  #         branches: master
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Push updates to branch for major version
-        # if there is a new version published, let's say v1.2.3
-        # then this step will update branch "v1" to this commit
-        # https://github.com/cypress-io/github-action/branches
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: 'git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v${{steps.semantic.outputs.new_release_major_version}}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Push updates to branch for major version
+  #       # if there is a new version published, let's say v1.2.3
+  #       # then this step will update branch "v1" to this commit
+  #       # https://github.com/cypress-io/github-action/branches
+  #       if: steps.semantic.outputs.new_release_published == 'true'
+  #       run: 'git push https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:refs/heads/v${{steps.semantic.outputs.new_release_major_version}}'
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
