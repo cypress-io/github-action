@@ -11,8 +11,8 @@ importers:
   packages/workspace-1:
     devDependencies:
       cypress:
-        specifier: 13.7.3
-        version: 13.7.3
+        specifier: 13.8.0
+        version: 13.8.0
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -20,8 +20,8 @@ importers:
   packages/workspace-2:
     devDependencies:
       cypress:
-        specifier: 13.7.3
-        version: 13.7.3
+        specifier: 13.8.0
+        version: 13.8.0
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -260,8 +260,8 @@ packages:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
 
-  cypress@13.7.3:
-    resolution: {integrity: sha512-uoecY6FTCAuIEqLUYkTrxamDBjMHTYak/1O7jtgwboHiTnS1NaMOoR08KcTrbRZFCBvYOiS4tEkQRmsV+xcrag==}
+  cypress@13.8.0:
+    resolution: {integrity: sha512-Qau//mtrwEGOU9cn2YjavECKyDUwBh8J2tit+y9s1wsv6C3BX+rlv6I9afmQnL8PmEEzJ6be7nppMHacFzZkTw==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
 
@@ -1142,7 +1142,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  cypress@13.7.3:
+  cypress@13.8.0:
     dependencies:
       '@cypress/request': 3.0.1
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)

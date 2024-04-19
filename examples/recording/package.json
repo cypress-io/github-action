@@ -9,6 +9,6 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "13.7.3"
+    "cypress": "13.8.0"
   }
 }
