@@ -11,6 +11,7 @@ jobs:
 
   basic-ubuntu-20:
     runs-on: ubuntu-20.04
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,6 +31,20 @@ jobs:
 
   basic-ubuntu-22:
     runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic
+          build: npx cypress info
+
+  basic-ubuntu-24:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,6 +57,7 @@ jobs:
 
   basic-on-windows:
     runs-on: windows-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,6 +70,7 @@ jobs:
 
   basic-on-mac:
     runs-on: macos-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -69,6 +86,7 @@ jobs:
   # https://github.com/cypress-io/github-action/issues/327
   basic-without-binary-install:
     runs-on: ubuntu-22.04
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
