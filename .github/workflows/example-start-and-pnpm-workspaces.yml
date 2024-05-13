@@ -39,9 +39,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/start-and-pnpm-workspaces/pnpm-lock.yaml') }}
 
       - name: Install dependencies
         # with Cypress GitHub Action.
@@ -104,9 +102,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/basic-pnpm/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/start-and-pnpm-workspaces/pnpm-lock.yaml') }}
 
       - name: Install dependencies
         uses: ./ # approximately equivalent to using cypress-io/github-action@v6
