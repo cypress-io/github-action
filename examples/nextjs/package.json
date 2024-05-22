@@ -15,6 +15,6 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "cypress": "13.9.0"
+    "cypress": "13.10.0"
   }
 }
