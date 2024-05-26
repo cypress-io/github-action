@@ -509,7 +509,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [18, 20, 21, 22]
+        node: [18, 20, 22]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1261,7 +1261,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [18, 20, 21, 22]
+        node: [18, 20, 22]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1295,7 +1295,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node: [18, 20, 21, 22]
+        node: [18, 20, 22]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v4
@@ -1624,8 +1624,7 @@ jobs:
 
 Node.js is required to run this action. The recommended version `v6` supports:
 
-- **Node.js** 18.x
-- **Node.js** 20.x and above
+- **Node.js** 18.x, 20.x and 22.x
 
 and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
 
