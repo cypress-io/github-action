@@ -13,7 +13,6 @@ jobs:
   single-ws:
     # This job installs pnpm,
     # installs all dependencies,
-    # caches the pnpm store,
     # caches the Cypress binary cache,
     # then runs Cypress tests in the single workspace
     # of the subfolder "packages/workspace-1".
@@ -26,20 +25,6 @@ jobs:
         # pnpm is not installed by default on GitHub runners
       - name: Install pnpm
         run: npm install -g pnpm@9
-
-        # locate the pnpm store directory where pnpm dependencies are installed
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-        # Cypress github-action does not cache pnpm dependencies by default.
-        # Cache the dependencies.
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/start-and-pnpm-workspaces/pnpm-lock.yaml') }}
 
       - name: Install dependencies
         # with Cypress GitHub Action.
@@ -75,7 +60,6 @@ jobs:
   multiple-ws:
     # This job installs pnpm,
     # installs all dependencies,
-    # caches the pnpm store,
     # caches the Cypress binary cache,
     # then runs Cypress tests in each of the workspaces.
     runs-on: ubuntu-22.04
@@ -92,17 +76,6 @@ jobs:
 
       - name: Install pnpm
         run: npm install -g pnpm@9
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('examples/start-and-pnpm-workspaces/pnpm-lock.yaml') }}
 
       - name: Install dependencies
         uses: ./ # approximately equivalent to using cypress-io/github-action@v6
