@@ -6,6 +6,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 | Version | Changes                                                                                                                              |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| v6.7.0  | Examples remove Node.js 21. End of support for Node.js 21.                                                                           |
 | v6.6.0  | Add parameter `summary-title`                                                                                                        |
 | v6.5.0  | Examples remove Node.js 16. End of support for Node.js 16.                                                                           |
 | v6.4.0  | Action adds PR number and URL if available when recording                                                                            |
