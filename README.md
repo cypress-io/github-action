@@ -243,6 +243,28 @@ Replace the `latest` tag with a specific version image tag from [`cypress/browse
 
 Include `options: --user 1001` to avoid permissions issues.
 
+When using [cypress/included](https://github.com/cypress-io/cypress-docker-images/tree/master/included) Docker images, set the environment variable `CYPRESS_INSTALL_BINARY=0` to suppress saving the Cypress binary cache, otherwise cache restore errors may occur. The example below shows how to do this:
+
+```yml
+name: Test with Docker cypress/included
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-22.04
+    container:
+      # Cypress Docker image from https://hub.docker.com/r/cypress/included
+      # with Cypress globally pre-installed
+      image: cypress/included:latest
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+```
+
 Refer to [cypress-io/cypress-docker-images](https://github.com/cypress-io/cypress-docker-images) for further information about using Cypress Docker images. Cypress offers the [Cypress Docker Factory](https://github.com/cypress-io/cypress-docker-images/tree/master/factory) to generate additional Docker images with selected components and versions.
 
 [![Docker example](https://github.com/cypress-io/github-action/actions/workflows/example-docker.yml/badge.svg)](.github/workflows/example-docker.yml)
