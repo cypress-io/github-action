@@ -1148,7 +1148,7 @@ If you are using [pnpm workspaces](https://pnpm.io/workspaces) you need to insta
 
 [![pnpm workspaces example](https://github.com/cypress-io/github-action/actions/workflows/example-start-and-pnpm-workspaces.yml/badge.svg)](.github/workflows/example-start-and-pnpm-workspaces.yml)
 
-See the example project [start-and-pnpm-workspaces](examples/start-and-pnpm-workspaces/) and the [example-start-and-pnpm-workspaces.yml](.github/workflows/example-start-and-pnpm-workspaces.yml) workflow for a full working example including pnpm caching.
+See the example project [start-and-pnpm-workspaces](examples/start-and-pnpm-workspaces/) and the [example-start-and-pnpm-workspaces.yml](.github/workflows/example-start-and-pnpm-workspaces.yml) workflow for a full working example.
 
 ### Yarn Classic
 
