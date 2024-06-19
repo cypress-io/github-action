@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       cypress:
-        specifier: 13.11.0
-        version: 13.11.0
+        specifier: 13.12.0
+        version: 13.12.0
 
 packages:
 
@@ -181,8 +181,8 @@ packages:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
 
-  cypress@13.11.0:
-    resolution: {integrity: sha512-NXXogbAxVlVje4XHX+Cx5eMFZv4Dho/2rIcdBHg9CNPFUGZdM4cRdgIgM7USmNYsC12XY0bZENEQ+KBk72fl+A==}
+  cypress@13.12.0:
+    resolution: {integrity: sha512-udzS2JilmI9ApO/UuqurEwOvThclin5ntz7K0BtnHBs+tg2Bl9QShLISXpSEMDv/u8b6mqdoAdyKeZiSqKWL8g==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
 
@@ -836,7 +836,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  cypress@13.11.0:
+  cypress@13.12.0:
     dependencies:
       '@cypress/request': 3.0.0
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
