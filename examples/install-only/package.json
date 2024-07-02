@@ -11,6 +11,6 @@
     "debug": "4.3.4"
   },
   "devDependencies": {
-    "cypress": "13.12.0"
+    "cypress": "13.13.0"
   }
 }
