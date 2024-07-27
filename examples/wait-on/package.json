@@ -17,7 +17,7 @@
   "private": true,
   "dependencies": {
     "arg": "5.0.0",
-    "debug": "4.3.4"
+    "debug": "4.3.6"
   },
   "devDependencies": {
     "cypress": "13.13.1"
