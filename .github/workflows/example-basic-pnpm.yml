@@ -8,8 +8,12 @@ on:
 
 jobs:
 
-  basic-pnpm-ubuntu-20:
-    runs-on: ubuntu-20.04
+  basic-pnpm:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022, macos-14]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,82 +22,12 @@ jobs:
         run: npm install -g pnpm@9
 
       - name: Cypress tests
-        # normally you would write
+        # if you copy this workflow to another repository
+        # take the next line as replacement for ./
         # uses: cypress-io/github-action@v6
         uses: ./
-        # the parameters below are only necessary
-        # because we are running these examples in a monorepo
         with:
           working-directory: examples/basic-pnpm
-          # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
-          build: npx cypress info
-
-  basic-pnpm-ubuntu-22:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        run: npm install -g pnpm@9
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic-pnpm
-          build: npx cypress info
-
-  basic-pnpm-on-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        run: npm install -g pnpm@9
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic-pnpm
-          build: npx cypress info
-
-  basic-pnpm-on-mac:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        run: npm install -g pnpm@9
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic-pnpm
-          build: npx cypress info
-
-  # skips the binary installation
-  # shows that the job should not fail
-  # https://github.com/cypress-io/github-action/issues/327
-  basic-pnpm-without-binary-install:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        run: npm install -g pnpm@9
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic-pnpm
-          # since we do not install Cypress
-          # we should not attempt to run tests
-          runTests: false
-        env:
-          # skip the binary install
-          CYPRESS_INSTALL_BINARY: 0
+          build: pnpm exec cypress info
