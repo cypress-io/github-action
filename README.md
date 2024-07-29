@@ -1127,7 +1127,8 @@ jobs:
 ### pnpm
 
 The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`) and so it must be installed in a separate workflow step (see below). If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
-At this time, the action does not automatically cache dependencies installed by pnpm. We advise against attempting to work around this restriction, by caching the pnpm store directory through additional workflow steps, as this can lead to the action skipping installation of the Cypress binary, causing workflow failure.
+
+The example below follows [pnpm recommendations](https://pnpm.io/continuous-integration#github-actions) for installing pnpm and caching the [pnpm store](https://pnpm.io/cli/store).
 
 ```yaml
 name: example-basic-pnpm
@@ -1139,7 +1140,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install pnpm
-        run: npm install -g pnpm@9
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: examples/basic-pnpm/pnpm-lock.yaml
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
