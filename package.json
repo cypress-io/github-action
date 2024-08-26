@@ -48,7 +48,7 @@
   "devDependencies": {
     "@types/node": "20.16.1",
     "@vercel/ncc": "0.38.1",
-    "husky": "9.1.4",
+    "husky": "9.1.5",
     "markdown-link-check": "3.12.2",
     "prettier": "3.3.3"
   },
