@@ -41,6 +41,8 @@ jobs:
         uses: cycjimmy/semantic-release-action@v4
         id: semantic
         with:
+          # https://github.com/semantic-release/semantic-release
+          semantic_version: 24.1.0
           branches: master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
