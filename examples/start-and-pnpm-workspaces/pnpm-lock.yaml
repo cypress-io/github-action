@@ -11,8 +11,8 @@ importers:
   packages/workspace-1:
     devDependencies:
       cypress:
-        specifier: 13.14.1
-        version: 13.14.1
+        specifier: 13.14.2
+        version: 13.14.2
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -20,8 +20,8 @@ importers:
   packages/workspace-2:
     devDependencies:
       cypress:
-        specifier: 13.14.1
-        version: 13.14.1
+        specifier: 13.14.2
+        version: 13.14.2
       serve:
         specifier: 14.2.1
         version: 14.2.1
@@ -39,8 +39,8 @@ packages:
   '@cypress/xvfb@1.2.4':
     resolution: {integrity: sha512-skbBzPggOVYCbnGgV+0dmBdW/s77ZkAOXIC1knS8NagwDjBrNC1LuXtQJeiN6l+m7lzmHtaoUw/ctJKdqkG57Q==}
 
-  '@types/node@22.5.1':
-    resolution: {integrity: sha512-KkHsxej0j9IW1KKOOAA/XBA0z08UFSrRQHErzEfA3Vgq57eXIMYboIlHJuYIfd+lwCQjtKqUu3UnmKbtUc9yRw==}
+  '@types/node@22.5.3':
+    resolution: {integrity: sha512-njripolh85IA9SQGTAqbmnNZTdxv7X/4OYGPz8tgy5JDr8MP+uDBa921GpYEoDDnwm0Hmn5ZPeJgiiSTPoOzkQ==}
 
   '@types/sinonjs__fake-timers@8.1.1':
     resolution: {integrity: sha512-0kSuKjAS0TrGLJ0M/+8MaFkGsQhZpB6pxOmvS3K8FYI72K//YmdfoW9X2qPsAKh1mkwxGD5zib9s1FIFed6E8g==}
@@ -260,8 +260,8 @@ packages:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
 
-  cypress@13.14.1:
-    resolution: {integrity: sha512-Wo+byPmjps66hACEH5udhXINEiN3qS3jWNGRzJOjrRJF3D0+YrcP2LVB1T7oYaVQM/S+eanqEvBWYc8cf7Vcbg==}
+  cypress@13.14.2:
+    resolution: {integrity: sha512-lsiQrN17vHMB2fnvxIrKLAjOr9bPwsNbPZNrWf99s4u+DVmCY6U+w7O3GGG9FvP4EUVYaDu+guWeNLiUzBrqvA==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
 
@@ -926,7 +926,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@types/node@22.5.1':
+  '@types/node@22.5.3':
     dependencies:
       undici-types: 6.19.8
     optional: true
@@ -937,7 +937,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.5.1
+      '@types/node': 22.5.3
     optional: true
 
   '@zeit/schemas@2.29.0': {}
@@ -1136,7 +1136,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  cypress@13.14.1:
+  cypress@13.14.2:
     dependencies:
       '@cypress/request': 3.0.1
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
