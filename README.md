@@ -1439,7 +1439,7 @@ See section [Yarn Modern](#yarn-modern) for information about using Yarn version
 
 ## Debugging
 
-This action uses the [debug](https://github.com/visionmedia/debug#readme) module to output additional verbose logs. You can see these debug messages by setting the following environment variable:
+This action uses the [debug](https://github.com/debug-js/debug#readme) module to output additional verbose logs. You can see these debug messages by setting the following environment variable:
 
 ```yml
 DEBUG: @cypress/github-action
