@@ -3,5 +3,8 @@
   "workspaces": [
     "workspace-1",
     "workspace-2"
-  ]
+  ],
+  "resolutions": {
+    "path-to-regexp": "3.3.0"
+  }
 }

@@ -15,5 +15,10 @@
     "cypress": "13.14.2",
     "serve": "14.2.1",
     "start-server-and-test": "2.0.3"
+  },
+  "overrides": {
+    "serve": {
+      "path-to-regexp": "3.3.0"
+    }
   }
 }
