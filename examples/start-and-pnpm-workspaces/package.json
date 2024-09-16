@@ -2,5 +2,10 @@
   "name": "start-and-pnpm-workspaces",
   "version": "1.0.0",
   "description": "example using pnpm with workspaces",
-  "private": true
+  "private": true,
+  "pnpm": {
+    "overrides": {
+      "path-to-regexp": "3.3.0"
+    }
+  }
 }
