@@ -13,5 +13,10 @@
   "devDependencies": {
     "cypress": "13.14.2",
     "serve": "14.2.1"
+  },
+  "overrides": {
+    "serve": {
+      "path-to-regexp": "3.3.0"
+    }
   }
 }
