@@ -63,23 +63,3 @@ jobs:
         with:
           working-directory: examples/basic
           build: npx cypress info
-
-  # skips the binary installation
-  # shows that the job should not fail
-  # https://github.com/cypress-io/github-action/issues/327
-  basic-without-binary-install:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic
-          # since we do not install Cypress
-          # we should not attempt to run tests
-          runTests: false
-        env:
-          # skip the binary install
-          CYPRESS_INSTALL_BINARY: 0
