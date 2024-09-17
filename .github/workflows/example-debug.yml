@@ -1,4 +1,15 @@
 name: example-debug
+
+# This workflow demonstrates how to use the DEBUG environment variable to get debug output.
+# See also https://github.com/cypress-io/github-action/blob/master/README.md#debugging and
+# https://on.cypress.io/troubleshooting#Print-DEBUG-logs
+
+# In the example jobs, the action is called with
+# uses: ./
+# which runs the action code from the current branch.
+# If you copy this workflow to another repo, replace the above line with
+# uses: cypress-io/github-action@v6
+
 on:
   push:
     branches:
@@ -7,15 +18,35 @@ on:
   workflow_dispatch:
 
 jobs:
-  debug-logs:
+  action-debug:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cypress debug logs 📝
+      - name: Cypress action debug logs
         uses: ./
         env:
+          # This enables debug logging output for the action
           DEBUG: '@cypress/github-action'
         with:
           working-directory: examples/basic
+
+  cypress-debug:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress debug logs
+        uses: ./
+        env:
+          # This enables debug logging output for Cypress
+          # See https://on.cypress.io/troubleshooting#Log-sources for other filtered DEBUG values
+          DEBUG: 'cypress:*'
+        with:
+          working-directory: examples/basic
+
+        # You can also combine the two debug options into one line
+        # to get both action debug and Cypress debug output
+        # DEBUG: '@cypress/github-action, cypress:*'
