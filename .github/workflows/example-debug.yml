@@ -50,3 +50,29 @@ jobs:
         # You can also combine the two debug options into one line
         # to get both action debug and Cypress debug output
         # DEBUG: '@cypress/github-action, cypress:*'
+
+  install-binary-debug:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress npm install
+        # Install only the Cypress npm module
+        uses: ./
+        with:
+          working-directory: examples/basic
+          runTests: false
+        env:
+          # Skip the Cypress binary installation
+          CYPRESS_INSTALL_BINARY: 0
+
+      - name: Cypress binary install
+        # Now install the Cypress binary with debug enabled
+        uses: ./
+        with:
+          working-directory: examples/basic
+          # use --force option to override any cached Cypress binary version
+          command: npx cypress install --force
+        env:
+          DEBUG: 'cypress:cli*'
