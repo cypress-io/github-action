@@ -18,7 +18,7 @@ jobs:
     # example with web application build,
     # server start and waiting for the server
     # to respond before running tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
   start-multiple:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,7 +54,7 @@ jobs:
   start-multiple-commas:
     # example with web application build
     # and several services to start
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
