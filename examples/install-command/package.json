@@ -7,7 +7,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "13.14.2"
+    "cypress": "13.15.0"
   },
   "dependencies": {
     "arg": "5.0.0",
