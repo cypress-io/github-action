@@ -9,7 +9,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "13.14.2",
+    "cypress": "13.15.0",
     "lodash": "4.17.21"
   }
 }
