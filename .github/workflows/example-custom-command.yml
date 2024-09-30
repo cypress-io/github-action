@@ -11,7 +11,7 @@ jobs:
   start:
     # example where instead of forming the default "cypress run ..."
     # the user can specify their own command
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v4

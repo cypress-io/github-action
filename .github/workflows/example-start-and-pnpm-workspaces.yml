@@ -16,7 +16,7 @@ jobs:
     # caches the Cypress binary cache,
     # then runs Cypress tests in the single workspace
     # of the subfolder "packages/workspace-1".
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: Single workspace
     steps:
       - name: Checkout repository
@@ -62,7 +62,7 @@ jobs:
     # installs all dependencies,
     # caches the Cypress binary cache,
     # then runs Cypress tests in each of the workspaces.
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:

@@ -9,7 +9,7 @@ on:
 jobs:
 
   wait:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait-server-starts-after-100-seconds:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
           wait-on-timeout: 110
 
   wait2:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,7 +51,7 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait2-delay-50:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait2-delay-120:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,7 +78,7 @@ jobs:
           wait-on-timeout: 130
 
   wait3:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -92,7 +92,7 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait3-for-200-seconds:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -107,7 +107,7 @@ jobs:
           wait-on-timeout: 210
 
   wait4:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -119,7 +119,7 @@ jobs:
           wait-on: 'http://localhost:3050'
 
   wait-multiple:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -133,7 +133,7 @@ jobs:
           wait-on: 'http://localhost:3050, http://localhost:3060, http://localhost:3070'
 
   wait-on-nextjs:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -145,7 +145,7 @@ jobs:
           wait-on: 'http://localhost:3000'
 
   wait-using-custom-command:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -158,7 +158,7 @@ jobs:
           wait-on: 'npx wait-on --timeout 60000 http://localhost:3000'
 
   ping-cli:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -168,7 +168,7 @@ jobs:
         run: node src/ping-cli https://example.cypress.io
 
   wait-on-vite:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
