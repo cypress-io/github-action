@@ -12,7 +12,7 @@ jobs:
     # the example has Yarn workspace in its "root" folder
     # examples/start-and-yarn-workspaces
     # and tests in a subfolder like "workspace-1"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
     # server start and waiting for the server
     # to respond before running tests
     # in each Yarn workspaces subfolder
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       # fail-fast: false allows tests for both workspaces to run even if one fails
       fail-fast: false

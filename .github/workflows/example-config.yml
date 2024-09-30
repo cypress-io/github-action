@@ -10,7 +10,7 @@ jobs:
 
   start:
     # example where we pass custom base URL
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
 
   config-file:
     # example where we use a custom config-file
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
 
   separate-specs:
     # example where we pass specs to run via multiple lines
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
 
   separate-specs-with-wildcard:
     # example where we pass specs to run via multiple lines and wildcards
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4

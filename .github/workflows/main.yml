@@ -6,7 +6,7 @@ on:
   pull_request:
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: Build and test
     steps:
       - name: Checkout
@@ -25,7 +25,7 @@ jobs:
       - run: npm test
 
   release:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: release
     needs: [build-and-test]
     # only release from the master branch

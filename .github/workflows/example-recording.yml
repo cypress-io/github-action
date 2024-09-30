@@ -22,7 +22,7 @@ env:
 jobs:
 
   check-record-key:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       record-key-exists: ${{ steps.record-key-check.outputs.defined }}
     steps:
@@ -36,7 +36,7 @@ jobs:
           fi
 
   parallel:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: [check-record-key]
     strategy:
       fail-fast: false
@@ -72,7 +72,7 @@ jobs:
           echo See results at ${{ steps.cypress.outputs.resultsUrl }}
 
   group:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: [check-record-key]
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     steps:
