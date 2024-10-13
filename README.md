@@ -1673,7 +1673,7 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 
 ## Compatibility
 
-- `github-action@v6` is the current recommended version, uses `node20` and is compatible with Cypress `10` and later.
+- `github-action@v6` is the current recommended version, uses `node20` and is compatible with Cypress `10` and above.
 - `github-action` versions `v1` to `v5` are unsupported: they rely on Node.js `12` and `16` in End-of-life status.
 
 ## Contributing
