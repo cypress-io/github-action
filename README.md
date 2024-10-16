@@ -63,13 +63,11 @@
 - Suppress [job summary](#suppress-job-summary)
 - [More examples](#more-examples)
 
-Examples contained in this repository, based on current Cypress versions, can be found in the [examples](./examples) directory. Examples for [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration), which use Cypress `9.7.0`, are no longer maintained. They can be referred to in the [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) directory of the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch.
+Examples contained in this repository, based on current Cypress versions, can be found in the [examples](./examples) directory.
 
 Live examples, such as [example-basic.yml](.github/workflows/example-basic.yml) are shown together with a status badge. Click on the status badge to read the source code of the workflow, for example
 
 [![End-to-End example](https://github.com/cypress-io/github-action/actions/workflows/example-basic.yml/badge.svg)](.github/workflows/example-basic.yml)
-
-Older **external** examples based on a [Legacy Configuration](https://on.cypress.io/guides/references/legacy-configuration) for Cypress `9` and earlier can be found in the [README](https://github.com/cypress-io/github-action/blob/v5/README.md) for version `v5`.
 
 **Note:** this package assumes that [cypress](https://www.npmjs.com/package/cypress) is declared as a development dependency in the [package.json](https://docs.npmjs.com/creating-a-package-json-file) file. The [cypress npm module](https://www.npmjs.com/package/cypress) is required to run Cypress via its [Module API](https://on.cypress.io/module-api).
 
@@ -1675,7 +1673,7 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 
 ## Compatibility
 
-- `github-action@v6` is the current recommended version and uses `node20`
+- `github-action@v6` is the current recommended version, uses `node20` and is compatible with Cypress `10` and above.
 - `github-action` versions `v1` to `v5` are unsupported: they rely on Node.js `12` and `16` in End-of-life status.
 
 ## Contributing

@@ -8,7 +8,7 @@ The [examples](../examples) directory contains examples of the use of Cypress (C
 
 The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [Yarn 1 (Classic)](https://classic.yarnpkg.com/) and [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) to define and install the packages being used.
 
-*The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch. This directory contains examples which were set up to use Cypress `9.7.0`, the last version using [Legacy Configuration](https://docs.cypress.io/guides/references/legacy-configuration), covering Cypress 9 and below. These `v9` examples are no longer maintained.
+*The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch. This directory contains examples which were set up to use Cypress `9.7.0`, the last version using Legacy Configuration, covering Cypress 9 and below. These `v9` examples are no longer maintained.
 
 ## Requirements
 
