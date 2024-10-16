@@ -12,11 +12,6 @@
   "private": true,
   "devDependencies": {
     "cypress": "13.15.0",
-    "serve": "14.2.3"
-  },
-  "overrides": {
-    "serve": {
-      "path-to-regexp": "3.3.0"
-    }
+    "serve": "14.2.4"
   }
 }
