@@ -32,6 +32,7 @@ npm install pnpm@latest -g
 npm install yarn@latest -g
 ```
 
+<!-- markdown-link-check-disable-next-line -->
 - [Visual Studio Code](https://code.visualstudio.com/) or other editor
 
 Under Microsoft Windows it may be necessary to also execute the following preparatory command:
