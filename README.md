@@ -1478,16 +1478,26 @@ If you have a problem with `wait-on` not working, you can check the [src/ping.js
 - start your server
 - from another terminal call the `ping` yourself to validate the server is responding:
 
-```
-$ node src/ping-cli.js <url>
+```shell
+node src/ping-cli.js <url>
 ```
 
-For example
+For example:
 
-```
+```text
 $ node src/ping-cli.js https://example.cypress.io
 pinging url https://example.cypress.io for 30 seconds
-::debug::pinging https://example.cypress.io has finished ok
+```
+
+You can also enable debug logs by setting the environment variable `DEBUG='@cypress/github-action'`, for example:
+
+```text
+$ DEBUG='@cypress/github-action' node src/ping-cli.js https://example.cypress.io
+pinging url https://example.cypress.io for 30 seconds
+  @cypress/github-action total ping timeout 60000 +0ms
+  @cypress/github-action individual ping timeout 30000ms +0ms
+  @cypress/github-action retries limit 2 +0ms
+  @cypress/github-action pinging https://example.cypress.io has finished ok after 185ms +185ms
 ```
 
 ## More information
