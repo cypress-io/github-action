@@ -21,6 +21,8 @@ jobs:
         # See https://github.com/pnpm/action-setup
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        # Optional when there is a `packageManager` field in the `package.json`.
+        # See https://github.com/pnpm/action-setup?tab=readme-ov-file#version
         with:
           version: 9
 
@@ -28,6 +30,8 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
+          # Note that pnpm `use-node-version` is not supported, yet
+          # See https://github.com/actions/setup-node/issues/1130
           node-version: 20
           cache: 'pnpm'
           cache-dependency-path: examples/basic-pnpm/pnpm-lock.yaml
