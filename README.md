@@ -1144,7 +1144,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
           cache-dependency-path: examples/basic-pnpm/pnpm-lock.yaml
       - name: Cypress run
