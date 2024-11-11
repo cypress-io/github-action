@@ -1,59 +1,17 @@
-name: example-chrome
-on:
-  push:
-    branches:
-      - 'master'
-  pull_request:
-  workflow_dispatch:
+name: Cypress Tests
+
+on: push
 
 jobs:
-
-  tests:
-    runs-on: ubuntu-24.04
+  cypress-run:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Chrome headless
-        uses: ./
+      # Install npm dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
         with:
-          # Print information about the system and current environment
-          # including detected browsers
-          # which are pre-installed in GitHub-hosted runners
-          # see https://on.cypress.io/command-line#cypress-info
-          # We do not need the build parameter to build an app here
-          # because the remote https://example.cypress.io site
-          # is already built and running, and so for convenience
-          # we repurpose the build parameter to get cypress info instead.
-          build: npx cypress info
-          working-directory: examples/browser
-          browser: chrome
-          summary-title: 'Chrome headless'
-          # As of Cypress v8.0 the `cypress run` command
-          # executes tests in `headless` mode by default
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: screenshots-headless-chrome
-          path: examples/browser/cypress/screenshots
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/browser
-
-      - name: Chrome headed
-        uses: ./
-        with:
-          # Cypress and dependencies are already installed
-          install: false
-          working-directory: examples/browser
-          browser: chrome
-          headed: true
-          summary-title: 'Chrome headed'
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: screenshots-headed-chrome
-          path: examples/browser/cypress/screenshots
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/browser
+          build: npm run build
+          start: npm start
