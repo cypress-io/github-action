@@ -1504,7 +1504,11 @@ pinging url https://example.cypress.io for 30 seconds
 
 ### Manual trigger
 
-If you add `workflow_dispatch` event to your workflow, you will be able to start the workflow by clicking a button on the GitHub page, see the [Test External Site Using GitHub Actions](https://www.youtube.com/watch?v=4TeSOj2Iy_Q) video.
+Each of the `example-*` workflows in the [.github/workflows](https://github.com/cypress-io/github-action/tree/master/.github/workflows) directory is configured to trigger on a `workflow_dispatch` event. This allows any of these workflows to be run manually.
+
+[Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) and [clone](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository) this repository to try out the examples live in your own repository copy. Refer to the GitHub Actions documentation [Manually running a workflow](https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow) which explains how to run a workflow from the Actions tab on GitHub. Workflows can also be run using the GitHub CLI or the REST API.
+
+If you configure a `workflow_dispatch` event in your own workflows, you will be able to run them manually in the same way.
 
 ### Outputs
 
