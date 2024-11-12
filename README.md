@@ -1500,12 +1500,6 @@ pinging url https://example.cypress.io for 30 seconds
   @cypress/github-action pinging https://example.cypress.io has finished ok after 185ms +185ms
 ```
 
-## More information
-
-- Read our blog post [Drastically Simplify Testing on CI with Cypress GitHub Action](https://www.cypress.io/blog/2019/11/20/drastically-simplify-your-testing-with-cypress-github-action/)
-- Read [Test the Preview Vercel Deploys](https://glebbahmutov.com/blog/develop-preview-test/) blog post
-- [Creating actions](https://docs.github.com/en/actions/creating-actions) docs
-
 ## Extras
 
 ### Manual trigger
