@@ -1514,7 +1514,7 @@ Each of the `example-*` workflows in the [.github/workflows](https://github.com/
 
 [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) and [clone](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository) this repository to try out the examples live in your own repository copy. Refer to the GitHub Actions documentation [Manually running a workflow](https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow) which explains how to run a workflow from the Actions tab on GitHub. Workflows can also be run using the GitHub CLI or the REST API.
 
-If you add `workflow_dispatch` event to any of your own workflows, you will be able to run your workflow manually in the same way.
+If you configure a `workflow_dispatch` event in your own workflows, you will be able to run them manually in the same way.
 
 ### Outputs
 
