@@ -49,7 +49,7 @@
     "@types/node": "22.8.7",
     "@vercel/ncc": "0.38.1",
     "husky": "9.1.6",
-    "markdown-link-check": "3.12.2",
+    "markdown-link-check": "3.13.6",
     "prettier": "3.3.3"
   },
   "publishConfig": {
