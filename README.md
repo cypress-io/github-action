@@ -927,7 +927,7 @@ Under Node.js version 18 and later, `wait-on` may fail to recognize that a `loca
 
 ### Custom install command
 
-If you want to overwrite the install command
+The action installs dependencies based on a package manager lock file using default commands described in the [Installation](#installation) section below. If you want to overwrite the default install command you can use the `install-command` option:
 
 ```yml
 - uses: cypress-io/github-action@v6
@@ -936,6 +936,8 @@ If you want to overwrite the install command
 ```
 
 See [example-install-command.yml](.github/workflows/example-install-command.yml) workflow file.
+
+If you do not commit a lock file to the repository, you cannot use the action to install dependencies. In this case you must ensure that dependencies are installed before using the action, and you must use the action option setting `install: false`.
 
 ### Command prefix
 
