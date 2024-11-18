@@ -92,7 +92,7 @@ jobs:
 
 The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), Windows, and macOS without additional OS dependencies necessary.
 
-This workflow uses the default [test type](https://on.cypress.io/choosing-testing-type) of [End-to-End (E2E) Testing](https://docs.cypress.io/app/core-concepts/testing-types#What-is-E2E-Testing). Alternatively, [Component Testing](https://docs.cypress.io/app/core-concepts/testing-types#What-is-Component-Testing) can be utilized by referencing the [Component Testing](#component-testing) section below.
+This workflow uses the default [test type](https://on.cypress.io/choosing-testing-type) of [End-to-End (E2E) Testing](https://on.cypress.io/app/core-concepts/testing-types#What-is-E2E-Testing). Alternatively, [Component Testing](https://on.cypress.io/app/core-concepts/testing-types#What-is-Component-Testing) can be utilized by referencing the [Component Testing](#component-testing) section below.
 
 ### Component Testing
 
