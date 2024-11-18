@@ -743,7 +743,7 @@ During staged rollout of a new GitHub-hosted runner version, GitHub may provide 
 
 ### Component and E2E Testing
 
-[Component Testing](https://docs.cypress.io/app/core-concepts/testing-types#What-is-Component-Testing) and [End-to-End (E2E) Testing](https://docs.cypress.io/app/core-concepts/testing-types#What-is-E2E-Testing) types can be combined in the same job using separate steps
+[Component Testing](https://on.cypress.io/app/core-concepts/testing-types#What-is-Component-Testing) and [End-to-End (E2E) Testing](https://on.cypress.io/app/core-concepts/testing-types#What-is-E2E-Testing) types can be combined in the same job using separate steps
 
 ```yml
 - name: Run E2E tests
