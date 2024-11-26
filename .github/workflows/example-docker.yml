@@ -13,9 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         browser: [chrome, edge, electron, firefox]
-    # from https://hub.docker.com/r/cypress/browsers/tags
+    # Cypress Docker image documentation on https://github.com/cypress-io/cypress-docker-images
+    # Available cypress/browsers tags listed on https://hub.docker.com/r/cypress/browsers/tags
     container:
-      image: cypress/browsers:node-22.11.0-chrome-130.0.6723.69-1-ff-132.0-edge-130.0.2849.56-1
+      image: cypress/browsers:22.11.0
       options: --user 1001
     steps:
       - name: Checkout
