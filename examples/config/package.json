@@ -7,13 +7,11 @@
     "test": "cypress run",
     "build": "echo building ... server ... done!",
     "start": "serve public --listen 3333",
-    "cy:open": "cypress open",
-    "dev": "CYPRESS_baseUrl=http://localhost:3333 start-test 3333 cy:open"
+    "cy:open": "cypress open"
   },
   "private": true,
   "devDependencies": {
     "cypress": "13.16.0",
-    "serve": "14.2.4",
-    "start-server-and-test": "2.0.3"
+    "serve": "14.2.4"
   }
 }
