@@ -78,7 +78,7 @@ name: End-to-end tests
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,7 +90,7 @@ jobs:
 
 [![End-to-End example](https://github.com/cypress-io/github-action/actions/workflows/example-basic.yml/badge.svg)](.github/workflows/example-basic.yml)
 
-The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (20 and 22), Windows, and macOS without additional OS dependencies necessary.
+The workflow file [example-basic.yml](.github/workflows/example-basic.yml) shows how Cypress runs on GH Actions using Ubuntu (`22.04` and `24.04`), Windows, and macOS without additional OS dependencies necessary.
 
 This workflow uses the default [test type](https://on.cypress.io/choosing-testing-type) of [End-to-End (E2E) Testing](https://on.cypress.io/app/core-concepts/testing-types#What-is-E2E-Testing). Alternatively, [Component Testing](https://on.cypress.io/app/core-concepts/testing-types#What-is-Component-Testing) can be utilized by referencing the [Component Testing](#component-testing) section below.
 
@@ -103,7 +103,7 @@ name: Component tests
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -150,7 +150,7 @@ name: Chrome
 on: push
 jobs:
   chrome:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: E2E on Chrome
     steps:
       - uses: actions/checkout@v4
@@ -168,7 +168,7 @@ name: Firefox
 on: push
 jobs:
   firefox:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: E2E on Firefox
     steps:
       - uses: actions/checkout@v4
@@ -186,7 +186,7 @@ name: Edge
 on: push
 jobs:
   edge:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: E2E on Edge
     steps:
       - uses: actions/checkout@v4
@@ -206,7 +206,7 @@ name: Chrome headed
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: cypress-io/github-action@v6
@@ -224,7 +224,7 @@ name: Test in Docker
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     # Cypress Docker image from https://hub.docker.com/r/cypress
     # with browsers pre-installed
     container:
@@ -248,7 +248,7 @@ name: Test with Docker cypress/included
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container:
       # Cypress Docker image from https://hub.docker.com/r/cypress/included
       # with Cypress globally pre-installed
@@ -276,7 +276,7 @@ name: Cypress tests
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -294,7 +294,7 @@ name: Cypress tests
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -320,7 +320,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -351,7 +351,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -375,7 +375,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -403,7 +403,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -429,7 +429,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -460,7 +460,7 @@ name: Example echo PR number and URL
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -498,7 +498,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -525,7 +525,7 @@ name: tags
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
@@ -568,7 +568,7 @@ name: Cypress E2E Tests
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: E2E
     steps:
 
@@ -597,7 +597,7 @@ name: Artifacts
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: Artifacts
     steps:
       - uses: actions/checkout@v4
@@ -626,7 +626,7 @@ name: example-quiet
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -651,7 +651,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -674,7 +674,7 @@ on: push
 jobs:
   cypress-run:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -699,7 +699,7 @@ on: push
 jobs:
   test:
     name: Cypress run
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       # when one test fails, DO NOT cancel the other
       # containers, because this will kill Cypress processes
@@ -768,7 +768,7 @@ name: Build
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -787,7 +787,7 @@ name: With server
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -805,7 +805,7 @@ name: With server
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -831,7 +831,7 @@ name: With servers
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -861,7 +861,7 @@ name: After server responds
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -948,7 +948,7 @@ name: Visual
 on: push
 jobs:
   e2e:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -991,7 +991,7 @@ name: Parallel
 on: push
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         # run 3 copies of the current job in parallel
@@ -1070,7 +1070,7 @@ repo/
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: cypress-io/github-action@v6
@@ -1108,7 +1108,7 @@ name: E2E
 on: push
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install root dependencies
@@ -1135,7 +1135,7 @@ name: example-basic-pnpm
 on: push
 jobs:
   basic-pnpm:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1190,7 +1190,7 @@ name: example-yarn-classic
 on: push
 jobs:
   yarn-classic:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1211,7 +1211,7 @@ name: example-yarn-modern
 on: push
 jobs:
   yarn-modern:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1236,7 +1236,7 @@ name: example-yarn-modern-pnp
 on: push
 jobs:
   yarn-classic:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1266,7 +1266,7 @@ jobs:
     # the example has Yarn workspace in its "root" folder
     # examples/start-and-yarn-workspaces
     # and tests in a subfolder like "workspace-1"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: cypress-io/github-action@v6
@@ -1288,7 +1288,7 @@ name: End-to-end tests
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
@@ -1323,7 +1323,7 @@ name: Node versions
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         node: [18, 20, 22, 23]
@@ -1349,7 +1349,7 @@ name: E2E
 on: push
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -1400,7 +1400,7 @@ You can tell the CI to stop the job or the individual step if it runs for longer
 ```yml
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     # stop the job if it runs over 10 minutes
     # to prevent a hanging process from using all your CI minutes
     timeout-minutes: 10
@@ -1552,7 +1552,7 @@ name: info
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1569,7 +1569,7 @@ name: info
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1600,7 +1600,7 @@ on:
     - cron: '0 4 * * *'
 jobs:
   nightly:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -1621,7 +1621,7 @@ name: Summary titles
 on: push
 jobs:
   tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Cypress headless tests
@@ -1649,7 +1649,7 @@ name: Example no summary
 on: push
 jobs:
   cypress-run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
