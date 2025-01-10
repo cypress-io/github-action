@@ -24,7 +24,7 @@ jobs:
 
         # pnpm is not installed by default on GitHub runners
       - name: Install pnpm
-        run: npm install -g pnpm@9
+        run: npm install -g pnpm@10
 
       - name: Install dependencies
         # with Cypress GitHub Action.
@@ -75,7 +75,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pnpm
-        run: npm install -g pnpm@9
+        run: npm install -g pnpm@10
 
       - name: Install dependencies
         uses: ./ # approximately equivalent to using cypress-io/github-action@v6
