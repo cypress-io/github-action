@@ -18,6 +18,6 @@
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "cypress": "14.0.0",
-    "vite": "^6.0.8"
+    "vite": "^6.0.11"
   }
 }
