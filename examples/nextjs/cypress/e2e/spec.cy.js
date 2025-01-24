@@ -1,6 +1,7 @@
 describe('example: nextjs', () => {
   it('loads correctly', () => {
     cy.visit('/')
-    cy.contains('Welcome to Next.js!')
+    cy.title().should('eq', 'Create Next App')
+    cy.contains('Read our docs')
   })
 })
