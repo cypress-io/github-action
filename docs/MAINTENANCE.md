@@ -6,7 +6,7 @@ This document describes updating the [examples](../examples) in this repository 
 
 The [examples](../examples) directory contains examples of the use of Cypress (Current) [Configuration](https://docs.cypress.io/guides/references/configuration) which applies to Cypress 10 and later. These examples test and demonstrate the use of [cypress-io/github-action](https://github.com/cypress-io/github-action).
 
-The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [Yarn 1 (Classic)](https://classic.yarnpkg.com/) and [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) to define and install the packages being used.
+The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [Yarn 1 (Classic)](https://classic.yarnpkg.com/) and [Yarn Modern](https://yarnpkg.com/) to define and install the packages being used. For [Yarn Modern](https://yarnpkg.com/) the recommended [Corepack](https://yarnpkg.com/corepack) is used as a Yarn version manager.
 
 *The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/examples/v9) are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch. This directory contains examples which were set up to use Cypress `9.7.0`, the last version using Legacy Configuration, covering Cypress 9 and below. These `v9` examples are no longer maintained.
 
@@ -18,18 +18,14 @@ The examples make use of [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/)
 
 - [git](https://git-scm.com/) distributed version control system.
 
-- [npm](https://www.npmjs.com/), which is installed with [Node.js](https://nodejs.org/)
+- [npm](https://www.npmjs.com/), which is installed with [Node.js](https://nodejs.org/).
+
+- [corepack](https://github.com/nodejs/corepack), which is installed with [Node.js](https://nodejs.org/).
 
 - [pnpm](https://pnpm.io/) installed through:
 
 ```bash
 npm install pnpm@latest -g
-```
-
-- [Yarn 1 (Classic)](https://classic.yarnpkg.com/) installed through:
-
-```bash
-npm install yarn@latest -g
 ```
 
 - [Visual Studio Code](https://code.visualstudio.com/) or other editor
@@ -55,3 +51,7 @@ This updates all [examples](../examples) to cypress@latest.
 [.github/workflows/example-install-only.yml](../.github/workflows/example-install-only.yml) contains a hard-coded Cypress version number. This can be updated by hand.
 
 After updating the examples locally, they can be committed with git and a pull request opened on GitHub.
+
+### Updating Yarn examples
+
+The script [/scripts/update-cypress-latest-yarn.sh](../scripts/update-cypress-latest-yarn.sh) (which is invoked through `npm run update:cypress` to update the Yarn examples) runs [Yarn 1 (Classic)](https://classic.yarnpkg.com/) as an `npm` global install, runs [Yarn Modern](https://yarnpkg.com/) through Corepack and returns Corepack to its default disabled state on completion.

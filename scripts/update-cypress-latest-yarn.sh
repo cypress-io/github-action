@@ -1,14 +1,31 @@
 #!/bin/bash
 set -e # fail on error
 #
+if ! command -v corepack &> /dev/null
+then
+    echo "**corepack is required and not installed**"
+    echo "Refer to Yarn Modern installation instructions"
+    echo "https://yarnpkg.com/getting-started/install"
+    echo "https://yarnpkg.com/corepack"
+    echo
+exit 1 # failure
+else
+    echo "corepack is installed"
+fi
+#
 # Examples using the yarn package manager are
 # updated to Cypress latest version
 #
-# Make sure that yarn is installed
-./scripts/check-package-manager-yarn.sh
-
+# After running this script, Yarn 1 Classic latest is installed
+# corepack is disabled
+#
 echo updating yarn examples to Cypress latest version
 cd examples
+# --------------------------------------------------
+# Yarn 1 Classic section
+# No corepack
+corepack disable yarn
+npm install yarn@latest -g
 
 # examples/start-and-yarn-workspaces (yarn)
 echo
@@ -37,6 +54,11 @@ cd yarn-classic
 yarn add cypress --dev --exact
 cd ..
 
+# --------------------------------------------------
+# Yarn 4 Modern section
+# Use corepack
+corepack enable yarn
+
 # examples/yarn-modern
 echo
 echo updating examples/yarn-modern to cypress@latest
@@ -52,5 +74,11 @@ cd yarn-modern-pnp
 yarn set version latest
 yarn add cypress --dev --exact
 cd ..
+
+corepack disable yarn
+echo "corepack is now disabled for Yarn"
+npm install yarn@latest -g
+# End of Yarn 4 Modern section
+# --------------------------------------------------
 
 cd ..
