@@ -386,9 +386,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:14.0.0":
-  version: 14.0.0
-  resolution: "cypress@npm:14.0.0"
+"cypress@npm:14.0.1":
+  version: 14.0.1
+  resolution: "cypress@npm:14.0.1"
   dependencies:
     "@cypress/request": "npm:^3.0.6"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -435,7 +435,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/231af826d394b9a9f35200ab56e531e911f774b86b2ecb17a3183685982ac93d534e7c80cfe24ca36f74c99525025472fe28a3ccf2f246c8e67f85ecb768086b
+  checksum: 10c0/6601a5b8260c496c96234b3a569a157d9ee08beafb3f1dd500c9cdbf9a1534a3eb13b18fe67d6417e8d06226d109139cb3208e7eebdc789000816075f9a42430
   languageName: node
   linkType: hard
 
@@ -564,7 +564,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-yarn-modern@workspace:."
   dependencies:
-    cypress: "npm:14.0.0"
+    cypress: "npm:14.0.1"
   languageName: unknown
   linkType: soft
 
