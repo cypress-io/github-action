@@ -1128,7 +1128,7 @@ jobs:
 
 The package manager `pnpm` is not pre-installed in [GitHub Actions runner images](https://github.com/actions/runner-images) (unlike `npm` and `yarn`) and so it must be installed in a separate workflow step (see below). If the action finds a `pnpm-lock.yaml` file, it uses the [pnpm](https://pnpm.io/cli/install) command `pnpm install --frozen-lockfile` by default to install dependencies.
 
-The example below follows [pnpm recommendations](https://pnpm.io/continuous-integration#github-actions) for installing pnpm and caching the [pnpm store](https://pnpm.io/cli/store).
+The example below follows [pnpm recommendations](https://pnpm.io/continuous-integration#github-actions) for installing pnpm and caching the [pnpm store](https://pnpm.io/cli/store). Add [side-effects-cache=false](https://pnpm.io/npmrc#side-effects-cache) to an `.npmrc` file in your project to allow pnpm to install the Cypress binary even if the Cypress npm module has been cached by pnpm.
 
 ```yaml
 name: example-basic-pnpm
