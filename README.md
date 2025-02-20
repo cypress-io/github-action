@@ -1205,7 +1205,9 @@ jobs:
 
 ### Yarn Modern
 
-To install dependencies using a `yarn.lock` file from [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) you need to override the default [Yarn 1 (Classic)](https://classic.yarnpkg.com/) installation command `yarn --frozen-lockfile`. You can do this by using the `install-command` parameter and specifying `yarn install` for example:
+To install dependencies using a `yarn.lock` file from [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) you need to override the default [Yarn 1 (Classic)](https://classic.yarnpkg.com/) installation command `yarn --frozen-lockfile`. You can do this by using the `install-command` parameter and specifying `yarn install` as in the example below.
+
+The action supports built-in caching of Yarn Classic dependencies only. To cache Yarn Modern dependencies additionally use [actions/setup-node](https://github.com/actions/setup-node) and specify `cache: yarn`.
 
 ```yaml
 name: example-yarn-modern
@@ -1216,6 +1218,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - run: corepack enable # (experimental and optional)
+      - name: Set up Yarn cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: examples/yarn-modern/yarn.lock
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -1231,6 +1240,8 @@ This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc
 ### Yarn Plug'n'Play
 
 When using [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) with [Plug'n'Play](https://yarnpkg.com/features/pnp) enabled, you will need to use the `command` parameter to run [`yarn`](https://yarnpkg.com/cli/run) instead of [`npx`](https://docs.npmjs.com/cli/v9/commands/npx).
+
+See the above [Yarn Modern](#yarn-modern) section for information on caching Yarn Modern dependencies.
 
 ```yaml
 name: example-yarn-modern-pnp
