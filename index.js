@@ -899,7 +899,7 @@ const generateSummary = async (testResults) => {
     `${testResults.totalFailed}`,
     `${testResults.totalPending}`,
     `${testResults.totalSkipped}`,
-    `${testResults.totalDuration / 1000}s` || ''
+    `${(testResults.totalDuration || 0) / 1000}s`
   ]
 
   const summaryTitle = core.getInput('summary-title')
