@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const got = require('got')
 const debug = require('debug')('@cypress/github-action')
 

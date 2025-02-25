@@ -100501,7 +100501,6 @@ function wrappy (fn, cb) {
 /***/ 9390:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(2186)
 const got = __nccwpck_require__(3061)
 const debug = __nccwpck_require__(8237)('@cypress/github-action')
 
