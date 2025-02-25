@@ -13,6 +13,7 @@
     "test": "echo \"There are no tests :(\"",
     "build": "ncc build -o dist index.js",
     "format": "prettier --write index.js src/ping.js",
+    "lint": "eslint",
     "check:markdown": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check",
     "update:cypress": "./scripts/update-cypress-latest.sh",
     "prepare": "husky"
@@ -46,8 +47,11 @@
     "supports-color": "9.3.1"
   },
   "devDependencies": {
+    "@eslint/js": "9.21.0",
     "@types/node": "22.13.5",
     "@vercel/ncc": "0.38.1",
+    "eslint": "9.21.0",
+    "globals": "16.0.0",
     "husky": "9.1.7",
     "markdown-link-check": "3.13.6",
     "prettier": "3.5.2"
