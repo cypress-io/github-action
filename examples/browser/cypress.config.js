@@ -4,7 +4,7 @@ const os = require('os')
 module.exports = defineConfig({
   fixturesFolder: false,
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       on('before:browser:launch', (browser, launchOptions) => {
         console.log('before launching browser')
         console.log(browser)

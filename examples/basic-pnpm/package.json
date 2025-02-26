@@ -8,7 +8,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "14.0.3"
+    "cypress": "14.1.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
