@@ -12,7 +12,7 @@
   "scripts": {
     "test": "echo \"There are no tests :(\"",
     "build": "ncc build -o dist index.js",
-    "format": "prettier --write index.js src/ping.js",
+    "format": "prettier --write index.js src/ping.js action.yml",
     "lint": "eslint",
     "check:markdown": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check",
     "update:cypress": "./scripts/update-cypress-latest.sh",
