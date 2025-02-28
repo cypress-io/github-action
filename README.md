@@ -1515,7 +1515,7 @@ If you configure a `workflow_dispatch` event in your own workflows, you will be 
 
 ### Outputs
 
-This action sets a GitHub step output `resultsUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `resultsUrl` step output is saved.
+This action sets a GitHub step output `resultsUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that if a custom test command with the [command](#custom-test-command) option or the [command-prefix](#command-prefix) option are used then no `resultsUrl` step output is saved.
 
 This is an example of using the step output `resultsUrl`:
 
