@@ -2,7 +2,7 @@
 
 Thanks for taking the time to contribute! :smile:
 
-*To contribute to the main Cypress product, please read the related [CONTRIBUTING](https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md) document, which also contains useful general tips.*
+_To contribute to the main Cypress product, please read the related [CONTRIBUTING](https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md) document, which also contains useful general tips._
 
 To contribute to the [cypress-io/github-action](https://github.com/cypress-io/github-action) repository, please continue reading here.
 
@@ -17,7 +17,6 @@ This document describes topics useful to contributors to this repository. The re
 1. GitHub's Marketplace as [cypress-io/github-action](https://github.com/marketplace/actions/cypress-io#cypress-iogithub-action--)
 2. npm's JavaScript Package Registry as [@cypress/github-action](https://www.npmjs.com/package/@cypress/github-action)
 
-
 You can read the GitHub document [Creating a JavaScript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action) for background information on how JavaScript actions for GitHub are created and how they work.
 
 ### Requirements
@@ -31,6 +30,7 @@ You must have the following installed on your system to contribute locally:
 If you are submitting a Pull Request (PR) to provide a fix or feature for the action, the following is relevant to you:
 
 The main source code elements for the action are:
+
 - [action.yml](action.yml)
 - [index.js](index.js)
 - [src/ping.js](src/ping.js)
@@ -45,11 +45,17 @@ To contribute changes, follow these instructions in the order given below:
 1. Make the necessary source code changes, including additions or changes to the [README.md](./README.md) documentation if parameters are added or affected.
 1. Execute the following in the root directory of the cloned repository
 
-    ```bash
-    npm install
-    npm run format
-    npm run build
-    ```
+   ```bash
+   npm install
+   npm run format
+   npm run build
+   ```
+
+1. If you have modified any Markdown documents (`*.md`) then execute
+
+   ```bash
+   npm run format:markdown
+   ```
 
 1. Commit the change. (If you are working on Microsoft Windows, see [Windows users](#windows-users) below.)
 1. Push to the repository.
@@ -97,18 +103,18 @@ This information is for Cypress.io Members or Collaborators who merge pull reque
 1. When merging a pull request, use the [Squash and merge](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github#squashing-your-merge-commits) option to squash all commits into one.
 1. Make sure the commit subject and body follow [semantic commit convention](https://semantic-release.gitbook.io/semantic-release/#commit-message-format), for instance:
 
-    ```text
-    feat: added new parameter
-    fix: fixed a bug
-    ```
+   ```text
+   feat: added new parameter
+   fix: fixed a bug
+   ```
 
-    If you need to bump the major version, mark it as breaking change in the body of the commit's message like:
+   If you need to bump the major version, mark it as breaking change in the body of the commit's message like:
 
-    ```text
-    fix: upgrade dependency X
+   ```text
+   fix: upgrade dependency X
 
-    BREAKING CHANGE: requires minimum Node.js 18 to run
-    ```
+   BREAKING CHANGE: requires minimum Node.js 18 to run
+   ```
 
 1. New versions of this action will be released automatically by the CI when merged to the `master` branch, see [.github/workflows/main.yml](.github/workflows/main.yml). This will create a new [GitHub release](https://github.com/cypress-io/github-action/releases) and will update the current highest branch from the series `v5`, `v6`, ... etc. Thus specifying `uses: cypress-io/github-action@v6` (or higher version if available) selects the new version automatically. This **will not** push the latest release to GitHub Marketplace.
 1. The action's CI is configured to use the [default Angular release rules](https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js). This means that only `feat:`, `fix:` and `perf:` trigger a new release which is then logged to the [releases](https://github.com/cypress-io/github-action/releases) page. Other Angular commit types listed on [Contributing to Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format) can be used for documentation purposes, however they are ignored by the currently configured release process.

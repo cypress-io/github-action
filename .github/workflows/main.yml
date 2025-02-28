@@ -22,7 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run format
       - run: npm run build
-      - run: npm test
+      - run: npm run lint
 
   release:
     runs-on: ubuntu-24.04

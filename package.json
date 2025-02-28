@@ -13,8 +13,10 @@
     "test": "echo \"There are no tests :(\"",
     "build": "ncc build -o dist index.js",
     "format": "prettier --write index.js src/ping.js action.yml",
+    "format:markdown": "prettier --write \"**/*.md\"",
+    "format:markdown:check": "prettier --check \"**/*.md\"",
     "lint": "eslint",
-    "check:markdown": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check",
+    "check:markdown-links": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check",
     "update:cypress": "./scripts/update-cypress-latest.sh",
     "prepare": "husky"
   },
@@ -33,7 +35,7 @@
   },
   "homepage": "https://github.com/cypress-io/github-action#readme",
   "dependencies": {
-    "@actions/cache": "4.0.1",
+    "@actions/cache": "4.0.2",
     "@actions/core": "1.11.1",
     "@actions/exec": "1.1.1",
     "@actions/io": "1.1.3",

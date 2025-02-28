@@ -7,11 +7,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-markdown-links:
+  check-markdown:
     runs-on: ubuntu-24.04
-    name: Check links in Markdown files
+    name: Check Markdown files
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm run check:markdown
+      - name: Install dependencies
+        run: npm ci
+      - name: Check Markdown links
+        run: npm run check:markdown-links
+      - name: Check Markdown formatting
+        run: npm run format:markdown:check

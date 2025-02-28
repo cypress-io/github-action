@@ -18,6 +18,7 @@ Access "Project settings" in Cypress Cloud and copy the contents of each of the 
 | Record Keys        | EXAMPLE_RECORDING_KEY | Actions secrets |
 
 Refer to the GitHub documentation
+
 - [Creating encrypted secrets for a repository](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository).
 
 When you have done this, the example recording will take the `projectId` from the `EXAMPLE_PROJECT_ID` variable instead of from the [cypress.config.js](cypress.config.js) configuration file.
