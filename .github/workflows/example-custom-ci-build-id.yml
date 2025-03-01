@@ -38,7 +38,6 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-
   check-record-key:
     runs-on: ubuntu-24.04
     outputs:

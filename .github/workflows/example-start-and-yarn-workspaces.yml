@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   single:
     # the example has Yarn workspace in its "root" folder
     # examples/start-and-yarn-workspaces

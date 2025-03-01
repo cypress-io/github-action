@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-    # The example has pnpm workspaces in its "root" folder
-    # examples/start-and-pnpm-workspaces
+  # The example has pnpm workspaces in its "root" folder
+  # examples/start-and-pnpm-workspaces
 
   single-ws:
     # This job installs pnpm,

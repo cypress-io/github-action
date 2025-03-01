@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   wait:
     runs-on: ubuntu-24.04
     steps:
