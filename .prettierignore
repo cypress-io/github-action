@@ -1,5 +1,7 @@
 /LICENSE.md
+/renovate.json
 
 examples/**/*.js
 examples/**/*.?js
+**/package-lock.json
 **/pnpm-lock.yaml
