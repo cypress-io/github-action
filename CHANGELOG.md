@@ -30,4 +30,4 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | v4.0.0  | Support for Cypress 10 and later versions added.                                                                                     |
 | v3      | Action runs under Node.js 16 instead of Node.js 12.                                                                                  |
 | v2      | Cypress runs using the [Module API](https://docs.cypress.io/guides/guides/module-api) instead of being started via the command line. |
-| v1      | *This version is no longer runnable in GitHub due to security changes.*                                                              |
+| v1      | _This version is no longer runnable in GitHub due to security changes._                                                              |

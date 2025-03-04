@@ -1,10 +1,10 @@
 # cypress-io/github-action [![Action status][ci-badge]][ci-workflow] [![cypress][cloud-badge]][cloud-project] [![renovate-app badge][renovate-badge]][renovate-bot]
 
- > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes npm, pnpm and Yarn installation, custom caching and lots of configuration options.
+> [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes npm, pnpm and Yarn installation, custom caching and lots of configuration options.
 
- Placing `use: cypress-io/github-action@v6` into a GitHub Action workflow gives you a simple way to run Cypress. The action takes the project's npm, pnpm or Yarn package manager lock file, installs dependencies and caches these dependencies for future use. It then proceeds to run Cypress end-to-end tests with the built-in Electron browser and provides a test summary after completion.
+Placing `use: cypress-io/github-action@v6` into a GitHub Action workflow gives you a simple way to run Cypress. The action takes the project's npm, pnpm or Yarn package manager lock file, installs dependencies and caches these dependencies for future use. It then proceeds to run Cypress end-to-end tests with the built-in Electron browser and provides a test summary after completion.
 
- If you are testing against a running server like the [Cypress Kitchen Sink showcase example](https://example.cypress.io/) on https://example.cypress.io/ no other parameters are necessary. In other cases where you need to fire up a development server, you can add the [start](#start-server) parameter to the workflow. Browse through the examples to find other useful parameters.
+If you are testing against a running server like the [Cypress Kitchen Sink showcase example](https://example.cypress.io/) on https://example.cypress.io/ no other parameters are necessary. In other cases where you need to fire up a development server, you can add the [start](#start-server) parameter to the workflow. Browse through the examples to find other useful parameters.
 
 ## Examples
 
@@ -452,9 +452,11 @@ Please refer to the [default GitHub environment variables](https://docs.github.c
 When recording runs to Cypress Cloud, the PR number and URL can be automatically detected if you pass `GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}`
 via the workflow `env`. When set, this value enables the Action to perform additional logic that grabs the related PR number and URL (if they
 exist) and sets them in the environment variables `CYPRESS_PULL_REQUEST_ID` and `CYPRESS_PULL_REQUEST_URL`, respectively.
-* See Cypress' documentation on [CI Build Information](https://on.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
+
+- See Cypress' documentation on [CI Build Information](https://on.cypress.io/guides/continuous-integration/introduction#CI-Build-Information)
 
 Example workflow using the variables:
+
 ```yml
 name: Example echo PR number and URL
 on: push
@@ -571,7 +573,6 @@ jobs:
     runs-on: ubuntu-24.04
     name: E2E
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -736,6 +737,7 @@ The Cypress GH Action does not spawn or create any additional containers - it on
 If you use the GitHub Actions facility for [Re-running workflows and jobs](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs), note that [Re-running failed jobs in a workflow](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs?tool=webui#re-running-failed-jobs-in-a-workflow) is not suited for use with parallel recording into Cypress Cloud. Re-running failed jobs in this situation does not simply re-run failed Cypress tests. Instead it re-runs **all** Cypress tests, load-balanced over the containers with failed jobs.
 
 To optimize runs when there are failing tests present, refer to optional [Cypress Cloud Smart Orchestration](https://docs.cypress.io/cloud/features/smart-orchestration/overview/) Premium features:
+
 - [Spec Prioritization](https://docs.cypress.io/cloud/features/smart-orchestration/spec-prioritization)
 - [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration/run-cancellation). See also [Specify auto cancel after failures](#specify-auto-cancel-after-failures) for details of how to set this option in a Cypress GH Action workflow.
 
@@ -796,6 +798,7 @@ jobs:
         with:
           start: npm start
 ```
+
 **Caution:** use the `start` parameter only to start a server, not to run Cypress, otherwise tests may be run twice. The action runs Cypress tests by default, unless the parameter `runTests` is set to `false`.
 
 **Note:** sometimes on Windows you need to run a different start command. You can use the `start-windows` parameter for this.
@@ -887,8 +890,6 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
     # wait for 2 minutes for the server to respond
     wait-on-timeout: 120
 ```
-
-
 
 You can wait for multiple URLs to respond by separating urls with a comma
 
@@ -1064,7 +1065,7 @@ repo/
   package-lock.json
 ```
 
- We use `working-directory: app-test` to match the above example directory structure:
+We use `working-directory: app-test` to match the above example directory structure:
 
 ```yml
 on: push
@@ -1429,11 +1430,11 @@ jobs:
 
 This action installs local dependencies using lock files. Ensure that exactly one type of lock file is used for each project or working-directory from the following supported package managers:
 
- | Lock file           | Package Manager                                                                                  | Installation command             |
- | ------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------- |
- | `package-lock.json` | [npm](https://docs.npmjs.com/cli/v9/commands/npm-ci)                                             | `npm ci`                         |
- | `pnpm-lock.yaml`    | [pnpm](https://pnpm.io/cli/install#--frozen-lockfile)                                            | `pnpm install --frozen-lockfile` |
- | `yarn.lock`         | [Yarn Classic](https://classic.yarnpkg.com/en/docs/cli/install#toc-yarn-install-frozen-lockfile) | `yarn --frozen-lockfile`         |
+| Lock file           | Package Manager                                                                                  | Installation command             |
+| ------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------- |
+| `package-lock.json` | [npm](https://docs.npmjs.com/cli/v9/commands/npm-ci)                                             | `npm ci`                         |
+| `pnpm-lock.yaml`    | [pnpm](https://pnpm.io/cli/install#--frozen-lockfile)                                            | `pnpm install --frozen-lockfile` |
+| `yarn.lock`         | [Yarn Classic](https://classic.yarnpkg.com/en/docs/cli/install#toc-yarn-install-frozen-lockfile) | `yarn --frozen-lockfile`         |
 
 See section [Yarn Modern](#yarn-modern) for information about using Yarn version 2 and later.
 
@@ -1514,7 +1515,7 @@ If you configure a `workflow_dispatch` event in your own workflows, you will be 
 
 ### Outputs
 
-This action sets a GitHub step output `resultsUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that using a [Custom test command](#custom-test-command) with the `command` parameter overrides the `record` parameter and in this case no `resultsUrl` step output is saved.
+This action sets a GitHub step output `resultsUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that if a custom test command with the [command](#custom-test-command) option or the [command-prefix](#command-prefix) option are used then no `resultsUrl` step output is saved.
 
 This is an example of using the step output `resultsUrl`:
 
@@ -1697,6 +1698,7 @@ Please see our [Contributing Guideline](./CONTRIBUTING.md) which explains how to
 This project is licensed under the terms of the [MIT license][license-file].
 
 <!-- badge links follow -->
+
 [ci-badge]: https://github.com/cypress-io/github-action/actions/workflows/main.yml/badge.svg
 [ci-workflow]: https://github.com/cypress-io/github-action/actions/workflows/main.yml
 [cloud-badge]: https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/3tb7jn/master&style=flat&logo=cypress
