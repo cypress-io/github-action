@@ -8,7 +8,7 @@ const http = require('http')
 const arg = require('arg')
 
 const args = arg({
-  '--port': Number
+  '--port': Number,
 })
 const port = args['--port'] || 3050
 

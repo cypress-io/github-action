@@ -1,4 +1,4 @@
-const { defineConfig } = require("cypress");
+const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
   fixturesFolder: false,
@@ -6,4 +6,4 @@ module.exports = defineConfig({
     supportFile: false,
     baseUrl: 'http://localhost:3000',
   },
-});
+})

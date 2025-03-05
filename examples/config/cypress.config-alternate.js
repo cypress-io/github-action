@@ -7,6 +7,6 @@ module.exports = defineConfig({
     setupNodeEvents() {
       console.log('\nUsing cypress.config-alternate.js config-file')
     },
-    supportFile: false
+    supportFile: false,
   },
 })
