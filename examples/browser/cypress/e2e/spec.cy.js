@@ -13,10 +13,10 @@ it('works', () => {
   // log the top window's dimensions
   const resolution = Cypress._.pick(top, [
     'innerWidth',
-    'innerHeight'
+    'innerHeight',
   ])
   cy.task(
     'log',
-    `top window inner w, h is ${resolution.innerWidth}x${resolution.innerHeight}`
+    `top window inner w, h is ${resolution.innerWidth}x${resolution.innerHeight}`,
   )
 })

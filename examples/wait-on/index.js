@@ -9,7 +9,7 @@ const arg = require('arg')
 
 const args = arg({
   '--port': Number,
-  '--delay': Number
+  '--delay': Number,
 })
 const port = args['--port'] || 3050
 const createServerAfterSeconds = args['--delay'] || 7
@@ -17,7 +17,7 @@ const createServerAfterSeconds = args['--delay'] || 7
 log(
   'starting the server at port %d after %d seconds',
   port,
-  createServerAfterSeconds
+  createServerAfterSeconds,
 )
 
 setTimeout(function () {

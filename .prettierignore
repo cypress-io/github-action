@@ -1,1 +1,4 @@
 /LICENSE.md
+
+examples/**/*.js
+examples/**/*.?js

@@ -2,7 +2,7 @@
 describe('Example config A', () => {
   it('has baseUrl', () => {
     expect(Cypress.config('baseUrl')).to.equal(
-      'http://localhost:3333'
+      'http://localhost:3333',
     )
   })
 

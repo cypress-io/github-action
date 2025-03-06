@@ -9,7 +9,7 @@ const arg = require('arg')
 
 const args = arg({
   '--port': Number,
-  '--delay': Number
+  '--delay': Number,
 })
 const port = args['--port'] || 3050
 const errorPeriodSeconds = args['--delay'] || 40
