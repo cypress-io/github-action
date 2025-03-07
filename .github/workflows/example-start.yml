@@ -13,7 +13,6 @@ env:
   NO_UPDATE_CHECK: 1
 
 jobs:
-
   start:
     # example with web application build,
     # server start and waiting for the server

@@ -4,6 +4,8 @@
   "description": "example using pnpm with workspaces",
   "private": true,
   "pnpm": {
-    "onlyBuiltDependencies": ["cypress"]
+    "onlyBuiltDependencies": [
+      "cypress"
+    ]
   }
 }

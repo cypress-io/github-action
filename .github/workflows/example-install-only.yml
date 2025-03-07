@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   # do not install every dependency in this example
   # just install Cypress, but make sure to cache it
   install-cypress-only:

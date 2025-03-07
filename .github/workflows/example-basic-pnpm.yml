@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   basic-pnpm:
     strategy:
       fail-fast: false

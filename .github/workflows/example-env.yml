@@ -13,7 +13,6 @@ env:
   # see https://on.cypress.io/env
   CYPRESS_environmentName: staging
 jobs:
-
   e2e:
     runs-on: ubuntu-24.04
     steps:
