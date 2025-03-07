@@ -93701,6 +93701,7 @@ const I = (x) => x
 
 const detectPrNumber = async () => {
   const {
+    GITHUB_API_URL,
     GITHUB_SHA,
     GITHUB_TOKEN,
     GITHUB_RUN_ID,
@@ -93726,7 +93727,8 @@ const detectPrNumber = async () => {
     )
 
     const client = new Octokit({
-      auth: GITHUB_TOKEN
+      auth: GITHUB_TOKEN,
+      baseUrl: GITHUB_API_URL
     })
 
     if (GITHUB_HEAD_REF) {
