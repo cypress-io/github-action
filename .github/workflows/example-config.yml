@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   start:
     # example where we pass custom base URL
     runs-on: ubuntu-24.04

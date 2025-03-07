@@ -2,3 +2,4 @@
 
 examples/**/*.js
 examples/**/*.?js
+**/pnpm-lock.yaml
