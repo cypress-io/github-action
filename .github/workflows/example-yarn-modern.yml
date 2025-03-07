@@ -13,6 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - run: corepack enable yarn # experimental - see https://nodejs.org/docs/latest/api/corepack.html
+      - name: Set up Yarn cache
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: yarn
+          cache-dependency-path: examples/yarn-modern/yarn.lock
       - name: Custom Yarn command
         uses: ./
         with:
