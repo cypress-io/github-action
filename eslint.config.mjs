@@ -8,26 +8,26 @@ export default [
   pluginCypress.configs.recommended,
   {
     name: 'global-ignores',
-    ignores: ['dist/', 'examples/nextjs/src/app/']
+    ignores: ['dist/', 'examples/nextjs/src/app/'],
   },
   {
     name: 'all-js',
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node
-      }
-    }
+        ...globals.node,
+      },
+    },
   },
   {
-    name: 'examples-style',
-    files: ['examples/**/*.js'],
+    name: 'style',
+    files: ['eslint.config.mjs', 'examples/**/*.js'],
     ...stylistic.configs.recommended,
     rules: {
       '@stylistic/indent': ['error', 2],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/semi': ['error', 'never'],
-    }
-  }
+    },
+  },
 ]
