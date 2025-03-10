@@ -522,7 +522,8 @@ const getCiBuildId = async () => {
     GITHUB_SHA,
     GITHUB_TOKEN,
     GITHUB_RUN_ID,
-    GITHUB_REPOSITORY
+    GITHUB_REPOSITORY,
+    GITHUB_API_URL
   } = process.env
 
   const [owner, repo] = GITHUB_REPOSITORY.split('/')
@@ -535,7 +536,8 @@ const getCiBuildId = async () => {
     )
 
     const client = new Octokit({
-      auth: GITHUB_TOKEN
+      auth: GITHUB_TOKEN,
+      baseUrl: GITHUB_API_URL
     })
 
     const resp = await client.request(
