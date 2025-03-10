@@ -8,7 +8,13 @@ export default [
   pluginCypress.configs.recommended,
   {
     name: 'global-ignores',
-    ignores: ['dist/', 'examples/nextjs/src/app/'],
+    ignores: [
+      'dist/',
+      'examples/component-tests/dist/',
+      'examples/nextjs/.next/',
+      'examples/nextjs/src/app/',
+      'examples/wait-on-vite/dist/',
+    ],
   },
   {
     name: 'all-js',
