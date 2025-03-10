@@ -1,19 +1,22 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-export default function Stepper({ count: _count = 0, onChange = () => {} }) {
-  const [count, setCount] = useState(_count);
+export default function Stepper({
+  count: _count = 0,
+  onChange = () => {}
+}) {
+  const [count, setCount] = useState(_count)
 
   const handleIncrement = () => {
-    const newCount = count + 1;
-    setCount(newCount);
-    onChange(newCount);
-  };
+    const newCount = count + 1
+    setCount(newCount)
+    onChange(newCount)
+  }
 
   const handleDecrement = () => {
-    const newCount = count - 1;
-    setCount(newCount);
-    onChange(newCount);
-  };
+    const newCount = count - 1
+    setCount(newCount)
+    onChange(newCount)
+  }
 
   return (
     <div>
@@ -25,5 +28,5 @@ export default function Stepper({ count: _count = 0, onChange = () => {} }) {
         +
       </button>
     </div>
-  );
+  )
 }
