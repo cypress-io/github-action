@@ -43,7 +43,7 @@ To contribute changes, follow these instructions in the order given below:
 1. Clone the repository
 1. Create a new branch with a meaningful name e.g. `fix/my-bug` based on the current `master` branch.
 1. Make the necessary source code changes, including additions or changes to the [README.md](./README.md) documentation if parameters are added or affected.
-1. Execute the following in the root directory of the cloned repository
+1. Execute the following in the root directory of the cloned repository to install dependencies, then to format and build the action from the main source code elements (see above):
 
    ```bash
    npm install
@@ -51,13 +51,19 @@ To contribute changes, follow these instructions in the order given below:
    npm run build
    ```
 
-1. If you have modified any Markdown documents (`*.md`) then execute
+1. If you have modified any other files, such as examples, then execute:
+
+   ```bash
+   npm run format:all
+   ```
+
+1. If you have only modified Markdown documents (`*.md`), then you can alternatively execute the following to format only those documents:
 
    ```bash
    npm run format:markdown
    ```
 
-1. Commit the change. (If you are working on Microsoft Windows, see [Windows users](#windows-users) below.)
+1. Commit any changes. (If you are working on Microsoft Windows, see [Windows users](#windows-users) below.)
 1. Push to the repository.
 1. If you are working in a fork, ensure actions are enabled.
 1. Refer to [Manually running a workflow](https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow) to use this to test any particular workflow affected by your change.

@@ -20,9 +20,12 @@ jobs:
           # https://github.com/actions/runner/blob/main/src/Misc/externals.sh
           node-version: 20.18.0
       - run: npm ci
-      - run: npm run format
-      - run: npm run build
-      - run: npm run lint
+      # Core action code
+      - run: npm run format # Prettier formats core action code
+      - run: npm run build # builds core action code into dist/
+      # All repo
+      - run: npm run lint # ESLint
+      - run: npm run format:all:check # Prettier formatting check
 
   release:
     runs-on: ubuntu-24.04
