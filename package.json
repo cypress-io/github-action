@@ -15,6 +15,8 @@
     "format": "prettier --write index.js src/ping.js action.yml",
     "format:markdown": "prettier --write \"**/*.md\"",
     "format:markdown:check": "prettier --check \"**/*.md\"",
+    "format:all": "prettier --write .",
+    "format:all:check": "prettier --check .",
     "lint": "eslint",
     "check:markdown-links": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check",
     "update:cypress": "./scripts/update-cypress-latest.sh",
