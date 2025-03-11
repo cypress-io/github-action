@@ -4,5 +4,8 @@
 
 examples/**/*.js
 examples/**/*.?js
+*.jsx
+!examples/component-tests/src/components/*.jsx
+
 **/package-lock.json
 **/pnpm-lock.yaml
