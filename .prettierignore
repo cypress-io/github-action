@@ -1,11 +1,19 @@
 /eslint.config.*js
 /LICENSE.md
 /renovate.json
+/dist/
 
 examples/**/*.js
 examples/**/*.?js
 *.jsx
 !examples/component-tests/src/components/*.jsx
+examples/component-tests/cypress/
+examples/component-tests/dist/
+examples/component-tests/src/*.jsx
+examples/component-tests/index.html
+examples/nextjs/.next/
+examples/wait-on-vite/dist/
+examples/wait-on-vite/index.html
 
 **/package-lock.json
 **/pnpm-lock.yaml
