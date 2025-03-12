@@ -2,7 +2,7 @@
 
 > [GitHub Action](https://docs.github.com/en/actions) for running [Cypress](https://www.cypress.io) end-to-end and component tests. Includes npm, pnpm and Yarn installation, custom caching and lots of configuration options.
 
-Placing `use: cypress-io/github-action@v6` into a GitHub Action workflow gives you a simple way to run Cypress. The action takes the project's npm, pnpm or Yarn package manager lock file, installs dependencies and caches these dependencies for future use. It then proceeds to run Cypress end-to-end tests with the built-in Electron browser and provides a test summary after completion.
+Placing `use: cypress-io/github-action@v6` into a GitHub Action workflow gives you a simple way to run Cypress. The action takes the project's npm, pnpm or Yarn package manager lock file and installs dependencies with [caching](#caching). It then proceeds to run Cypress end-to-end tests with the built-in Electron browser and provides a test summary after completion.
 
 If you are testing against a running server like the [Cypress Kitchen Sink showcase example](https://example.cypress.io/) on https://example.cypress.io/ no other parameters are necessary. In other cases where you need to fire up a development server, you can add the [start](#start-server) parameter to the workflow. Browse through the examples to find other useful parameters.
 
@@ -1446,6 +1446,29 @@ This action installs local dependencies using lock files. Ensure that exactly on
 | `yarn.lock`         | [Yarn Classic](https://classic.yarnpkg.com/en/docs/cli/install#toc-yarn-install-frozen-lockfile) | `yarn --frozen-lockfile`         |
 
 See section [Yarn Modern](#yarn-modern) for information about using Yarn version 2 and later.
+
+### Caching
+
+When the action installs dependencies, it also caches these where possible using GitHub Actions [@actions/cache](https://github.com/actions/toolkit/tree/main/packages/cache).
+
+#### Cypress binary cache
+
+The Cypress binary is saved to the `$HOME/.cache/Cypress` directory or to a location defined by the environment variable `CYPRESS_CACHE_FOLDER`. This location is then cached by GitHub Actions and carries the cache label `cypress-<platform-and-architecture>-hash`.
+
+#### Package Manager cache
+
+Based on the package manager lock file, the action caches the following package manager cache locations:
+
+| Lock file           | Package Manager                                                     | Cached location     |
+| ------------------- | ------------------------------------------------------------------- | ------------------- |
+| `package-lock.json` | [npm](https://docs.npmjs.com/cli/commands/npm-cache)                | `$HOME/.npm`        |
+| `yarn.lock`         | [Yarn Classic](https://classic.yarnpkg.com/lang/en/docs/cli/cache/) | `$HOME/.cache/yarn` |
+
+The cache carries the label `npm-<platform-and-architecture>-hash`.
+In the cache label, `npm` refers to the npm public registry at https://registry.npmjs.org from which both the above package managers download npm modules by default.
+
+Note that the Cypress GitHub action does not include any built-in caching for pnpm and Yarn Modern.
+GitHub Actions however provides [actions/setup-node](https://github.com/actions/setup-node) which includes functionality to optionally cache npm, Yarn and pnpm dependencies. This can be added to any GitHub Actions workflow if needed. Examples are shown above for [pnpm](#pnpm) and [Yarn Modern](#yarn-modern).
 
 ## Debugging
 
