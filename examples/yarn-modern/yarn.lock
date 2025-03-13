@@ -299,16 +299,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-table3@npm:~0.6.1":
-  version: 0.6.3
-  resolution: "cli-table3@npm:0.6.3"
+"cli-table3@npm:~0.6.5":
+  version: 0.6.5
+  resolution: "cli-table3@npm:0.6.5"
   dependencies:
     "@colors/colors": "npm:1.5.0"
     string-width: "npm:^4.2.0"
   dependenciesMeta:
     "@colors/colors":
       optional: true
-  checksum: 10c0/39e580cb346c2eaf1bd8f4ff055ae644e902b8303c164a1b8894c0dc95941f92e001db51f49649011be987e708d9fa3183ccc2289a4d376a057769664048cc0c
+  checksum: 10c0/d7cc9ed12212ae68241cc7a3133c52b844113b17856e11f4f81308acc3febcea7cc9fd298e70933e294dd642866b29fd5d113c2c098948701d0c35f09455de78
   languageName: node
   linkType: hard
 
@@ -386,9 +386,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:14.1.0":
-  version: 14.1.0
-  resolution: "cypress@npm:14.1.0"
+"cypress@npm:14.2.0":
+  version: 14.2.0
+  resolution: "cypress@npm:14.2.0"
   dependencies:
     "@cypress/request": "npm:^3.0.7"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -403,7 +403,7 @@ __metadata:
     check-more-types: "npm:^2.24.0"
     ci-info: "npm:^4.1.0"
     cli-cursor: "npm:^3.1.0"
-    cli-table3: "npm:~0.6.1"
+    cli-table3: "npm:~0.6.5"
     commander: "npm:^6.2.1"
     common-tags: "npm:^1.8.0"
     dayjs: "npm:^1.10.4"
@@ -435,7 +435,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/d746c2ff86f0b37671f85d6da272a4e6b6627603ebe2d345ca5b2071ebace1b7e1a138086b0e00af6a0244d204fa73b7ca3d08d0cfe6b9f4f20e888e6c611435
+  checksum: 10c0/70d9ca4bf5154f542a51665e19484828cbb52c2e618fb41aff5b6d37eaf1530d71aca794edd4d58c5823c3b83d03efb207d41e78d843103688fb47fe2eeaee93
   languageName: node
   linkType: hard
 
@@ -564,7 +564,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-yarn-modern@workspace:."
   dependencies:
-    cypress: "npm:14.1.0"
+    cypress: "npm:14.2.0"
   languageName: unknown
   linkType: soft
 

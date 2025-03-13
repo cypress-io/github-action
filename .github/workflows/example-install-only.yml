@@ -29,7 +29,7 @@ jobs:
           key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Cypress 📥
-        run: npm install cypress@14.1.0 --save-dev
+        run: npm install cypress@14.2.0 --save-dev
 
       - name: Cypress tests 🧪
         uses: ./
