@@ -26,7 +26,7 @@ jobs:
           # https://github.com/cypress-io/github-action/blob/master/action.yml
           # Node.js minor version is aligned to
           # https://github.com/actions/runner/blob/main/src/Misc/externals.sh
-          node-version: 20.18.0
+          node-version: 20.19.0
       - run: npm ci
       - run: npm run format
       - run: npm run build
