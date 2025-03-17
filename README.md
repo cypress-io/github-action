@@ -1425,15 +1425,13 @@ jobs:
 
 ### More examples
 
-<!-- prettier-ignore-start -->
-| Name                                                                                                    | Description                                                                               |
-| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [cypress-io/cypress-example-kitchensink](https://github.com/cypress-io/cypress-example-kitchensink)     | Runs every API command in Cypress using various CI platforms including GitHub Actions     |
-| [cypress-io/cypress-realworld-app](https://github.com/cypress-io/cypress-realworld-app)                 | A real-world example payment application. Uses GitHub Actions and CircleCI.               |
-| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)                    | Splits install and running tests commands, runs Cypress from sub-folder                   |
-| [cypress-examples](https://github.com/bahmutov/cypress-examples)                                        | Shows separate install job from parallel test jobs                                        |
-| [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs)                | Shows a separate install job with the build step, and another job that runs the tests     |
-<!-- prettier-ignore-end -->
+| Name                                                                                                | Description                                                                           |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [cypress-io/cypress-example-kitchensink](https://github.com/cypress-io/cypress-example-kitchensink) | Runs every API command in Cypress using various CI platforms including GitHub Actions |
+| [cypress-io/cypress-realworld-app](https://github.com/cypress-io/cypress-realworld-app)             | A real-world example payment application. Uses GitHub Actions and CircleCI.           |
+| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)                | Splits install and running tests commands, runs Cypress from sub-folder               |
+| [cypress-examples](https://github.com/bahmutov/cypress-examples)                                    | Shows separate install job from parallel test jobs                                    |
+| [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs)            | Shows a separate install job with the build step, and another job that runs the tests |
 
 ## Notes
 
