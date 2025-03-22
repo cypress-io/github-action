@@ -82,7 +82,7 @@ The repository is set up with a `git` / `Husky` pre-commit hook which ensures th
 1. Add a corresponding `.github/workflows` YAML file that uses this action and runs using your new `examples/X` through the `working-directory` parameter. The example should demonstrate any new feature.
 1. Add a workflow status badge to the [README.md](README.md) file (see [Adding a workflow status badge](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge)), like the following:
 
-[![Chrome example](https://github.com/cypress-io/github-action/workflows/example-chrome/badge.svg?branch=master)](.github/workflows/example-chrome.yml)
+[![Chrome example](https://github.com/cypress-io/github-action/actions/workflows/example-chrome.yml/badge.svg)](.github/workflows/example-chrome.yml)
 
 ### External Testing
 
