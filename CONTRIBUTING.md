@@ -55,6 +55,7 @@ To contribute changes, follow these instructions in the order given below:
 
    ```bash
    npm run format:all
+   npm run lint:fix
    ```
 
 1. If you have only modified Markdown documents (`*.md`), then you can alternatively execute the following to format only those documents:
