@@ -94030,6 +94030,7 @@ const runTests = async () => {
   debug(`requiring cypress dependency, cwd is ${process.cwd()}`)
   debug(`working directory ${workingDirectory}`)
   debug(`resolved cypress ${cypressModulePath}`)
+  debug(`GitHub JavaScript Action Node.js version ${process.version}`)
 
   if (core.getInput('group')) {
     cypressOptions.group = core.getInput('group')
