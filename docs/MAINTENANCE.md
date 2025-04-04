@@ -20,7 +20,7 @@ _The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/
 
 - [npm](https://www.npmjs.com/), which is installed with [Node.js](https://nodejs.org/).
 
-- [corepack](https://github.com/nodejs/corepack), which is installed with [Node.js](https://nodejs.org/).
+- [corepack](https://github.com/nodejs/corepack). This is currently installed with [Node.js](https://nodejs.org/). Due to plans of Node.js to remove it in versions Node.js `25.x` and later, you may need to install it separately with `npm install -g corepack`.
 
 - [pnpm](https://pnpm.io/) installed through:
 
