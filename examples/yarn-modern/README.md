@@ -5,6 +5,7 @@ This example demonstrates installing dependencies using [Yarn Modern v4](https:/
 Run locally with:
 
 ```shell
+npm install -g corepack
 corepack enable yarn
 yarn
 yarn test
