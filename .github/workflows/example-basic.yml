@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, windows-2022, macos-14]
+        os: [ubuntu-22.04, ubuntu-24.04, windows-2025, macos-14]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
