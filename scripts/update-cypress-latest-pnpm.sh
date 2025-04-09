@@ -4,9 +4,22 @@ set -e # fail on error
 # Examples using the pnpm package manager are
 # updated to Cypress latest version
 #
-# Make sure that pnpm is installed
-./scripts/check-package-manager-pnpm.sh
+# npm must be installed before running this script.
+./scripts/check-package-manager-npm.sh
 
+# Make sure that pnpm is installed
+if command -v corepack &> /dev/null
+then
+    echo disabling Corepack for pnpm
+    corepack disable pnpm
+else
+    echo Corepack is not needed and not installed
+fi
+echo install latest pnpm version
+npm add pnpm@latest -g
+echo pnpm version $(pnpm --version) is installed
+
+echo
 echo updating pnpm examples to Cypress latest version
 cd examples
 
