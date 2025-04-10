@@ -4,13 +4,12 @@ set -e # fail on error
 # All examples are updated to Cypress latest version
 #
 # Make sure that Node.js LTS from https://nodejs.org/en/ is installed before running.
-# Ensure pnpm is installed.
-# npm install pnpm -g
+
 # The VScode editor is also used in the last step if available.
 #
 # First check if the required package managers are installed
 ./scripts/check-package-manager-npm.sh
-./scripts/check-package-manager-pnpm.sh
+./scripts/check-package-manager-corepack.sh
 # then proceed to updating the examples
 echo
 ./scripts/update-cypress-latest-npm.sh

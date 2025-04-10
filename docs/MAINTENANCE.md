@@ -22,12 +22,6 @@ _The previous [examples/v9](https://github.com/cypress-io/github-action/tree/v5/
 
 - [corepack](https://github.com/nodejs/corepack). This is currently installed with [Node.js](https://nodejs.org/). Due to plans of Node.js to remove it in versions Node.js `25.x` and later, you may need to install it separately with `npm install -g corepack`.
 
-- [pnpm](https://pnpm.io/) installed through:
-
-```bash
-npm install pnpm@latest -g
-```
-
 - [Visual Studio Code](https://code.visualstudio.com/) or other editor
 
 Under Microsoft Windows it may be necessary to also execute the following preparatory command:
@@ -52,6 +46,10 @@ This updates all [examples](../examples) to cypress@latest.
 
 After updating the examples locally, they can be committed with git and a pull request opened on GitHub.
 
+### Updating pnpm examples
+
+The script [/scripts/update-cypress-latest-pnpm.sh](../scripts/update-cypress-latest-pnpm.sh) (which is invoked through `npm run update:cypress` to update the pnpm examples) runs [pnpm](https://pnpm.io/) as an `npm` global install. It leaves pnpm installed and Corepack disabled for pnpm on completion.
+
 ### Updating Yarn examples
 
-The script [/scripts/update-cypress-latest-yarn.sh](../scripts/update-cypress-latest-yarn.sh) (which is invoked through `npm run update:cypress` to update the Yarn examples) runs [Yarn 1 (Classic)](https://classic.yarnpkg.com/) as an `npm` global install, runs [Yarn Modern](https://yarnpkg.com/) through Corepack and returns Corepack to its default disabled state on completion.
+The script [/scripts/update-cypress-latest-yarn.sh](../scripts/update-cypress-latest-yarn.sh) (which is invoked through `npm run update:cypress` to update the Yarn examples) runs [Yarn 1 (Classic)](https://classic.yarnpkg.com/) as an `npm` global install and runs [Yarn Modern](https://yarnpkg.com/) through Corepack. It leaves Yarn Classic installed and Corepack disabled for Yarn on completion.
