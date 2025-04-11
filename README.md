@@ -833,7 +833,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          # Linux and MacOS
+          # Linux and macOS
           start: npm start
           # Takes precedences on Windows
           start-windows: npm run start:windows:server
