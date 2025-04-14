@@ -57,7 +57,7 @@
     "@types/node": "22.13.10",
     "@vercel/ncc": "0.38.1",
     "eslint": "9.21.0",
-    "eslint-plugin-cypress": "4.2.0",
+    "eslint-plugin-cypress": "4.2.1",
     "globals": "16.0.0",
     "husky": "9.1.7",
     "markdown-link-check": "3.13.7",
