@@ -1,39 +1,81 @@
-# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/metadata-syntax-for-github-actions
+# https://docs.github.com/en/actions/sharing-automations/creating-actions/metadata-syntax-for-github-actions
 name: 'Cypress.io'
 description: 'GitHub Action for running Cypress end-to-end and component tests'
 author: 'Cypress-io'
 inputs:
-  record:
-    description: 'Sends test results to Cypress Cloud'
-    required: false
-    default: false
+  # inputs passed to Cypress Module API https://on.cypress.io/module-api
+  # Action options names are the same as Cypress Module API options names, except where noted
+  # and Cypress CLI option names https://on.cypress.io/command-line#Options are used instead
   auto-cancel-after-failures:
     description: 'Overrides the global Cloud configuration to set the failed test threshold for auto cancellation or to disable auto cancellation when recording to the Cloud (requires Cypress 12.x or later)'
     required: false
+  browser:
+    description: 'Name of the browser to use'
+    required: false
+  ci-build-id:
+    description: 'ID associates multiple CI machines to one test run'
+    required: false
+  component: # translates to Module API testingType e2e (default / false) or component (true)
+    description: 'Lets the action know that Cypress is running component tests and not e2e tests'
+    required: false
+    default: false
   config:
     description: 'Set configuration values. Separate multiple values with a comma. The values set here override any values set in your configuration file.'
     required: false
   config-file:
-    description: 'Path to the cypress config file where configuration values are set.'
+    description: 'Path to the cypress config file where configuration values are set'
     required: false
     default: ''
   env:
     description: 'Sets Cypress environment variables'
     required: false
-  browser:
-    description: 'Name of the browser to use'
+  group:
+    description: 'Group setting for recording tests'
     required: false
-  command:
-    description: 'Command that overrides cypress run'
+  headed:
+    description: 'Whether or not to use headed mode'
     required: false
-  start:
-    description: 'Command for starting local server in the background'
+  # headless: # not used (default and equivalent to headed: false)
+  # key: # not used. Pass this option using CYPRESS_RECORD_KEY as a secret environment variable
+  # exit: # not used
+  parallel:
+    description: 'Whether or not to load balance recorded tests using multiple containers'
     required: false
-  start-windows:
-    description: 'A different start command on Windows'
+  # port: # not used
+  project:
+    description: 'Path of project to run'
     required: false
+  quiet:
+    description: 'Whether or not to silence any Cypress specific output from stdout'
+    required: false
+  record:
+    description: 'Sends test results to Cypress Cloud'
+    required: false
+    default: false
+  # reporter: # not used
+  # reporterOptions: # not used
+  # runnerUi: # not used
+  # slowTestThreshold # not used
+  spec:
+    description: 'Provide specific specs to run'
+    required: false
+  tag:
+    description: 'Tag setting for tests'
+    required: false
+  #
+  # inputs used internally by action, not passed to Cypress Module API
+  #
   build:
     description: 'Command to run build step before starting tests'
+    required: false
+  cache-key:
+    description: 'Custom cache key'
+    required: false
+  command: # Using this option overrides passing inputs to the Cypress Module API
+    description: 'Command that overrides cypress run'
+    required: false
+  command-prefix:
+    description: 'You can prefix the default test command using the command-prefix option.'
     required: false
   install:
     description: 'Whether or not to run install'
@@ -41,60 +83,33 @@ inputs:
   install-command:
     description: 'Custom install command to use'
     required: false
+  publish-summary:
+    description: 'Whether or not to publish a job summary'
+    required: false
+    default: true
   runTests:
     description: 'Whether or not to run tests'
+    required: false
+  start:
+    description: 'Command for starting local server in the background'
+    required: false
+  start-windows:
+    description: 'A different start command on Windows'
+    required: false
+  summary-title:
+    description: 'Title for job summary'
     required: false
   wait-on:
     description: 'Local server URL to wait for'
     required: false
   wait-on-timeout:
-    description: 'Amount of time to wait for wait-on url to be available'
-    required: false
-  parallel:
-    description: 'Whether or not to load balance tests using multiple containers'
-    required: false
-  group:
-    description: 'Group setting for tests'
-    required: false
-  tag:
-    description: 'Tag setting for tests'
+    description: 'Amount of time to wait for wait-on URL to be available'
     required: false
   working-directory:
     description: 'Working directory containing Cypress folder'
     required: false
-  headed:
-    description: 'Whether or not to use headed mode'
-    required: false
-  publish-summary:
-    description: 'Whether or not to publish a job summary'
-    required: false
-    default: true
-  summary-title:
-    description: 'Title for job summary'
-    required: false
-  spec:
-    description: 'Provide a specific specs to run'
-    required: false
-  project:
-    description: 'Path of project to run'
-    required: false
-  command-prefix:
-    description: 'You can prefix the default test command using the command-prefix option.'
-    required: false
-  ci-build-id:
-    description: 'ID associates multiple CI machines to one test run'
-    required: false
-  cache-key:
-    description: 'Custom cache key'
-    required: false
-  quiet:
-    description: 'Whether or not to silence any Cypress specific output from stdout'
-    required: false
-  component:
-    description: 'Lets the action know that Cypress is running component tests and not e2e tests'
-    required: false
-    default: false
 outputs:
+  # derived from Cypress Module API https://on.cypress.io/module-api#Results runUrl
   dashboardUrl:
     description: 'Cypress Cloud URL if the run was recorded (deprecated)'
   resultsUrl:
