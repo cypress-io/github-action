@@ -1,4 +1,7 @@
 packages:
   - packages/*
+
 onlyBuiltDependencies:
   - cypress
+
+sideEffectsCache: false
