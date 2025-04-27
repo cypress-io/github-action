@@ -44,7 +44,7 @@ The following examples demonstrate the actions' functions.
   - Getting [PR and URL](#automatic-pr-number-and-url-detection) automatically
   - Overwriting [Merge SHA into SHA](#merge-sha-into-sha) message
 - Tag [recordings](#tag-recordings)
-- Specify [auto cancel](#specify-auto-cancel-after-failures) after failures
+- Specify [auto cancel](#auto-cancel-after-failures) after failures
 - Store [test artifacts](#artifacts) on GitHub
 - [Quiet output](#quiet-flag)
 - Set Cypress [config values](#config)
@@ -577,7 +577,7 @@ The recording will have tags as labels on the run.
 
 You can pass multiple tags using commas like `tag: node-18,nightly,staging`.
 
-### Specify auto cancel after failures
+### Auto cancel after failures
 
 Specify the number of failed tests that will cancel a run when using the [Cypress Cloud Auto Cancellation](https://docs.cypress.io/cloud/features/smart-orchestration/run-cancellation) feature.
 
@@ -757,7 +757,7 @@ If you use the GitHub Actions facility for [Re-running workflows and jobs](https
 To optimize runs when there are failing tests present, refer to optional [Cypress Cloud Smart Orchestration](https://docs.cypress.io/cloud/features/smart-orchestration/overview/) Premium features:
 
 - [Spec Prioritization](https://docs.cypress.io/cloud/features/smart-orchestration/spec-prioritization)
-- [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration/run-cancellation). See also [Specify auto cancel after failures](#specify-auto-cancel-after-failures) for details of how to set this option in a Cypress GH Action workflow.
+- [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration/run-cancellation). See also [Auto cancel after failures](#auto-cancel-after-failures) for details of how to set this option in a Cypress GitHub Action workflow.
 
 During staged rollout of a new GitHub-hosted runner version, GitHub may provide a mixture of current and new image versions used by the container matrix. It is recommended to use a [Docker image](#docker-image) in the parallel job run which avoids any Cypress Cloud errors due to browser major version mismatch from the two different image versions. A [Docker image](#docker-image) is not necessary if testing against the default built-in Electron browser because this browser version is fixed by the Cypress version in use and it is unaffected by any GitHub runner image rollout.
 
