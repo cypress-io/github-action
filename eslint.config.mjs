@@ -14,6 +14,7 @@ export default [
       'examples/nextjs/.next/',
       'examples/nextjs/src/app/',
       'examples/wait-on-vite/dist/',
+      'examples/**/.pnp.*',
     ],
   },
   {
