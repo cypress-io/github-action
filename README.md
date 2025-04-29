@@ -39,7 +39,6 @@ The following examples demonstrate the actions' functions.
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
-  - Storing the [Project ID and Record Key](#project-id-and-record-key)
   - Getting [Git information](#git-information) environment variables
   - Getting [PR and URL](#automatic-pr-number-and-url-detection) automatically
   - Overwriting [Merge SHA into SHA](#merge-sha-into-sha) message
@@ -383,9 +382,13 @@ For more information, visit [the Cypress command-line docs](https://on.cypress.i
 
 ### Record test results on Cypress Cloud
 
-By setting the parameter `record` to `true`, you can record your test results into the [Cypress Cloud](https://on.cypress.io/cloud). Read the [Cypress Cloud documentation](https://on.cypress.io/guides/cloud/introduction) to learn how to sign up and create a Cypress Cloud project.
+By setting the parameter `record` to `true`, you can record your test results into [Cypress Cloud](https://on.cypress.io/cloud). Read the [Cypress Cloud setup](https://on.cypress.io/cloud/get-started/setup) documentation to learn how to sign up to Cypress Cloud, to create and set up a [Cloud project](https://on.cypress.io/cloud/account-management/projects) to get the required `projectId` and record key for recording.
 
-We recommend passing the `GITHUB_TOKEN` secret (created by the GH Action automatically) as an environment variable. This will allow correctly identifying every build and avoid confusion when re-running a build.
+- The `projectId` can either be stored in the [Cypress Configuration File](https://on.cypress.io/app/references/configuration#Configuration-File) or passed to the action as an environment variable `CYPRESS_PROJECT_ID`. In the example below, it is retrieved from a [GitHub secret](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) variable.
+
+- The record key is passed to the action as an environment variable `CYPRESS_RECORD_KEY`. We recommend you treat this value as sensitive and store it as a [GitHub secret](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) variable, so that access is restricted.
+
+- We recommend passing the `GITHUB_TOKEN` secret (created by the GH Action automatically) as an environment variable. This will allow correctly identifying every build and avoid confusion when re-running a build.
 
 ```yml
 name: Cypress tests
@@ -403,39 +406,15 @@ jobs:
         with:
           record: true
         env:
+          # pass the Cypress Cloud project ID as an environment variable or store it in the Cypress configuration file
+          CYPRESS_PROJECT_ID: ${{ secrets.EXAMPLE_PROJECT_ID }}
+          # pass the Cypress Cloud record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 [![recording example](https://github.com/cypress-io/github-action/actions/workflows/example-recording.yml/badge.svg)](.github/workflows/example-recording.yml)
-
-### Project ID and Record Key
-
-To record the project needs `projectId` and `recordKey`.
-
-Typically, the `projectId` is stored in the [Cypress Configuration File](https://docs.cypress.io/guides/references/configuration#Configuration-File), while the `recordKey` is set as a [CLI parameter](https://docs.cypress.io/guides/guides/command-line#cypress-run-record-key-lt-record-key-gt). If you want to avoid this, both the `projectId` and `recordKey` can be provided as environment variables using [GitHub secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
-
-```yml
-name: Cypress tests
-on: push
-jobs:
-  cypress-run:
-    name: Cypress run
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          record: true
-        env:
-          # pass the Cypress Cloud record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass the project ID from the secrets through environment variable
-          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
-```
 
 ### Git information
 
@@ -451,7 +430,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -459,6 +437,7 @@ jobs:
         env:
           # Get the short ref name of the branch that triggered the workflow run
           COMMIT_INFO_BRANCH: ${{ github.ref_name }}
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 ```
 
 Please refer to the [Cypress Cloud Git information environment variables](https://on.cypress.io/guides/continuous-integration/introduction#Git-information) section in our documentation for more examples.
@@ -491,7 +470,7 @@ jobs:
       - run: echo "PR number is $CYPRESS_PULL_REQUEST_ID"
       - run: echo "PR URL is $CYPRESS_PULL_REQUEST_URL"
     env:
-      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -532,6 +511,7 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           # re-enable PR comment bot
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 ```
 
 See [issue 124](https://github.com/cypress-io/github-action/issues/124#issuecomment-1076826988) for details.
@@ -567,7 +547,7 @@ jobs:
           record: true
           tag: node-${{ matrix.node }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -601,7 +581,7 @@ jobs:
           # Cancel the run after 2 failed tests
           auto-cancel-after-failures: 2
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -742,7 +722,7 @@ jobs:
           group: 'Actions example'
         env:
           # pass the Cypress Cloud record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -1025,7 +1005,7 @@ jobs:
           ci-build-id: '${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}'
         env:
           # pass the Cypress Cloud record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -1340,7 +1320,7 @@ jobs:
           group: Tests on Node v${{ matrix.node }}
           cache-key: node-v${{ matrix.node }}-on-${{ runner.os }}-hash-${{ hashFiles('yarn.lock') }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -1578,7 +1558,7 @@ This is an example of using the step output `resultsUrl`:
   with:
     record: true
   env:
-    CYPRESS_RECORD_KEY: ${{ secrets.RECORDING_KEY }}
+    CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
 - name: Print Cypress Cloud URL
   if: always()
   run: |
