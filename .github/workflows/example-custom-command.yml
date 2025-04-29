@@ -1,4 +1,9 @@
 name: example-custom-command
+# example using the command parameter
+# this allows any cli command to be run
+# the command parameter causes other action parameters that would be passed to Cypress
+# to be ignored and so it should not be used with these other parameters
+# for example, browsers, config, record, parallel, spec, etc would be ignored
 on:
   push:
     branches:
@@ -8,18 +13,16 @@ on:
 
 jobs:
   start:
-    # example where instead of forming the default "cypress run ..."
-    # the user can specify their own command
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout 🛎
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Custom tests 🧪
+      - name: Custom tests
         uses: ./
         with:
           command: npm run custom-test
           working-directory: examples/custom-command
 
-      - name: Show saved file 🖨
+      - name: Show saved file
         run: cat examples/custom-command/results.json
