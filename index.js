@@ -725,25 +725,26 @@ const runTestsUsingCommandLine = async () => {
  */
 const commandIgnoredBooleanInputs = [
   // parameter name, default value
-  [`component`, false],
-  [`headed`, false],
-  [`parallel`, false],
-  [`quiet`, false],
-  [`record`, false],
-  [`publish-summary`, true]
+  ['component', false],
+  ['headed', false],
+  ['parallel', false],
+  ['quiet', false],
+  ['record', false],
+  ['publish-summary', true]
 ]
 const commandIgnoredStringInputs = [
-  `auto-cancel-after-failures`,
-  `browser`,
-  `ci-build-id`,
-  `config`,
-  `config-file`,
-  `group`,
-  `project`,
-  `spec`,
-  `tag`,
-  `command-prefix`,
-  `summary-title`
+  'auto-cancel-after-failures',
+  'browser',
+  'ci-build-id',
+  'config',
+  'config-file',
+  'env',
+  'group',
+  'project',
+  'spec',
+  'tag',
+  'command-prefix',
+  'summary-title'
 ]
 let ignoredInputParameters = []
 const validateCustomCommand = () => {
