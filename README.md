@@ -1451,6 +1451,68 @@ jobs:
 | [cypress-examples](https://github.com/bahmutov/cypress-examples)                                    | Shows separate install job from parallel test jobs                                    |
 | [cypress-gh-action-split-jobs](https://github.com/bahmutov/cypress-gh-action-split-jobs)            | Shows a separate install job with the build step, and another job that runs the tests |
 
+## Migration
+
+### Migrating from CLI command
+
+To migrate from Cypress [CLI run command options](https://on.cypress.io/command-line#Options) to Cypress GitHub Action parameters, check the [CLI Run Option / Action Parameter](#cli-run-option--action-parameter) table below. In most cases, the name of the action parameter is the same as the long form of the `cypress run` CLI option.
+
+Create a [GitHub Actions workflow](https://docs.github.com/en/actions/writing-workflows/quickstart) referring to [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions). The action `cypress-io/github-action@v6` is invoked with the `uses` keyword. Cypress GitHub Action input parameters are specified under the [with](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith) keyword.
+
+If you have previously been using a [CLI command](https://on.cypress.io/command-line#cypress-run) to run Cypress locally or in a CI environment, you will be familiar with testing commands like this:
+
+```shell
+npx cypress run --spec cypress/e2e/spec.cy.js --browser chrome
+```
+
+or you may be using a script defined in your project's `package.json` file, such as:
+
+```json
+"cy:e2e:chrome": "cypress run --spec cypress/e2e/spec.cy.js --browser chrome"
+```
+
+Here is the equivalent GitHub Actions example workflow. The action runs Cypress by passing the action parameters (`browser` and `spec`) programmatically to the [Cypress Module API](https://on.cypress.io/module-api) without using any CLI. The complete workflow also checks out the repo and installs dependencies before running Cypress.
+
+```yml
+name: CLI migration example
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+      - name: Cypress run # install dependencies and run Cypress E2E tests
+        uses: cypress-io/github-action@v6 # replaces CLI cypress run
+        with:
+          browser: chrome # replaces CLI option --browser chrome
+          spec: cypress/e2e/spec.cy.js # replaces CLI option --spec cypress/e2e/spec.cy.js
+```
+
+#### CLI Run Option / Action Parameter
+
+| CLI Option `cypress run`       | Action Parameter                                            | Description                                                                                          |
+| ------------------------------ | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `--auto-cancel-after-failures` | [`auto-cancel-after-failures`](#auto-cancel-after-failures) | Set the failed test threshold for auto cancellation or disable auto cancellation for Cloud recording |
+| `--browser`, `-b`              | [`browser`](#browser)                                       | Select browser that Cypress runs in. A filesystem path to a browser can also be used.                |
+| `--ci-build-id`                | [`ci-build-id`](#custom-build-id)                           | Specify a unique identifier for a run to enable grouping or parallelization for Cloud recording      |
+| `--component`                  | [`component`](#component-testing)                           | Run component tests                                                                                  |
+| `--config`, `-c`               | [`config`](#config)                                         | Specify configuration                                                                                |
+| `--config-file`, `-C`          | [`config-file`](#config-file)                               | Specify configuration file                                                                           |
+| `--e2e`                        | [`component: false`](#component-testing) (default)          | Run end to end tests                                                                                 |
+| `--env`, `-e`                  | [`env`](#env)                                               | Specify environment variables                                                                        |
+| `--group`                      | [`group`](#parallel)                                        | Group recorded tests together under a single run for Cloud recording                                 |
+| `--headed`                     | [`headed`](#headed)                                         | Display the browser instead of running headlessly                                                    |
+| `--headless`                   | [`headed: false`](#headed) (default)                        | Hide the browser instead of running headed                                                           |
+| `--parallel`                   | [`parallel`](#parallel)                                     | Run recorded specs in parallel across multiple machines for Cloud recording                          |
+| `--project`, `-P`              | [`project`](#project)                                       | Path to a specific project                                                                           |
+| `--quiet`, `-q`                | [`quiet`](#quiet-flag)                                      | Reduce output to `stdout`                                                                            |
+| `--record`                     | [`record`](#record-test-results-on-cypress-cloud)           | Record the test run to Cypress Cloud                                                                 |
+| `--spec`, `-s`                 | [`spec`](#specs)                                            | Specify the spec files to run                                                                        |
+| `--tag`, `-t`                  | [`tag`](#tag-recordings)                                    | Identify a run with a tag or tags                                                                    |
+
+There is no equivalent action parameter for the CLI options `help`, `key`, `--no-exit`, `--no-runner-ui`, `port`, `reporter`, `reporter-options` or `runner-ui`. See the section [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud) for information on passing a Cypress Cloud record key to the action.
+
 ## Notes
 
 ### Installation
