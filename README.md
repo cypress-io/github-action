@@ -54,7 +54,6 @@ The following examples demonstrate the actions' functions.
 - [Start server](#start-server) before running the tests
 - [Start multiple servers](#start-multiple-servers) before running the tests
 - [Wait for server](#wait-on) to respond before running the tests
-- [`wait-on` with Node.js 18+](#wait-on-with-nodejs-18) workarounds
 - Use [custom install command](#custom-install-command)
 - Use [command prefix](#command-prefix)
 - Use [own custom test command](#custom-test-command)
@@ -529,7 +528,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [18, 20, 22, 23]
+        node: [20, 22, 23]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -555,7 +554,7 @@ The recording will have tags as labels on the run.
 
 ![Tags](images/tags.png)
 
-You can pass multiple tags using commas like `tag: node-18,nightly,staging`.
+You can pass multiple tags using commas like `tag: node-22,nightly,staging`.
 
 ### Auto cancel after failures
 
@@ -915,14 +914,6 @@ You can even use your own command (usually by using `npm`, `yarn`, `npx`) to wai
 See [example-wait-on.yml](.github/workflows/example-wait-on.yml) workflow file.
 
 If this action times out waiting for the server to respond, please see [Debugging](#debugging) section in this README file.
-
-#### `wait-on` with Node.js 18+
-
-Under Node.js version 18 and later, `wait-on` may fail to recognize that a `localhost` server is running. This affects development web servers which do not listen on both IPv4 and IPv6 network stacks.
-
-- Check your server documentation to see if it can be started using `0.0.0.0` (all addresses) and use this if available. If this option is not available or does not resolve the issue then carry on to the next steps:
-- If the action log shows that `wait-on` is failing to connect to `127.0.0.1`, replace `localhost` by `[::1]` (the IPv6 loopback address)
-- If the action log shows that `wait-on` is failing to connect to `::1`, replace `localhost` by `127.0.0.1` (the IPv4 loopback address)
 
 ### Custom install command
 
@@ -1302,7 +1293,7 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [18, 20, 22, 23]
+        node: [20, 22, 23]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -1336,7 +1327,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        node: [18, 20, 22, 23]
+        node: [20, 22, 23]
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/setup-node@v4
@@ -1758,7 +1749,7 @@ jobs:
 
 Node.js is required to run this action. The recommended version `v6` supports:
 
-- **Node.js** 18.x, 20.x, 22.x and 23.x
+- **Node.js** 20.x, 22.x and 23.x
 
 and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
 
