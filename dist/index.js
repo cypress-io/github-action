@@ -93982,10 +93982,58 @@ const runTestsUsingCommandLine = async () => {
 
   return exec.exec(quote(npxPath), cmd, opts)
 }
+/**
+ * Validate input parameters for consistency when command parameter is used
+ * Output GitHub actions annotation warning if ignored parameters are used
+ */
+const commandIgnoredBooleanInputs = [
+  // parameter name, default value
+  ['component', false],
+  ['headed', false],
+  ['parallel', false],
+  ['quiet', false],
+  ['record', false],
+  ['publish-summary', true]
+]
+const commandIgnoredStringInputs = [
+  'auto-cancel-after-failures',
+  'browser',
+  'ci-build-id',
+  'config',
+  'config-file',
+  'env',
+  'group',
+  'project',
+  'spec',
+  'tag',
+  'command-prefix',
+  'summary-title'
+]
+let ignoredInputParameters = []
+const validateCustomCommand = () => {
+  commandIgnoredBooleanInputs.forEach((input) => {
+    const inputParameter = input[0]
+    const inputDefault = input[1]
+    if (getInputBool(inputParameter) !== inputDefault) {
+      ignoredInputParameters.push(inputParameter)
+    }
+  })
+  commandIgnoredStringInputs.forEach((input) => {
+    if (core.getInput(input)) {
+      ignoredInputParameters.push(input)
+    }
+  })
+  if (ignoredInputParameters.length > 0) {
+    core.warning(
+      `command parameter is used and the following other parameters are ignored: ${ignoredInputParameters.sort().join(', ')}.`
+    )
+  }
+}
 
 /**
  * Run Cypress tests by collecting input parameters
  * and using Cypress module API to run tests.
+ * If command parameter is specified, then run using @actions/exec instead.
  * @see https://on.cypress.io/module-api
  */
 const runTests = async () => {
@@ -94014,6 +94062,7 @@ const runTests = async () => {
 
   if (customCommand) {
     console.log('Using custom test command: %s', customCommand)
+    validateCustomCommand() // catch ignored parameters and output warning
     return execCommand(customCommand, true, 'run tests')
   }
 
