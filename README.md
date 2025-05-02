@@ -931,7 +931,19 @@ If you do not commit a lock file to the repository, you cannot use the action to
 
 ### Command prefix
 
-You can prefix the default test command using the `command-prefix` option. This is useful for example when running [Percy](https://docs.percy.io/docs/cypress), which requires the test command to be wrapped with `percy exec --`.
+You can prefix a test command using the `command-prefix` parameter. This is useful, for example, when running [BrowserStack Percy](https://www.browserstack.com/docs/percy/integrate/cypress), which requires the test command to be prefixed with `percy exec --`. When this parameter is used, the action constructs and executes a CLI command using [npx](https://docs.npmjs.com/cli/v11/commands/npx) in the following form:
+
+```shell
+npx <command-prefix> cypress run <cli run options>
+```
+
+where the `<command-prefix>` is the literal string value from the `command-prefix` parameter and `<cli run options>` are put together from action parameters such as the value of the `browser` parameter. The complete constructed command is shown in the logs. For the example below, this is shown as:
+
+```text
+Cypress test command: npx percy exec -- npx cypress run --browser chrome
+```
+
+Since `command-prefix` is run using `npx`, it is compatible with [npm](https://docs.npmjs.com/cli/v11/) and [Yarn Classic](https://classic.yarnpkg.com/). It may also be used with [pnpm](https://pnpm.io/settings#nodelinker) and [Yarn Modern](https://yarnpkg.com/configuration/yarnrc#nodeLinker) when they are configured for `nodeLinker` compatibility with the `node_modules` directory structure of npm. An alternative to using `command-prefix` is to pass a complete [command](#custom-test-command) parameter instead, including the exact command to be passed to the CLI.
 
 ```yml
 name: Visual
@@ -945,13 +957,11 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          start: npm start
-          # quote the url to be safe against YML parsing surprises
-          wait-on: 'http://localhost:8080'
-          # the entire command will automatically be prefixed with "npm"
-          # and we need the second "npm" to execute "cypress run ..." command line
           command-prefix: 'percy exec -- npx'
+          browser: chrome
 ```
+
+If `command-prefix` is used, then no [job summary](#job-summary-title) is produced, since it runs Cypress with a CLI [cypress run](https://on.cypress.io/app/references/command-line#cypress-run) command instead of using the [Cypress Module API](https://docs.cypress.io/app/references/module-api). The `command` parameter overrides the `command-prefix` parameter, preventing these two parameters from being used together.
 
 ### Custom test command
 
