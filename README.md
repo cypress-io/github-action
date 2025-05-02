@@ -976,7 +976,7 @@ If you don't have a special case and you just need to convert a `cypress run` CL
 
 There are some parameters that cannot be used together with the `command` parameter, and these are ignored. The parameters include action input parameters listed in the table [CLI Run Option / Action Parameter](#cli-run-option--action-parameter), the [publish-summary](#suppress-job-summary), [summary-title](#job-summary-title) and [command-prefix](#command-prefix). If any such parameters are passed to the action, a warning message appears in the logs that the parameters have been ignored.
 
-Correct Example:
+Correct example snippet:
 
 ```yml
 steps:
