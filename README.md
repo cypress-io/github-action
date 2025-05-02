@@ -56,7 +56,7 @@ The following examples demonstrate the actions' functions.
 - [Wait for server](#wait-on) to respond before running the tests
 - Use [custom install command](#custom-install-command)
 - Use [command prefix](#command-prefix)
-- Use [own custom test command](#custom-test-command)
+- Use [custom test command](#custom-test-command)
 - Pass [custom build id](#custom-build-id) when recording to Cypress Cloud
 - Generate a [robust custom build id](#robust-custom-build-id) to allow re-running the workflow
 - Use different [working-directory](#working-directory)
@@ -965,22 +965,28 @@ If `command-prefix` is used, then no [job summary](#job-summary-title) is produc
 
 ### Custom test command
 
-You can overwrite the Cypress run command with your own command.
+The `command` parameter executes a CLI command using the GitHub [@actions/exec](https://github.com/actions/toolkit/tree/main/packages/exec) action.
+
+This parameter is useful for special test cases, for example:
+
+- in the project [examples/custom-command](./examples/custom-command/), a JavaScript [examples/custom-command/index.js](./examples/custom-command/index.js) is run with `node .` through `command: npm run custom-test`
+- in the workflow [example-yarn-modern-pnp.yml](.github/workflows/example-yarn-modern-pnp.yml) Yarn Modern with Plug'n'Play is run with `command: yarn run --binaries-only cypress run` since [Yarn Plug'n'Play](#yarn-plugnplay) is not natively supported by the action.
+
+If you don't have a special case and you just need to convert a `cypress run` CLI command to use the Cypress GitHub Action, refer to the section [Migrating from CLI command](#migrating-from-cli-command) which explains how to map CLI options to equivalent action parameters, avoiding the need for the `command` parameter in most cases.
+
+There are some parameters that cannot be used together with the `command` parameter, and these are ignored. The parameters include action input parameters listed in the table [CLI Run Option / Action Parameter](#cli-run-option--action-parameter), the [publish-summary](#suppress-job-summary), [summary-title](#job-summary-title) and [command-prefix](#command-prefix). If any such parameters are passed to the action, a warning message appears in the logs that the parameters have been ignored.
+
+Correct example snippet:
 
 ```yml
 steps:
-  - name: Checkout 🛎
-    uses: actions/checkout@v4
-
-  - name: Custom tests 🧪
-    uses: cypress-io/github-action@v6
+  - uses: actions/checkout@v4
+  - uses: cypress-io/github-action@v6
     with:
-      command: npm run e2e:ci
+      command: npm run custom-test
 ```
 
-**Caution**: using the action parameter `command` causes multiple other parameters to be ignored including: `auto-cancel-after-failures`, `browser`, `ci-build-id`, `command-prefix`, `component`, `config`, `config-file`, `env`, `group`, `headed`, `parallel`, `project`, `publish-summary`, `quiet`, `record`, `spec` and `tag`.
-
-See [example-custom-command.yml](.github/workflows/example-custom-command.yml) file.
+[![command example](https://github.com/cypress-io/github-action/actions/workflows/example-custom-command.yml/badge.svg)](.github/workflows/example-custom-command.yml)
 
 ### Custom build id
 
@@ -1608,7 +1614,7 @@ If you configure a `workflow_dispatch` event in your own workflows, you will be 
 
 ### Outputs
 
-This action sets a GitHub step output `resultsUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that if a custom test command with the [command](#custom-test-command) option or the [command-prefix](#command-prefix) option are used then no `resultsUrl` step output is saved.
+This action sets a GitHub step output `resultsUrl` if the run was recorded on [Cypress Cloud](https://on.cypress.io/cloud-introduction) using the action parameter setting `record: true` (see [Record test results on Cypress Cloud](#record-test-results-on-cypress-cloud)). Note that if a custom test command with the [command](#custom-test-command) parameter or the [command-prefix](#command-prefix) parameter are used then no `resultsUrl` step output is saved.
 
 This is an example of using the step output `resultsUrl`:
 
