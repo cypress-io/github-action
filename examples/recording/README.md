@@ -1,12 +1,12 @@
 # example: recording
 
-The recording example uses [Cypress Cloud](https://docs.cypress.io/guides/cloud/introduction) to record results using the Cypress Cloud `projectId` as defined in the [cypress.config.js](cypress.config.js) configuration file.
+The recording example uses [Cypress Cloud](https://on.cypress.io/cloud-introduction) to record results using the Cypress Cloud `projectId` as defined in the [cypress.config.js](cypress.config.js) configuration file.
 
 ## Using your own Cypress Cloud project
 
 In order to use the recording example with your own Cypress Cloud project, you need to replace the `projectId` and `record key` with your own values.
 
-Follow the [Cypress Cloud](https://docs.cypress.io/guides/cloud/introduction) documentation to sign up, if you do not already have an account, or to [sign in](https://cloud.cypress.io/) if you have an account.
+Follow the [Cypress Cloud](https://on.cypress.io/cloud-introduction) documentation to sign up, if you do not already have an account, or to [sign in](https://cloud.cypress.io/) if you have an account.
 
 Create a new project if one does not exist.
 
