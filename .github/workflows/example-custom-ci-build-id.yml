@@ -13,13 +13,7 @@ name: example-custom-ci-build-id
 # In that case it is important to make sure this build id
 # is generated _again_ on workflow re-run. This example
 # shows how to create a unique ID then pass it to
-# multiple testing jobs running in parallel
-# based on the recipe written in
-# https://medium.com/attest-r-and-d/adding-a-unique-github-build-identifier-7aa2e83cadca
-# The use of set-output is however deprecated by GitHub since the above blog
-# was written in 2019 so this is replaced by GitHub Environment files, see
-# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#environment-files
-#
+# multiple testing jobs running in parallel.
 
 on:
   push:
@@ -60,14 +54,14 @@ jobs:
     outputs:
       uuid: ${{ steps.uuid.outputs.value }}
     steps:
-      - name: Generate unique ID 💎
+      - name: Generate unique ID
         id: uuid
         # take the current commit + timestamp together
         # the typical value would be something like
         # "sha-5d3fe...35d3-time-1620841214"
         run: echo "value=sha-$GITHUB_SHA-time-$(date +"%s")" >> $GITHUB_OUTPUT
 
-      - name: Print unique ID 🖨`
+      - name: Print unique ID
         run: echo "generated id ${{ steps.uuid.outputs.value }}"
 
   # let's run a small subset of the tests
@@ -76,13 +70,13 @@ jobs:
     needs: [prepare]
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout 🛎
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Print custom build id 🖨
+      - name: Print custom build id
         run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
 
-      - name: Smoke tests using custom build id 🧪
+      - name: Smoke tests using custom build id
         uses: ./
         with:
           # run just some specs in this group
@@ -104,22 +98,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # run 3 copies of the current job in parallel
-        containers: [1, 2, 3]
+        # run 2 copies of the current job in parallel
+        containers: [1, 2]
     steps:
-      - name: Checkout 🛎
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Print custom build id 🖨
+      - name: Print custom build id
         run: echo "Custom build id is ${{ needs.prepare.outputs.uuid }}"
 
-      - name: All tests using custom build id 🧪
+      - name: All tests using custom build id
         uses: ./
         with:
-          # we can pass the build id using CLI argument
-          # since we are using a custom command
-          command: |
-            npx cypress run --record --parallel \
-              --ci-build-id ${{ needs.prepare.outputs.uuid }} \
-              --group "2 - all tests"
+          record: true
+          parallel: true
+          group: '2 - all tests'
+          ci-build-id: ${{ needs.prepare.outputs.uuid }}
+          publish-summary: false # view consolidated test summary on Cypress Cloud
           working-directory: examples/recording
