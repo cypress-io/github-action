@@ -55,4 +55,5 @@ jobs:
         uses: ./
         with:
           start: npm start # start server using the build artifacts
+          wait-on: http://localhost:3000
           working-directory: examples/nextjs
