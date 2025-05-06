@@ -1393,6 +1393,8 @@ If your test job(s) first need a build step, you can split the jobs into a separ
 
 In the build job, use [upload-artifact](https://github.com/actions/upload-artifact) to store the build results, then in subsequent jobs use [download-artifact](https://github.com/actions/download-artifact) to restore them.
 
+Your tests jobs may use a [GitHub Actions matrix strategy](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow), such as when recording to [Cypress Cloud](https://on.cypress.io/cloud-introduction) with [parallel jobs](#parallel).
+
 ```yml
 name: Split build and test
 on: push
