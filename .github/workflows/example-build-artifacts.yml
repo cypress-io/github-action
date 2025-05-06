@@ -1,0 +1,59 @@
+name: example-build-artifacts
+# This workflow shows how to split build and test steps with artifacts.
+# In the build job, dependencies are installed, the app is built and the build results
+# are stored as an artifact using actions/upload-artifact.
+# No tests are run in the build job.
+# The test jobs use the results from the build job:
+# - dependencies and the Cypress binary are installed using dependency caching
+# - build results are restored using actions/download-artifact
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build app
+        uses: ./ # refers to local instance of cypress-io/github-action@v6
+        with:
+          runTests: false # only build app, don't test yet
+          build: npm run build
+          working-directory: examples/nextjs
+      - name: Store build artifacts
+        uses: actions/upload-artifact@v4 # https://github.com/actions/upload-artifact
+        with:
+          name: app
+          path: examples/nextjs/build
+          if-no-files-found: error
+          retention-days: 1
+
+  test:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025, macos-15]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore build artifacts
+        uses: actions/download-artifact@v4 # https://github.com/actions/download-artifact
+        with:
+          name: app
+          path: examples/nextjs/build
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          start: npm start # start server using the build artifacts
+          wait-on: http://localhost:3000
+          working-directory: examples/nextjs

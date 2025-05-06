@@ -70,6 +70,7 @@ The following examples demonstrate the actions' functions.
 - Use [custom cache key](#custom-cache-key)
 - Run tests on multiple [Node versions](#node-versions)
 - Split [install and tests](#split-install-and-tests) into separate jobs
+- Split [install and tests](#split-install-and-test-with-artifacts) with artifacts
 - Use [custom install commands](#custom-install)
 - Install [only Cypress](#install-cypress-only) to avoid installing all dependencies
 - Use [timeouts](#timeouts) to avoid hanging CI jobs
@@ -1385,6 +1386,54 @@ jobs:
 ```
 
 See [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo) for a working example.
+
+### Split install and test with artifacts
+
+If your test job(s) first need a build step, you can split the jobs into a separate build job followed by test jobs. You pass the build results to any subsequent jobs using [GitHub Actions artifacts](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow).
+
+In the build job, use [upload-artifact](https://github.com/actions/upload-artifact) to store the build results, then in subsequent jobs use [download-artifact](https://github.com/actions/download-artifact) to restore them.
+
+Your tests jobs may use a [GitHub Actions matrix strategy](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow), such as when recording to [Cypress Cloud](https://on.cypress.io/cloud-introduction) with [parallel jobs](#parallel).
+
+```yml
+name: Split build and test
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build app
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false # only build app, don't test yet
+          build: npm run build
+      - name: Store build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: build
+          if-no-files-found: error
+          retention-days: 1
+
+  test:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: build
+
+      - name: Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start # start server using the build artifacts
+```
+
+[![Split with build artifacts](https://github.com/cypress-io/github-action/actions/workflows/example-build-artifacts.yml/badge.svg)](.github/workflows/example-build-artifacts.yml)
 
 ### Custom install
 
