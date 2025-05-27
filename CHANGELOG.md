@@ -9,6 +9,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 | v6.9.0  | Add parameter validation for `command`                                                                       |
 | v6.8.0  | Examples remove Node.js 18. End of support for Node.js 18.                                                   |
 | v6.7.10 | Examples updated to Cypress 14                                                                               |
+| v6.7.9  | Migrate to @actions/cache@4.0.0 for continued access to GitHub Actions caching services                      |
 | v6.7.0  | Examples remove Node.js 21. End of support for Node.js 21.                                                   |
 | v6.6.0  | Add parameter `summary-title`                                                                                |
 | v6.5.0  | Examples remove Node.js 16. End of support for Node.js 16.                                                   |
