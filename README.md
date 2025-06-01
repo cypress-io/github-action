@@ -1483,7 +1483,6 @@ jobs:
 | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [cypress-io/cypress-example-kitchensink](https://github.com/cypress-io/cypress-example-kitchensink) | Runs every API command in Cypress using various CI platforms including GitHub Actions |
 | [cypress-io/cypress-realworld-app](https://github.com/cypress-io/cypress-realworld-app)             | A real-world example payment application. Uses GitHub Actions and CircleCI.           |
-| [cypress-gh-action-monorepo](https://github.com/bahmutov/cypress-gh-action-monorepo)                | Splits install and running tests commands, runs Cypress from sub-folder               |
 
 ## Migration
 
