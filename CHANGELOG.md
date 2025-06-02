@@ -6,6 +6,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 | Version | Changes                                                                                                      |
 | ------- | ------------------------------------------------------------------------------------------------------------ |
+| v6.10.0 | Examples remove Node.js 23. End of support for Node.js 23.                                                   |
 | v6.9.0  | Add parameter validation for `command`                                                                       |
 | v6.8.0  | Examples remove Node.js 18. End of support for Node.js 18.                                                   |
 | v6.7.10 | Examples updated to Cypress 14                                                                               |
