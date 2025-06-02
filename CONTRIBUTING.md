@@ -79,7 +79,7 @@ The repository is set up with a `git` / `Husky` pre-commit hook which ensures th
 
 ### Adding a new example
 
-1. If you are creating a new example, add this as a new project in the `examples` directory. An example project is a regular npm package with its own `package.json` and Cypress dev dependency. (Note: Legacy `examples/v9` are archived in the [v5](https://github.com/cypress-io/github-action/tree/v5/) branch and are no longer supported or maintained.)
+1. If you are creating a new example, add this as a new project in the `examples` directory. An example project is a regular npm package with its own `package.json` and Cypress dev dependency.
 1. Add a corresponding `.github/workflows` YAML file that uses this action and runs using your new `examples/X` through the `working-directory` parameter. The example should demonstrate any new feature.
 1. Add a workflow status badge to the [README.md](README.md) file (see [Adding a workflow status badge](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/adding-a-workflow-status-badge)), like the following:
 

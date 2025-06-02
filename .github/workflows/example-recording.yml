@@ -13,7 +13,7 @@ on:
 env:
   # Set up the Cypress Cloud project ID and record key as environment variables
   # If the Actions secret EXAMPLE_PROJECT_ID is not defined then
-  # the projectId is taken from cypress.json (v9) or cypress.config.js (v10 and later).
+  # the projectId is taken from cypress.config.js.
   # If the Actions secret EXAMPLE_RECORDING_KEY is not defined then recording jobs are skipped.
   CYPRESS_PROJECT_ID: ${{ secrets.EXAMPLE_PROJECT_ID }}
   CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
