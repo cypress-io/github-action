@@ -1,0 +1,28 @@
+name: example-chrome-for-testing
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Chrome for Testing
+        # https://github.com/browser-actions/setup-chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 137
+      - name: Cypress info
+        uses: ./
+        with:
+          # just for full picture after installing Cypress
+          # print information about detected browsers, etc
+          # see https://on.cypress.io/command-line#cypress-info
+          build: npm run info
+          working-directory: examples/browser
+          browser: chrome-for-testing
