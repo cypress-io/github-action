@@ -8,7 +8,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "14.4.1",
+    "cypress": "14.5.0",
     "webpack": "^5.99.6",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.1"
