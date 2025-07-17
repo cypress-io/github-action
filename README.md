@@ -384,7 +384,7 @@ For more information, visit [the Cypress command-line docs](https://on.cypress.i
 
 ### Project
 
-Specify the [project to run](https://docs.cypress.io/guides/guides/command-line.html#cypress-run-project-lt-project-path-gt) with `project` parameter
+Specify the [project to run](https://on.cypress.io/command-line#cypress-run-project-lt-project-path-gt) with the `project` parameter
 
 ```yml
 name: Cypress tests
@@ -399,10 +399,14 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          project: ./some/nested/folder
+          project: ./test-subdirectory
 ```
 
-For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-project-lt-project-path-gt).
+The `project` parameter may be used to pass on the location of a sub-directory containing a Cypress configuration file and Cypress tests specs. For more information, visit [the Cypress command-line docs](https://on.cypress.io/command-line#cypress-run-project-lt-project-path-gt).
+
+A package manager lock file, including Cypress, must be provided in the root of the repository so that the action is able to [install Cypress](#installation).
+
+If the parameter [working-directory](#working-directory) is also defined, then this is the location to place the package manager lock file, and the project directory would be a subdirectory of the [working-directory](#working-directory). The `project` parameter location may not be above the level of a specified [working-directory](#working-directory) in the file hierarchy.
 
 ### Record test results on Cypress Cloud
 
@@ -1091,8 +1095,8 @@ repo/
       fixtures/
       support/
     cypress.config.js
-  package.json
-  package-lock.json
+    package.json
+    package-lock.json
 ```
 
 We use `working-directory: app-test` to match the above example directory structure:
@@ -1574,7 +1578,7 @@ There is no equivalent action parameter for the CLI options `help`, `key`, `--no
 
 ### Installation
 
-This action installs local dependencies using lock files. Ensure that exactly one type of lock file is used for each project or working-directory from the following supported package managers:
+This action installs local dependencies using lock files. Ensure that exactly one type of lock file is used at the root of the repo or in each working-directory of a monorepo from the following supported package managers:
 
 | Lock file           | Package Manager                                                                                  | Installation command             |
 | ------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------- |
