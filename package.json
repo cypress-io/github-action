@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.29.0",
-    "@stylistic/eslint-plugin": "5.0.0",
+    "@stylistic/eslint-plugin": "5.2.0",
     "@types/node": "22.13.10",
     "@vercel/ncc": "0.38.1",
     "eslint": "9.29.0",
