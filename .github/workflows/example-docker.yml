@@ -16,7 +16,7 @@ jobs:
     # Cypress Docker image documentation on https://github.com/cypress-io/cypress-docker-images
     # Available cypress/browsers tags listed on https://hub.docker.com/r/cypress/browsers/tags
     container:
-      image: cypress/browsers:22.16.0
+      image: cypress/browsers:22.18.0
       options: --user 1001
     steps:
       - name: Checkout
