@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Chrome for Testing
         # https://github.com/browser-actions/setup-chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: 137
       - name: Cypress info
