@@ -1,4 +1,9 @@
 name: example-start-and-pnpm-workspaces
+# In the example jobs, the action is called with
+# uses: ./
+# which runs the action code from the current branch.
+# If you copy this workflow to another repo, replace the above line with
+# uses: cypress-io/github-action@v6
 on:
   push:
     branches:
@@ -45,7 +50,7 @@ jobs:
 
       - name: Cypress test Single
         # Run Cypress in examples/start-and-pnpm-workspaces/packages/workspace-1 only
-        uses: ./ # equivalent to using cypress-io/github-action@v6
+        uses: ./
         with:
           # Do not attempt to install dependencies in the workspace using the action.
           # There is no pnpm-lock.yaml file in a workspace for
@@ -78,7 +83,7 @@ jobs:
         run: npm install -g pnpm@10
 
       - name: Install dependencies
-        uses: ./ # approximately equivalent to using cypress-io/github-action@v6
+        uses: ./
         with:
           working-directory: examples/start-and-pnpm-workspaces
           runTests: false
@@ -87,7 +92,7 @@ jobs:
         # Run Cypress in
         # examples/start-and-pnpm-workspaces/packages/workspace-1 and
         # examples/start-and-pnpm-workspaces/packages/workspace-2
-        uses: ./ # equivalent to using cypress-io/github-action@v6
+        uses: ./
         with:
           install: false
           working-directory: ${{ matrix.cypress.working_directory }}

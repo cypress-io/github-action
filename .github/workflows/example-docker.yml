@@ -24,7 +24,7 @@ jobs:
       # replace with the following for regular use:
       # uses: cypress-io/github-action@v6
       - name: Cypress tests
-        uses: ./
+        uses: ./ # if copying, replace with cypress-io/github-action@v6
         with:
           working-directory: examples/basic
           browser: ${{ matrix.browser }}

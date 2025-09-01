@@ -32,7 +32,7 @@ jobs:
         run: npm install cypress@15.0.0 --save-dev
 
       - name: Cypress tests 🧪
-        uses: ./
+        uses: ./ # if copying, replace with cypress-io/github-action@v6
         with:
           working-directory: examples/install-only
           install: false

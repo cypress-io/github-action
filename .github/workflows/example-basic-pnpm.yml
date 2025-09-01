@@ -32,10 +32,7 @@ jobs:
           cache-dependency-path: examples/basic-pnpm/pnpm-lock.yaml
 
       - name: Cypress tests
-        # if you copy this workflow to another repository
-        # take the next line as replacement for ./
-        # uses: cypress-io/github-action@v6
-        uses: ./
+        uses: ./ # if copying, replace with cypress-io/github-action@v6
         with:
           working-directory: examples/basic-pnpm
           # print information about detected browsers, etc

@@ -6,6 +6,12 @@ name: example-build-artifacts
 # The test jobs use the results from the build job:
 # - dependencies and the Cypress binary are installed using dependency caching
 # - build results are restored using actions/download-artifact
+#
+# In the example jobs, the action is called with
+# uses: ./
+# which runs the action code from the current branch.
+# If you copy this workflow to another repo, replace the above line with
+# uses: cypress-io/github-action@v6
 on:
   push:
     branches:
@@ -21,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build app
-        uses: ./ # refers to local instance of cypress-io/github-action@v6
+        uses: ./
         with:
           runTests: false # only build app, don't test yet
           build: npm run build

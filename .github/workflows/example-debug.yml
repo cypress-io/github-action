@@ -1,15 +1,13 @@
 name: example-debug
-
 # This workflow demonstrates how to use the DEBUG environment variable to get debug output.
 # See also https://github.com/cypress-io/github-action/blob/master/README.md#debugging and
 # https://on.cypress.io/troubleshooting#Print-DEBUG-logs
-
+#
 # In the example jobs, the action is called with
 # uses: ./
 # which runs the action code from the current branch.
 # If you copy this workflow to another repo, replace the above line with
 # uses: cypress-io/github-action@v6
-
 on:
   push:
     branches:

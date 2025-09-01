@@ -27,7 +27,7 @@ jobs:
           npm install -g corepack
           corepack enable yarn
       - name: Custom Yarn command
-        uses: ./
+        uses: ./ # if copying, replace with cypress-io/github-action@v6
         with:
           working-directory: examples/yarn-modern
           # https://yarnpkg.com/cli/install

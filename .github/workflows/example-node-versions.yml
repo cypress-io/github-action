@@ -26,6 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: ./
+      - uses: ./ # if copying, replace with cypress-io/github-action@v6
         with:
           working-directory: examples/node-versions
