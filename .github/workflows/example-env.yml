@@ -2,7 +2,7 @@ name: example-env
 # In the example jobs, the action is called with
 # uses: ./
 # which runs the action code from the current branch.
-# If you copy this workflow to another repo, replace the above line with
+# If you copy this workflow to another repo, replace the line with
 # uses: cypress-io/github-action@v6
 on:
   push:
