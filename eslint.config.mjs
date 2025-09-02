@@ -12,6 +12,7 @@ export default [
       'dist/',
       'examples/component-tests/dist/',
       'examples/nextjs/.next/',
+      'examples/nextjs/build/',
       'examples/nextjs/src/app/',
       'examples/wait-on-vite/dist/',
       'examples/**/.pnp.*',
