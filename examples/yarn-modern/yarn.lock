@@ -143,13 +143,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^3.2.0":
-  version: 3.2.4
-  resolution: "async@npm:3.2.4"
-  checksum: 10c0/b5d02fed64717edf49e35b2b156debd9cf524934ea670108fa5528e7615ed66a5e0bf6c65f832c9483b63aa7f0bffe3e588ebe8d58a539b833798d324516e1c9
-  languageName: node
-  linkType: hard
-
 "asynckit@npm:^0.4.0":
   version: 0.4.0
   resolution: "asynckit@npm:0.4.0"
@@ -393,9 +386,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:15.0.0":
-  version: 15.0.0
-  resolution: "cypress@npm:15.0.0"
+"cypress@npm:15.1.0":
+  version: 15.1.0
+  resolution: "cypress@npm:15.1.0"
   dependencies:
     "@cypress/request": "npm:^3.0.9"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -422,7 +415,6 @@ __metadata:
     extract-zip: "npm:2.0.1"
     figures: "npm:^3.2.0"
     fs-extra: "npm:^9.1.0"
-    getos: "npm:^3.2.1"
     hasha: "npm:5.2.2"
     is-installed-globally: "npm:~0.4.0"
     lazy-ass: "npm:^1.6.0"
@@ -437,13 +429,14 @@ __metadata:
     request-progress: "npm:^3.0.0"
     semver: "npm:^7.7.1"
     supports-color: "npm:^8.1.1"
+    systeminformation: "npm:5.27.7"
     tmp: "npm:~0.2.4"
     tree-kill: "npm:1.2.2"
     untildify: "npm:^4.0.0"
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/601d16909fe013c383ad49f6f736183bcbe64e7b774ba696842d06d865e013f1d64b3fe176e89ce0c127004a97d1d1035ec2f4bf71b00faedbf1b8761cc969b6
+  checksum: 10c0/af763099acefc037357f73b1233cb45848287127e528f0150da0c5f58df7502fff5be00667d63815f47a1da38b28a4c2495f586ffc174cf31ca4132759fd7343
   languageName: node
   linkType: hard
 
@@ -591,7 +584,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-yarn-modern@workspace:."
   dependencies:
-    cypress: "npm:15.0.0"
+    cypress: "npm:15.1.0"
   languageName: unknown
   linkType: soft
 
@@ -750,15 +743,6 @@ __metadata:
   dependencies:
     pump: "npm:^3.0.0"
   checksum: 10c0/43797ffd815fbb26685bf188c8cfebecb8af87b3925091dd7b9a9c915993293d78e3c9e1bce125928ff92f2d0796f3889b92b5ec6d58d1041b574682132e0a80
-  languageName: node
-  linkType: hard
-
-"getos@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "getos@npm:3.2.1"
-  dependencies:
-    async: "npm:^3.2.0"
-  checksum: 10c0/21556fca1da4dfc8f1707261b4f9ff19b9e9bfefa76478249d2abddba3cd014bd6c5360634add1590b27e0b27d422e8f997dddaa0234aae1fa4c54f33f82e841
   languageName: node
   linkType: hard
 
@@ -1434,6 +1418,16 @@ __metadata:
   dependencies:
     has-flag: "npm:^4.0.0"
   checksum: 10c0/ea1d3c275dd604c974670f63943ed9bd83623edc102430c05adb8efc56ba492746b6e95386e7831b872ec3807fd89dd8eb43f735195f37b5ec343e4234cc7e89
+  languageName: node
+  linkType: hard
+
+"systeminformation@npm:5.27.7":
+  version: 5.27.7
+  resolution: "systeminformation@npm:5.27.7"
+  bin:
+    systeminformation: lib/cli.js
+  checksum: 10c0/92a9f3a2f37e135422da745be8e51984d66ae4c411e3d5c0ffdab9aef5cd8abc45d0d476bfa28c4bfee30a6e73722649544a88c4b6fa82b426c291adbfcdd8f9
+  conditions: (os=darwin | os=linux | os=win32 | os=freebsd | os=openbsd | os=netbsd | os=sunos | os=android)
   languageName: node
   linkType: hard
 
