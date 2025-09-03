@@ -14,7 +14,12 @@ name: example-custom-ci-build-id
 # is generated _again_ on workflow re-run. This example
 # shows how to create a unique ID then pass it to
 # multiple testing jobs running in parallel.
-
+#
+# In the example jobs, the action is called with
+# uses: ./
+# which runs the action code from the current branch.
+# If you copy this workflow to another repo, replace the line with
+# uses: cypress-io/github-action@v6
 on:
   push:
     branches:

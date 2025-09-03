@@ -3,6 +3,11 @@ name: example-recording
 # To set up this workflow to work with your own Cypress Cloud project
 # refer to the README in the example directory examples/recording.
 #
+# In the example jobs, the action is called with
+# uses: ./
+# which runs the action code from the current branch.
+# If you copy this workflow to another repo, replace the line with
+# uses: cypress-io/github-action@v6
 on:
   push:
     branches:

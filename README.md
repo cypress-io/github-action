@@ -157,6 +157,12 @@ Alternatively, to mitigate unforeseen breaks, bind to a specific [tag](https://g
 
 The changes associated with each tag are shown under GitHub's [releases](https://github.com/cypress-io/github-action/releases) list. Refer also to the [CHANGELOG](./CHANGELOG.md) for an overview of major changes.
 
+The workflows in the [examples](./examples/) directory use the latest commit from the repo's current branch. This allows all tests to run in CI before release. If you copy any of the examples to your own repo, you should replace `./` and specify instead the action and version as described above.
+
+```yml
+- uses: ./ # replace with cypress-io/github-action@v6
+```
+
 ### Browser
 
 Specify the browser name or path with the `browser` parameter. The default browser, if none is specified, is the built-in [Electron browser](https://on.cypress.io/guides/guides/launching-browsers#Electron-Browser).
@@ -660,7 +666,7 @@ jobs:
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
-        uses: ./
+        uses: cypress-io/github-action@v6
         with:
           working-directory: examples/quiet
           quiet: true
