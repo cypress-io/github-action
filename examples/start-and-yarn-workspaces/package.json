@@ -3,8 +3,5 @@
   "workspaces": [
     "workspace-1",
     "workspace-2"
-  ],
-  "resolutions": {
-    "on-headers": "~1.1.0"
-  }
+  ]
 }

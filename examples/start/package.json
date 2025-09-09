@@ -12,11 +12,6 @@
   "private": true,
   "devDependencies": {
     "cypress": "15.1.0",
-    "serve": "14.2.4"
-  },
-  "overrides": {
-    "compression": {
-      "on-headers": "1.1.0"
-    }
+    "serve": "14.2.5"
   }
 }
