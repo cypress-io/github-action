@@ -15,7 +15,7 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "cypress": "15.1.0",
+    "cypress": "15.2.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17"
   }
