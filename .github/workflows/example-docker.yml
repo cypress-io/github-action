@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # replace with the following for regular use:
-      # uses: cypress-io/github-action@v6
       - name: Cypress tests
         uses: ./ # if copying, replace with cypress-io/github-action@v6
         with:
