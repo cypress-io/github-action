@@ -198,9 +198,9 @@ jobs:
     name: E2E on Chrome for Testing
     steps:
       - uses: actions/checkout@v4
-      - uses: browser-actions/setup-chrome@v1
+      - uses: browser-actions/setup-chrome@v2
         with:
-          chrome-version: 137
+          chrome-version: 140
       - uses: cypress-io/github-action@v6
         with:
           browser: chrome-for-testing
