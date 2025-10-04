@@ -1,41 +1,37 @@
+import { defineConfig, globalIgnores } from 'eslint/config'
 import globals from 'globals'
-import pluginJs from '@eslint/js'
+import js from '@eslint/js'
 import pluginCypress from 'eslint-plugin-cypress'
 import stylistic from '@stylistic/eslint-plugin'
 
-export default [
-  pluginJs.configs.recommended,
-  pluginCypress.configs.recommended,
+export default defineConfig([
+  globalIgnores([
+    'dist/',
+    'examples/component-tests/dist/',
+    'examples/nextjs/.next/',
+    'examples/nextjs/build/',
+    'examples/nextjs/src/app/',
+    'examples/wait-on-vite/dist/',
+    'examples/**/.pnp.*',
+  ]),
   {
-    name: 'global-ignores',
-    ignores: [
-      'dist/',
-      'examples/component-tests/dist/',
-      'examples/nextjs/.next/',
-      'examples/nextjs/build/',
-      'examples/nextjs/src/app/',
-      'examples/wait-on-vite/dist/',
-      'examples/**/.pnp.*',
-    ],
-  },
-  {
-    name: 'all-js',
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
-  },
-  {
-    name: 'style',
     files: ['eslint.config.mjs', 'examples/**/*.js'],
-    ...stylistic.configs.recommended,
+    extends:
+      [
+        js.configs.recommended,
+        pluginCypress.configs.recommended,
+        stylistic.configs.recommended,
+      ],
     rules: {
-      '@stylistic/indent': ['error', 2],
+      '@stylistic/arrow-parens': ['error', 'always'],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      '@stylistic/indent': ['error', 2],
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/semi': ['error', 'never'],
+      '@stylistic/space-before-function-paren': ['error', 'always'],
+    },
+    languageOptions: {
+      globals: globals.node,
     },
   },
-]
+])
