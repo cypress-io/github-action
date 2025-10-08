@@ -17,7 +17,7 @@ log('creating the server on port %d', port)
 const server = http.createServer((req, res) => {
   const reqTimestamp = +new Date()
   log('request at %d: %s %s', reqTimestamp, req.method, req.url)
-  setTimeout(function() {
+  setTimeout(function () {
     log('responding to request from %d', reqTimestamp)
     res.writeHead(200)
     res.end('all good')
