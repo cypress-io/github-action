@@ -19,7 +19,7 @@
     "format:all:check": "prettier --check .",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "check:markdown-links": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check",
+    "check:markdown-links": "find *.md docs/*.md -print0 | xargs -0 -n1 markdown-link-check -c markdownLinkConfig.json",
     "update:cypress": "./scripts/update-cypress-latest.sh",
     "prepare": "husky"
   },
