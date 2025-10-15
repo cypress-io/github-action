@@ -1,7 +1,7 @@
 {
   "ignorePatterns": [
     {
-      "pattern": "^https://www.npmjs.com"
+      "pattern": "^https://www\\.npmjs\\.com"
     }
   ]
 }
