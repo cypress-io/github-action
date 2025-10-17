@@ -80423,92 +80423,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 9922:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const got = __nccwpck_require__(3061)
-const debug = __nccwpck_require__(8237)('@cypress/github-action')
-
-/**
- * A small utility for checking when an URL responds, kind of
- * a poor man's https://www.npmjs.com/package/wait-on. This version
- * is implemented using https://github.com/sindresorhus/got
- */
-const ping = (url, timeout) => {
-  if (!timeout) {
-    throw new Error('Expected timeout in ms')
-  }
-
-  // make copy of the error codes that "got" retries on
-  const errorCodes = [...got.defaults.options.retry.errorCodes]
-  errorCodes.push('ESOCKETTIMEDOUT')
-
-  // we expect the server to respond within a time limit
-  // and if it does not - retry up to total "timeout" duration
-  const individualPingTimeout = Math.min(timeout, 30000)
-
-  // add to the timeout max individual ping timeout
-  // to avoid long-waiting ping from "rolling" over the end
-  // and preventing pinging the last time
-  timeout += individualPingTimeout
-  const limit = Math.ceil(timeout / individualPingTimeout)
-
-  debug(`total ping timeout ${timeout}`)
-  debug(`individual ping timeout ${individualPingTimeout}ms`)
-  debug(`retries limit ${limit}`)
-
-  const start = +new Date()
-  return got(url, {
-    headers: {
-      Accept: 'text/html, application/json, text/plain, */*'
-    },
-    timeout: individualPingTimeout,
-    errorCodes,
-    retry: {
-      limit,
-      calculateDelay({ error, attemptCount }) {
-        if (error) {
-          debug(`got error ${JSON.stringify(error)}`)
-        }
-        const now = +new Date()
-        const elapsed = now - start
-        debug(
-          `${elapsed}ms ${error.method} ${error.host} ${error.code} attempt ${attemptCount}`
-        )
-        if (elapsed > timeout) {
-          console.error(
-            '%s timed out on retry %d of %d, elapsed %dms, limit %dms',
-            url,
-            attemptCount,
-            limit,
-            elapsed,
-            timeout
-          )
-          return 0
-        }
-
-        // if the error code is ECONNREFUSED use shorter timeout
-        // because the server is probably starting
-        if (error.code === 'ECONNREFUSED') {
-          return 1000
-        }
-
-        // default "long" timeout
-        return individualPingTimeout
-      }
-    }
-  }).then(() => {
-    const now = +new Date()
-    const elapsed = now - start
-    debug(`pinging ${url} has finished ok after ${elapsed}ms`)
-  })
-}
-
-module.exports = { ping }
-
-
-/***/ }),
-
 /***/ 9491:
 /***/ ((module) => {
 
@@ -91899,6 +91813,92 @@ __webpack_unused_export__ = defaultContentType
 
 /***/ }),
 
+/***/ 2851:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const got = __nccwpck_require__(3061)
+const debug = __nccwpck_require__(8237)('@cypress/github-action')
+
+/**
+ * A small utility for checking when an URL responds, kind of
+ * a poor man's https://www.npmjs.com/package/wait-on. This version
+ * is implemented using https://github.com/sindresorhus/got
+ */
+const ping = (url, timeout) => {
+  if (!timeout) {
+    throw new Error('Expected timeout in ms')
+  }
+
+  // make copy of the error codes that "got" retries on
+  const errorCodes = [...got.defaults.options.retry.errorCodes]
+  errorCodes.push('ESOCKETTIMEDOUT')
+
+  // we expect the server to respond within a time limit
+  // and if it does not - retry up to total "timeout" duration
+  const individualPingTimeout = Math.min(timeout, 30000)
+
+  // add to the timeout max individual ping timeout
+  // to avoid long-waiting ping from "rolling" over the end
+  // and preventing pinging the last time
+  timeout += individualPingTimeout
+  const limit = Math.ceil(timeout / individualPingTimeout)
+
+  debug(`total ping timeout ${timeout}`)
+  debug(`individual ping timeout ${individualPingTimeout}ms`)
+  debug(`retries limit ${limit}`)
+
+  const start = +new Date()
+  return got(url, {
+    headers: {
+      Accept: 'text/html, application/json, text/plain, */*'
+    },
+    timeout: individualPingTimeout,
+    errorCodes,
+    retry: {
+      limit,
+      calculateDelay({ error, attemptCount }) {
+        if (error) {
+          debug(`got error ${JSON.stringify(error)}`)
+        }
+        const now = +new Date()
+        const elapsed = now - start
+        debug(
+          `${elapsed}ms ${error.method} ${error.host} ${error.code} attempt ${attemptCount}`
+        )
+        if (elapsed > timeout) {
+          console.error(
+            '%s timed out on retry %d of %d, elapsed %dms, limit %dms',
+            url,
+            attemptCount,
+            limit,
+            elapsed,
+            timeout
+          )
+          return 0
+        }
+
+        // if the error code is ECONNREFUSED use shorter timeout
+        // because the server is probably starting
+        if (error.code === 'ECONNREFUSED') {
+          return 1000
+        }
+
+        // default "long" timeout
+        return individualPingTimeout
+      }
+    }
+  }).then(() => {
+    const now = +new Date()
+    const elapsed = now - start
+    debug(`pinging ${url} has finished ok after ${elapsed}ms`)
+  })
+}
+
+module.exports = { ping }
+
+
+/***/ }),
+
 /***/ 8570:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
@@ -93275,7 +93275,7 @@ const quote = __nccwpck_require__(5427)
 const cliParser = __nccwpck_require__(8604)()
 const findYarnWorkspaceRoot = __nccwpck_require__(6748)
 const debug = __nccwpck_require__(8237)('@cypress/github-action')
-const { ping } = __nccwpck_require__(9922)
+const { ping } = __nccwpck_require__(2851)
 const { SUMMARY_ENV_VAR } = __nccwpck_require__(1327)
 
 /**
