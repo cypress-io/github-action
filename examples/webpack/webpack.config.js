@@ -7,7 +7,7 @@ module.exports = {
   },
   devServer: {
     static: {
-      directory:  __dirname,
+      directory: __dirname,
     },
   },
   mode: 'development',
