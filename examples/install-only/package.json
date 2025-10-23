@@ -11,6 +11,6 @@
     "debug": "4.3.6"
   },
   "devDependencies": {
-    "cypress": "15.4.0"
+    "cypress": "15.5.0"
   }
 }
