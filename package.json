@@ -33,6 +33,7 @@
   ],
   "author": "Cypress-io",
   "license": "MIT",
+  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/cypress-io/github-action/issues"
   },
