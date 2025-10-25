@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           # Action runs: using: node20 as defined in
           # https://github.com/cypress-io/github-action/blob/master/action.yml
