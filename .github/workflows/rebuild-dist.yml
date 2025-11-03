@@ -37,5 +37,5 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v7 # https://github.com/stefanzweifel/git-auto-commit-action
         with:
-          commit_message: "chore: rebuild action after dependency update"
+          commit_message: 'chore: rebuild action after dependency update'
           file_pattern: 'dist/*'
