@@ -1,6 +1,7 @@
 {
+  "configMigration": true,
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "automerge": true,
   "major": {
@@ -10,7 +11,6 @@
     "type: dependencies",
     "renovate"
   ],
-  "masterIssue": true,
   "prConcurrentLimit": 5,
   "prHourlyLimit": 1,
   "timezone": "America/New_York",
