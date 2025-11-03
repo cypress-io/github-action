@@ -1,0 +1,41 @@
+name: Rebuild Action after Renovate PR
+# cypress-io/github-action runs from the dist/ directory
+# After Renovate has created a PR that updates dependencies,
+# the built action in dist/ will be out of date.
+# This workflow ensures that the contents of this directory
+# are in sync with the source files by using
+# npm run build which in turn calls ncc build to rebuild
+# the dist/ directory
+on:
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  rebuild-dist:
+    if: startsWith(github.head_ref, 'renovate/')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5 # https://github.com/actions/checkout
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Setup Node
+        uses: actions/setup-node@v4 # https://github.com/actions/setup-node
+        with:
+          # Action runs: using: node20 as defined in
+          # https://github.com/cypress-io/github-action/blob/master/action.yml
+          # Node.js minor version is aligned to
+          # https://github.com/actions/runner/blob/main/src/Misc/externals.sh
+          node-version: 20.19.5
+      - run: npm ci
+      - run: npm run format
+      - run: npm run build
+
+      - uses: stefanzweifel/git-auto-commit-action@v7 # https://github.com/stefanzweifel/git-auto-commit-action
+        with:
+          commit_message: 'chore: rebuild action after dependency update'
+          file_pattern: 'dist/*'
