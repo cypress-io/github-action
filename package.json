@@ -59,7 +59,7 @@
     "@vercel/ncc": "0.38.4",
     "eslint": "9.38.0",
     "eslint-plugin-cypress": "5.2.0",
-    "globals": "16.4.0",
+    "globals": "16.5.0",
     "husky": "9.1.7",
     "markdown-link-check": "3.14.1",
     "prettier": "3.6.2"
