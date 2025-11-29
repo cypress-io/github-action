@@ -25,7 +25,7 @@ jobs:
     name: Single workspace
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
         # pnpm is not installed by default on GitHub runners
       - name: Install pnpm
@@ -71,7 +71,7 @@ jobs:
     name: Multiple workspaces
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install pnpm
         run: npm install -g pnpm@10

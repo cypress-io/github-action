@@ -20,7 +20,7 @@ jobs:
       options: --user 1001
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress tests
         uses: ./ # if copying, replace with cypress-io/github-action@v6
         with:
