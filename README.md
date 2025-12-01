@@ -1200,22 +1200,20 @@ jobs:
 
 ### pnpm workspaces
 
-If you are using [pnpm workspaces](https://pnpm.io/workspaces) you need to install dependencies and run Cypress tests in a workspace in separate steps. The snippet below shows this principle.
+The action does not directly support using [pnpm workspaces](https://pnpm.io/workspaces) (see feature request [#1144](https://github.com/cypress-io/github-action/issues/1144)). As a workaround, you can install dependencies and run Cypress tests in a workspace in separate steps. The snippet below shows this principle.
 
 ```yml
       ...
       - name: Install dependencies
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: examples/start-and-pnpm-workspaces
-          runTests: false
+        run: pnpm install --frozen-lockfile
+        working-directory: examples/start-and-pnpm-workspaces
 
       - name: Cypress test
         uses: cypress-io/github-action@v6
         with:
           install: false
           working-directory: examples/start-and-pnpm-workspaces/packages/workspace-1
-        ...
+      ...
 ```
 
 [![pnpm workspaces example](https://github.com/cypress-io/github-action/actions/workflows/example-start-and-pnpm-workspaces.yml/badge.svg)](.github/workflows/example-start-and-pnpm-workspaces.yml)
