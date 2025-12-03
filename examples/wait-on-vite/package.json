@@ -10,7 +10,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.7.0",
+    "cypress": "15.7.1",
     "vite": "^7.1.5"
   }
 }
