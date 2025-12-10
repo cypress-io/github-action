@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install Chrome for Testing
         # https://github.com/browser-actions/setup-chrome
         uses: browser-actions/setup-chrome@v2

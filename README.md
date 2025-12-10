@@ -99,7 +99,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
@@ -124,7 +124,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -177,7 +177,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: E2E on Chrome
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           browser: chrome
@@ -197,7 +197,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: E2E on Chrome for Testing
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: 140
@@ -218,7 +218,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: E2E on Firefox
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           browser: firefox
@@ -236,7 +236,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: E2E on Edge
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           browser: edge
@@ -255,7 +255,7 @@ jobs:
   cypress-run:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           browser: chrome
@@ -278,7 +278,7 @@ jobs:
       image: cypress/browsers:latest
       options: --user 1001
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           browser: chrome
@@ -302,7 +302,7 @@ jobs:
       image: cypress/included:latest
       options: --user 1001
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           browser: chrome
@@ -326,7 +326,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run with env
         uses: cypress-io/github-action@v6
@@ -344,7 +344,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run with env
         uses: cypress-io/github-action@v6
@@ -370,7 +370,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -401,7 +401,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -433,7 +433,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -463,7 +463,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -496,7 +496,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -534,7 +534,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -573,7 +573,7 @@ jobs:
       - run: node -v
 
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -606,7 +606,7 @@ jobs:
     name: E2E
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -633,7 +633,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: Artifacts
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
       # after the test run completes store videos and any screenshots
       - uses: actions/upload-artifact@v4
@@ -662,7 +662,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
@@ -687,7 +687,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -710,7 +710,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -744,7 +744,7 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # because of "record" and "parallel" parameters
       # these containers will load balance all found tests among themselves
@@ -805,7 +805,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -824,7 +824,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -843,7 +843,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -869,7 +869,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -899,7 +899,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -988,7 +988,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -1015,7 +1015,7 @@ Correct example snippet:
 
 ```yml
 steps:
-  - uses: actions/checkout@v5
+  - uses: actions/checkout@v6
   - uses: cypress-io/github-action@v6
     with:
       command: npm run custom-test
@@ -1038,7 +1038,7 @@ jobs:
         # run 3 copies of the current job in parallel
         containers: [1, 2, 3]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           record: true
@@ -1073,7 +1073,7 @@ jobs:
   smoke-tests:
     needs: ['prepare']
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           record: true
@@ -1113,7 +1113,7 @@ jobs:
   cypress-run:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           start: npm start
@@ -1151,7 +1151,7 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install root dependencies
         run: npm ci
 
@@ -1179,7 +1179,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -1232,7 +1232,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -1255,7 +1255,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - run: corepack enable # (experimental and optional)
       - name: Set up Yarn cache
         uses: actions/setup-node@v4
@@ -1289,7 +1289,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -1318,7 +1318,7 @@ jobs:
     # and tests in a subfolder like "workspace-1"
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         with:
           working-directory: examples/start-and-yarn-workspaces/workspace-1
@@ -1350,7 +1350,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       # run Cypress tests and record them under the same run
       # associated with commit SHA and just give a different group name
       - name: Cypress run
@@ -1382,7 +1382,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
 ```
 
@@ -1401,7 +1401,7 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install dependencies
         uses: cypress-io/github-action@v6
         with:
@@ -1434,7 +1434,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build app
         uses: cypress-io/github-action@v6
         with:
@@ -1452,7 +1452,7 @@ jobs:
     needs: build
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Restore build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -1476,7 +1476,7 @@ Finally, you might not need this GH Action at all. For example, if you want to s
 If the project has many dependencies, but you want to install just Cypress you can combine this action with `actions/cache` and `npm i cypress` commands yourself.
 
 ```yml
-- uses: actions/checkout@v5
+- uses: actions/checkout@v6
 - uses: actions/cache@v4
   with:
     path: |
@@ -1503,7 +1503,7 @@ jobs:
     # to prevent a hanging process from using all your CI minutes
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v6
         # you can specify individual step timeout too
         timeout-minutes: 5
@@ -1546,7 +1546,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run # install dependencies and run Cypress E2E tests
         uses: cypress-io/github-action@v6 # replaces CLI cypress run
         with:
@@ -1733,7 +1733,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -1750,7 +1750,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress install
         uses: cypress-io/github-action@v6
         with:
@@ -1781,7 +1781,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress nightly tests 🌃
         uses: cypress-io/github-action@v6
 ```
@@ -1801,7 +1801,7 @@ jobs:
   tests:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Cypress headless tests
         uses: cypress-io/github-action@v6
         with:
@@ -1830,7 +1830,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:

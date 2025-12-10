@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # cache npm modules and Cypress binary folder
       # we can use "package-lock.json" as the key file
