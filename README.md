@@ -1477,7 +1477,7 @@ If the project has many dependencies, but you want to install just Cypress you c
 
 ```yml
 - uses: actions/checkout@v6
-- uses: actions/cache@v4
+- uses: actions/cache@v5
   with:
     path: |
       ~/.cache/Cypress
