@@ -10,12 +10,12 @@
     "test": "cypress run"
   },
   "dependencies": {
-    "next": "^16.0.8",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "next": "^16.0.10",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.17",
+    "@tailwindcss/postcss": "^4.1.18",
     "cypress": "15.7.1",
     "tailwindcss": "^4"
   }
