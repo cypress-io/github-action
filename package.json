@@ -43,7 +43,7 @@
     "@actions/core": "2.0.1",
     "@actions/exec": "2.0.0",
     "@actions/io": "2.0.0",
-    "@octokit/core": "6.1.4",
+    "@octokit/core": "7.0.6",
     "argument-vector": "1.0.2",
     "debug": "4.4.0",
     "find-yarn-workspace-root": "2.0.0",
