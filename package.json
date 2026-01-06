@@ -53,11 +53,11 @@
     "supports-color": "9.3.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.38.0",
+    "@eslint/js": "9.39.2",
     "@stylistic/eslint-plugin": "5.5.0",
     "@types/node": "24.0.15",
     "@vercel/ncc": "0.38.4",
-    "eslint": "9.38.0",
+    "eslint": "9.39.2",
     "eslint-plugin-cypress": "5.2.0",
     "globals": "16.4.0",
     "husky": "9.1.7",
