@@ -16,5 +16,11 @@
   "timezone": "America/New_York",
   "schedule": [
     "every weekend"
+  ],
+  "packageRules": [
+    {
+      "matchDepTypes": ["dependencies"],
+      "enabled": false
+    }
   ]
 }
