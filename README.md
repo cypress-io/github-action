@@ -566,8 +566,8 @@ jobs:
         node: [20, 22, 24, 25]
     name: E2E on Node v${{ matrix.node }}
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
@@ -1185,9 +1185,9 @@ jobs:
         with:
           version: 10
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'pnpm'
           cache-dependency-path: examples/basic-pnpm/pnpm-lock.yaml
       - name: Cypress run
@@ -1258,9 +1258,9 @@ jobs:
         uses: actions/checkout@v6
       - run: corepack enable # (experimental and optional)
       - name: Set up Yarn cache
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: yarn
           cache-dependency-path: examples/yarn-modern/yarn.lock
       - name: Cypress run
@@ -1345,8 +1345,8 @@ jobs:
         node: [20, 22, 24, 25]
     name: E2E on Node v${{ matrix.node }}
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
       - name: Checkout
@@ -1379,7 +1379,7 @@ jobs:
         node: [20, 22, 24, 25]
     name: E2E on Node v${{ matrix.node }}
     steps:
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
       - uses: actions/checkout@v6
