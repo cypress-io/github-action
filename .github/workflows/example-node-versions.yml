@@ -20,8 +20,8 @@ jobs:
           - 25
     name: Cypress E2E on Node v${{ matrix.node }}
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
