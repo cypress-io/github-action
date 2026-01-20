@@ -41,11 +41,11 @@ jobs:
       - run: npm ci
       # https://github.com/cycjimmy/semantic-release-action
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v5
+        uses: cycjimmy/semantic-release-action@v6
         id: semantic
         with:
           # https://github.com/semantic-release/semantic-release
-          semantic_version: 24.2.3
+          semantic_version: 25.0.2
           branches: master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

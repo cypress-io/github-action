@@ -53,16 +53,16 @@
     "supports-color": "9.3.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.38.0",
-    "@stylistic/eslint-plugin": "5.5.0",
-    "@types/node": "24.0.15",
+    "@eslint/js": "9.39.2",
+    "@stylistic/eslint-plugin": "5.7.0",
+    "@types/node": "25.0.8",
     "@vercel/ncc": "0.38.4",
-    "eslint": "9.38.0",
-    "eslint-plugin-cypress": "5.2.0",
-    "globals": "16.4.0",
+    "eslint": "9.39.2",
+    "eslint-plugin-cypress": "5.2.1",
+    "globals": "17.0.0",
     "husky": "9.1.7",
     "markdown-link-check": "3.14.2",
-    "prettier": "3.6.2"
+    "prettier": "3.8.0"
   },
   "publishConfig": {
     "access": "public"
