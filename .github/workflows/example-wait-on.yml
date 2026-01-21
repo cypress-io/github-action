@@ -3,7 +3,7 @@ name: example-wait-on
 # uses: ./
 # which runs the action code from the current branch.
 # If you copy this workflow to another repo, replace the line with
-# uses: cypress-io/github-action@v6
+# uses: cypress-io/github-action@v7
 on:
   push:
     branches:

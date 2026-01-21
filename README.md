@@ -103,7 +103,7 @@ jobs:
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
 ```
 
 [![End-to-End example](https://github.com/cypress-io/github-action/actions/workflows/example-basic.yml/badge.svg)](.github/workflows/example-basic.yml)
@@ -126,7 +126,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           component: true
 ```
@@ -139,20 +139,20 @@ See the example project [component-tests](examples/component-tests/) and the [ex
 
 **Best practice:**
 
-Our examples specify using branch [v6](https://github.com/cypress-io/github-action/tree/v6) which is the action's recommended major version:
+Our examples specify using branch `v7` which is the action's recommended major version:
 
 ```yml
 - name: Cypress run
-  uses: cypress-io/github-action@v6
+  uses: cypress-io/github-action@v7
 ```
 
-When using `cypress-io/github-action@v6` from your workflow file, you will automatically use the latest [tag](https://github.com/cypress-io/github-action/tags) from branch [v6](https://github.com/cypress-io/github-action/tree/v6).
+When using `cypress-io/github-action@v7` from your workflow file, you will automatically use the latest [tag](https://github.com/cypress-io/github-action/tags) from branch `v7`.
 
 Alternatively, to mitigate unforeseen breaks, bind to a specific [tag](https://github.com/cypress-io/github-action/tags), for example:
 
 ```yml
 - name: Cypress run
-  uses: cypress-io/github-action@v6.1.0
+  uses: cypress-io/github-action@v7.0.0
 ```
 
 The changes associated with each tag are shown under GitHub's [releases](https://github.com/cypress-io/github-action/releases) list. Refer also to the [CHANGELOG](./CHANGELOG.md) for an overview of major changes.
@@ -160,7 +160,7 @@ The changes associated with each tag are shown under GitHub's [releases](https:/
 The workflows in the [examples](./examples/) directory use the latest commit from the repo's current branch. This allows all tests to run in CI before release. If you copy any of the examples to your own repo, you should replace `./` and specify instead the action and version as described above.
 
 ```yml
-- uses: ./ # replace with cypress-io/github-action@v6
+- uses: ./ # replace with cypress-io/github-action@v7
 ```
 
 ### Browser
@@ -178,7 +178,7 @@ jobs:
     name: E2E on Chrome
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           browser: chrome
 ```
@@ -201,7 +201,7 @@ jobs:
       - uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: 140
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           browser: chrome-for-testing
 ```
@@ -219,7 +219,7 @@ jobs:
     name: E2E on Firefox
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           browser: firefox
 ```
@@ -237,7 +237,7 @@ jobs:
     name: E2E on Edge
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           browser: edge
 ```
@@ -256,7 +256,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           browser: chrome
           headed: true
@@ -279,7 +279,7 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           browser: chrome
 ```
@@ -303,7 +303,7 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           browser: chrome
         env:
@@ -329,7 +329,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run with env
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           env: host=api.dev.local,port=4222
 ```
@@ -347,7 +347,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run with env
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           CYPRESS_host: api.dev.local
           CYPRESS_port: 4222
@@ -373,7 +373,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           spec: cypress/e2e/spec1.cy.js
 ```
@@ -403,7 +403,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           project: ./test-subdirectory
 ```
@@ -436,7 +436,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
         env:
@@ -465,7 +465,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
         env:
@@ -498,7 +498,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
       - run: echo "PR number is $CYPRESS_PULL_REQUEST_ID"
@@ -537,7 +537,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
         env:
@@ -576,7 +576,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
           tag: node-${{ matrix.node }}
@@ -609,7 +609,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
           # Cancel the run after 2 failed tests
@@ -634,7 +634,7 @@ jobs:
     name: Artifacts
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
       # after the test run completes store videos and any screenshots
       - uses: actions/upload-artifact@v6
         # add the line below to store screenshots only on failures
@@ -666,7 +666,7 @@ jobs:
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: examples/quiet
           quiet: true
@@ -690,7 +690,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
 ```
@@ -713,7 +713,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           config-file: cypress.config-alternate.js
 ```
@@ -749,7 +749,7 @@ jobs:
       # because of "record" and "parallel" parameters
       # these containers will load balance all found tests among themselves
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
           parallel: true
@@ -781,10 +781,10 @@ During staged rollout of a new GitHub-hosted runner version, GitHub may provide 
 
 ```yml
 - name: Run E2E tests
-  uses: cypress-io/github-action@v6
+  uses: cypress-io/github-action@v7
 
 - name: Run Component Testing
-  uses: cypress-io/github-action@v6
+  uses: cypress-io/github-action@v7
   with:
     # we have already installed everything
     install: false
@@ -807,7 +807,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           build: npm run build
 ```
@@ -826,7 +826,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: npm start
 ```
@@ -845,7 +845,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           # Linux and macOS
           start: npm start
@@ -871,7 +871,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: npm run api, npm run web
 ```
@@ -901,7 +901,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: npm start
           # quote the url to be safe against YML parsing surprises
@@ -915,7 +915,7 @@ jobs:
 By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout in seconds using `wait-on-timeout`.
 
 ```yml
-- uses: cypress-io/github-action@v6
+- uses: cypress-io/github-action@v7
   with:
     start: npm start
     wait-on: 'http://localhost:8080/status'
@@ -926,7 +926,7 @@ By default, `wait-on` will retry for 60 seconds. You can pass a custom timeout i
 You can wait for multiple URLs to respond by separating urls with a comma
 
 ```yml
-- uses: cypress-io/github-action@v6
+- uses: cypress-io/github-action@v7
   with:
     # API runs on port 3050
     # Web server runs on port 8080
@@ -940,7 +940,7 @@ The action will wait for the first url to respond, then will check the second ur
 You can even use your own command (usually by using `npm`, `yarn`, `npx`) to wait for the server to respond. For example, if you want to use the [wait-on](https://github.com/jeffbski/wait-on) utility to ping the server and run the Cypress tests after the server responds:
 
 ```yml
-- uses: cypress-io/github-action@v6
+- uses: cypress-io/github-action@v7
   with:
     start: npm start
     wait-on: 'npx wait-on --timeout 60000 http://localhost:3000'
@@ -955,7 +955,7 @@ If this action times out waiting for the server to respond, please see [Debuggin
 The action installs dependencies based on a package manager lock file using default commands described in the [Installation](#installation) section below. If you want to overwrite the default install command you can use the `install-command` option:
 
 ```yml
-- uses: cypress-io/github-action@v6
+- uses: cypress-io/github-action@v7
   with:
     install-command: yarn --frozen-lockfile --silent
 ```
@@ -990,7 +990,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           command-prefix: 'percy exec -- npx'
           browser: chrome
@@ -1016,7 +1016,7 @@ Correct example snippet:
 ```yml
 steps:
   - uses: actions/checkout@v6
-  - uses: cypress-io/github-action@v6
+  - uses: cypress-io/github-action@v7
     with:
       command: npm run custom-test
 ```
@@ -1039,7 +1039,7 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           record: true
           parallel: true
@@ -1074,7 +1074,7 @@ jobs:
     needs: ['prepare']
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           record: true
           parallel: true
@@ -1114,7 +1114,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           start: npm start
           working-directory: app-test
@@ -1160,7 +1160,7 @@ jobs:
 
       # Cypress has its own package.json in folder "e2e"
       - name: Install Cypress and run tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: e2e
 ```
@@ -1191,7 +1191,7 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: examples/basic-pnpm/pnpm-lock.yaml
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: examples/basic-pnpm
 ```
@@ -1209,7 +1209,7 @@ The action does not directly support using [pnpm workspaces](https://pnpm.io/wor
         working-directory: examples/start-and-pnpm-workspaces
 
       - name: Cypress test
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           install: false
           working-directory: examples/start-and-pnpm-workspaces/packages/workspace-1
@@ -1234,7 +1234,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: examples/yarn-classic
 ```
@@ -1264,7 +1264,7 @@ jobs:
           cache: yarn
           cache-dependency-path: examples/yarn-modern/yarn.lock
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: examples/yarn-modern
           install-command: yarn install
@@ -1291,7 +1291,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           working-directory: examples/yarn-modern-pnp
           install-command: yarn install
@@ -1319,7 +1319,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         with:
           working-directory: examples/start-and-yarn-workspaces/workspace-1
           build: yarn run build
@@ -1354,7 +1354,7 @@ jobs:
       # run Cypress tests and record them under the same run
       # associated with commit SHA and just give a different group name
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           record: true
           group: Tests on Node v${{ matrix.node }}
@@ -1383,7 +1383,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
 ```
 
 See the [Node.js](#nodejs) section for information about supported versions and usage of Node.js.
@@ -1403,13 +1403,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install dependencies
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           # just perform install
           runTests: false
       - run: yarn lint
       - name: Run e2e tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           # we have already installed all dependencies above
           install: false
@@ -1436,7 +1436,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Build app
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           runTests: false # only build app, don't test yet
           build: npm run build
@@ -1460,7 +1460,7 @@ jobs:
           path: build
 
       - name: Cypress tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: npm start # start server using the build artifacts
 ```
@@ -1484,7 +1484,7 @@ If the project has many dependencies, but you want to install just Cypress you c
       node_modules
     key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 - run: npm i cypress
-- uses: cypress-io/github-action@v6
+- uses: cypress-io/github-action@v7
   with:
     install: false
 ```
@@ -1504,7 +1504,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-      - uses: cypress-io/github-action@v6
+      - uses: cypress-io/github-action@v7
         # you can specify individual step timeout too
         timeout-minutes: 5
 ```
@@ -1522,7 +1522,7 @@ jobs:
 
 To migrate from Cypress [CLI run command options](https://on.cypress.io/command-line#Options) to Cypress GitHub Action parameters, check the [CLI Run Option / Action Parameter](#cli-run-option--action-parameter) table below. In most cases, the name of the action parameter is the same as the long form of the `cypress run` CLI option.
 
-Create a [GitHub Actions workflow](https://docs.github.com/en/actions/writing-workflows/quickstart) referring to [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions). The action `cypress-io/github-action@v6` is invoked with the `uses` keyword. Cypress GitHub Action input parameters are specified under the [with](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith) keyword.
+Create a [GitHub Actions workflow](https://docs.github.com/en/actions/writing-workflows/quickstart) referring to [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions). The action `cypress-io/github-action@v7` is invoked with the `uses` keyword. Cypress GitHub Action input parameters are specified under the [with](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith) keyword.
 
 If you have previously been using a [CLI command](https://on.cypress.io/command-line#cypress-run) to run Cypress locally or in a CI environment, you will be familiar with testing commands like this:
 
@@ -1548,7 +1548,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v6
       - name: Cypress run # install dependencies and run Cypress E2E tests
-        uses: cypress-io/github-action@v6 # replaces CLI cypress run
+        uses: cypress-io/github-action@v7 # replaces CLI cypress run
         with:
           browser: chrome # replaces CLI option --browser chrome
           spec: cypress/e2e/spec.cy.js # replaces CLI option --spec cypress/e2e/spec.cy.js
@@ -1627,7 +1627,7 @@ You can set the environment variable using GitHub UI interface, or in the workfl
 
 ```yml
 - name: Cypress tests with debug logs
-  uses: cypress-io/github-action@v6
+  uses: cypress-io/github-action@v7
   env:
     DEBUG: '@cypress/github-action'
 ```
@@ -1642,7 +1642,7 @@ To see all [Cypress debug logs](https://on.cypress.io/troubleshooting#Print-DEBU
 
 ```yml
 - name: Cypress tests with debug logs
-  uses: cypress-io/github-action@v6
+  uses: cypress-io/github-action@v7
   env:
     DEBUG: 'cypress:*'
 ```
@@ -1698,7 +1698,7 @@ This is an example of using the step output `resultsUrl`:
 
 ```yml
 - name: Cypress tests
-  uses: cypress-io/github-action@v6
+  uses: cypress-io/github-action@v7
   # let's give this action an ID so we can refer
   # to its output values later
   id: cypress
@@ -1735,7 +1735,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           build: npx cypress info
 ```
@@ -1752,14 +1752,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress install
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           # just perform install
           runTests: false
       - name: Cypress info
         run: npx cypress info
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           # we have already installed all dependencies above
           install: false
@@ -1783,7 +1783,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress nightly tests 🌃
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
 ```
 
 [![cron example](https://github.com/cypress-io/github-action/actions/workflows/example-cron.yml/badge.svg)](.github/workflows/example-cron.yml)
@@ -1803,11 +1803,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Cypress headless tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           summary-title: 'Headless'
       - name: Cypress headed tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           install: false
           headed: true
@@ -1832,7 +1832,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           publish-summary: false
 ```
@@ -1841,7 +1841,7 @@ jobs:
 
 ### Support
 
-Node.js is required to run this action. The recommended version `v6` supports:
+Node.js is required to run this action. The recommended version `v7` supports:
 
 - **Node.js** 20.x, 22.x, 24.x and 25.x
 
@@ -1853,7 +1853,7 @@ and is generally aligned with [Node.js's release schedule](https://github.com/no
 
 [![Node versions example](https://github.com/cypress-io/github-action/actions/workflows/example-node-versions.yml/badge.svg)](.github/workflows/example-node-versions.yml)
 
-Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). `github-action@v6` uses `node20`.
+Cypress itself runs with a fixed Node.js version specified by the [runs.using](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) parameter of [action.yml](action.yml). `github-action@v7` uses `node24`.
 
 ## Changelog
 
@@ -1861,9 +1861,12 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 
 ## Compatibility
 
-- `github-action@v6` is the current recommended version, uses `node20` and is compatible with Cypress `10` and above.
+- `github-action@v7` is the current recommended version, uses `node24` and is compatible with Cypress `10` and above.
+- `github-action@v6` is deprecated. It uses `node20` which GitHub has deprecated. GitHub Actions will force runners to use `node24` beginning on Mar 4, 2026 - see [Deprecation of Node 20 on GitHub Actions runners](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
 - `github-action@v6.7.9` is the minimum version required to use GitHub Actions caching services. The legacy caching service used by lower versions of the action is no longer available.
 - `github-action` versions `v1` to `v5` are unsupported: they rely on Node.js `12` and `16` in End-of-life status.
+
+Cypress lists browser compatibility information under [System Requirements](https://docs.cypress.io/app/get-started/install-cypress#Browsers).
 
 ## Contributing
 
