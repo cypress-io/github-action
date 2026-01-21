@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Cypress tests
-        uses: ./ # if copying, replace with cypress-io/github-action@v6
+        uses: ./ # if copying, replace with cypress-io/github-action@v7
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
         with:

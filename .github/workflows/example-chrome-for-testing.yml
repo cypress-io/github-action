@@ -18,7 +18,7 @@ jobs:
         with:
           chrome-version: 140
       - name: Cypress info
-        uses: ./ # if copying, replace with cypress-io/github-action@v6
+        uses: ./ # if copying, replace with cypress-io/github-action@v7
         with:
           # just for full picture after installing Cypress
           # print information about detected browsers, etc

@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Cypress tests
-        uses: ./ # if copying, replace with cypress-io/github-action@v6
+        uses: ./ # if copying, replace with cypress-io/github-action@v7
         with:
           working-directory: examples/basic
           browser: ${{ matrix.browser }}
