@@ -20,15 +20,14 @@ jobs:
           - 25
     name: Cypress E2E on Node v${{ matrix.node }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
       - run: npm -v
-
-      - name: Checkout
-        uses: actions/checkout@v6
 
       - name: Cypress tests
         uses: ./ # if copying, replace with cypress-io/github-action@v7
