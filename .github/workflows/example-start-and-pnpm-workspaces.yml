@@ -26,14 +26,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-        # pnpm is not installed by default on GitHub runners
+        # See https://github.com/pnpm/action-setup
       - name: Install pnpm
-        run: npm install -g pnpm@10
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+        # See https://github.com/actions/setup-node
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+          cache-dependency-path: examples/start-and-pnpm-workspaces/pnpm-lock.yaml
 
       - name: Install dependencies
         # All dependencies including workspaces are installed
-        run: pnpm install --frozen-lockfile
-        working-directory: examples/start-and-pnpm-workspaces
+        uses: ./
+        with:
+          package-manager-cache: false
+          runTests: false
+          working-directory: examples/start-and-pnpm-workspaces
 
       - name: Cypress test Single
         # Run Cypress in examples/start-and-pnpm-workspaces/packages/workspace-1 only
@@ -66,11 +79,23 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install pnpm
-        run: npm install -g pnpm@10
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+          cache-dependency-path: examples/start-and-pnpm-workspaces/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        working-directory: examples/start-and-pnpm-workspaces
+        uses: ./
+        with:
+          package-manager-cache: false
+          runTests: false
+          working-directory: examples/start-and-pnpm-workspaces
 
       - name: Cypress test Multiple
         # Run Cypress in

@@ -11,7 +11,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-2025, macos-15]
+        os:
+          - ubuntu-24.04
+          - windows-2025
+          - macos-15
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -28,12 +31,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version-file: '.node-version'
-          cache: 'pnpm'
+          cache: pnpm
           cache-dependency-path: examples/basic-pnpm/pnpm-lock.yaml
 
       - name: Cypress tests
         uses: ./ # if copying, replace with cypress-io/github-action@v7
         with:
+          package-manager-cache: false
           working-directory: examples/basic-pnpm
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info

@@ -1,5 +1,11 @@
 name: example-basic
 # This workflow represents a set of basic End-to-End tests
+#
+# In the example jobs, the action is called with
+# uses: ./
+# which runs the action code from the current branch.
+# If you copy this workflow to another repo, replace the line with
+# uses: cypress-io/github-action@v7
 on:
   push:
     branches:
@@ -12,14 +18,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, windows-2025, macos-15]
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - windows-2025
+          - macos-15
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
       - name: Cypress tests
-        uses: ./ # if copying, replace with cypress-io/github-action@v7
+        uses: ./
         # the parameters below are only necessary
         # because we are running these examples in a monorepo
         with:
@@ -27,4 +37,32 @@ jobs:
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
+          build: npx cypress info
+
+  basic-npm-cache:
+    # Use setup-node to cache npm dependencies
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - windows-2025
+          - macos-15
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: examples/basic/package-lock.json
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          package-manager-cache: false
+          working-directory: examples/basic
           build: npx cypress info
