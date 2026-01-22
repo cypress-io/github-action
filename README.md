@@ -1362,8 +1362,8 @@ jobs:
     runs-on: ubuntu-24.04
     name:
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: lts
           cache: 'pnpm'
