@@ -45,7 +45,7 @@ jobs:
         uses: ./
         with:
           package-manager-cache: false
-          test: false
+          runTests: false
           working-directory: examples/start-and-pnpm-workspaces
 
       - name: Cypress test Single
@@ -94,7 +94,7 @@ jobs:
         uses: ./
         with:
           package-manager-cache: false
-          test: false
+          runTests: false
           working-directory: examples/start-and-pnpm-workspaces
 
       - name: Cypress test Multiple

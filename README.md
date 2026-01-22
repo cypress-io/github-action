@@ -1217,7 +1217,7 @@ The snippet below shows this principle.
         uses: cypress-io/github-action@v7
         with:
           package-manager-cache: false
-          test: false
+          runTests: false
           working-directory: examples/start-and-pnpm-workspaces
 
       - name: Cypress test
