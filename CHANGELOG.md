@@ -6,6 +6,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 | Version | Changes                                                                                                      |
 | ------- | ------------------------------------------------------------------------------------------------------------ |
+| v7.1.0  | Add parameter `package-manager-cache`                                                                        |
 | v7.0.0  | Action runs under Node.js 24 instead of Node.js 20                                                           |
 | v6.10.0 | Examples remove Node.js 23. End of support for Node.js 23.                                                   |
 | v6.9.0  | Add parameter validation for `command`                                                                       |
