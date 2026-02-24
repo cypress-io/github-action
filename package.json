@@ -57,7 +57,7 @@
     "@stylistic/eslint-plugin": "5.9.0",
     "@types/node": "25.0.8",
     "@vercel/ncc": "0.38.4",
-    "eslint": "10.0.0",
+    "eslint": "10.0.2",
     "eslint-plugin-cypress": "6.1.0",
     "globals": "17.3.0",
     "husky": "9.1.7",
