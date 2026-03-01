@@ -75,7 +75,15 @@ To contribute changes, follow these instructions in the order given below:
 
 #### Windows users
 
-The repository is set up with a `git` / `Husky` pre-commit hook which ensures that any changes to the core source files are formatted and built consistently before they are committed. This does not work well with [GitHub Desktop](https://docs.github.com/en/desktop). You can disable this function by setting an environment variable `HUSKY=0`. If you do this and then omit to use `npm run format` / `npm run build` before you commit any changes affecting the core source files, you will find that checks fail when you submit a PR. In this case you should run the `format` and `build` commands and amend your commit.
+Rebuilding the action with `npm run build` produces different results under Windows compared to Ubuntu.
+This means that Windows cannot be used to rebuild the action,
+because the workflow [check-dist.yml](./.github/workflows/check-dist.yml), running under `ubuntu-24.04`,
+will fail for action content in the [dist](./dist/) directory built under Windows.
+
+The repository is set up with a `git` / `Husky` pre-commit hook which is intended to ensure that any changes
+to the core source files are formatted and built consistently before they are committed.
+Since this is not relevant for Windows, you can disable this function by setting an environment variable `HUSKY=0`.
+You can alternatively use `git commit` with `--no-verify` to bypass the pre-commit hook from `Husky` when working on Windows.
 
 ### Adding a new example
 
