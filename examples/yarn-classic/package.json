@@ -1,7 +1,8 @@
 {
   "name": "example-yarn-classic",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Install dependencies using Yarn",
+  "type": "module",
   "scripts": {
     "test": "cypress run"
   },

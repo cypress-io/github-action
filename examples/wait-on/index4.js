@@ -3,9 +3,11 @@
 
 // always log messages
 // useful because shows timestamps
-const log = require('debug')('*')
-const http = require('http')
-const arg = require('arg')
+import debug from 'debug'
+import http from 'node:http'
+import arg from 'arg'
+
+const log = debug('*')
 
 const args = arg({
   '--port': Number,

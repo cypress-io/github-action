@@ -1,7 +1,8 @@
 {
   "name": "example-install-only",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Do not install _every_ dependency, just Cypress before running tests",
+  "type": "module",
   "scripts": {
     "test": "cypress run"
   },

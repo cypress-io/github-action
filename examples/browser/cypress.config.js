@@ -1,7 +1,7 @@
-const { defineConfig } = require('cypress')
-const os = require('os')
+import { defineConfig } from 'cypress'
+import os from 'node:os'
 
-module.exports = defineConfig({
+export default defineConfig({
   fixturesFolder: false,
   e2e: {
     setupNodeEvents (on) {
