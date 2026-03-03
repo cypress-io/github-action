@@ -636,14 +636,14 @@ jobs:
       - uses: actions/checkout@v6
       - uses: cypress-io/github-action@v7
       # after the test run completes store videos and any screenshots
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         # add the line below to store screenshots only on failures
         # if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: cypress-videos
           path: cypress/videos
@@ -1485,7 +1485,7 @@ jobs:
           runTests: false # only build app, don't test yet
           build: npm run build
       - name: Store build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: app
           path: build
@@ -1498,7 +1498,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Restore build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: app
           path: build
