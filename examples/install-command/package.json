@@ -1,7 +1,8 @@
 {
   "name": "example-install-command",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Install dependencies using custom command",
+  "type": "module",
   "scripts": {
     "test": "cypress run"
   },

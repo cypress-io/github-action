@@ -1,8 +1,8 @@
 console.log('running Cypress from index.js')
 
-const cypress = require('cypress')
-const _ = require('lodash')
-const fs = require('fs')
+import cypress from 'cypress'
+import _ from 'lodash'
+import fs from 'node:fs'
 
 cypress.run().then((results) => {
   const summary = _.pickBy(results, (value, key) =>

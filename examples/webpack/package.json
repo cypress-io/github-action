@@ -1,7 +1,8 @@
 {
   "name": "example-webpack",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Waiting for Webpack DevServer to start",
+  "type": "module",
   "scripts": {
     "test": "cypress run",
     "start": "webpack-dev-server"
