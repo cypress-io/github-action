@@ -17,6 +17,10 @@
     {
       "matchDepTypes": ["dependencies"],
       "enabled": false
+    },
+    {
+      "matchPackageNames": ["@types/node"],
+      "extends": ["schedule:quarterly"]
     }
   ]
 }
