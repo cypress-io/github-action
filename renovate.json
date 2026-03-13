@@ -17,6 +17,14 @@
     {
       "matchDepTypes": ["dependencies"],
       "enabled": false
+    },
+    {
+      "matchPackageNames": [
+        "/eslint/",
+        "globals"
+      ],
+      "groupName": "eslint",
+      "extends": ["schedule:monthly"]
     }
   ]
 }
