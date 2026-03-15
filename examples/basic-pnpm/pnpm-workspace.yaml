@@ -1,4 +1,3 @@
-onlyBuiltDependencies:
-  - cypress
-
+allowBuilds:
+  cypress: true
 sideEffectsCache: false
