@@ -19,6 +19,14 @@
       "enabled": false
     },
     {
+      "matchPackageNames": [
+        "/eslint/",
+        "globals"
+      ],
+      "groupName": "eslint",
+      "extends": ["schedule:monthly"]
+    },
+    {
       "matchPackageNames": ["@types/node"],
       "extends": ["schedule:quarterly"]
     }
