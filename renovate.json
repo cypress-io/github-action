@@ -15,6 +15,11 @@
   "prHourlyLimit": 1,
   "packageRules": [
     {
+      "matchPackageNames": ["cypress"],
+      "matchFileNames": ["examples/**"],
+      "enabled": true
+    },
+    {
       "matchDepTypes": ["dependencies"],
       "enabled": false
     },
