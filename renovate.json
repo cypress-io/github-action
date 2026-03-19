@@ -21,6 +21,11 @@
       "enabled": false
     },
     {
+      "matchPackageNames": ["/webpack/"],
+      "groupName": "webpack",
+      "extends": ["schedule:weekly"]
+    },
+    {
       "matchPackageNames": [
         "/eslint/",
         "globals"
