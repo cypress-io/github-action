@@ -14,6 +14,7 @@
   ],
   "prConcurrentLimit": 5,
   "prHourlyLimit": 1,
+  "rangeStrategy": "bump",
   "packageRules": [
     {
       "matchDepTypes": ["dependencies"],
