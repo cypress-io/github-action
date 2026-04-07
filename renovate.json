@@ -21,6 +21,14 @@
       "enabled": false
     },
     {
+      "matchPackageNames": ["vite"],
+      "allowedVersions": "<8"
+    },
+    {
+      "matchPackageNames": ["@vitejs/plugin-react"],
+      "allowedVersions": "<6"
+    },
+    {
       "matchPackageNames": ["/webpack/"],
       "groupName": "webpack",
       "extends": ["schedule:weekly"]
