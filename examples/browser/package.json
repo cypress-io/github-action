@@ -14,7 +14,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.13.0",
+    "cypress": "15.13.1",
     "image-size": "2.0.2"
   }
 }

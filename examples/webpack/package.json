@@ -9,7 +9,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.13.0",
+    "cypress": "15.13.1",
     "webpack": "^5.105.4",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.3"
