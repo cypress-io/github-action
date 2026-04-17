@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chrome, edge, firefox]
+        browser: [chrome, edge, electron, firefox]
     # Cypress Docker image documentation on https://github.com/cypress-io/cypress-docker-images
     # Available cypress/browsers tags listed on https://hub.docker.com/r/cypress/browsers/tags
     container:
