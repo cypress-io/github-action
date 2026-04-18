@@ -11,6 +11,6 @@
   "private": true,
   "devDependencies": {
     "cypress": "15.14.0",
-    "lodash": "^4.17.23"
+    "lodash": "^4.18.1"
   }
 }
