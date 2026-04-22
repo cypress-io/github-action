@@ -15,7 +15,19 @@
   "prConcurrentLimit": 5,
   "prHourlyLimit": 1,
   "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
+    {
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "enabled": false
+    },
+    {
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "matchFileNames": ["examples/**"],
+      "enabled": true
+    },
     {
       "matchDepTypes": ["dependencies"],
       "enabled": false
