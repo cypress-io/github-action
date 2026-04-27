@@ -1,6 +1,6 @@
 {
   "name": "example-wait-on-vite",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "e2e tests for wait-on feature against Vite.js server",
   "type": "module",
   "scripts": {
@@ -12,6 +12,6 @@
   "private": true,
   "devDependencies": {
     "cypress": "15.14.1",
-    "vite": "^7.3.2"
+    "vite": "^8.0.10"
   }
 }
