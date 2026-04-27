@@ -41,6 +41,11 @@
       "allowedVersions": "<7"
     },
     {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["cypress/browsers"],
+      "allowedVersions": "<25"
+    },
+    {
       "matchPackageNames": ["/webpack/"],
       "groupName": "webpack",
       "extends": ["schedule:weekly"]
