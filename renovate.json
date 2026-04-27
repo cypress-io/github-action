@@ -61,6 +61,11 @@
     {
       "matchPackageNames": ["@types/node"],
       "extends": ["schedule:quarterly"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["pnpm/action-setup"],
+      "enabled": false
     }
   ]
 }
