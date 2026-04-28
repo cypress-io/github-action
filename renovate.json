@@ -66,6 +66,11 @@
       "matchManagers": ["github-actions"],
       "matchPackageNames": ["pnpm/action-setup"],
       "enabled": false
+    },
+    {
+      "matchDepTypes": ["uses-with"],
+      "matchPackageNames": ["pnpm"],
+      "enabled": false
     }
   ]
 }
