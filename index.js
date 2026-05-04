@@ -699,6 +699,12 @@ const runTestsUsingCommandLine = async () => {
     cmd.push(envInput)
   }
 
+  const exposeInput = core.getInput('expose')
+  if (exposeInput) {
+    cmd.push('--expose')
+    cmd.push(exposeInput)
+  }
+
   const quiet = getInputBool('quiet')
   if (quiet) {
     cmd.push('--quiet')
@@ -739,6 +745,7 @@ const commandIgnoredStringInputs = [
   'config',
   'config-file',
   'env',
+  'expose',
   'group',
   'project',
   'spec',
@@ -762,7 +769,9 @@ const validateCustomCommand = () => {
   })
   if (ignoredInputParameters.length > 0) {
     core.warning(
-      `command parameter is used and the following other parameters are ignored: ${ignoredInputParameters.sort().join(', ')}.`
+      `command parameter is used and the following other parameters are ignored: ${ignoredInputParameters
+        .sort()
+        .join(', ')}.`
     )
   }
 }
@@ -856,6 +865,10 @@ const runTests = async () => {
 
   if (core.getInput('env')) {
     cypressOptions.env = core.getInput('env')
+  }
+
+  if (core.getInput('expose')) {
+    cypressOptions.expose = core.getInput('expose')
   }
 
   if (cypressOptions.parallel || cypressOptions.group) {

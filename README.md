@@ -37,6 +37,7 @@ The following examples demonstrate the actions' functions.
   - using [headed mode](#headed)
 - Using [Docker image](#docker-image)
 - Specify [environment variables](#env)
+- Specify [expose variables](#expose)
 - Run only some [spec files](#specs)
 - Test [project in subfolder](#project)
 - [Record results](#record-test-results-on-cypress-cloud) on Cypress Cloud
@@ -357,6 +358,30 @@ jobs:
 For more examples, see the workflows below, using environment variables for [recording](#record-test-results-on-cypress-cloud).
 
 [![Env example](https://github.com/cypress-io/github-action/actions/workflows/example-env.yml/badge.svg)](.github/workflows/example-env.yml)
+
+### Expose
+
+Specify the expose argument with `expose` parameter. Expose variables are for non-sensitive, public config values that are synchronous and exposed to the browser (requires Cypress 15.10.0 or later).
+
+```yml
+name: Cypress tests
+on: push
+jobs:
+  cypress-run:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Cypress run with expose
+        uses: cypress-io/github-action@v7
+        with:
+          expose: host=api.dev.local,port=4222
+```
+
+For more information, see [Cypress.expose()](https://docs.cypress.io/api/cypress-api/expose) in the Cypress documentation.
+
+[![Expose example](https://github.com/cypress-io/github-action/actions/workflows/example-expose.yml/badge.svg)](.github/workflows/example-expose.yml)
 
 ### Specs
 
@@ -1610,6 +1635,7 @@ jobs:
 | `--config-file`, `-C`          | [`config-file`](#config-file)                               | Specify configuration file                                                                           |
 | `--e2e`                        | [`component: false`](#component-testing) (default)          | Run end to end tests                                                                                 |
 | `--env`, `-e`                  | [`env`](#env)                                               | Specify environment variables                                                                        |
+| `--expose`, `-x`               | [`expose`](#expose)                                         | Specify expose variables for non-sensitive, public config values                                     |
 | `--group`                      | [`group`](#parallel)                                        | Group recorded tests together under a single run for Cloud recording                                 |
 | `--headed`                     | [`headed`](#headed)                                         | Display the browser instead of running headlessly                                                    |
 | `--headless`                   | [`headed: false`](#headed) (default)                        | Hide the browser instead of running headed                                                           |
