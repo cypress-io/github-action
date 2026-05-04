@@ -564,7 +564,10 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [20, 22, 24, 25]
+        node:
+          - 22
+          - 24
+          - 25
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Checkout
@@ -1386,7 +1389,10 @@ jobs:
     # let's make sure our "app" works on several versions of Node
     strategy:
       matrix:
-        node: [20, 22, 24, 25]
+        node:
+          - 22
+          - 24
+          - 25
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Checkout
@@ -1420,7 +1426,10 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        node: [20, 22, 24, 25]
+        node:
+          - 22
+          - 24
+          - 25
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/checkout@v6
@@ -1887,9 +1896,9 @@ jobs:
 
 Node.js is required to run this action. The recommended version `v7` supports:
 
-- **Node.js** 20.x, 22.x, 24.x and 25.x
+- **Node.js** 22.x, 24.x and 25.x
 
-and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release).
+and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release#readme).
 
 ### Usage
 
@@ -1906,7 +1915,7 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 ## Compatibility
 
 - `github-action@v7` is the current recommended version, uses `node24` and is compatible with Cypress `10` and above.
-- `github-action@v6` is deprecated. It uses `node20` which GitHub has deprecated. GitHub Actions will force runners to use `node24` beginning on Mar 4, 2026 - see [Deprecation of Node 20 on GitHub Actions runners](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
+- `github-action@v6` is deprecated. It uses `node20` which has reached its end of life - see [Deprecation of Node 20 on GitHub Actions runners](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
 - `github-action@v6.7.9` is the minimum version required to use GitHub Actions caching services. The legacy caching service used by lower versions of the action is no longer available.
 - `github-action` versions `v1` to `v5` are unsupported: they rely on Node.js `12` and `16` in End-of-life status.
 
