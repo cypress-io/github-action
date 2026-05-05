@@ -1,0 +1,14 @@
+{
+  "name": "example-expose",
+  "version": "1.0.0",
+  "description": "example passing expose variables to Cypress",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run"
+  },
+  "private": true,
+  "devDependencies": {
+    "cypress": "15.14.2"
+  }
+}

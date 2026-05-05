@@ -1,0 +1,26 @@
+name: example-expose
+# In the example jobs, the action is called with
+# uses: ./
+# which runs the action code from the current branch.
+# If you copy this workflow to another repo, replace the line with
+# uses: cypress-io/github-action@v7
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  with-expose:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Cypress run with expose
+        uses: ./
+        with:
+          working-directory: examples/expose
+          expose: host=http://api.dev.local,apiPort=4222
+          spec: cypress/e2e/spec.cy.js
