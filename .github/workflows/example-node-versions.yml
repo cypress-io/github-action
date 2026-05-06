@@ -17,6 +17,7 @@ jobs:
           - 22
           - 24
           - 25
+          - 26
     name: Cypress E2E on Node v${{ matrix.node }}
     steps:
       - name: Checkout
