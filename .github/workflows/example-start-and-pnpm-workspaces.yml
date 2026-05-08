@@ -28,9 +28,9 @@ jobs:
 
         # See https://github.com/pnpm/action-setup
       - name: Install pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
         with:
-          version: 10
+          version: 11
 
         # See https://github.com/actions/setup-node
       - name: Install Node.js
@@ -78,10 +78,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+        # See https://github.com/pnpm/action-setup
       - name: Install pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
         with:
-          version: 10
+          version: 11
 
       - name: Install Node.js
         uses: actions/setup-node@v6
