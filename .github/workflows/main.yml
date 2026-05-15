@@ -32,6 +32,8 @@ jobs:
   release:
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-24.04
     name: release
     needs: [build-and-test]
