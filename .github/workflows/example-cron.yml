@@ -4,6 +4,8 @@ on:
     # runs tests every day at 4am
     - cron: '0 4 * * *'
   workflow_dispatch:
+permissions:
+  contents: read
 
 jobs:
   nightly:
