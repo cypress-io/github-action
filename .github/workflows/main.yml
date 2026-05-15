@@ -4,6 +4,8 @@ on:
     branches:
       - 'master'
   pull_request:
+permissions:
+  contents: read
 jobs:
   build-and-test:
     runs-on: ubuntu-24.04
@@ -28,6 +30,8 @@ jobs:
       - run: npm run format:all:check # Prettier formatting check
 
   release:
+    permissions:
+      contents: write
     runs-on: ubuntu-24.04
     name: release
     needs: [build-and-test]
