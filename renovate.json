@@ -14,6 +14,11 @@
   ],
   "prConcurrentLimit": 5,
   "prHourlyLimit": 1,
+  "minimumReleaseAge": "7 days",
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": "0 days"
+  },
   "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "enabled": true
@@ -71,6 +76,10 @@
       "matchDepTypes": ["uses-with"],
       "matchPackageNames": ["pnpm"],
       "enabled": false
+    },
+    {
+      "matchPackageNames": ["cypress"],
+      "minimumReleaseAge": "0 days"
     }
   ]
 }
