@@ -17,6 +17,9 @@ env:
   # Cypress.env('environmentName') // 'staging'
   # see https://on.cypress.io/env
   CYPRESS_environmentName: staging
+permissions:
+  contents: read
+
 jobs:
   e2e:
     runs-on: ubuntu-24.04
