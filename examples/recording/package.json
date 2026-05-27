@@ -10,6 +10,6 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.15.0"
+    "cypress": "15.16.0"
   }
 }
