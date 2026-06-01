@@ -6,6 +6,7 @@ See [Releases](https://github.com/cypress-io/github-action/releases) for full de
 
 | Version | Changes                                                                                                      |
 | ------- | ------------------------------------------------------------------------------------------------------------ |
+| v7.4.0  | Examples remove Node.js 25. End of support for Node.js 25.                                                   |
 | v7.3.0  | Add parameter `expose` for [`Cypress.expose()`](https://docs.cypress.io/api/cypress-api/expose) support      |
 | v7.2.0  | Examples remove Node.js 20. End of support for Node.js 20.                                                   |
 | v7.1.0  | Add parameter `package-manager-cache`                                                                        |

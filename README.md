@@ -592,7 +592,6 @@ jobs:
         node:
           - 22
           - 24
-          - 25
           - 26
     name: E2E on Node v${{ matrix.node }}
     steps:
@@ -1418,7 +1417,6 @@ jobs:
         node:
           - 22
           - 24
-          - 25
           - 26
     name: E2E on Node v${{ matrix.node }}
     steps:
@@ -1456,7 +1454,6 @@ jobs:
         node:
           - 22
           - 24
-          - 25
           - 26
     name: E2E on Node v${{ matrix.node }}
     steps:
@@ -1925,7 +1922,7 @@ jobs:
 
 Node.js is required to run this action. The recommended version `v7` supports:
 
-- **Node.js** 22.x, 24.x, 25.x and 26.x
+- **Node.js** 22.x, 24.x and 26.x
 
 and is generally aligned with [Node.js's release schedule](https://github.com/nodejs/Release#readme).
 
