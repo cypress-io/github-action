@@ -16,5 +16,8 @@
   "devDependencies": {
     "cypress": "15.16.0",
     "image-size": "2.0.2"
+  },
+  "allowScripts": {
+    "cypress": true
   }
 }

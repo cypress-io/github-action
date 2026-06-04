@@ -14,5 +14,8 @@
   "devDependencies": {
     "cypress": "15.16.0",
     "serve": "^14.2.6"
+  },
+  "allowScripts": {
+    "cypress": true
   }
 }
