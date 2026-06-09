@@ -19,5 +19,9 @@
     "@tailwindcss/postcss": "^4.3.0",
     "cypress": "15.16.0",
     "tailwindcss": "^4.3.0"
+  },
+  "allowScripts": {
+    "cypress": true,
+    "sharp": true
   }
 }

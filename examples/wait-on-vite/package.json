@@ -13,5 +13,8 @@
   "devDependencies": {
     "cypress": "15.16.0",
     "vite": "^8.0.16"
+  },
+  "allowScripts": {
+    "cypress": true
   }
 }

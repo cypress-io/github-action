@@ -12,5 +12,8 @@
   "devDependencies": {
     "cypress": "15.16.0",
     "lodash": "^4.18.1"
+  },
+  "allowScripts": {
+    "cypress": true
   }
 }

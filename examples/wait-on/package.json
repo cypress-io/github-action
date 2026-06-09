@@ -22,5 +22,8 @@
   },
   "devDependencies": {
     "cypress": "15.16.0"
+  },
+  "allowScripts": {
+    "cypress": true
   }
 }
