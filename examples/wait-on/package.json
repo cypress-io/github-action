@@ -21,7 +21,7 @@
     "debug": "4.3.6"
   },
   "devDependencies": {
-    "cypress": "15.16.0"
+    "cypress": "15.17.0"
   },
   "allowScripts": {
     "cypress": true
