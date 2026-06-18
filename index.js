@@ -273,6 +273,55 @@ const install = () => {
   }
 }
 
+/**
+ * Runs an explicit, package-manager-aware "cypress install" after the
+ * dependencies have been installed. This downloads the Cypress binary when
+ * it is missing and is a no-op when it is already present.
+ *
+ * Package managers may no longer run a dependency's `postinstall` script by
+ * default, which means the script that normally downloads the Cypress binary
+ * no longer runs during a package-manager install. Running the install
+ * explicitly keeps the binary available on a cold cache regardless of package
+ * manager.
+ */
+const installCypressBinary = () => {
+  debug('installing Cypress binary')
+
+  if (isCypressBinarySkipped()) {
+    debug('Skipping Cypress install, binary installation is disabled')
+    return Promise.resolve()
+  }
+
+  if (useYarn()) {
+    debug('installing Cypress binary using Yarn')
+    return io.which('yarn', true).then((yarnPath) => {
+      return exec.exec(
+        quote(yarnPath),
+        ['cypress', 'install'],
+        cypressCommandOptions
+      )
+    })
+  } else if (usePnpm()) {
+    debug('installing Cypress binary using pnpm')
+    return io.which('pnpm', true).then((pnpmPath) => {
+      return exec.exec(
+        quote(pnpmPath),
+        ['cypress', 'install'],
+        cypressCommandOptions
+      )
+    })
+  } else {
+    debug('installing Cypress binary using npx')
+    return io.which('npx', true).then((npxPath) => {
+      return exec.exec(
+        quote(npxPath),
+        ['cypress', 'install'],
+        cypressCommandOptions
+      )
+    })
+  }
+}
+
 const listCypressBinaries = () => {
   debug(
     `Cypress versions in the cache folder ${CYPRESS_CACHE_FOLDER}`
@@ -1007,19 +1056,22 @@ const installMaybe = () => {
 
     return install().then(() => {
       debug('install has finished')
-      return listCypressBinaries().then(() => {
-        if (npmCacheHit && cypressCacheHit) {
-          debug('no need to verify Cypress binary or save caches')
-          return Promise.resolve(undefined)
-        }
+      return installCypressBinary().then(() => {
+        debug('Cypress binary install has finished')
+        return listCypressBinaries().then(() => {
+          if (npmCacheHit && cypressCacheHit) {
+            debug('no need to verify Cypress binary or save caches')
+            return Promise.resolve(undefined)
+          }
 
-        debug('verifying Cypress binary')
-        const saveNpmPromise = packageManagerCacheEnabled
-          ? saveCachedNpm()
-          : Promise.resolve(undefined)
-        return verifyCypressBinary()
-          .then(() => saveNpmPromise)
-          .then(saveCachedCypressBinary)
+          debug('verifying Cypress binary')
+          const saveNpmPromise = packageManagerCacheEnabled
+            ? saveCachedNpm()
+            : Promise.resolve(undefined)
+          return verifyCypressBinary()
+            .then(() => saveNpmPromise)
+            .then(saveCachedCypressBinary)
+        })
       })
     })
   })
