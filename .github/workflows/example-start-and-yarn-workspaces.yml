@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Single
         uses: ./
@@ -46,7 +46,7 @@ jobs:
           - working_directory: examples/start-and-yarn-workspaces/workspace-2
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Cypress tests
         uses: ./

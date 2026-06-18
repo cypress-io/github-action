@@ -26,7 +26,7 @@ jobs:
     name: Single workspace
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
         # See https://github.com/pnpm/action-setup
       - name: Install pnpm
@@ -78,7 +78,7 @@ jobs:
     name: Multiple workspaces
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
         # See https://github.com/pnpm/action-setup
       - name: Install pnpm
