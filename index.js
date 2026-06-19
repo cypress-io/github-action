@@ -285,8 +285,7 @@ const install = () => {
  * manager.
  *
  * Like "cypress verify" and "cypress cache list", this is invoked via npx for
- * all package managers so the Cypress binary is resolved consistently,
- * including within pnpm and Yarn workspaces.
+ * all package managers so the Cypress binary is resolved consistently.
  */
 const installCypressBinary = () => {
   debug('installing Cypress binary')
