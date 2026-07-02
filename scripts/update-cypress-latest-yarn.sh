@@ -25,7 +25,7 @@ cd examples
 # Yarn 1 Classic section
 # No corepack
 corepack disable yarn
-npm install yarn@1 -g
+npm install yarn@1 --global --allow-scripts=yarn
 echo yarn version $(yarn --version) is installed
 
 # examples/start-and-yarn-workspaces (yarn)
@@ -81,7 +81,7 @@ cd ..
 echo
 corepack disable yarn
 echo corepack is now disabled for Yarn
-npm install yarn@1 -g
+npm install yarn@1 --global --allow-scripts=yarn
 echo yarn version $(yarn --version) is installed
 echo
 # End of Yarn 4 Modern section
