@@ -1262,7 +1262,7 @@ See the example project [start-and-pnpm-workspaces](examples/start-and-pnpm-work
 
 ### Yarn Classic
 
-If a `yarn.lock` file is found, the action uses the [Yarn 1 (Classic)](https://classic.yarnpkg.com/) command `yarn --frozen-lockfile` by default to install dependencies.
+If a `yarn.lock` file is found, the action uses the [Yarn 1 (Classic)](https://classic.yarnpkg.com/) command `yarn --frozen-lockfile` by default to install dependencies, unless [Yarn Modern](#yarn-modern) is detected.
 
 ```yaml
 name: example-yarn-classic
@@ -1283,7 +1283,7 @@ jobs:
 
 ### Yarn Modern
 
-To install dependencies using a `yarn.lock` file from [Yarn Modern](https://yarnpkg.com/) (Yarn 2 and later) you need to override the default [Yarn 1 (Classic)](https://classic.yarnpkg.com/) installation command `yarn --frozen-lockfile`. You can do this by using the `install-command` parameter and specifying `yarn install` as in the example below.
+If a `yarn.lock` file is found with a Yarn Modern format, the [Yarn Modern install](https://yarnpkg.com/cli/install) command, `yarn install --immutable`, is used to install dependencies.
 
 The action supports built-in caching of Yarn Classic dependencies only. To cache Yarn Modern dependencies additionally use [actions/setup-node](https://github.com/actions/setup-node) and specify `cache: yarn`.
 
@@ -1307,7 +1307,6 @@ jobs:
         uses: cypress-io/github-action@v7
         with:
           working-directory: examples/yarn-modern
-          install-command: yarn install
 ```
 
 This example covers the [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) configuration `nodeLinker: node-modules` which Yarn uses by default for projects updated from Yarn Classic. For `nodeLinker: pnp` see [Yarn Plug'n'Play](#yarn-plugnplay) below.
@@ -1325,7 +1324,7 @@ See the above [Yarn Modern](#yarn-modern) section for information on caching Yar
 name: example-yarn-modern-pnp
 on: push
 jobs:
-  yarn-classic:
+  yarn-modern-pnp:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -1334,7 +1333,6 @@ jobs:
         uses: cypress-io/github-action@v7
         with:
           working-directory: examples/yarn-modern-pnp
-          install-command: yarn install
           command: yarn run --binaries-only cypress run
 ```
 
@@ -1668,8 +1666,7 @@ This action installs local dependencies using lock files. Ensure that exactly on
 | `package-lock.json` | [npm](https://docs.npmjs.com/cli/v9/commands/npm-ci)                                             | `npm ci`                         |
 | `pnpm-lock.yaml`    | [pnpm](https://pnpm.io/cli/install#--frozen-lockfile)                                            | `pnpm install --frozen-lockfile` |
 | `yarn.lock`         | [Yarn Classic](https://classic.yarnpkg.com/en/docs/cli/install#toc-yarn-install-frozen-lockfile) | `yarn --frozen-lockfile`         |
-
-See section [Yarn Modern](#yarn-modern) for information about using Yarn version 2 and later.
+| `yarn.lock`         | [Yarn Modern](https://yarnpkg.com/cli/install)                                                   | `yarn install --immutable`       |
 
 ### Caching
 

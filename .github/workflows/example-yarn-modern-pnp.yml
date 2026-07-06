@@ -28,10 +28,8 @@ jobs:
         run: |
           npm install -g corepack
           corepack enable yarn
-      - name: Custom Yarn command
+      - name: Custom Yarn Modern command
         uses: ./ # if copying, replace with cypress-io/github-action@v7
         with:
           working-directory: examples/yarn-modern-pnp
-          # https://yarnpkg.com/cli/install
-          install-command: yarn install
           command: yarn run --binaries-only cypress run

@@ -103,6 +103,14 @@ const packageLockFilename = path.join(
 )
 
 const useYarn = () => fs.existsSync(yarnFilename)
+const isYarnModern = () => {
+  if (!useYarn()) return false
+  const fd = fs.openSync(yarnFilename, 'r')
+  const buffer = Buffer.alloc(256)
+  fs.readSync(fd, buffer, 0, 256, 0)
+  fs.closeSync(fd)
+  return buffer.toString('utf8').includes('__metadata:')
+}
 const usePnpm = () => fs.existsSync(pnpmLockFilename)
 const useNpm = () => fs.existsSync(packageLockFilename)
 
@@ -245,15 +253,27 @@ const install = () => {
   }
 
   if (useYarn()) {
-    debug('installing npm dependencies using Yarn')
-    return io.which('yarn', true).then((yarnPath) => {
-      debug(`yarn at "${yarnPath}"`)
-      return exec.exec(
-        quote(yarnPath),
-        ['--frozen-lockfile'],
-        cypressCommandOptions
-      )
-    })
+    if (isYarnModern()) {
+      debug('installing npm dependencies using Yarn Modern')
+      return io.which('yarn', true).then((yarnPath) => {
+        debug(`yarn at "${yarnPath}"`)
+        return exec.exec(
+          quote(yarnPath),
+          ['install', '--immutable'],
+          cypressCommandOptions
+        )
+      })
+    } else {
+      debug('installing npm dependencies using Yarn Classic')
+      return io.which('yarn', true).then((yarnPath) => {
+        debug(`yarn at "${yarnPath}"`)
+        return exec.exec(
+          quote(yarnPath),
+          ['--frozen-lockfile'],
+          cypressCommandOptions
+        )
+      })
+    }
   } else if (usePnpm()) {
     debug('installing npm dependencies using pnpm')
     return io.which('pnpm', true).then((pnpmPath) => {
