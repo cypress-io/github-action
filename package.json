@@ -56,7 +56,7 @@
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
     "@types/node": "25.9.4",
-    "@vercel/ncc": "0.44.0",
+    "@vercel/ncc": "0.44.1",
     "eslint": "10.4.0",
     "eslint-plugin-cypress": "6.4.1",
     "globals": "17.6.0",
