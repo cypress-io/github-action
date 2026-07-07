@@ -14,7 +14,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.18.0",
+    "cypress": "15.18.1",
     "image-size": "2.0.2"
   },
   "allowScripts": {
