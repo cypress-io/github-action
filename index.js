@@ -103,14 +103,9 @@ const packageLockFilename = path.join(
 )
 
 const useYarn = () => fs.existsSync(yarnFilename)
-const isYarnModern = () => {
-  if (!useYarn()) return false
-  const fd = fs.openSync(yarnFilename, 'r')
-  const buffer = Buffer.alloc(256)
-  fs.readSync(fd, buffer, 0, 256, 0)
-  fs.closeSync(fd)
-  return buffer.toString('utf8').includes('__metadata:')
-}
+const isYarnModern = () =>
+  useYarn() &&
+  fs.readFileSync(yarnFilename, 'utf8').includes('__metadata:')
 const usePnpm = () => fs.existsSync(pnpmLockFilename)
 const useNpm = () => fs.existsSync(packageLockFilename)
 
