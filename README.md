@@ -598,7 +598,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
       - run: node -v
@@ -1218,7 +1218,7 @@ jobs:
         with:
           version: 11
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: 'pnpm'
@@ -1298,7 +1298,7 @@ jobs:
         uses: actions/checkout@v7
       - run: corepack enable # (experimental and optional)
       - name: Set up Yarn cache
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: yarn
@@ -1391,7 +1391,7 @@ jobs:
     name:
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: lts
           cache: 'pnpm'
@@ -1423,7 +1423,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
       # run Cypress tests and record them under the same run
@@ -1458,7 +1458,7 @@ jobs:
     name: E2E on Node v${{ matrix.node }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
       - uses: cypress-io/github-action@v7

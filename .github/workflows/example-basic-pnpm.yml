@@ -30,7 +30,7 @@ jobs:
 
         # See https://github.com/actions/setup-node
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: '.node-version'
           cache: pnpm
