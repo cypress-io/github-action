@@ -9,6 +9,6 @@
   "private": true,
   "packageManager": "yarn@4.17.1",
   "devDependencies": {
-    "cypress": "15.18.1"
+    "cypress": "15.19.0"
   }
 }
