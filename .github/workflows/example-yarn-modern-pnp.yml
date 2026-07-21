@@ -19,7 +19,7 @@ jobs:
           npm install -g corepack
           corepack enable yarn
       - name: Set up Yarn cache
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: '.node-version'
           cache: yarn
