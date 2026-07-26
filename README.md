@@ -75,7 +75,6 @@ The following examples demonstrate the actions' functions.
 - Split [install and tests](#split-install-and-tests) into separate jobs
 - Split [install and tests](#split-install-and-test-with-artifacts) with artifacts
 - Use [custom install commands](#custom-install)
-- Install [only Cypress](#install-cypress-only) to avoid installing all dependencies
 - Use [timeouts](#timeouts) to avoid hanging CI jobs
 - Print [Cypress info](#print-cypress-info) like detected browsers
 - Run [tests nightly](#nightly-tests) or on any schedule
@@ -1548,26 +1547,6 @@ jobs:
 ### Custom install
 
 Finally, you might not need this GH Action at all. For example, if you want to split the npm dependencies installation from the Cypress binary installation, then it makes no sense to use this action. Instead you can install and cache Cypress yourself.
-
-### Install Cypress only
-
-If the project has many dependencies, but you want to install just Cypress you can combine this action with `actions/cache` and `npm i cypress` commands yourself.
-
-```yml
-- uses: actions/checkout@v7
-- uses: actions/cache@v5
-  with:
-    path: |
-      ~/.cache/Cypress
-      node_modules
-    key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-- run: npm i cypress
-- uses: cypress-io/github-action@v7
-  with:
-    install: false
-```
-
-[![Install only Cypress example](https://github.com/cypress-io/github-action/actions/workflows/example-install-only.yml/badge.svg)](.github/workflows/example-install-only.yml)
 
 ### Timeouts
 
