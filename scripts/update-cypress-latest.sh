@@ -15,9 +15,3 @@ echo
 ./scripts/update-cypress-latest-npm.sh
 ./scripts/update-cypress-latest-yarn.sh
 ./scripts/update-cypress-latest-pnpm.sh
-
-echo
-echo please manually edit run command in
-echo .github/workflows/example-install-only.yml
-echo to use latest Cypress version
-code .github/workflows/example-install-only.yml

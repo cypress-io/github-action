@@ -42,8 +42,6 @@ npm run update:cypress
 
 This updates all [examples](../examples) to cypress@latest.
 
-[.github/workflows/example-install-only.yml](../.github/workflows/example-install-only.yml) contains a hard-coded Cypress version number. This can be updated by hand.
-
 After updating the examples locally, they can be committed with git and a pull request opened on GitHub.
 
 ### Updating pnpm examples
