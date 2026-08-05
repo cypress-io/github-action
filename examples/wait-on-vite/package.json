@@ -11,7 +11,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.19.0",
+    "cypress": "15.20.0",
     "vite": "^8.1.5"
   },
   "allowScripts": {
