@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
-    "cypress": "15.20.0",
+    "cypress": "15.20.1",
     "tailwindcss": "^4.3.3"
   },
   "allowScripts": {

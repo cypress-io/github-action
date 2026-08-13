@@ -17,7 +17,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
-    "cypress": "15.20.0",
+    "cypress": "15.20.1",
     "vite": "^8.2.0"
   },
   "allowScripts": {
