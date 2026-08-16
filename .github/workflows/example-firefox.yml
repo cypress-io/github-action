@@ -10,7 +10,13 @@ permissions:
 
 jobs:
   firefox:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -27,7 +33,7 @@ jobs:
       # report screenshot size and store the screenshots as test artifacts
       - uses: actions/upload-artifact@v7
         with:
-          name: screenshots-in-firefox
+          name: screenshots-in-firefox-${{ matrix.os }}
           path: examples/browser/cypress/screenshots
 
       - run: npx image-size cypress/screenshots/**/*.png
