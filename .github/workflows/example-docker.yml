@@ -10,15 +10,25 @@ permissions:
 
 jobs:
   docker-browsers:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        browser: [chrome, edge, electron, firefox]
+        os:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+        browser:
+          # Available browsers listed on https://github.com/cypress-io/cypress-docker-images#browsers
+          - chrome
+          - edge
+          - electron
+          - firefox
+        exclude:
+          - os: ubuntu-24.04-arm
+            browser: edge # not available for Linux/arm64
     # Cypress Docker image documentation on https://github.com/cypress-io/cypress-docker-images
-    # Available cypress/browsers tags listed on https://hub.docker.com/r/cypress/browsers/tags
     container:
-      image: cypress/browsers:24.18.1
+      image: cypress/browsers:24.19.0
       options: --user 1001
     steps:
       - name: Checkout
