@@ -19,14 +19,19 @@ jobs:
           - 22
           - 24
           - 26
-    name: Cypress E2E on Node v${{ matrix.node }}
+          - latest
+    name: Cypress E2E on Node.js ${{ matrix.node }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
       - name: Install Node.js
+        # https://github.com/actions/setup-node
         uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
+      - if: matrix.node == 'latest'
+        # test with bundled version of npm, except for with Node.js latest
+        run: npm install -g npm@latest
       - run: node -v
       - run: npm -v
 
