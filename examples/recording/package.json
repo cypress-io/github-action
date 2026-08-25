@@ -10,7 +10,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.21.0"
+    "cypress": "15.21.1"
   },
   "allowScripts": {
     "cypress": true
