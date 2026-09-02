@@ -1,17 +1,14 @@
 {
   "name": "example-quiet",
-  "version": "2.0.0",
   "description": "running Cypress with quiet flag",
   "type": "module",
-  "main": "index.js",
   "scripts": {
     "test": "cypress run",
     "info": "cypress info"
   },
   "private": true,
   "devDependencies": {
-    "cypress": "15.21.1",
-    "image-size": "2.0.2"
+    "cypress": "15.21.1"
   },
   "allowScripts": {
     "cypress": true
