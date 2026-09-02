@@ -35,6 +35,3 @@ jobs:
         with:
           name: screenshots-in-firefox-${{ matrix.os }}
           path: examples/browser/cypress/screenshots
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/browser
