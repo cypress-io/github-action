@@ -751,7 +751,9 @@ jobs:
 
 **Note:** Cypress parallelization requires a [Cypress Cloud](https://on.cypress.io/cloud-introduction) account.
 
-You can spin multiple containers running in parallel using `strategy: matrix` argument. Just add more dummy items to the `containers: [1, 2, ...]` array to spin more free or paid containers. Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization).
+You can spin multiple jobs running in parallel using the `strategy: matrix` argument.
+Just add more dummy items to the `recording-job: [1, 2, ...]` array to create multiple job runs.
+Then use `record` and `parallel` parameters to [load balance tests](https://on.cypress.io/parallelization).
 
 ```yml
 name: Parallel Cypress Tests
@@ -768,13 +770,16 @@ jobs:
       fail-fast: false
       matrix:
         # run 3 copies of the current job in parallel
-        containers: [1, 2, 3]
+        recording-job: [1, 2, 3]
+    container:
+      image: cypress/browsers:latest
+      options: --user 1001
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       # because of "record" and "parallel" parameters
-      # these containers will load balance all found tests among themselves
+      # these jobs will load balance all found tests among themselves
       - name: Cypress run
         uses: cypress-io/github-action@v7
         with:
@@ -784,14 +789,18 @@ jobs:
         env:
           # pass the Cypress Cloud record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.EXAMPLE_RECORDING_KEY }}
-          # Recommended: pass the GitHub token lets this action correctly
+          # Recommended: passing the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ![Parallel run](images/parallel.png)
 
-The Cypress GH Action does not spawn or create any additional containers - it only links the multiple containers spawned using the matrix strategy into a single logical Cypress Cloud run where it splits the specs amongst the machines. See the [Cypress Cloud Smart Orchestration](https://docs.cypress.io/cloud/features/smart-orchestration/overview/) guide for a detailed explanation.
+The Cypress GitHub Action does not spawn or create any additional jobs -
+it only links the multiple jobs spawned using the matrix strategy into a single logical Cypress Cloud run
+where it splits the specs amongst the machines.
+See the [Cypress Cloud Smart Orchestration](https://docs.cypress.io/cloud/features/smart-orchestration/overview/) guide
+for a detailed explanation.
 
 If you use the GitHub Actions facility for [Re-running workflows and jobs](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs), note that [Re-running failed jobs in a workflow](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs?tool=webui#re-running-failed-jobs-in-a-workflow) is not suited for use with parallel recording into Cypress Cloud. Re-running failed jobs in this situation does not simply re-run failed Cypress tests. Instead it re-runs **all** Cypress tests, load-balanced over the containers with failed jobs.
 
@@ -800,7 +809,17 @@ To optimize runs when there are failing tests present, refer to optional [Cypres
 - [Spec Prioritization](https://docs.cypress.io/cloud/features/smart-orchestration/spec-prioritization)
 - [Auto Cancellation](https://docs.cypress.io/guides/cloud/smart-orchestration/run-cancellation). See also [Auto cancel after failures](#auto-cancel-after-failures) for details of how to set this option in a Cypress GitHub Action workflow.
 
-During staged rollout of a new GitHub-hosted runner version, GitHub may provide a mixture of current and new image versions used by the container matrix. It is recommended to use a [Docker image](#docker-image) in the parallel job run which avoids any Cypress Cloud errors due to browser major version mismatch from the two different image versions. A [Docker image](#docker-image) is not necessary if testing against the default built-in Electron browser because this browser version is fixed by the Cypress version in use and it is unaffected by any GitHub runner image rollout.
+During staged rollout of a new [GitHub-hosted runner image](https://github.com/actions/runner-images#readme) version,
+GitHub may provide a mixture of current and new image versions used by the job matrix.
+When running parallel jobs under GitHub-hosted Ubuntu runner images,
+it is recommended to use a [Docker image](#docker-image)
+to avoid any Cypress Cloud errors due to browser major version mismatch between the current and new image versions.
+
+Avoid using parallel jobs with GitHub-hosted macOS or Windows runner images,
+since there is currently no workaround for the deployment mismatch issue.
+On macOS the problem can also occur when there is an upgrade to the macOS version.
+
+[![recording example](https://github.com/cypress-io/github-action/actions/workflows/example-recording.yml/badge.svg)](.github/workflows/example-recording.yml)
 
 ### Component and E2E Testing
 
