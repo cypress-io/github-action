@@ -49,8 +49,13 @@ jobs:
       fail-fast: false
       matrix:
         # run copies of the current job in parallel
-        containers: [1, 2]
+        recording-job: [1, 2] # the name of the matrix variable is arbitrary, we just need two copies of the job
     if: needs.check-record-key.outputs.record-key-exists == 'true'
+    # Use a Cypress Docker image with browsers pre-installed
+    # to ensure that the tests run in the same consistent environment across each parallel run
+    container:
+      image: cypress/browsers:24.20.0
+      options: --user 1001
     steps:
       - name: Checkout
         uses: actions/checkout@v7
