@@ -41,6 +41,7 @@ jobs:
         # because we are running these examples in a monorepo
         with:
           working-directory: examples/basic
+          browser: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.os, '-arm') && 'firefox' || '' }}
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
@@ -77,4 +78,5 @@ jobs:
         with:
           package-manager-cache: false
           working-directory: examples/basic
+          browser: ${{ contains(matrix.os, 'ubuntu') && contains(matrix.os, '-arm') && 'firefox' || '' }}
           build: npx cypress info
