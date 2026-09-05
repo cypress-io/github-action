@@ -317,7 +317,9 @@ Refer to [cypress-io/cypress-docker-images](https://github.com/cypress-io/cypres
 
 ### Env
 
-Specify the env argument with `env` parameter
+To pass an environment variable to Cypress <15.10.0 use the action's `env` parameter.
+In Cypress 15.10.0 and above, the `env` is specified for use with secret environment variables.
+It is replaced with the [expose](#expose) action parameter for public, non-sensitive environment variables.
 
 ```yml
 name: Cypress tests
