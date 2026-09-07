@@ -10,8 +10,8 @@
   "private": true,
   "devDependencies": {
     "cypress": "15.21.1",
-    "webpack": "^5.109.2",
-    "webpack-cli": "^7.2.2",
+    "webpack": "^5.110.2",
+    "webpack-cli": "^7.2.3",
     "webpack-dev-server": "^6.0.0"
   },
   "allowScripts": {
