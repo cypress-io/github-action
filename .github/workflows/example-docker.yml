@@ -28,7 +28,7 @@ jobs:
             browser: edge # not available for Linux/arm64
     # Cypress Docker image documentation on https://github.com/cypress-io/cypress-docker-images
     container:
-      image: cypress/browsers:24.19.0
+      image: cypress/browsers:24.20.0
       options: --user 1001
     steps:
       - name: Checkout
