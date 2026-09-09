@@ -21,7 +21,6 @@ jobs:
           # Available browsers listed on https://github.com/cypress-io/cypress-docker-images#browsers
           - chrome
           - edge
-          - electron
           - firefox
         exclude:
           - os: ubuntu-24.04-arm
