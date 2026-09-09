@@ -1,4 +1,9 @@
 name: example-env
+#
+# The API call Cypress.env() was deprecated in Cypress 15.10.0 and removed in Cypress 16.0.0.
+# See the workflow example-expose.yml for working with non-sensitive environment variables
+# in Cypress 15.10.0 and above.
+#
 # In the example jobs, the action is called with
 # uses: ./
 # which runs the action code from the current branch.
@@ -15,7 +20,6 @@ env:
   # pass an environment variable to Cypress
   # a test can get its value like this
   # Cypress.env('environmentName') // 'staging'
-  # see https://on.cypress.io/env
   CYPRESS_environmentName: staging
 permissions:
   contents: read
@@ -37,9 +41,10 @@ jobs:
 
   with-env:
     # in the tests below, in addition to 'environmentName'
-    # we are passing additional environment variables
-    # using "--env" command line option
-    # see https://on.cypress.io/configuration
+    # we are passing other environment variables
+    # using the action env option that maps to the option of the
+    # same name in Cypress Module API
+    # see https://docs.cypress.io/app/references/module-api
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
