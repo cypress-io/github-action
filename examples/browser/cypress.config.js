@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress'
 import os from 'node:os'
 
 export default defineConfig({
+  defaultBrowser: 'chrome',
   fixturesFolder: false,
   e2e: {
     setupNodeEvents (on) {
