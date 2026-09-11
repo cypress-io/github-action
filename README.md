@@ -188,7 +188,11 @@ jobs:
 
 ### Chrome for Testing
 
-To install [Google Chrome for Testing](https://developer.chrome.com/blog/chrome-for-testing/), specify a partial or full numerical Chrome for Testing version using [browser-actions/setup-chrome](https://github.com/browser-actions/setup-chrome). Refer to [Chrome for Testing availability](https://googlechromelabs.github.io/chrome-for-testing/) for current versions or [JSON API endpoints](https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints) for all available versions.
+To install [Google Chrome for Testing](https://developer.chrome.com/blog/chrome-for-testing/)
+use [browser-actions/setup-chrome](https://github.com/browser-actions/setup-chrome).
+Refer to [Chrome for Testing availability](https://googlechromelabs.github.io/chrome-for-testing/) for current versions
+or [JSON API endpoints](https://github.com/GoogleChromeLabs/chrome-for-testing#json-api-endpoints)
+for all available versions.
 
 ```yml
 name: Chrome for Testing
@@ -200,8 +204,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: browser-actions/setup-chrome@v2
-        with:
-          chrome-version: 140
       - uses: cypress-io/github-action@v7
         with:
           browser: chrome-for-testing
