@@ -1,4 +1,3 @@
-const got = require('got')
 const debug = require('debug')('@cypress/github-action')
 
 /**
@@ -6,10 +5,13 @@ const debug = require('debug')('@cypress/github-action')
  * a poor man's https://www.npmjs.com/package/wait-on. This version
  * is implemented using https://github.com/sindresorhus/got
  */
-const ping = (url, timeout) => {
+const ping = async (url, timeout) => {
   if (!timeout) {
     throw new Error('Expected timeout in ms')
   }
+
+  // got@16 is ESM-only; dynamic import works from CommonJS
+  const { default: got } = await import('got')
 
   // make copy of the error codes that "got" retries on
   const errorCodes = [...got.defaults.options.retry.errorCodes]
@@ -34,9 +36,14 @@ const ping = (url, timeout) => {
     headers: {
       Accept: 'text/html, application/json, text/plain, */*'
     },
-    timeout: individualPingTimeout,
-    errorCodes,
+    timeout: {
+      request: individualPingTimeout
+    },
     retry: {
+      errorCodes,
+      // enforceRetryRules:false lets calculateDelay be the sole stop condition,
+      // matching got@11 behaviour. limit is a generous failsafe only.
+      enforceRetryRules: false,
       limit,
       calculateDelay({ error, attemptCount }) {
         if (error) {
@@ -49,10 +56,9 @@ const ping = (url, timeout) => {
         )
         if (elapsed > timeout) {
           console.error(
-            '%s timed out on retry %d of %d, elapsed %dms, limit %dms',
+            '%s timed out after %d retries, elapsed %dms, limit %dms',
             url,
             attemptCount,
-            limit,
             elapsed,
             timeout
           )
