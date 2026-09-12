@@ -10,15 +10,21 @@ permissions:
 
 jobs:
   tests:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
       - name: Install Chrome for Testing
-        # https://github.com/browser-actions/setup-chrome
+        # Installs from stable channel by default.
+        # See https://github.com/browser-actions/setup-chrome for other options.
+        # See https://github.com/GoogleChromeLabs/chrome-for-testing for available versions.
         uses: browser-actions/setup-chrome@v2
-        with:
-          chrome-version: 140
       - name: Cypress info
         uses: ./ # if copying, replace with cypress-io/github-action@v7
         with:
