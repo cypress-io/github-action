@@ -8,7 +8,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "16.0.0"
+    "cypress": "16.1.0"
   },
   "dependencies": {
     "arg": "5.0.0",
