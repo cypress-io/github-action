@@ -10,3 +10,10 @@ if (!url) {
   process.exit(1)
 }
 ping(url, timeoutSeconds * 1000)
+  .then(() => {
+    console.log('%s is responding', url)
+  })
+  .catch((err) => {
+    console.error('Could not connect to %s: %s', url, err.message)
+    process.exit(1)
+  })
