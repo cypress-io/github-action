@@ -51,7 +51,7 @@ jobs:
         id: semantic
         with:
           # https://github.com/semantic-release/semantic-release
-          semantic_version: 25.0.2
+          semantic_version: 25.0.9
           branches: master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
