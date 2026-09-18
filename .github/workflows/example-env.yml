@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   e2e:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -45,7 +45,7 @@ jobs:
     # using the action env option that maps to the option of the
     # same name in Cypress Module API
     # see https://docs.cypress.io/app/references/module-api
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -62,7 +62,7 @@ jobs:
           spec: cypress/e2e/spec.cy.js
 
   with-action-env:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -84,7 +84,7 @@ jobs:
     # 'environmentName' value comes from the workflow's environment
     # 'apiPort' comes from the step's "env" block
     # 'host' is defined in the action's "with: env:" parameter
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7

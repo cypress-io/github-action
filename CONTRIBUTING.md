@@ -77,7 +77,7 @@ To contribute changes, follow these instructions in the order given below:
 
 Rebuilding the action with `npm run build` produces different results under Windows compared to Ubuntu.
 This means that Windows cannot be used to rebuild the action,
-because the workflow [check-dist.yml](./.github/workflows/check-dist.yml), running under `ubuntu-24.04`,
+because the workflow [check-dist.yml](./.github/workflows/check-dist.yml), running under `ubuntu-26.04`,
 will fail for action content in the [dist](./dist/) directory built under Windows.
 
 The repository is set up with a `git` / `Husky` pre-commit hook which is intended to ensure that any changes

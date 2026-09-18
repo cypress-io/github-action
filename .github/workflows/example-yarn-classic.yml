@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   yarn-classic:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -27,7 +27,7 @@ jobs:
 
   yarn-classic-cache:
     # Use setup-node to cache Yarn dependencies
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7

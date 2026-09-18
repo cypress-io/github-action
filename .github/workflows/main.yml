@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   build-and-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     name: Build and test
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     name: release
     needs: [build-and-test]
     # only release from the master branch
