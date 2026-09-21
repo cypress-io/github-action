@@ -41,7 +41,7 @@ permissions:
 
 jobs:
   check-record-key:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       record-key-exists: ${{ steps.record-key-check.outputs.defined }}
     steps:
@@ -57,7 +57,7 @@ jobs:
   # single job that generates and outputs a common id
   prepare:
     needs: [check-record-key]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: needs.check-record-key.outputs.record-key-exists == 'true'
     outputs:
       uuid: ${{ steps.uuid.outputs.value }}
@@ -76,7 +76,7 @@ jobs:
   # and record it to the Cypress Cloud
   smoke-tests:
     needs: [prepare]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     container:
       image: cypress/browsers:24.20.0
       options: --user 1001
@@ -105,7 +105,7 @@ jobs:
   # under different groups
   all-tests:
     needs: [prepare, smoke-tests]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
