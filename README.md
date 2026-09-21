@@ -166,7 +166,15 @@ The workflows in the [examples](./examples/) directory use the latest commit fro
 
 ### Browser
 
-Specify the browser name or path with the `browser` parameter. The default browser, if none is specified, is the built-in [Electron browser](https://on.cypress.io/guides/guides/launching-browsers#Electron-Browser).
+Specify the browser name or path with the `browser` parameter.
+
+The default browser can be set as a [Browser](https://docs.cypress.io/app/references/configuration#Browser) configuration option `defaultBrowser`.
+If no `browser` parameter is specified and `defaultBrowser` is also undefined,
+the built-in [Electron browser](https://on.cypress.io/guides/guides/launching-browsers#Electron-Browser) is used.
+
+[cypress@16.0.0](https://docs.cypress.io/app/references/changelog#16-0-0) deprecated the Electron browser and describes the plan to remove it in a future major version of Cypress.
+
+Each of the [examples](./examples/) directories in this repo sets `defaultBrowser` to `chrome`.
 
 ### Chrome
 
