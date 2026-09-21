@@ -32,7 +32,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: 11
+          version: 12
 
         # See https://github.com/actions/setup-node
       - name: Install Node.js
@@ -84,7 +84,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: 11
+          version: 12
 
       - name: Install Node.js
         uses: actions/setup-node@v7

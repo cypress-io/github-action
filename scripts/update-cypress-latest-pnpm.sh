@@ -16,7 +16,7 @@ else
     echo Corepack is not needed and not installed
 fi
 echo install latest pnpm version
-npm add pnpm@latest -g
+npm add pnpm@latest -g --min-release-age=7 --allow-scripts=pnpm
 echo pnpm version $(pnpm --version) is installed
 
 echo
