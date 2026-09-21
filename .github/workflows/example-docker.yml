@@ -15,15 +15,15 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-24.04
-          - ubuntu-24.04-arm
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
         browser:
           # Available browsers listed on https://github.com/cypress-io/cypress-docker-images#browsers
           - chrome
           - edge
           - firefox
         exclude:
-          - os: ubuntu-24.04-arm
+          - os: ubuntu-26.04-arm
             browser: edge # not available for Linux/arm64
     # Cypress Docker image documentation on https://github.com/cypress-io/cypress-docker-images
     container:
