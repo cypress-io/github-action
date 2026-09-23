@@ -78,7 +78,7 @@ jobs:
     needs: [prepare]
     runs-on: ubuntu-26.04
     container:
-      image: cypress/browsers:24.20.0
+      image: cypress/browsers:24.21.0
       options: --user 1001
     steps:
       - name: Checkout
@@ -112,7 +112,7 @@ jobs:
         # run 2 copies of the current job in parallel
         recording-job: [1, 2]
     container:
-      image: cypress/browsers:24.20.0
+      image: cypress/browsers:24.21.0
       options: --user 1001
     steps:
       - name: Checkout
