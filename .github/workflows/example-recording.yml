@@ -54,7 +54,7 @@ jobs:
     # Use a Cypress Docker image with browsers pre-installed
     # to ensure that the tests run in the same consistent environment across each parallel run
     container:
-      image: cypress/browsers:24.20.0
+      image: cypress/browsers:24.21.0
       options: --user 1001
     steps:
       - name: Checkout
