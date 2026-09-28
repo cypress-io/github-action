@@ -1957,9 +1957,7 @@ View the [CHANGELOG](./CHANGELOG.md) document for an overview of version changes
 ## Compatibility
 
 - `github-action@v7` is the current recommended version, uses `node24` and is compatible with Cypress `10` and above.
-- `github-action@v6` is deprecated. It uses `node20` which has reached its end of life - see [Deprecation of Node 20 on GitHub Actions runners](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
-- `github-action@v6.7.9` is the minimum version required to use GitHub Actions caching services. The legacy caching service used by lower versions of the action is no longer available.
-- `github-action` versions `v1` to `v5` are unsupported: they rely on Node.js `12` and `16` in End-of-life status.
+- `github-action` versions `v1` to `v6` are unsupported: they rely on Node.js `12`, `16` or `20` in End-of-life status.
 
 Cypress lists browser compatibility information under [System Requirements](https://docs.cypress.io/app/get-started/install-cypress#Browsers).
 
