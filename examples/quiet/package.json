@@ -8,7 +8,7 @@
   },
   "private": true,
   "devDependencies": {
-    "cypress": "16.1.0"
+    "cypress": "16.1.1"
   },
   "allowScripts": {
     "cypress": true
