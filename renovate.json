@@ -36,7 +36,10 @@
     },
     {
       "matchUpdateTypes": ["lockFileMaintenance"],
-      "matchFileNames": ["/^examples/yarn-modern/"],
+      "matchFileNames": [
+        "examples/yarn-modern/**",
+        "examples/yarn-modern-pnp/**"
+      ],
       "enabled": false
     },
     {
