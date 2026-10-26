@@ -24,11 +24,8 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          # Action runs: using: node24 as defined in
-          # https://github.com/cypress-io/github-action/blob/master/action.yml
-          # Node.js minor version is aligned to
-          # https://github.com/actions/runner/blob/main/src/Misc/externals.sh
-          node-version: 24.22.1
+          node-version-file: '.node-version'
+          cache: npm
       - run: npm ci
       - run: npm run format
       - run: npm run build
