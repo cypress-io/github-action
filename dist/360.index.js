@@ -1,6 +1,6 @@
 "use strict";
-exports.id = 849;
-exports.ids = [849];
+exports.id = 360;
+exports.ids = [360];
 exports.modules = {
 
 /***/ 12203:
@@ -342,12 +342,13 @@ module.exports = class CachePolicy {
 
     /**
      * @param {{headers: Record<string, string>, synchronous: boolean}|undefined} revalidation - Revalidation information, if any.
-     * @returns {{response: {headers: Record<string, string>}, revalidation: {headers: Record<string, string>, synchronous: boolean}|undefined}} An object with a cached response headers and revalidation info.
+     * @returns {{response: HttpResponse, revalidation: {headers: Record<string, string>, synchronous: boolean}|undefined}} An object with a cached response headers and revalidation info.
      */
     _evaluateRequestHitResult(revalidation) {
         return {
             response: {
                 headers: this.responseHeaders(),
+                status: this._status,
             },
             revalidation,
         };
@@ -395,9 +396,9 @@ module.exports = class CachePolicy {
      * }
      * ```
      * @param {HttpRequest} req - new incoming HTTP request
-     * @returns {{response: {headers: Record<string, string>}|undefined, revalidation: {headers: Record<string, string>, synchronous: boolean}|undefined}} An object containing keys:
+     * @returns {{response: HttpResponse|undefined, revalidation: {headers: Record<string, string>, synchronous: boolean}|undefined}} An object containing keys:
      *   - revalidation: { headers: Record<string, string>, synchronous: boolean } Set if you should send this to the origin server
-     *   - response: { headers: Record<string, string> } Set if you can respond to the client with these cached headers
+     *   - response: HttpResponse Set if you can respond to the client with these cached headers
      */
     evaluateRequest(req) {
         this._assertRequestHasHeaders(req);
@@ -492,18 +493,32 @@ module.exports = class CachePolicy {
             return true;
         }
 
-        // A Vary header field-value of "*" always fails to match
-        if (this._resHeaders.vary === '*') {
-            return false;
-        }
-
         const fields = this._resHeaders.vary
             .trim()
             .toLowerCase()
             .split(/\s*,\s*/);
+
         for (const name of fields) {
-            if (req.headers[name] !== this._reqHeaders[name]) return false;
+            // A Vary header field-value of "*" always fails to match
+            if (name === '*') {
+                return false;
+            }
+
+            const newReq = Object.prototype.hasOwnProperty.call(
+                req.headers,
+                name
+            ) && req.headers[name];
+
+            const cachedReq = Object.prototype.hasOwnProperty.call(
+                this._reqHeaders,
+                name
+            ) && this._reqHeaders[name];
+
+            if (newReq !== cachedReq) {
+                return false;
+            }
         }
+
         return true;
     }
 
@@ -562,6 +577,14 @@ module.exports = class CachePolicy {
         headers.age = `${Math.round(age)}`;
         headers.date = new Date(this.now()).toUTCString();
         return headers;
+    }
+
+    /**
+     * Returns the status code of the cached response.
+     * @returns {number} The response status code.
+     */
+    status() {
+      return this._status;
     }
 
     /**
@@ -938,7 +961,7 @@ module.exports = class CachePolicy {
 
 /***/ }),
 
-/***/ 20849:
+/***/ 44360:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 
@@ -2810,6 +2833,10 @@ function isUint8ArrayOrArrayBuffer(value) {
 	return uint8array_extras_isUint8Array(value) || uint8array_extras_isArrayBuffer(value);
 }
 
+function toUint8ArrayIfArrayBuffer(value) {
+	return uint8array_extras_isArrayBuffer(value) ? new Uint8Array(value) : value;
+}
+
 function uint8array_extras_assertUint8Array(value) {
 	if (!uint8array_extras_isUint8Array(value)) {
 		throw new TypeError(`Expected \`Uint8Array\`, got \`${typeof value}\``);
@@ -2839,13 +2866,14 @@ function concatUint8Arrays(arrays, totalLength) {
 		return new Uint8Array(0);
 	}
 
-	totalLength ??= arrays.reduce((accumulator, currentValue) => accumulator + currentValue.length, 0);
+	totalLength ??= arrays.reduce((accumulator, currentValue) => accumulator + currentValue.byteLength, 0);
 
 	const returnValue = new Uint8Array(totalLength);
 
 	let offset = 0;
-	for (const array of arrays) {
-		uint8array_extras_assertUint8Array(array);
+	for (let array of arrays) {
+		assertUint8ArrayOrArrayBuffer(array);
+		array = toUint8ArrayIfArrayBuffer(array);
 		returnValue.set(array, offset);
 		offset += array.length;
 	}
@@ -2854,8 +2882,10 @@ function concatUint8Arrays(arrays, totalLength) {
 }
 
 function areUint8ArraysEqual(a, b) {
-	uint8array_extras_assertUint8Array(a);
-	uint8array_extras_assertUint8Array(b);
+	assertUint8ArrayOrArrayBuffer(a);
+	assertUint8ArrayOrArrayBuffer(b);
+	a = toUint8ArrayIfArrayBuffer(a);
+	b = toUint8ArrayIfArrayBuffer(b);
 
 	if (a === b) {
 		return true;
@@ -2876,8 +2906,10 @@ function areUint8ArraysEqual(a, b) {
 }
 
 function compareUint8Arrays(a, b) {
-	uint8array_extras_assertUint8Array(a);
-	uint8array_extras_assertUint8Array(b);
+	assertUint8ArrayOrArrayBuffer(a);
+	assertUint8ArrayOrArrayBuffer(b);
+	a = toUint8ArrayIfArrayBuffer(a);
+	b = toUint8ArrayIfArrayBuffer(b);
 
 	const length = Math.min(a.length, b.length);
 
@@ -2931,7 +2963,8 @@ function base64UrlToBase64(base64url) {
 const MAX_BLOCK_SIZE = 65_535;
 
 function uint8ArrayToBase64(array, {urlSafe = false} = {}) {
-	uint8array_extras_assertUint8Array(array);
+	assertUint8ArrayOrArrayBuffer(array);
+	array = toUint8ArrayIfArrayBuffer(array);
 
 	let base64 = '';
 
@@ -2962,7 +2995,8 @@ function base64ToString(base64String) {
 const byteToHexLookupTable = Array.from({length: 256}, (_, index) => index.toString(16).padStart(2, '0'));
 
 function uint8ArrayToHex(array) {
-	uint8array_extras_assertUint8Array(array);
+	assertUint8ArrayOrArrayBuffer(array);
+	array = toUint8ArrayIfArrayBuffer(array);
 
 	// Concatenating a string is faster than using an array.
 	let hexString = '';
@@ -3057,11 +3091,14 @@ function getUintBE(view) {
 }
 
 /**
-@param {Uint8Array} array
-@param {Uint8Array} value
+@param {Uint8Array | ArrayBuffer} array
+@param {Uint8Array | ArrayBuffer} value
 @returns {number}
 */
 function indexOf(array, value) {
+	array = toUint8ArrayIfArrayBuffer(array);
+	value = toUint8ArrayIfArrayBuffer(value);
+
 	const arrayLength = array.length;
 	const valueLength = value.length;
 
@@ -3093,8 +3130,8 @@ function indexOf(array, value) {
 }
 
 /**
-@param {Uint8Array} array
-@param {Uint8Array} value
+@param {Uint8Array | ArrayBuffer} array
+@param {Uint8Array | ArrayBuffer} value
 @returns {boolean}
 */
 function includes(array, value) {
@@ -3105,7 +3142,7 @@ function includes(array, value) {
 var external_node_crypto_ = __webpack_require__(77598);
 // EXTERNAL MODULE: external "node:url"
 var external_node_url_ = __webpack_require__(73136);
-;// CONCATENATED MODULE: ./node_modules/get-stream/node_modules/is-stream/index.js
+;// CONCATENATED MODULE: ./node_modules/is-stream/index.js
 function isStream(stream, {checkOpen = true} = {}) {
 	return stream !== null
 		&& typeof stream === 'object'
