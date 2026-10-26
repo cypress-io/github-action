@@ -31,7 +31,6 @@ jobs:
           node-version: 24.22.1
       - run: npm ci
       - run: npm run format
-      - run: rm -rf dist/
       - run: npm run build
 
       - name: Compare the expected and actual dist/ directories

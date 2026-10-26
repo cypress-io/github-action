@@ -11,8 +11,7 @@
   ],
   "scripts": {
     "test": "echo \"There are no tests :(\"",
-    "prebuild": "rimraf dist",
-    "build": "ncc build -o dist index.js",
+    "build": "rimraf dist && ncc build -o dist index.js",
     "format": "prettier --write index.js src/ping.js action.yml",
     "format:markdown": "prettier --write \"**/*.md\"",
     "format:markdown:check": "prettier --check \"**/*.md\"",
