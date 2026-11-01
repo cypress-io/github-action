@@ -101323,7 +101323,7 @@ const ping = async (url, timeout) => {
   }
 
   // got@16 is ESM-only; dynamic import works from CommonJS
-  const { default: got } = await __nccwpck_require__.e(/* import() */ 360).then(__nccwpck_require__.bind(__nccwpck_require__, 44360))
+  const { default: got } = await __nccwpck_require__.e(/* import() */ 912).then(__nccwpck_require__.bind(__nccwpck_require__, 86912))
 
   // make copy of the error codes that "got" retries on
   const errorCodes = [...got.defaults.options.retry.errorCodes]
