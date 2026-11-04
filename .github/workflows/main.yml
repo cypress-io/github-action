@@ -50,7 +50,7 @@ jobs:
       - run: npm ci
       # https://github.com/cycjimmy/semantic-release-action
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v8.1.3
+        uses: cycjimmy/semantic-release-action@v8.1.4
         id: semantic
         with:
           # https://github.com/semantic-release/semantic-release
