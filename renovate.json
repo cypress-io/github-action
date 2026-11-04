@@ -54,7 +54,7 @@
     {
       "matchDatasources": ["docker"],
       "matchPackageNames": ["cypress/browsers"],
-      "allowedVersions": "<25"
+      "allowedVersions": "<27"
     },
     {
       "matchPackageNames": ["/webpack/"],
