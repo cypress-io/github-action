@@ -31,6 +31,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+      id-token: write # npm trusted publishing (OIDC)
     runs-on: ubuntu-26.04
     name: release
     needs: [build-and-test]
