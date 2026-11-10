@@ -396,7 +396,9 @@ For more information, see [Cypress.expose()](https://docs.cypress.io/api/cypress
 
 ### Specs
 
-Specify the [spec files to run](https://docs.cypress.io/guides/guides/command-line.html#cypress-run-spec-lt-spec-gt) with `spec` parameter
+Specify the
+[spec files to run](https://docs.cypress.io/app/references/command-line#cypress-run-spec-lt-spec-gt)
+with `spec` parameter
 
 ```yml
 name: Cypress tests
