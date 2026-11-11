@@ -1,0 +1,63 @@
+# Single required status check for branch protection:
+# passes once every other pull_request workflow run for the PR head commit has passed
+name: required-checks
+on:
+  pull_request:
+permissions:
+  actions: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  all-green:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - name: Wait for all workflows to pass
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const sha = context.payload.pull_request.head.sha
+            const { data: self } = await github.rest.actions.getWorkflowRun({
+              ...context.repo,
+              run_id: context.runId,
+            })
+            const passing = ['success', 'neutral', 'skipped']
+
+            while (true) {
+              await new Promise((resolve) => setTimeout(resolve, 30_000))
+
+              const runs = await github.paginate(github.rest.actions.listWorkflowRunsForRepo, {
+                ...context.repo,
+                head_sha: sha,
+                event: 'pull_request',
+                per_page: 100,
+              })
+
+              // a workflow can have several runs for one commit (e.g. PR reopened); only the newest counts
+              const latest = new Map()
+              for (const run of runs) {
+                if (run.workflow_id === self.workflow_id) continue
+                const seen = latest.get(run.workflow_id)
+                if (!seen || run.id > seen.id) latest.set(run.workflow_id, run)
+              }
+              const workflows = [...latest.values()]
+
+              const failed = workflows.filter(
+                (run) => run.status === 'completed' && !passing.includes(run.conclusion),
+              )
+              if (failed.length) {
+                core.setFailed(
+                  failed.map((run) => `${run.name}: ${run.conclusion} ${run.html_url}`).join('\n'),
+                )
+                return
+              }
+
+              const pending = workflows.filter((run) => run.status !== 'completed')
+              if (workflows.length && !pending.length) {
+                core.info(`All ${workflows.length} workflows passed`)
+                return
+              }
+              core.info(`Waiting on: ${pending.map((run) => run.name).join(', ')}`)
+            }
