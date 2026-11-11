@@ -278,10 +278,10 @@ cross-spawn@^7.0.0:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-cypress@16.2.1:
-  version "16.2.1"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-16.2.1.tgz#98993dd2e6669e303f4ec3391c380b2c59e3b005"
-  integrity sha512-3Vqf1Krr92hKww/Owob9JrDO7TgBCR2ct+OQrvBOFGSnoGsikL4YF5arqDrJb+SM8Fzi7xXIeVmCeaOqJKPhRA==
+cypress@16.3.0:
+  version "16.3.0"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-16.3.0.tgz#c1335704442ea67effe0643bf1ee098e1f690eda"
+  integrity sha512-h5qq6G9wgNEMWEUFejeBwj7fzwJljrO54n3wAa7yW2Q/8ORnkq4tQBqUhY4g9UM5uOazKmr4ay8YcKi+SJJ1ng==
   dependencies:
     "@cypress/request" "^4.0.0"
     "@cypress/xvfb" "^1.2.4"
@@ -317,7 +317,7 @@ cypress@16.2.1:
     proxy-from-env "1.0.0"
     request-progress "^3.0.0"
     supports-color "^8.1.1"
-    systeminformation "^5.31.1"
+    systeminformation "^5.33.16"
     tmp "~0.2.4"
     tree-kill "1.2.2"
     untildify "^4.0.0"
@@ -1064,10 +1064,10 @@ supports-color@^8.1.1:
   dependencies:
     has-flag "^4.0.0"
 
-systeminformation@^5.31.1:
-  version "5.33.16"
-  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.33.16.tgz#878ccdc0151a55506903c23c06684db1185ef843"
-  integrity sha512-R+Lh69IJXfJj6bfyH1In5cIR9FTr4hBS39YvlZHZjsK1p9cuELPq7hplZZIb56ZESMMb+DzdKqqE6Iomi01Mvg==
+systeminformation@^5.33.16:
+  version "5.33.19"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.33.19.tgz#b956e75ff6d7bdc6019ca4fc13c78b01f47cc415"
+  integrity sha512-Zm7wGeCG7PqfvzegMJIzrxICopWqYCeLATVmvxOOci1isLcNVKgY4Fr0hhYQzvc7cgtK3377jQVChTFAnznOiA==
 
 throttleit@^1.0.0:
   version "1.0.1"
