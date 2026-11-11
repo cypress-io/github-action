@@ -35,11 +35,6 @@
       "minimumReleaseAge": null
     },
     {
-      "matchUpdateTypes": ["lockFileMaintenance"],
-      "matchFileNames": ["/^examples/yarn-modern/"],
-      "enabled": false
-    },
-    {
       "matchDepTypes": ["dependencies"],
       "enabled": false
     },
