@@ -55,7 +55,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@stylistic/eslint-plugin": "5.10.0",
-    "@types/node": "26.6.5",
+    "@types/node": "26.6.6",
     "@vercel/ncc": "0.45.0",
     "eslint": "10.13.0",
     "eslint-plugin-cypress": "7.0.2",
