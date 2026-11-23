@@ -27,7 +27,6 @@ jobs:
           - windows-2025
           - windows-11-arm
           - macos-26
-          - macos-26-intel
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -57,7 +56,6 @@ jobs:
           - windows-2025
           - windows-11-arm
           - macos-26
-          - macos-26-intel
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
