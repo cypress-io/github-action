@@ -1166,7 +1166,7 @@ serve-handler@6.1.7:
     path-to-regexp "3.3.0"
     range-parser "1.2.0"
 
-serve@^14.2.6:
+serve@^14.2.8:
   version "14.2.8"
   resolved "https://registry.yarnpkg.com/serve/-/serve-14.2.8.tgz#0d72860f4f751b5bb897a32ed9f631ed17ab0ae4"
   integrity sha512-7or7YqR3zXwHhiBGj40l9yODyQY146O+hXKaEAfQYQkcvHtMDdX95K96xr50qL9EjXScyYVJb1NIgVE8F0i5cA==
