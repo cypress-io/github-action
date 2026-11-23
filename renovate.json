@@ -52,6 +52,10 @@
       "allowedVersions": "<27"
     },
     {
+      "matchPackageNames": ["semantic-release"],
+      "allowedVersions": "<26"
+    },
+    {
       "matchPackageNames": ["/webpack/"],
       "groupName": "webpack",
       "extends": ["schedule:weekly"]
