@@ -14,7 +14,7 @@ importers:
         specifier: 16.3.0
         version: 16.3.0
       serve:
-        specifier: ^14.2.6
+        specifier: ^14.2.8
         version: 14.2.8(supports-color@8.1.1)
 
   packages/workspace-2:
@@ -23,7 +23,7 @@ importers:
         specifier: 16.3.0
         version: 16.3.0
       serve:
-        specifier: ^14.2.6
+        specifier: ^14.2.8
         version: 14.2.8(supports-color@8.1.1)
 
 packages:
