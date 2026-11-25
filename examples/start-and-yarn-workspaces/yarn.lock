@@ -395,10 +395,10 @@ cross-spawn@^7.0.0:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-cypress@16.3.0:
-  version "16.3.0"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-16.3.0.tgz#c1335704442ea67effe0643bf1ee098e1f690eda"
-  integrity sha512-h5qq6G9wgNEMWEUFejeBwj7fzwJljrO54n3wAa7yW2Q/8ORnkq4tQBqUhY4g9UM5uOazKmr4ay8YcKi+SJJ1ng==
+cypress@16.4.0:
+  version "16.4.0"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-16.4.0.tgz#c13aa9f470efc2ae2dacccd538689e064f82aeeb"
+  integrity sha512-Y1ZmU9RSUEjCiLFQFH7G3NZdD+EpJ3mD0R/oxzF6YO++38U4YeOXx2hHBRsRub7VvPCETkRP8FuZw2ncJt2t7Q==
   dependencies:
     "@cypress/request" "^4.0.0"
     "@cypress/xvfb" "^1.2.4"
